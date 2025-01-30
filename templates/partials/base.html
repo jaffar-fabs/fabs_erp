@@ -1,0 +1,56 @@
+@ -1,39 +0,0 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  {% block head %}
+    {% include 'partials/head.html' %}
+  {% endblock head %}
+
+  <body class="{% if request.path == '/chat' %} main-chat-blk {% else %} {% endif %}">
+    {% if request.path == '/index' or request.path == '/leads-dashboard' or request.path == '/project-dashboard' %}
+      <div class="preloader">
+        <span class="loader"></span>
+      </div>
+    {% endif %}
+
+    <div class="main-wrapper">
+      {% block header %}
+        {% include 'partials/topbar.html' %}
+      {% endblock header %}
+
+      {% block sidebar %}
+        {% include 'partials/sidebar.html' %}
+      {% endblock sidebar %}
+
+      {% block content %}
+      {{ block.super }}
+  
+  <!-- Job Form Modal -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="job-add" aria-labelledby="job-add-label">
+      <div class="offcanvas-header">
+          <h5 id="job-add-label">Add New Job</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+          <form id="job-form" method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit" class="btn btn-primary">Save Job</button>
+          </form>
+      </div>
+  </div>
+
+      {% endblock content %}
+    </div>
+
+    {% block javascript %}
+      {% include 'partials/script.html' %}
+    {% endblock javascript %}
+
+    
+    {% block theme_settings %}
+      {% include 'partials/theme-settings.html' %}
+    {% endblock theme_settings %}
+      
+  </body>
+</html>

@@ -1,0 +1,160 @@
+{% load static %}
+
+<!-- jQuery -->
+<script src="{% static 'assets/js/jquery-3.7.1.min.js' %}"></script>
+
+<!-- Bootstrap Core JS -->
+<script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- Feather Icon JS -->
+<script src="{% static 'assets/js/feather.min.js' %}"></script>
+
+<!-- Slimscroll JS -->
+{% if request.path == '/index' %}
+<script src="{% static 'assets/js/jquery.slimscroll.js' %}"></script>
+{% endif %}
+<script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+
+{% if request.path == '/chat' %}
+<!-- Slimscroll JS -->
+<script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+{% endif %}
+
+<!-- Daterangepicker JS -->
+<script src="{% static 'assets/js/moment.min.js' %}"></script>
+<script src="{% static 'assets/plugins/daterangepicker/daterangepicker.js' %}"></script>
+
+{% if request.path == '/form-wizard' %}
+<!-- Wizard JS -->
+<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js' %}"></script>
+<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/prettify.js' %}"></script>
+<script src="{% static 'assets/plugins/twitter-bootstrap-wizard/form-wizard.js' %}"></script>
+{% endif %}
+
+<!-- Stickynote JS -->
+{% if request.path == '/calendar' or request.path == '/deals-kanban' or request.path == '/estimations-kanban' or request.path == '/leads-kanban' or request.path == '/ui-stickynote' %}
+<script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-stickynote' %}
+<script src="{% static 'assets/plugins/stickynote/sticky.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-scrollbar' %}
+<!-- Plyr JS -->
+<script src="{% static 'assets/plugins/scrollbar/scrollbar.min.js' %}"></script>
+<script src="{% static 'assets/plugins/scrollbar/custom-scroll.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-counter' %}
+<!-- Stickynote JS -->
+<script src="{% static 'assets/plugins/countup/jquery.counterup.min.js' %}"></script>
+<script src="{% static 'assets/plugins/countup/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'assets/plugins/countup/jquery.missofis-countdown.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-clipboard' %}
+<!-- Clipboard JS -->
+<script src="{% static 'assets/plugins/clipboard/clipboard.min.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-rangeslider' %}
+<!-- Rangeslider JS -->
+<script src="{% static 'assets/plugins/ion-rangeslider/js/ion.rangeSlider.min.js' %}"></script>
+<script src="{% static 'assets/plugins/ion-rangeslider/js/custom-rangeslider.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/ui-rating' %}
+<!-- Rater JS -->
+<script src="{% static 'assets/plugins/rater-js/index.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/file-manager' or request.path == '/notes' or request.path == '/todo' %}
+<!-- Owl Carousel -->
+<script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/chat' or request.path == '/file-manager' or request.path == '/notes' or request.path == '/todo' or request.path == '/ui-text-editor' %}
+<!-- Summernote JS -->
+<script src="{% static 'assets/plugins/summernote/summernote-bs4.min.js' %}"></script>
+{% endif %}
+
+<!-- Mobile Input -->
+{% if request.path == '/chat' or request.path == '/two-step-verification' %}
+<script src="{% static 'assets/plugins/intltelinput/js/intlTelInput.js' %}"></script>
+{% endif %}
+
+<!-- Apexchart JS -->
+<script src="{% static 'assets/plugins/apexchart/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/plugins/apexchart/chart-data.js' %}"></script>
+
+<!-- Datatable JS -->
+<script src="{% static 'assets/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/dataTables.bootstrap5.min.js' %}"></script>
+
+<!-- Full Calendar JS -->
+{% if request.path == '/calendar' or request.path == '/deals-kanban' or request.path == '/estimations-kanban' or request.path == '/leads-kanban' or request.path == '/ui-stickynote' %}
+<script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/calendar' %}
+<script src="{% static 'assets/plugins/fullcalendar/fullcalendar.min.js' %}"></script>
+<script src="{% static 'assets/plugins/fullcalendar/jquery.fullcalendar.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/deals-kanban' or request.path == '/estimations-kanban' or request.path == '/leads-kanban' %}
+<!-- Drag Card -->
+<script src="{% static 'assets/js/jquery.ui.touch-punch.min.js' %}"></script>
+{% endif %}
+
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+{% if request.path == '/calendar' or request.path == '/todo' %}
+<!-- Datetimepicker JS -->
+<script src="{% static 'assets/plugins/moment/moment.min.js' %}"></script>
+{% endif %}
+
+<!-- Bootstrap Tagsinput JS -->
+<script src="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
+
+<!-- Sticky Sidebar JS -->
+<script src="{% static 'assets/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
+<script src="{% static 'assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
+
+<!-- Owl JS -->
+{% if request.path == '/file-manager' %}
+<script src="{% static 'assets/js/plyr-js.js' %}"></script>
+{% endif %}
+
+{% if request.path == '/video-call' or request.path == '/audio-call' %}
+<script src="{% static 'assets/plugins/owlcarousel/owl.carousel.min.js' %}"></script>
+{% endif %}
+
+<!-- Sweetalert 2 -->
+{% if request.path == '/call-history' or request.path == '/audio-call' or request.path == '/chat' or request.path == '/ui-ribbon' or request.path == '/ui-sweetalert' %}
+<script src="{% static 'assets/plugins/sweetalert/sweetalert2.all.min.js' %}"></script>
+<script src="{% static 'assets/plugins/sweetalert/sweetalerts.min.js' %}"></script>
+{% endif %}
+
+<!-- Select2 JS -->
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+
+{% if request.path == '/video-call' or request.path == '/chat' %}
+<!-- Swiper JS -->
+<script src="{% static 'assets/plugins/swiper/swiper.min.js' %}"></script>
+{% endif %}
+
+<!-- Profile Upload JS -->
+<script src="{% static 'assets/js/profile-upload.js' %}"></script>
+
+{% if request.path == '/chat' %}
+<!-- FancyBox JS -->
+<script src="{% static 'assets/plugins/fancybox/jquery.fancybox.min.js' %}"></script>
+{% endif %}
+
+<!-- Summernote JS -->
+<script src="{% static 'assets/plugins/summernote/summernote-lite.min.js' %}"></script>
+
+<!-- Custom JS -->
+<script src="{% static 'assets/js/script.js' %}"></script>

@@ -1,0 +1,110 @@
+{% load static %}
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/img/apple-touch-icon.png' %}">
+
+<!-- Favicon -->
+<link rel="icon" href="{% static 'assets/img/favicon.png' %}" type="image/x-icon">
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.png' %}">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+
+<!-- animation CSS -->
+<link rel="stylesheet" href="{% static 'assets/css/animate.css' %}">
+
+<!-- Tabler Icon CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/tabler-icons/tabler-icons.css' %}">
+
+<!-- Boxicons CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/boxicons/css/boxicons.min.css' %}">
+
+<!-- Fontawesome CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+
+{% if request.path == '/calendar' %}
+<!-- Full Calander CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/fullcalendar/fullcalendar.min.css' %}">
+{% endif %}
+
+{% if request.path == '/audio-call' or request.path == '/video-call' %}
+<!-- Owl Carousel CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/owlcarousel/owl.carousel.min.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/owlcarousel/owl.theme.default.min.css' %}">
+{% endif %}
+
+<!-- Datatable CSS -->
+<link rel="stylesheet" href="{% static 'assets/css/dataTables.bootstrap5.min.css' %}">
+
+<!-- Daterangepicker CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/daterangepicker/daterangepicker.css' %}">
+
+<!-- Select2 CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/select2/css/select2.min.css' %}">
+
+{% if request.path == '/chat' %}
+<!-- Fancybox -->
+<link rel="stylesheet" href="{% static 'assets/plugins/fancybox/jquery.fancybox.min.css' %}">
+{% endif %}
+
+{% if request.path == '/ui-clipboard' or request.path == '/ui-drag-drop' %}
+<!-- Dragula CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/dragula/css/dragula.min.css' %}">
+{% endif %}
+
+{% if request.path == '/ui-rangeslider' or request.path == '/ui-rating' %}
+<!-- Rangeslider CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/ion-rangeslider/css/ion.rangeSlider.min.css' %}">
+{% endif %}
+
+{% if request.path == '/ui-scrollbar' or request.path == '/ui-spinner' %}
+<!-- Main CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/scrollbar/scroll.min.css' %}">
+{% endif %}
+
+{% if request.path == '/ui-stickynote' or request.path == '/ui-timeline' %}
+<!-- Sticky CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/stickynote/sticky.css' %}">
+{% endif %}
+
+{% if request.path == '/form-wizard' %}
+<!-- Wizard CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/twitter-bootstrap-wizard/form-wizard.css' %}">
+{% endif %}
+
+<!-- Owl Carousel -->
+{% if request.path == '/file-manager' %}
+<link rel="stylesheet" href="{% static 'assets/css/plyr.css' %}">
+{% endif %}
+
+{% if request.path == '/file-manager' or request.path == '/notes' or request.path == '/todo' %}
+<link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+{% endif %}
+
+{% if request.path == '/chat' or request.path == '/video-call' %}
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/swiper/swiper.min.css' %}">
+{% endif %}
+
+{% if request.path == '/chat' or request.path == '/file-manager' or request.path == '/notes' or request.path == '/todo' or request.path == '/ui-text-editor' %}
+<!-- Summernote CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/summernote/summernote-bs4.min.css' %}">
+{% endif %}
+
+<link rel="stylesheet" href="{% static 'assets/plugins/summernote/summernote-lite.min.css' %}">
+
+<!-- Bootstrap Tagsinput CSS -->
+<link rel="stylesheet" href="{% static 'assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}">
+
+<!-- Datetimepicker CSS -->
+<link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+
+<!-- Mobile CSS-->
+{% if request.path == '/chat' or request.path == '/two-step-verification' %}
+<link rel="stylesheet" href="{% static 'assets/plugins/intltelinput/css/intlTelInput.css' %}">
+<link rel="stylesheet" href="{% static 'assets/plugins/intltelinput/css/demo.css' %}">
+{% endif %}
+
+<!-- Main CSS -->
+<link rel="stylesheet" href="{% static 'assets/css/style.css' %}">

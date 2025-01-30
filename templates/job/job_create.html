@@ -1,0 +1,25 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Add New Job</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form.as_p }}  <!-- Render form fields as paragraph elements -->
+                                <button type="submit" class="btn btn-primary">Add New Job</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

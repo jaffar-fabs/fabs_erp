@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container mt-4">
+        <h1>Edit Job</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="job-title" class="form-label">Job Title:</label>
+                <input type="text" class="form-control" id="job-title" name="job_title" value="{{ job.title }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="department" class="form-label">Department:</label>
+                <select class="form-select" id="department" name="department">
+                    <option {% if job.department == "IT" %}selected{% endif %}>IT</option>
+                    <option {% if job.department == "HR" %}selected{% endif %}>HR</option>
+                    <option {% if job.department == "Marketing" %}selected{% endif %}>Marketing</option>
+                    <option {% if job.department == "Finance" %}selected{% endif %}>Finance</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="job-type" class="form-label">Job Type:</label>
+                <select class="form-select" id="job-type" name="job_type">
+                    <option value="full_time" {% if job.job_type == "full_time" %}selected{% endif %}>Full Time</option>
+                    <option value="part_time" {% if job.job_type == "part_time" %}selected{% endif %}>Part Time</option>
+                    <option value="contract" {% if job.job_type == "contract" %}selected{% endif %}>Contract</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="status" class="form-label">Status:</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="active" {% if job.status == "active" %}selected{% endif %}>Active</option>
+                    <option value="closed" {% if job.status == "closed" %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label>
+                <textarea class="form-control" id="description" name="description">{{ job.description }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

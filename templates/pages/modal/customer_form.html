@@ -1,0 +1,113 @@
+{% load static %}
+
+<!-- Add Customer -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="customer-add">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Add New Customer</h5>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'create-customer' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Customer Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="customer_name" required>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Phone <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="phone" required>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Address</label>
+                        <input type="text" class="form-control" name="address">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Customer Type</label>
+                        <select class="select" name="customer_type">
+                            <option>Individual</option>
+                            <option>Business</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Industry</label>
+                        <select class="select" name="industry">
+                            <option>Retail</option>
+                            <option>Healthcare</option>
+                            <option>Technology</option>
+                            <option>Finance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Tags</label>
+                        <input class="input-tags form-control" type="text" data-role="tagsinput" name="tags">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Notes</label>
+                        <textarea class="form-control" rows="5" name="notes"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visibility</label>
+                        <div class="d-flex flex-wrap">
+                            <div class="me-2">
+                                <input type="radio" class="status-radio" id="public" name="visibility">
+                                <label for="public">Public</label>
+                            </div>
+                            <div class="me-2">
+                                <input type="radio" class="status-radio" id="private" name="visibility">
+                                <label for="private">Private</label>
+                            </div>
+                            <div data-bs-toggle="modal" data-bs-target="#access_view">
+                                <input type="radio" class="status-radio" id="people" name="visibility">
+                                <label for="people">Select People</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="col-form-label">Status</label>
+                        <div class="d-flex flex-wrap">
+                            <div class="me-2">
+                                <input type="radio" class="status-radio" id="active" name="status" checked="">
+                                <label for="active">Active</label>
+                            </div>
+                            <div>
+                                <input type="radio" class="status-radio" id="inactive" name="status">
+                                <label for="inactive">Inactive</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Customer</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Add Customer -->
