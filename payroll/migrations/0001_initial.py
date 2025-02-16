@@ -2,6 +2,7 @@
 
 import django.utils.timezone
 import uuid
+
 from django.db import migrations, models
 
 
@@ -9,8 +10,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
@@ -43,11 +43,49 @@ class Migration(migrations.Migration):
                 ('default_project', models.CharField(blank=True, max_length=30, null=True)),
                 ('start_time', models.CharField(blank=True, max_length=30, null=True)),
                 ('end_time', models.CharField(blank=True, max_length=30, null=True)),
-                ('is_active', models.BooleanField(max_length=1)),
+                ('is_active', models.BooleanField()),
                 ('created_by', models.BigIntegerField()),
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now)),
                 ('modified_by', models.BigIntegerField(blank=True, null=True)),
                 ('modified_on', models.DateTimeField(blank=True, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Project',
+            fields=[
+                ('project_id', models.BigAutoField(primary_key=True, serialize=False)),
+                ('comp_code', models.CharField(max_length=15)),
+                ('prj_code', models.CharField(max_length=50)),
+                ('prj_name', models.CharField(max_length=50)),
+                ('project_description', models.TextField(max_length=500)),
+                ('project_type', models.BigIntegerField()),
+                ('project_value', models.DecimalField(blank=True, decimal_places=2, max_digits=18, null=True)),
+                ('timeline_from', models.CharField(blank=True, max_length=200, null=True)),
+                ('timeline_to', models.CharField(blank=True, max_length=200, null=True)),
+                ('prj_city', models.BigIntegerField()),
+                ('consultant', models.CharField(blank=True, max_length=50, null=True)),
+                ('main_contractor', models.CharField(blank=True, max_length=50, null=True)),
+                ('sub_contractor', models.CharField(blank=True, max_length=50, null=True)),
+                ('instance_id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ('is_active', models.BooleanField(default=True)),
+                ('created_by', models.BigIntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CodeMaster',
+            fields=[
+                ('comp_code', models.CharField(max_length=15)),
+                ('common_master_id', models.BigAutoField(primary_key=True, serialize=False)),
+                ('base_type', models.CharField(max_length=100)),
+                ('base_value', models.CharField(max_length=100)),
+                ('base_description', models.CharField(blank=True, max_length=500, null=True)),
+                ('sequence_id', models.IntegerField()),
+                ('instance_id', models.CharField(max_length=50)),
+                ('is_active', models.CharField(max_length=2)),
+                ('created_by', models.BigIntegerField(default=1)),
+                ('created_on', models.DateTimeField(auto_now_add=True)),
+                ('modified_by', models.BigIntegerField(blank=True, null=True)),
+                ('modified_on', models.DateTimeField(auto_now=True, null=True)),
             ],
         ),
     ]

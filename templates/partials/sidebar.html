@@ -1,10 +1,11 @@
-@ -1,462 +0,0 @@
+
+
 {% load static %} 
 {% block sidebar %}
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-    <div class="sidebar-inner slimscroll">
+    {% comment %} <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
                 <li class="clinicdropdown">
@@ -17,7 +18,7 @@
                     </a>
                 </li>
             </ul>
-            {% comment %} <ul>
+            <ul>
                 <li>
                     <h6 class="submenu-hdr">Main Menu</h6>
                     <ul>
@@ -433,8 +434,8 @@
                 <li>
                     <h6 class="submenu-hdr">Help</h6>
                     <ul>
-                        <li><a href="#"><i class="ti ti-file-type-doc"></i><span>Documentation</span></a></li>
-                        <li><a href="#"><i class="ti ti-arrow-capsule"></i><span>Changelog v2.2</span></a></li>
+                        <li><a href="https://crms.dreamstechnologies.com/documentation/index.html"><i class="ti ti-file-type-doc"></i><span>Documentation</span></a></li>
+                        <li><a href="https://crms.dreamstechnologies.com/documentation/changelog.html"><i class="ti ti-arrow-capsule"></i><span>Changelog v2.2</span></a></li>
                         <li class="submenu">
                             <a href="javascript:void(0);"><i class="ti ti-brand-databricks"></i><span>Multi Level</span><span class="menu-arrow"></span></a>
                             <ul>
@@ -454,9 +455,9 @@
                         </li>
                     </ul>
                 </li>
-            </ul> {% endcomment %}
+            </ul>
         </div>
-    </div>
+    </div> {% endcomment %}
 </div>
 <!-- /Sidebar -->
 

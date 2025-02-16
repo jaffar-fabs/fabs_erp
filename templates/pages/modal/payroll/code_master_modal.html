@@ -1,0 +1,317 @@
+{% load static %}
+
+
+<!-- Add CodeMaster -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Add Code Master</h5>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'code_master_list' %}">
+            {% csrf_token %}
+            <div class="accordion" id="main_accordion">
+                <div class="accordion-item rounded mb-3">
+                    <div class="accordion-collapse collapse show" id="basic" data-bs-parent="#main_accordion">
+                        <div class="accordion-body border-top">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Base Type <span
+                                                class="text-danger">*</span></label>
+                                        <select name="base_description" class="form-control" id="base_description"
+                                            required>
+                                            <option value="">Select Base Description</option>
+                                            {% for base in base_type_suggestions %}
+                                            <option value="{{ base.base_description }}"
+                                                data-base-value="{{ base.base_value }}">{{ base.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        <input type="hidden" name="base_type" id="base_type">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="col-form-label">Base Value <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" name="base_value" class="form-control"
+                                                    autocomplete="off" oninput="this.value = this.value.toUpperCase();">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Description <span
+                                                class="text-danger">*</span></label>
+                                        <textarea name="description" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" name="is_active" class="form-check-input" id="is_active"
+                                            checked>
+                                        <label class="form-check-label" for="is_active">Is Active</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="create-btn">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Add CodeMaster -->
+
+
+<!-- Edit CodeMaster -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Code Master</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="editForm">
+            <div class="mb-3">
+                <label for="baseTypeInput" class="form-label">Base Type</label>
+                <input type="text" class="form-control" id="baseTypeInput" name="base_type" readonly>
+            </div>
+            <div class="mb-3">
+                <div class="pipe-title d-flex align-items-center justify-content-between">
+                    <h5 class="form-title">Base Values</h5>
+                </div>
+                <div class="pipeline-listing">
+                    <div class="pipeline-item">
+                        <p><i class="ti ti-grip-vertical"></i> Inpipeline</p>
+                        <div class="action-pipeline">
+                            <a href="#" class="edit-base-value" data-bs-toggle="modal" data-bs-target="#edit_stage">
+                                <i class="ti ti-edit text-blue"></i>Edit
+                            </a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#delete_stage">
+                                <i class="ti ti-trash text-danger"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Edit CodeMaster -->
+
+
+<!-- Edit Popup -->
+<div class="modal custom-modal fade" id="edit_stage" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Base Description</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editStageForm">
+                    <div class="mb-3">
+                        <label for="editStageNameInput" class="form-label">Base Description *</label>
+                        <input type="text" class="form-control" id="editStageNameInput" name="base_description"
+                            autocomplete="off">
+                    </div>
+                    <input type="hidden" id="baseValueInput" name="base_value">
+                    <input type="hidden" id="baseTypeInput" name="base_type">
+                    <div class="modal-btn text-end">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Edit Popup -->
+
+
+<!-- Delete Popup -->
+<div class="modal fade" id="delete_stage" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Stage?</h4>
+                    <p class="mb-0">Are you sure you want to remove <br> stage you selected.</p>
+                    <div class="d-flex align-items-center justify-content-center mt-4">
+                        <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                        <button id="confirmDeleteBtn" class="btn btn-danger">Yes, Delete it</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Popup -->
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".edit-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                let baseType = this.getAttribute("data-base");
+                document.getElementById("baseTypeInput").value = baseType;
+
+                // AJAX Request to Fetch Base Values and Descriptions
+                fetch("", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: new URLSearchParams({
+                        "base_type": baseType
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        let pipelineListing = document.querySelector(".pipeline-listing");
+                        pipelineListing.innerHTML = "";
+
+                        if (data.base_values && data.base_values.length > 0) {
+                            data.base_values.forEach(item => {
+                                let value = item.base_value;
+                                let description = item.base_description;
+                                let pipelineItem = document.createElement("div");
+                                pipelineItem.classList.add("pipeline-item");
+                                pipelineItem.innerHTML = `
+                            <p><i class="ti ti-grip-vertical"></i> ${value}</p>
+                            <div class="action-pipeline">
+                                <a href="#" class="edit-base-value" data-base-type="${baseType}" data-base-value="${value}" data-description="${description}" data-bs-toggle="modal" data-bs-target="#edit_stage">
+                                    <i class="ti ti-edit text-blue"></i> Edit
+                                </a>
+                                <a href="#" class="delete-base-value" data-base-type="${baseType}" data-base-value="${value}" data-bs-toggle="modal" data-bs-target="#delete_stage">
+                                    <i class="ti ti-trash text-danger"></i> Delete
+                                </a>
+                            </div>
+                        `;
+                                pipelineListing.appendChild(pipelineItem);
+                            });
+
+                            // Attach event listeners to the new edit buttons
+                            document.querySelectorAll(".edit-base-value").forEach(function (editButton) {
+                                editButton.addEventListener("click", function () {
+                                    let baseType = this.getAttribute("data-base-type");
+                                    let baseValue = this.getAttribute("data-base-value");
+                                    let description = this.getAttribute("data-description");
+
+                                    // Populate the edit modal fields
+                                    let editStageNameInput = document.getElementById("editStageNameInput");
+                                    if (editStageNameInput) { editStageNameInput.value = description; }
+
+                                    // Set hidden input values for baseType and baseValue
+                                    let baseTypeInput = document.getElementById("baseTypeInput");
+                                    let baseValueInput = document.getElementById("baseValueInput");
+
+                                    if (baseTypeInput) { baseTypeInput.value = baseType; }
+                                    if (baseValueInput) { baseValueInput.value = baseValue; }
+                                });
+                            });
+
+                            // Attach event listeners to the new delete buttons
+                            document.querySelectorAll(".delete-base-value").forEach(function (deleteButton) {
+                                deleteButton.addEventListener("click", function () {
+                                    let baseType = document.getElementById("baseTypeInput").value;
+                                    let baseValue = this.getAttribute("data-base-value");
+
+                                    // Set values for delete confirmation modal
+                                    let confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+                                    confirmDeleteBtn.setAttribute("data-base-type", baseType);
+                                    confirmDeleteBtn.setAttribute("data-base-value", baseValue);
+                                });
+                            });
+
+                        } else { pipelineListing.innerHTML = "<p>No base values found.</p>"; }
+                    })
+                    .catch(error => console.error("Error fetching base values:", error));
+            });
+        });
+
+        // Save changes button event listener
+        document.getElementById("editStageForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let baseType = document.getElementById("baseTypeInput").value;
+            let baseValue = document.getElementById("baseValueInput").value;
+            let newDescription = document.getElementById("editStageNameInput").value;
+
+            // AJAX Request to update the value
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    "base_type": baseType,
+                    "base_value": baseValue,
+                    "description": newDescription
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Value updated successfully!");
+                        location.reload();
+                    } else {
+                        console.error("Error updating value:", data.error);
+                    }
+                })
+                .catch(error => console.error("Error updating value:", error));
+        });
+
+        // Perform delete operation on confirmation
+        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
+            let baseType = this.getAttribute("data-base-type");
+            let baseValue = this.getAttribute("data-base-value");
+
+            fetch("", {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: new URLSearchParams({
+                    "base_type": baseType,
+                    "base_value": baseValue,
+                    "comp_code": "1000",
+                    "delete": true
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) { location.reload() }
+                    else { console.error("Error deleting value:", data.error); }
+                })
+                .catch(error => console.error("Error deleting value:", error));
+        });
+    });
+</script>

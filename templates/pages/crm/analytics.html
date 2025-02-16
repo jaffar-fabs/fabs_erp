@@ -1,0 +1,1159 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Wrapper -->
+	<div class="page-wrapper">
+		<div class="content">
+
+			<div class="row">
+				<div class="col-md-12">
+
+					<!-- Page Header -->
+					{% block pagetitle %}
+					{% include "partials/title.html" with title="Analytics" %}
+					{% endblock pagetitle %}
+					<!-- /Page Header -->
+
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xl-6">
+					<div class="card ">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Recently Created Contacts</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table dataTable custom-table mb-0" id="analytic-contact">
+									<thead>
+										<tr>
+											<th>Contact</th>
+											<th>Email</th>
+											<th>Phone</th>
+											<th>Created at</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="odd">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-16.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>Carol Thomas<span class="text-default">UI /UX Designer </span></a
+												>
+											</h2>
+											</td>
+											<td>caroo3@example.com</td>
+											<td>+1 124547845</td>
+											<td>25 Sep 2023, 12:12 pm</td>
+										</tr>
+										<tr class="even">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-22.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>Dawn Mercha<span class="text-default">Technician </span></a
+												>
+											</h2>
+											</td>
+											<td>dercha@example.com</td>
+											<td>+1 478845447</td>
+											<td>27 Sep 2023, 11:23 pm</td>
+										</tr>
+										<tr class="odd">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-23.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>Rachel Hampton<span class="text-default"
+													>Software developer
+												</span></a
+												>
+											</h2>
+											</td>
+											<td>rael@example.com</td>
+											<td>+1 215544845</td>
+											<td>04 Oct 2023, 04:12 pm</td>
+										</tr>
+										<tr class="even">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-24.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>Jonelle Curtiss<span class="text-default">Supervisor </span></a
+												>
+											</h2>
+											</td>
+											<td>joe@example.com</td>
+											<td>+1 124547845</td>
+											<td>17 Oct 2023, 11:34 am</td>
+										</tr>
+										<tr class="odd">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-23.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>Rachel Hampton<span class="text-default"
+													>Software developer
+												</span></a
+												>
+											</h2>
+											</td>
+											<td>rael@example.com</td>
+											<td>+1 215544845</td>
+											<td>04 Oct 2023, 04:12 pm</td>
+										</tr>
+										<tr class="even">
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'contact_details' %}" class="avatar avatar-sm me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/profiles/avatar-20.jpg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'contact_details' %}" class="d-flex flex-column"
+												>sharon Roy<span class="text-default">Installer </span></a
+												>
+											</h2>
+											</td>
+											<td>sharon@example.com</td>
+											<td>+1 466701256</td>
+											<td>15 Nov 2023, 07:26 pm</td>
+										</tr>
+									</tbody>										
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="card ">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Won Deals Stage</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Marketing Pipeline
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Marketing Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Sales Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Email
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Chats
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Operational
+											</a>
+										</div>
+									</div>
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body pt-0">
+							<div id="won-chart"></div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Recently Created Deals</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-nowrap custom-table mb-0" id="analytic-deal">
+									<thead>
+										<tr>
+											<th>Deal Name</th>
+											<th>Stage</th>
+											<th>Deal Value</th>
+											<th>Probability</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Collins</td>
+											<td>Conversation</td>
+											<td>$04,51,000</td>
+											<td>85%</td>
+											<td><span class="badge badge-pill badge-status bg-success"> Won</span></td>
+										</tr>
+										<tr>
+											<td>Konopelski</td>
+											<td>Pipeline</td>
+											<td>$04,14,800</td>
+											<td>15%</td>
+											<td><span class="badge badge-pill badge-status bg-danger"> Lost</span></td>
+										</tr>
+										<tr>
+											<td>Adams</td>
+											<td>Won</td>
+											<td>$04,14,800</td>
+											<td>95%</td>
+											<td><span class="badge badge-pill badge-status bg-success"> Won</span></td>
+										</tr>
+										<tr>
+											<td>Schumm</td>
+											<td>Lost</td>
+											<td>$9,14,400</td>
+											<td>47%</td>
+											<td><span class="badge badge-pill badge-status bg-success"> Won</span></td>
+										</tr>
+										<tr>
+											<td>Wisozk</td>
+											<td>Follow Up</td>
+											<td>$11,14,400</td>
+											<td>98%</td>
+											<td><span class="badge badge-pill badge-status bg-success"> Won</span></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Lost Leads Stage</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Marketing Pipeline
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Marketing Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Sales Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Email
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Chats
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Operational
+											</a>
+										</div>
+									</div>
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body pt-0">
+							<div id="last-chart-2"></div>
+						</div>
+					</div>
+					<div class="card ">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Leads By Stage</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Sales Pipeline
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Marketing Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Sales Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Email
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Chats
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Operational
+											</a>
+										</div>
+									</div>
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div id="leads-chart"></div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Recently Added Companies</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+									<a href="#" class="btn btn-primary" data-bs-toggle="offcanvas"
+										data-bs-target="#offcanvas_add_2"><i
+											class="ti ti-square-rounded-plus me-2"></i> Add Company</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table custom-table mb-0" id="analytic-company">
+									<thead>
+										<tr>
+											<th>Company Name</th>
+											<th>Email</th>
+											<th>Phone</th>
+											<th>Created at</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-01.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">NovaWaveLLC</a>
+											</h2>
+											</td>
+											<td>caroo3@example.com</td>
+											<td>+1 124547845</td>
+											<td>25 Sep 2023, 12:12 pm</td>
+										</tr>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-03.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">SilverHawk</a>
+											</h2>
+											</td>
+											<td>dercha@example.com</td>
+											<td>+1 478845447</td>
+											<td>27 Sep 2023, 11:23 pm</td>
+										</tr>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-04.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">SummitPeak</a>
+											</h2>
+											</td>
+											<td>rael@example.com</td>
+											<td>+1 215544845</td>
+											<td>04 Oct 2023, 04:12 pm</td>
+										</tr>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-05.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">RiverStone Ventur</a>
+											</h2>
+											</td>
+											<td>joe@example.com</td>
+											<td>+1 124547845</td>
+											<td>17 Oct 2023, 11:34 am</td>
+										</tr>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-07.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">CoastalStar Co.</a>
+											</h2>
+											</td>
+											<td>joe@example.com</td>
+											<td>+1 124547845</td>
+											<td>17 Oct 2023, 11:34 am</td>
+										</tr>
+										<tr>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'company_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-10.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'company_details' %}">Redwood Inc</a>
+											</h2>
+											</td>
+											<td>sharon@example.com</td>
+											<td>+1 466701256</td>
+											<td>15 Nov 2023, 07:26 pm</td>
+										</tr>
+										</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-6">
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Deals By Stage</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Sales Pipeline
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Marketing Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Sales Pipeline
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Email
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Chats
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Operational
+											</a>
+										</div>
+									</div>
+									<div class="dropdown">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div id="deals-chart"></div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Activities</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+									<a href="#" class="btn btn-primary" data-bs-toggle="offcanvas"
+										data-bs-target="#offcanvas_add"><i
+											class="ti ti-square-rounded-plus me-2"></i>Add New Activity</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="activities-list">
+								<ul>
+									<li>
+										<div class="row align-items-center">
+											<div class="col-md-5">
+												<div class="activity-name">
+													<h5>We scheduled a meeting for next week</h5>
+													<p>Due Date : 10 Feb 2024, 09:00 am </p>
+													<span class="badge activity-badge bg-purple"><i
+															class="ti ti-user-share"></i>Meeting</span>
+												</div>
+											</div>
+											<div class="col-md-3">
+												<div class="user-activity">
+													<span>
+														<img src="{% static 'assets/img/profiles/avatar-19.jpg' %}" alt="">
+													</span>
+													<h6>Darlee Robertson</h6>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="mb-0">
+													<select class="select">
+														<option>Inprogress</option>
+														<option>Completed</option>
+														<option>Cancelled</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="row align-items-center">
+											<div class="col-md-5">
+												<div class="activity-name">
+													<h5>Regarding latest updates in project </h5>
+													<p>Due date : 29 Sep 2023, 08:20 am</p>
+													<span class="badge activity-badge bg-warning"><i
+															class="ti ti-mail"></i>Email</span>
+												</div>
+											</div>
+											<div class="col-md-3">
+												<div class="user-activity">
+													<span>
+														<img src="{% static 'assets/img/profiles/avatar-22.jpg' %}" alt="">
+													</span>
+													<h6>Dawn Mercha</h6>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="mb-0">
+													<select class="select">
+														<option>Inprogress</option>
+														<option>Completed</option>
+														<option>Cancelled</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="row align-items-center">
+											<div class="col-md-5">
+												<div class="activity-name">
+													<h5>Call John and discuss about project</h5>
+													<p>Due date : 05 Oct 2023, 10:35 am</p>
+													<span class="badge activity-badge bg-blue"><i
+															class="ti ti-subtask"></i>Task</span>
+												</div>
+											</div>
+											<div class="col-md-3">
+												<div class="user-activity">
+													<span>
+														<img src="{% static 'assets/img/profiles/avatar-16.jpg' %}" alt="">
+													</span>
+													<h6>Carol Thomas</h6>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="mb-0">
+													<select class="select">
+														<option>Inprogress</option>
+														<option>Completed</option>
+														<option>Cancelled</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="row align-items-center">
+											<div class="col-md-5">
+												<div class="activity-name">
+													<h5>Discussed budget proposal with Edwin</h5>
+													<p>Due date : 16 Oct 2023, 04:40 pm</p>
+													<span class="badge activity-badge bg-green"><i
+															class="ti ti-phone"></i>Calls</span>
+												</div>
+											</div>
+											<div class="col-md-3">
+												<div class="user-activity">
+													<span>
+														<img src="{% static 'assets/img/profiles/avatar-20.jpg' %}" alt="">
+													</span>
+													<h6>Sharon Roy</h6>
+												</div>
+											</div>
+											<div class="col-md-4">
+												<div class="mb-0">
+													<select class="select">
+														<option>Inprogress</option>
+														<option>Completed</option>
+														<option>Cancelled</option>
+													</select>
+												</div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Lost Leads Stage</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+									<a href="#" class="btn btn-primary" data-bs-toggle="offcanvas"
+										data-bs-target="#offcanvas_add_2"><i
+											class="ti ti-square-rounded-plus me-2"></i> Add Company</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body pt-0">
+							<div id="last-chart"></div>
+						</div>
+					</div>
+					<div class="card ">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Recently Created Leads</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table custom-table mb-0" id="analytic-lead">
+									<thead>
+										<tr>
+											<th>Lead Name</th>
+											<th>Company Name</th>
+											<th>Phone</th>
+											<th>Lead Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr class="odd">
+											<td>Collins</td>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'leads_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-01.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'leads_details' %}" class="d-flex flex-column"
+												>NovaWaveLLC<span class="text-default">Newyork, USA </span></a
+												>
+											</h2>
+											</td>
+											<td>+1 875455453</td>
+											<td><span class="badge badge-pill text-white bg-success"> Closed</span></td>
+										</tr>
+										<tr class="even">
+											<td>Collins</td>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'leads_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-02.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'leads_details' %}" class="d-flex flex-column"
+												>Konopelski<span class="text-default">Winchester, KY </span></a
+												>
+											</h2>
+											</td>
+											<td>+1 989757485</td>
+											<td>
+											<span class="badge badge-pill text-white bg-pending"> Not Contacted</span>
+											</td>
+										</tr>
+										<tr class="odd">
+											<td>Adams</td>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'leads_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-03.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'leads_details' %}" class="d-flex flex-column"
+												>SilverHawk<span class="text-default">Jametown, NY </span></a
+												>
+											</h2>
+											</td>
+											<td>+1 546555455</td>
+											<td><span class="badge badge-pill text-white bg-success"> Closed</span></td>
+										</tr>
+										<tr class="even">
+											<td>Schumm</td>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'leads_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-04.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'leads_details' %}" class="d-flex flex-column"
+												>SummitPeak<span class="text-default">Compton, RI </span></a
+												>
+											</h2>
+											</td>
+											<td>+1 454478787</td>
+											<td>
+											<span class="badge badge-pill text-white bg-warning"> Contacted</span>
+											</td>
+										</tr>
+										<tr class="odd">
+											<td>Wisozk</td>
+											<td>
+											<h2 class="d-flex align-items-center">
+												<a href="{% url 'leads_details' %}" class="avatar avatar-sm border me-2"
+												><img
+													class="w-auto h-auto"
+													src="{% static 'assets/img/icons/company-icon-05.svg' %}"
+													alt="User Image" /></a
+												><a href="{% url 'leads_details' %}" class="d-flex flex-column"
+												>RiverStone Ventur<span class="text-default">Dayton, OH </span></a
+												>
+											</h2>
+											</td>
+											<td>+1 124547845</td>
+											<td><span class="badge badge-pill text-white bg-success"> Closed</span></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="card">
+						<div class="card-header border-0 pb-0">
+							<div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+								<h4><i class="ti ti-grip-vertical me-1"></i>Recently Created Campaign</h4>
+								<div class="d-flex align-items-center flex-wrap row-gap-2">
+									<div class="dropdown me-2">
+										<a class="dropdown-toggle" data-bs-toggle="dropdown"
+											href="javascript:void(0);">
+											Last 30 Days
+										</a>
+										<div class="dropdown-menu dropdown-menu-end">
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 30 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 15 Days
+											</a>
+											<a href="javascript:void(0);" class="dropdown-item">
+												Last 7 Days
+											</a>
+										</div>
+									</div>
+									<a href="#" class="btn btn-primary" data-bs-toggle="offcanvas"
+										data-bs-target="#offcanvas_pipeline"><i
+											class="ti ti-square-rounded-plus me-2"></i> Add Pipeline</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="campaign-card">
+								<ul>
+									<li class="campaign-wrap">
+										<div class="campaign-info">
+											<div class="campaign-name">
+												<h5>Distribution</h5>
+												<p>Public Relations</p>
+											</div>
+											<ul class="list-progress">
+												<li>
+													<h6>30.5%</h6>
+													<p>Opened</p>
+												</li>
+												<li>
+													<h6>20.5%</h6>
+													<p>Closed</p>
+												</li>
+												<li>
+													<h6>30.5%</h6>
+													<p>Unsubscribe</p>
+												</li>
+												<li>
+													<h6>70.5%</h6>
+													<p>Delivered</p>
+												</li>
+												<li>
+													<h6>35.0%</h6>
+													<p>Conversation</p>
+												</li>
+											</ul>
+										</div>
+										<div class="campaign-action">
+											<div class="campaign-date">
+												<span class="badge badge-pill badge-status bg-danger">Bounced</span>
+												<p>Due Date : 25 Sep 2023</p>
+											</div>
+											<ul class="project-mem">
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-14.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-15.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-16.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li class="more-set"><a href="#">+03</a></li>
+											</ul>
+										</div>
+									</li>
+									<li class="campaign-wrap">
+										<div class="campaign-info">
+											<div class="campaign-name">
+												<h5>Pricing</h5>
+												<p>Social Marketing</p>
+											</div>
+											<ul class="list-progress">
+												<li>
+													<h6>42.5%</h6>
+													<p>Opened</p>
+												</li>
+												<li>
+													<h6>38.2%</h6>
+													<p>Closed</p>
+												</li>
+												<li>
+													<h6>48.8%</h6>
+													<p>Unsubscribe</p>
+												</li>
+												<li>
+													<h6>62.7%</h6>
+													<p>Delivered</p>
+												</li>
+												<li>
+													<h6>22.5%</h6>
+													<p>Conversation</p>
+												</li>
+											</ul>
+										</div>
+										<div class="campaign-action">
+											<div class="campaign-date">
+												<span class="badge badge-pill badge-status bg-green">Running</span>
+												<p>Due Date : 14 Oct 2023</p>
+											</div>
+											<ul class="project-mem">
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-14.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-15.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-16.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li class="more-set"><a href="#">+04</a></li>
+											</ul>
+										</div>
+									</li>
+									<li class="campaign-wrap">
+										<div class="campaign-info">
+											<div class="campaign-name">
+												<h5>Merchandising</h5>
+												<p>Content Marketing</p>
+											</div>
+											<ul class="list-progress">
+												<li>
+													<h6>52.5%</h6>
+													<p>Opened</p>
+												</li>
+												<li>
+													<h6>29.3%</h6>
+													<p>Closed</p>
+												</li>
+												<li>
+													<h6>62.8%</h6>
+													<p>Unsubscribe</p>
+												</li>
+												<li>
+													<h6>71.3%</h6>
+													<p>Delivered</p>
+												</li>
+												<li>
+													<h6>39.5%</h6>
+													<p>Conversation</p>
+												</li>
+											</ul>
+										</div>
+										<div class="campaign-action">
+											<div class="campaign-date">
+												<span class="badge badge-pill badge-status bg-info">Paused</span>
+												<p>Due Date : 14 Oct 2023</p>
+											</div>
+											<ul class="project-mem">
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-14.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-15.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-16.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li class="more-set"><a href="#">+06</a></li>
+											</ul>
+										</div>
+									</li>
+									<li class="campaign-wrap">
+										<div class="campaign-info">
+											<div class="campaign-name">
+												<h5>Repeat Customers</h5>
+												<p>Rebranding</p>
+											</div>
+											<ul class="list-progress">
+												<li>
+													<h6>17.5%</h6>
+													<p>Opened</p>
+												</li>
+												<li>
+													<h6>49.5%</h6>
+													<p>Closed</p>
+												</li>
+												<li>
+													<h6>35.2%</h6>
+													<p>Unsubscribe</p>
+												</li>
+												<li>
+													<h6>54.8%</h6>
+													<p>Delivered</p>
+												</li>
+												<li>
+													<h6>60.5%</h6>
+													<p>Conversation</p>
+												</li>
+											</ul>
+										</div>
+										<div class="campaign-action">
+											<div class="campaign-date">
+												<span
+													class="badge badge-pill badge-status bg-success">Success</span>
+												<p>Due Date : 29 Oct 2023</p>
+											</div>
+											<ul class="project-mem">
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-14.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-15.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li>
+													<a href="#"><img src="{% static 'assets/img/profiles/avatar-16.jpg' %}"
+															alt="img"></a>
+												</li>
+												<li class="more-set"><a href="#">+02</a></li>
+											</ul>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+	{% block analytics_modal %}
+    {% include "pages/modal/analytics-modal.html" %}
+    {% endblock  %}
+{% endblock content %}
+    
