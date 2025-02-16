@@ -88,8 +88,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'ERP',
         'USER': 'postgres',
-        'PASSWORD': 'Windows*1',
-        'HOST': '92.96.112.184',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
