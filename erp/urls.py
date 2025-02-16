@@ -17,9 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from auth import views as auth_views
+from payroll import views as projects
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
-    path ('', auth_views.Login.as_view(), name='login'),
-    
-]
+    path('projects/', projects.project, name='project'),
+    path('login', auth_views.Login.as_view(), name='login'),
+    path("delete_project/", projects.delete_project, name="delete_project"),
+
+    ]
+

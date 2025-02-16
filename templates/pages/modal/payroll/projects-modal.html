@@ -1,0 +1,379 @@
+{% load static %}
+
+<!-- Add New Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Project</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+     <form action="{% url 'project' %}" method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <!-- Row 1 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                <input class="form-control" name="project_code" type="text" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Project Name <span class="text-danger">*</span></label>
+                <input type="text" name="project_name" class="form-control" required>
+            </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
+                <select class="select form-control" name="project_type" required>
+                    <option value=''>Select</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
+                <input class="form-control" name="project_value" type="text" required>
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
+                <select class="select form-control" name="main_contractor" required>
+                    <option value="">Select</option>
+                    <option>NovaWave LLC</option>
+                    <option>Silver Hawk</option>
+                    <option>Harbor View</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Sub Contractor<span class="text-danger">*</span></label>
+                <select class="select form-control" name="sub_contractor" required>
+                    <option value="">Select</option>
+                    <option>NovaWave LLC</option>
+                    <option>Silver Hawk</option>
+                    <option>Harbor View</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Row 4 -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Start Date<span class="text-danger">*</span></label>
+                <div class="icon-form">
+                    <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                    <input type="date" class="form-control" name="timeline_from" required>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Due Date <span class="text-danger">*</span></label>
+                <div class="icon-form">
+                    <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                    <input type="date" class="form-control" name="timeline_to" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultant -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
+                <select class="multiple-img form-control" multiple name="consultant" required>
+                    <option>Darlee Robertson</option>
+                    <option>Sharon Roy</option>
+                    <option>Vaughan</option>
+                    <option>Jessica</option>
+                    <option>Carol Thomas</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                <select class="multiple-img form-control" multiple name="prj_city" required>
+                    <option value=''>Select</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                </select>
+            </div>
+        </div>
+        <!-- Active Checkbox (Centered in Row) -->
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <div class="mb-3 d-flex align-items-center">
+                <label class="col-form-label me-2" for="is_active">Active</label>
+                <input type="hidden" name="is_active" value="false">
+                <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active" checked>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label class="col-form-label">Description <span class="text-danger">*</span></label>
+                <textarea class="form-control" rows="4" name="project_description" required></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex align-items-center justify-content-end">
+        <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+</form>
+
+
+
+
+    </div>
+</div>
+<!-- /Add New Project -->
+
+<!-- Edit Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Project</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+         <form action="" method="POST">
+                {% csrf_token %}
+                {% comment %} <input type="hidden" name="_method" value="PUT"> {% endcomment %}
+                <input type="hidden" name="project_id" id="project_id">
+                <div class="row">
+                    <!-- Row 1 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                            <input class="form-control" id="prj_code" name="project_code" type="text" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Name <span class="text-danger">*</span></label>
+                            <input type="text" id="prj_name" name="project_name" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
+                            <select class="select form-control" id="project_type" name="project_type" required>
+                                <option value=''>Select</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
+                            <input class="form-control" id="project_value" name="project_value" type="text" required>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
+                            <select class="select form-control" id="main_contractor" name="main_contractor" required>
+                                <option value="">Select</option>
+                                <option value="NovaWave LLC">NovaWave LLC</option>
+                                <option value="Silver Hawk">Silver Hawk</option>
+                                <option value="Harbor View">Harbor View</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Sub Contractor <span class="text-danger">*</span></label>
+                            <select class="select form-control" id="sub_contractor" name="sub_contractor" required>
+                                <option value="">Select</option>
+                                <option value="NovaWave LLC">NovaWave LLC</option>
+                                <option value="Silver Hawk">Silver Hawk</option>
+                                <option value="Harbor View">Harbor View</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 4 -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="date" class="form-control" id="timeline_from" name="timeline_from" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Due Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="date" class="form-control" id="timeline_to" name="timeline_to" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consultant -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
+                            <select class="multiple-img form-select" id="consultant" multiple name="consultant" required>
+                                <option value="Darlee Robertson">Darlee Robertson</option>
+                                <option value="Sharon Roy">Sharon Roy</option>
+                                <option value="Vaughan">Vaughan</option>
+                                <option value="Jessica">Jessica</option>
+                                <option value="Carol Thomas">Carol Thomas</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                        <select class="multiple-img form-control" id="prj_city"  name="prj_city" required>
+                            <option value=''>Select</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                        </select>
+                    </div>
+                </div>
+                    <!-- Active Checkbox (Centered in Row) -->
+                   <div class="col-md-6 d-flex justify-content-center align-items-center">
+    <div class="mb-3 d-flex align-items-center">
+        <label class="col-form-label me-2" for="is_active">Active</label>
+        <input type="hidden" name="is_active" value="false">
+        <input type="checkbox" class="form-check-input" id="is_Active" name="is_active" value="Active"
+        {% if is_active %}checked{% endif %}>
+    </div>
+</div>
+                    
+                    <!-- Description -->
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="col-form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="project_description" rows="4" name="project_description" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="d-flex align-items-center justify-content-end">
+                    <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+</form>
+
+    </div>
+</div>
+<!-- /Edit Project -->
+
+<!-- Delete Project -->
+<div class="modal fade" id="delete_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Project?</h4>
+                    <p class="mb-0">Are you sure you want to remove this project?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_project' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="project_id" id="delete_project_id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Delete Project -->
+
+<!-- Create Project -->
+<div class="modal custom-modal fade" id="create_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 m-0 justify-content-end">
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-message text-center">
+                    <div class="success-popup-icon bg-light-blue">
+                        <i class="ti ti-atom-2"></i>
+                    </div>
+                    <h3>Project Created Successfully!!!</h3>
+                    <p>View the details of project, created</p>
+                    <div class="col-lg-12 text-center modal-btn">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create Project -->
+
+<!-- Add New View -->
+<div class="modal custom-modal fade" id="save_view" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New View</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="projects">
+                    <div class="mb-3">
+                        <label class="col-form-label">View Name</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="modal-btn text-end">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add New View -->
