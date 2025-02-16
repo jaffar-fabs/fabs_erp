@@ -570,6 +570,7 @@
                                 <th>From Date</th>
                                 <th>To Date</th>
                                 <th>Attendance UOM</th>
+                                <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
                         </thead>
@@ -588,11 +589,13 @@
                                 <td>{{record.process_description}}</td>
                                 <td>{{record.pay_process_month}}</td>
                                 <td><span
-                                        class="badge badge-tag {% if record.Tag == 'Collab' %} badge-success-light {% elif record.Tag == 'Promotion' %} badge-purple-light {% else %} badge-warning-light {% endif %}">{{record.date_from}}</span>
-                                </td>
-                                <td><span
-                                        class="badge badge-tag {% if record.Tag == 'Collab' %} badge-success-light {% elif record.Tag == 'Promotion' %} badge-purple-light {% else %} badge-warning-light {% endif %}">{{record.date_to}}</span>
-                                </td>
+                                    class="badge badge-tag {% if record.Tag == 'Collab' %} badge-success-light {% elif record.Tag == 'Promotion' %} badge-purple-light {% else %} badge-warning-light {% endif %}">
+                                    {{ record.date_from|date:"d-M-Y" }}
+                            </span></td>
+                            <td><span
+                                    class="badge badge-tag {% if record.Tag == 'Collab' %} badge-success-light {% elif record.Tag == 'Promotion' %} badge-purple-light {% else %} badge-warning-light {% endif %}">
+                                    {{ record.date_to|date:"d-M-Y" }}
+                            </span></td>
                                 <td>{{record.attendance_uom}}</td>
                                 <td>
                                     <div class="dropdown table-action">

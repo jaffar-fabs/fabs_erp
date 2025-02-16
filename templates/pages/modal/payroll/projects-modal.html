@@ -18,13 +18,14 @@
                     <div class="col-md-6">
                         <div class="col-md-12">
                             <div class="mb-3">
-                                <label class="col-form-label">Process Cycle<span
-                                        class="text-danger">*</span></label>
+                                <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
                                 <select class="form-select" name="process_cycle" required aria-label="select example">
                                     <option value="">Select</option>
                                     <option value="101">101</option>
                                     <option value="102">102</option>
                                     <option value="103">103</option>
+                                    <option value="ABC">ABC</option>
+                                    <option value="XYZ">XYZ</option>
                                 </select>
                                 <div class="invalid-feedback">Please provide a process cycle.</div>
                             </div>
@@ -71,25 +72,28 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom05">To Date <span class="text-danger">*</span></label>
+                            <label class="col-form-label" for="validationCustom05">To Date <span
+                                    class="text-danger">*</span></label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
-                                <input type="text" class="form-control datetimepicker" name="date_to"
-                                    autocomplete="off" required>
+                                <input type="text" class="form-control datetimepicker" name="date_to" autocomplete="off"
+                                    required>
                                 <div class="invalid-feedback">Please provide a to date.</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom06">Attendance UDM<span class="text-danger">*</span></label>
+                            <label class="col-form-label" for="validationCustom06">Attendance UDM<span
+                                    class="text-danger">*</span></label>
                             <input class="form-control" type="number" name="attendance_uom" autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a to date.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom07">Process Date <span class="text-danger">*</span></label>
+                            <label class="col-form-label" for="validationCustom07">Process Date <span
+                                    class="text-danger">*</span></label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
                                 <input type="text" class="form-control datetimepicker" name="process_date"
@@ -112,7 +116,8 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom08">Start Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label" for="validationCustom08">Start Time <span
+                                    class="text-danger">*</span></label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
                                 <input type="time" class="form-control" name="start_time" autocomplete="off" required>
@@ -122,7 +127,8 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom09">End Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label" for="validationCustom09">End Time <span
+                                    class="text-danger">*</span></label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
                                 <input type="time" class="form-control" name="end_time" autocomplete="off" required>
@@ -132,21 +138,24 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom10">Hours Per Day<span class="text-danger"> *</span></label>
+                            <label class="col-form-label" for="validationCustom10">Hours Per Day<span
+                                    class="text-danger"> *</span></label>
                             <input class="form-control" type="number" name="hours_per_day" autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a hours per day.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom11">Days Per Month<span class="text-danger"> *</span></label>
+                            <label class="col-form-label" for="validationCustom11">Days Per Month<span
+                                    class="text-danger"> *</span></label>
                             <input class="form-control" type="number" name="days_per_month" autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a days per month.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom12">Transportation Time(Travel)<span class="text-danger">
+                            <label class="col-form-label" for="validationCustom12">Transportation Time(Travel)<span
+                                    class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="number" name="travel_time" autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a transportation time.</div>
@@ -154,7 +163,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom13">Lunch Break (In Minutes)<span class="text-danger">
+                            <label class="col-form-label" for="validationCustom13">Lunch Break (In Minutes)<span
+                                    class="text-danger">
                                     *</span></label>
                             <input class="form-control" type="number" name="lunch_break" autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a lunch break.</div>
@@ -162,25 +172,27 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom14">Max Mn Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label" for="validationCustom14">Max Mn Hrs<span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="number" name="max_mn_hrs" id="max_mn_hrs"
-                                autocomplete="off" required> 
+                                autocomplete="off" required>
                             <div class="invalid-feedback">Please provide a max mn hrs</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label" for="validationCustom15">Max An Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label" for="validationCustom15">Max An Hrs<span class="text-danger">
+                                    *</span></label>
                             <input class="form-control" type="number" name="max_an_hrs" id="max_an_hrs"
                                 autocomplete="off" required>
-                                <div class="invalid-feedback">Please provide a max an hrs</div>
+                            <div class="invalid-feedback">Please provide a max an hrs</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">OT1 Eligible<span class="text-danger">*</span></label>
-                            <select class="form-select" name="ot_eligible" id="add_ot_eligible" required aria-label="select example"
-                                onchange="changeOTFields('ot1');">
+                            <select class="form-select" name="ot_eligible" id="add_ot_eligible" required
+                                aria-label="select example" onchange="changeOTFields('ot1');">
                                 <option value="">Select</option>
                                 <option value="Y">Y</option>
                                 <option value="N">N</option>
@@ -205,8 +217,8 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">OT2 Eligible<span class="text-danger">*</span></label>
-                            <select class="form-select" name="ot2_eligible" id="add_ot2_eligible" required aria-label="select example"
-                                onchange="changeOTFields('ot2');">
+                            <select class="form-select" name="ot2_eligible" id="add_ot2_eligible" required
+                                aria-label="select example" onchange="changeOTFields('ot2');">
                                 <option value="">Select</option>
                                 <option value="Y">Y</option>
                                 <option value="N">N</option>
@@ -297,6 +309,8 @@
                                 <option value="101">101</option>
                                 <option value="102">102</option>
                                 <option value="103">103</option>
+                                <option value="ABC">ABC</option>
+                                <option value="XYZ">XYZ</option>
                             </select>
                         </div>
                     </div>

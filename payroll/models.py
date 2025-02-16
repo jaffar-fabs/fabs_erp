@@ -5,7 +5,7 @@ import uuid
 class PaycycleMaster(models.Model):
     comp_code = models.CharField(max_length=20, null=False, blank=False)
     process_cycle_id = models.BigIntegerField(null=False, blank=False)
-    process_cycle = models.BigIntegerField(null=False, blank=False)
+    process_cycle = models.CharField(null=False, blank=False)
     process_description = models.CharField(max_length=500, null=False, blank=False)
     pay_process_month = models.CharField(max_length=20, null=False, blank=False)
     date_from = models.DateField(null=False, blank=False)
