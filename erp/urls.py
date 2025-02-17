@@ -16,10 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from auth import views as auth_views
-
+from payroll import views as auth_views
+from security import views as role_views
 urlpatterns = [
-    #path('admin/', admin.site.urls),
-    path ('', auth_views.Login.as_view(), name='login'),
-    
+    path('', auth_views.Login.as_view(), name='login'),
+    path('users/', auth_views.UserMasterList.as_view(), name='user_list'),
+    path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),
+    path('users/update/<int:user_master_id>/', auth_views.UserMasterUpdate.as_view(), name='user_update'),
+    path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
+
+    # Role Master URLs
+    path('roles/', role_views.RoleMasterList.as_view(), name='role_list'),
+    path('roles/create/', role_views.RoleMasterCreate.as_view(), name='role_create'),
+    path('roles/update/<int:role_id>/', role_views.RoleMasterUpdate.as_view(), name='role_update'),
+    path('roles/delete/<int:role_id>/', role_views.RoleMasterDelete.as_view(), name='role_delete'),
 ]

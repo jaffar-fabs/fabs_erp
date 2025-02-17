@@ -5,11 +5,11 @@
   <div class="header">
     <!-- Logo -->
     <div class="header-left active">
-      <a href="{% url 'index' %}" class="logo logo-normal">
+      {% comment %} <a href="{% url 'index' %}" class="logo logo-normal"> {% endcomment %}
         <img src="{% static 'assets/img/logo.svg' %}" alt="Logo" />
         <img src="{% static 'assets/img/white-logo.svg' %}" class="white-logo" alt="Logo" />
       </a>
-      <a href="{% url 'index' %}" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}" alt="Logo" /></a>
+      {% comment %} <a href="{% url 'index' %}" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}" alt="Logo" /></a> {% endcomment %}
       <a id="toggle_btn" href="javascript:void(0);"><i class="ti ti-arrow-bar-to-left"></i></a>
     </div>
     <!-- /Logo -->
@@ -175,7 +175,7 @@
               </div>
             </li>
             <li class="nav-item">
-              <a href="{% url 'faq' %}" class="btn btn-help"><i class="ti ti-help-hexagon"></i></a>
+              {% comment %} <a href="{% url 'faq' %}" class="btn btn-help"><i class="ti ti-help-hexagon"></i></a> {% endcomment %}
             </li>
             <li class="nav-item">
               <a href="lead-reports" class="btn btn-chart-pie"><i class="ti ti-chart-pie"></i></a>
