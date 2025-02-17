@@ -14,10 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from payroll import views as auth_views
 from security import views as role_views
+from payroll import views as payroll_views
+from payroll import views as projects
+
+
+
 urlpatterns = [
     path('', auth_views.Login.as_view(), name='login'),
     path('users/', auth_views.UserMasterList.as_view(), name='user_list'),
@@ -30,4 +36,11 @@ urlpatterns = [
     path('roles/create/', role_views.RoleMasterCreate.as_view(), name='role_create'),
     path('roles/update/<int:role_id>/', role_views.RoleMasterUpdate.as_view(), name='role_update'),
     path('roles/delete/<int:role_id>/', role_views.RoleMasterDelete.as_view(), name='role_delete'),
+    #path('admin/', admin.site.urls),
+    #path ('', auth_views.Login.as_view(), name='login'),
+    path('',payroll_views.Paycycle.as_view(),name = 'payroll_paycycle_master'),
+    path('paycycle/delete/<int:process_cycle_id>/', payroll_views.Paycycle.as_view(), name='delete_paycycle'), 
+    path('projects/', projects.project, name='project'),
+    path("delete_project/", projects.delete_project, name="delete_project"),
+    path ('payroll/code_master_list', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
 ]

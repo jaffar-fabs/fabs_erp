@@ -3,6 +3,35 @@ Author       : Arif, Fabs Infotech
 Template Name: Mio
 */
 
+// static/js/scripts.js
+function openEditModal(projectId) {
+    $.ajax({
+        url: '/projects/get-project-data/',
+        method: 'GET',
+        data: { project_id: projectId },
+        dataType: 'json',
+        success: function(response) {
+            // Populate the modal fields with the retrieved data
+            $('#project_id').val(response.project_id);
+            $('input[name="project_code"]').val(response.prj_code);
+            $('input[name="project_name"]').val(response.prj_name);
+            $('input[name="project_type"]').val(response.project_type);
+            $('input[name="project_value"]').val(response.project_value);
+            $('select[name="main_contractor"]').val(response.main_contractor);
+            $('select[name="sub_contractor"]').val(response.sub_contractor);
+            $('input[name="timeline_from"]').val(response.timeline_from);
+            $('input[name="timeline_to"]').val(response.timeline_to);
+            $('select[name="consultant"]').val(response.consultant.split(','));
+            $('textarea[name="project_description"]').val(response.project_description);
+            $('input[name="is_active"]').prop('checked', response.is_active);
+
+            $('#project-modal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching project data:', error);
+        }
+    });
+}
 
 $(document).ready(function(){
 
