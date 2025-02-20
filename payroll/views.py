@@ -4,11 +4,9 @@ from .models import PaycycleMaster
 from django.utils.timezone import now
 from datetime import datetime
 from django.http import JsonResponse
-
 from .models import projectMatster
 import  uuid
 from django.views.decorators.csrf import csrf_exempt
-
 from django.utils.decorators import method_decorator
 from .models import CodeMaster
 
@@ -160,6 +158,7 @@ def project(request):
                 "is_active": project.is_active,
                 "comp_code": project.comp_code,
                 # "prj_city":project.prj_city
+                "prj_city":project.prj_city
             })
         
         except Exception as e:

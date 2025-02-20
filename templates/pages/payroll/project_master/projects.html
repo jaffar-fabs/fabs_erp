@@ -61,7 +61,7 @@
 
                         <div class="card-body">
                             <!-- Filter -->
-                            <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-4">
+                            {% comment %} <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-4">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2">
                                     <div class="dropdown me-2">
                                         <a href="javascript:void(0);" class="dropdown-toggle"
@@ -563,19 +563,19 @@
                                         <a href="#"><i class="ti ti-grid-dots"></i></a>
                                     </div>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                             <!-- /Filter -->
 
                             <!-- Projects List -->
                             <div class="table-responsive custom-table">
                                 <table class="table datatable">
-                                    <thead class="thead-light">
+                                    <thead class="">
                                         <tr>
-                                            <th class="no-sort">
+                                            <th class="">
                                                 <label class="checkboxs"><input type="checkbox"
                                                         id="select-all"><span class="checkmarks"></span></label>
                                             </th>
-                                            <th></th>
+                                            {% comment %} <th></th> {% endcomment %}
                                             <th>Name</th>
                                             <th>Client</th>
                                             {% comment %} <th>Priority</th> {% endcomment %}
@@ -595,9 +595,9 @@
                                                     <input type="checkbox" /><span class="checkmarks"></span>
                                                 </label>
                                             </td>
-                                            <td>
+                                            {% comment %} <td>
                                                 <div class="set-star rating-select"><i class="fa fa-star"></i></div>
-                                            </td>
+                                            </td> {% endcomment %}
                                             <td>
                                                 <h2 class="d-flex align-items-center">
                                                     {% comment %} <a href="#" class="avatar avatar-sm border me-2">
@@ -618,8 +618,8 @@
                                                 <span class="priority badge badge-tag {% if record.priority == 'High' %} badge-danger-light {% elif record.priority == 'Medium' %} badge-warning-light {% else %} badge-success-light {% endif %}">
                                                 <i class="ti ti-square-rounded-filled"></i>{{record.priority}}</span>
                                             </td> {% endcomment %}
-                                            <td>{{record.timeline_from}}</td>
-                                            <td>{{record.timeline_to}}</td>
+                                            <td>{{record.timeline_from|date:"d-M-Y"}}</td>
+                                            <td>{{record.timeline_to|date:"d-M-Y"}}</td>
                                             <td>{{record.project_type}}</td>
                                             {% comment %} <td>{{record.project_id}} hidden</td> {% endcomment %}
                                             {% comment %} <td>
@@ -635,7 +635,8 @@
                                                         {% if record.is_active %} bg-success {% else %} bg-danger {% endif %}">
                                                         {% if record.is_active %} Active {% else %} Inactive {% endif %}
                                                     </span>
-                                                </td>                                            <td>
+                                                </td>                                            
+                                                <td>
                                                 <div class="dropdown table-action">
                                                     <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <i class="fa fa-ellipsis-v"></i>
@@ -691,7 +692,7 @@
     var project_id = $(this).data("id");
 
     $.ajax({
-        url: "/projects/",  
+        url: "/payroll/projects/",  
         type: "GET",
         data: { 'project_id': project_id },  
         success: function (response) {
@@ -708,6 +709,8 @@
             $("#main_contractor").val(response.main_contractor).trigger("change");
             $("#sub_contractor").val(response.sub_contractor).trigger("change");
             $("#consultant").val(response.consultant).trigger("change");
+            $("#prj_city").val(response.prj_city).trigger("change");
+
             let isActive = response.is_active === true; 
             $("#is_Active").prop("checked", isActive); 
             var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));

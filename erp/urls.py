@@ -38,9 +38,8 @@ urlpatterns = [
     path('roles/delete/<int:role_id>/', role_views.RoleMasterDelete.as_view(), name='role_delete'),
     #path('admin/', admin.site.urls),
     #path ('', auth_views.Login.as_view(), name='login'),
-    path('',payroll_views.Paycycle.as_view(),name = 'payroll_paycycle_master'),
     path('paycycle/delete/<int:process_cycle_id>/', payroll_views.Paycycle.as_view(), name='delete_paycycle'), 
-    path('projects/', projects.project, name='project'),
+    path('payroll/projects/', projects.project, name='project'),
     path("delete_project/", projects.delete_project, name="delete_project"),
     path ('payroll/code_master_list', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
 ]
