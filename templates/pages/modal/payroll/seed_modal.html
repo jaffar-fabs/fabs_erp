@@ -1,0 +1,241 @@
+{% load static %}
+<!-- Add New Seed Form -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Add New Seed</h5>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'create_seed' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Code <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_code" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Module <span class="text-danger">*</span></label>
+                        <select class="form-control" name="seed_group" required>
+                            <option value="">Select</option>
+                            <option value="Payroll">Payroll</option>
+                            <option value="Accounting">Accounting</option>
+                            <option value="Inventory">Inventory</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Type <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_type" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Prefix<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_prefix" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Length<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_length" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Start Num<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_start_num" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Next Num<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_next_num" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Inc By <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" autocomplete="off" name="seed_inc_by" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Timeline From</label>
+                        <div class="icon-form-end">
+                            <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                            <input type="date" class="form-control" autocomplete="off" name="seed_timeline_from" id="add_seed_timeline_from" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Timeline To</label>
+                        <div class="icon-form-end">
+                            <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                            <input type="date" class="form-control" autocomplete="off" name="seed_timeline_to" id="add_seed_timeline_to" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="mb-0">
+                    <label class="col-form-label">Status</label>
+                    <div class="d-flex flex-wrap">
+                        <div class="me-2">
+                            <input type="radio" class="status-radio" autocomplete="off" id="active" name="status" value="active" checked>
+                            <label for="active">Active</label>
+                        </div>
+                        <div>
+                            <input type="radio" class="status-radio" id="inactive" name="status" value="inactive" autocomplete="off">
+                            <label for="inactive">Inactive</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary" data-bs-target="#create_success_2">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add New Seed Form -->
+
+
+
+
+<!-- Edit Seed Form -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Edit Seed</h5>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Code <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_code" id="seed_code" autocomplete="off" disabled required>
+                        <input type="hidden" name="seed_code" id="hidden_seed_code">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Group <span class="text-danger">*</span></label>
+                        <select class="form-control" name="seed_group" disabled id="seed_group" required>
+                            <option value="">Select</option>
+                            <option value="Payroll">Payroll</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <input type="hidden" name="seed_group" id="hidden_seed_group">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Type <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_type" id="seed_type" autocomplete="off" required disabled>
+                        <input type="hidden" name="seed_type" id="hidden_seed_type">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Prefix <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="seed_prefix" id="seed_prefix" autocomplete="off" required disabled>
+                        <input type="hidden" name="seed_prefix" id="hidden_seed_prefix">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Length <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="seed_length" id="seed_length" autocomplete="off" required disabled>
+                        <input type="hidden" name="seed_length" id="hidden_seed_length">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Start Number <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="seed_start_num" id="seed_start_num" autocomplete="off" required disabled>
+                        <input type="hidden" name="seed_start_num" id="hidden_seed_start_num">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Next Number <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="seed_next_num" id="seed_next_num" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Seed Increment By <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="seed_inc_by" id="seed_inc_by" autocomplete="off" required disabled>
+                        <input type="hidden" name="seed_inc_by" id="hidden_seed_inc_by">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Timeline From <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="seed_timeline_from" id="edit_seed_timeline_from" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Timeline To <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="seed_timeline_to" id="edit_seed_timeline_to" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Seed Form -->
+
+
+
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this seed?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+
+
+

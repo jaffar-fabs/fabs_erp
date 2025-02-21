@@ -37,6 +37,42 @@ class PaycycleMaster(models.Model):
 
     def __str__(self):
         return self.comp_code
+    
+
+
+#------------------------------------------------------------------------------------------
+
+#Seed Master Model
+
+
+from django.db import models
+
+class SeedModel(models.Model):
+    seed_id = models.BigAutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15, default='1000')  # Default comp_code value
+    seed_code = models.CharField(max_length=50)
+    seed_group = models.CharField(max_length=50)
+    seed_type = models.CharField(max_length=50)
+    seed_prefix = models.CharField(max_length=50)
+    seed_length = models.BigIntegerField()
+    seed_start_num = models.BigIntegerField()
+    seed_next_num = models.BigIntegerField()
+    seed_timeline_from = models.DateField()
+    seed_timeline_to = models.DateField()
+    seed_inc_by = models.BigIntegerField()
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField()
+    modified_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'payroll_seedmaster'  # Change this to your desired table name
+
+    def __str__(self):
+        return f"{self.seed_code} - {self.seed_group}"
+
+#------------------------------------------------------------------------------------------
 
 
 class projectMatster(models.Model):

@@ -9,7 +9,105 @@ import  uuid
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .models import CodeMaster
+from .models import SeedModel
 
+
+#-------------------------------
+
+#Seed Master View
+
+def create_seed(request):
+    if request.method == "POST":
+        seed_code = request.POST.get("seed_code")
+        seed_group = request.POST.get("seed_group")
+        seed_type = request.POST.get("seed_type")
+        seed_prefix = request.POST.get("seed_prefix")
+        seed_length = request.POST.get("seed_length")
+        seed_start_num = request.POST.get("seed_start_num")
+        seed_next_num = request.POST.get("seed_next_num")
+        seed_timeline_from = request.POST.get("seed_timeline_from")
+        seed_timeline_to = request.POST.get("seed_timeline_to")
+        seed_inc_by = request.POST.get("seed_inc_by")
+        is_active = request.POST.get("status") == "active"
+        
+        created_by = 1  # Example user ID
+        modified_by = 1  # Example user ID
+
+        SeedModel.objects.create(
+            comp_code="1000",
+            seed_code=seed_code,
+            seed_group=seed_group,
+            seed_type=seed_type,
+            seed_prefix=seed_prefix,
+            seed_length=seed_length,
+            seed_start_num=seed_start_num,
+            seed_next_num=seed_next_num,
+            seed_timeline_from=seed_timeline_from,
+            seed_timeline_to=seed_timeline_to,
+            seed_inc_by=seed_inc_by,
+            is_active=is_active,
+            created_by=created_by,
+            modified_by=modified_by
+        )
+        return redirect('create_seed')
+
+    seed_data = SeedModel.objects.all()
+    return render(request, 'pages/payroll/seed_master/seedmaster.html', {'seed_data': seed_data})
+
+def update_seed_status(request, seed_id):
+    if request.method == 'POST':
+        seed = get_object_or_404(SeedModel, seed_id=seed_id)
+        seed.is_active = False
+        seed.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
+def edit_seed(request, seed_id):
+    seed = get_object_or_404(SeedModel, seed_id=seed_id)
+
+    if request.method == 'POST':
+        seed.seed_code = request.POST.get('seed_code')
+        seed.seed_group = request.POST.get('seed_group')
+        seed.seed_type = request.POST.get('seed_type')
+        seed.seed_prefix = request.POST.get('seed_prefix')
+        seed.seed_length = request.POST.get('seed_length')
+        seed.seed_start_num = request.POST.get('seed_start_num')
+        seed.seed_next_num = request.POST.get('seed_next_num')
+        seed.seed_inc_by = request.POST.get('seed_inc_by')
+        seed.seed_timeline_from = request.POST.get('seed_timeline_from')
+        seed.seed_timeline_to = request.POST.get('seed_timeline_to')
+        
+        # Ensure the status is correctly updated based on the form submission
+        if 'status' in request.POST:
+            seed.is_active = request.POST.get('status') == 'active'
+        
+        seed.modified_by = 1
+
+        seed.save()
+        return redirect('create_seed')
+    else:
+        return render(request, 'pages/modal/payroll/seed_modal.html', {'seed': seed})
+
+def get_seed(request, seed_id):
+    seed = SeedModel.objects.get(seed_id=seed_id)
+    data = {
+        'seed_code': seed.seed_code,
+        'seed_group': seed.seed_group,
+        'seed_type': seed.seed_type,
+        'seed_prefix': seed.seed_prefix,
+        'seed_length': seed.seed_length,
+        'seed_start_num': seed.seed_start_num,
+        'seed_next_num': seed.seed_next_num,
+        'seed_inc_by': seed.seed_inc_by,
+        'seed_timeline_from': seed.seed_timeline_from.strftime('%Y-%m-%d'),
+        'seed_timeline_to': seed.seed_timeline_to.strftime('%Y-%m-%d'),
+        'is_active': seed.is_active,
+    }
+    return JsonResponse(data)
+
+
+
+#--------------------------------------------------
 
 
 class Paycycle(View):
