@@ -42,5 +42,5 @@ urlpatterns = [
     path('paycycle/delete/<int:process_cycle_id>/', payroll_views.Paycycle.as_view(), name='delete_paycycle'), 
     path('payroll/projects/', projects.project, name='project'),
     path("delete_project/", projects.delete_project, name="delete_project"),
-    path ('payroll/code_master_list', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
+    path('payroll/code_master_list/', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
 ]

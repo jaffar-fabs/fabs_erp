@@ -1,0 +1,578 @@
+{% load static %}
+
+<!-- Add New Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Paycycle Master</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'payroll_paycycle_master' %}">
+            {% csrf_token %}
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
+                                <select class="select" name="process_cycle">
+                                    <option>Select</option>
+                                    <option>101</option>
+                                    <option>102</option>
+                                    <option>103</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Description<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="text" name="process_description" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Pay Process Month<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="text" name="pay_process_month"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Comp Flag<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="process_comp_flag"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">From Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="date_from" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">To Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="date_to"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Attendance UDM<span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" name="attendance_uom"  autocomplete="off">
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="process_date"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
+                            <select class="select" name="default_project">
+                                <option>Select</option>
+                                <option>NovaWave LLC</option>
+                                <option>Silver Hawk</option>
+                                <option>Harbor View</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Time <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="start_time"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">End Time <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="end_time" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Hours Per Day<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="hours_per_day"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Days Per Month<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="days_per_month"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Transportation Time(Travel)<span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="number" name="travel_time"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Lunch Break (In Minutes)<span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="number" name="lunch_break"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max Mn Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_mn_hrs" id="max_mn_hrs"   autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max An Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_an_hrs" id="max_an_hrs"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Eligible<span class="text-danger">*</span></label>
+                            <select class="select2" name="ot_eligible" id="add_ot_eligible"
+                                onchange="addtoggleOTFields('ot1')">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT1 Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_ot1_hrs" id="max_ot1_hrs"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Amt<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="ot1_amt" id="ot1_amt"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Eligible<span class="text-danger">*</span></label>
+                            <select class="select2" name="ot2_eligible" id="add_ot2_eligible"
+                                onchange="addtoggleOTFields('ot2')">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT2 Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_ot2_hrs" id="max_ot2_hrs"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Amt<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="ot2_amt" id="ot2_amt"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-check form-check-md d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md"
+                                checked />
+                            <label class="form-check-label" for="checkebox-md">is Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- /Add New Project -->
+
+<!-- Edit Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Paycyle Master</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'payroll_paycycle_master' %}">
+            {% csrf_token %}
+            <input type="hidden" name="process_cycle_id" id="process_cycle_id" value="">
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
+                                <select class="select2" name="process_cycle">
+                                    <option>Select</option>
+                                    <option>101</option>
+                                    <option>102</option>
+                                    <option>103</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Description<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="text" name="process_description" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Pay Process Month<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="text" name="pay_process_month"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Comp Flag<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="process_comp_flag"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">From Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="date_from" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">To Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="date_to"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
+                            <input class="form-control" type="number" name="attendance_uom"  autocomplete="off">
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" name="process_date"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
+                            <select class="select2" name="default_project">
+                                <option>Select</option>
+                                <option>NovaWave LLC</option>
+                                <option>Silver Hawk</option>
+                                <option>Harbor View</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Time <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="start_time"  autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">End Time <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="end_time" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Hours Per Day<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="hours_per_day"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Days Per Month<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="days_per_month"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Transportation Time(Travel)<span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="number" name="travel_time"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Lunch Break (In Minutes)<span class="text-danger">
+                                    *</span></label>
+                            <input class="form-control" type="number" name="lunch_break"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max Mn Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_mn_hrs" id="max_mn_hrs"   autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max An Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_an_hrs" id="max_an_hrs"  autocomplete="off" >
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Eligible<span class="text-danger">*</span></label>
+                            <select class="select2" name="ot_eligible" id="edit_ot_eligible"
+                                onchange="edittoggleOTFields('ot1')">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT1 Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_ot1_hrs" id="max_ot1_hrs"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Amt<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="ot1_amt" id="ot1_amt"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Eligible<span class="text-danger">*</span></label>
+                            <select class="select2" name="ot2_eligible" id="edit_ot2_eligible"
+                                onchange="edittoggleOTFields('ot2')">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT2 Hrs<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="max_ot2_hrs" id="max_ot2_hrs"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Amt<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="number" name="ot2_amt" id="ot2_amt"  autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-check form-check-md d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md"
+                                checked />
+                            <label class="form-check-label" for="checkebox-md">is Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Edit Project -->
+
+<!-- Delete Project -->
+<div class="modal fade" id="delete_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Pay Cycle?</h4>
+                    <p class="mb-0">Are you sure you want to delete the selected pay cycle?</p>
+                    <input type="hidden" id="processCycleId" value="">
+                    <div class="d-flex align-items-center justify-content-center mt-4">
+                        <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                        <a href="#" class="btn btn-danger" id="confirmDelete">Yes, Delete it</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Project -->
+
+<!-- Create Project -->
+<div class="modal custom-modal fade" id="create_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 m-0 justify-content-end">
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-message text-center">
+                    <div class="success-popup-icon bg-light-blue">
+                        <i class="ti ti-atom-2"></i>
+                    </div>
+                    <h3>Project Created Successfully!!!</h3>
+                    <p>View the details of project, created</p>
+                    <div class="col-lg-12 text-center modal-btn">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create Project -->
+
+<!-- Add New View -->
+<div class="modal custom-modal fade" id="save_view" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New View</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="projects">
+                    <div class="mb-3">
+                        <label class="col-form-label">View Name</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="modal-btn text-end">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add New View -->
+
+
+
+
+
+<script>
+    function addtoggleOTFields(type) {
+        const isOT1 = type === 'ot1';
+        const eligibleField = isOT1 ? 'add_ot_eligible' : 'add_ot2_eligible';
+        const eligibleValue = document.getElementById(eligibleField).value;
+
+        const fields = isOT1
+            ? ['max_ot1_hrs', 'ot1_amt']
+            : ['max_ot2_hrs', 'ot2_amt'];
+
+        fields.forEach(field => {
+            document.getElementById(field).disabled = eligibleValue !== 'Y';
+        });
+    }
+
+    function edittoggleOTFields(type) {
+        const isOT1 = type === 'ot1';
+        const eligibleField = isOT1 ? 'edit_ot_eligible' : 'edit_ot2_eligible';
+        const eligibleValue = document.getElementById(eligibleField).value;
+
+        const fields = isOT1
+            ? ['max_ot1_hrs', 'ot1_amt']
+            : ['max_ot2_hrs', 'ot2_amt'];
+
+        fields.forEach(field => {
+            document.getElementById(field).disabled = eligibleValue !== 'Y';
+        });
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        let processCycleId = "";
+
+        document.querySelectorAll(".delete-paycycle").forEach(button => {
+            button.addEventListener("click", function() {
+                processCycleId = this.getAttribute("data-process-cycle-id");
+                document.getElementById("processCycleId").value = processCycleId;
+                let deleteModal = new bootstrap.Modal(document.getElementById("delete_project"));
+                deleteModal.show();
+            });
+        });
+
+        document.getElementById("confirmDelete").addEventListener("click", function() {
+            processCycleId = document.getElementById("processCycleId").value;
+            fetch(`/paycycle/delete/${processCycleId}/`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Failed to delete pay cycle.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+
+    
+</script>
+
