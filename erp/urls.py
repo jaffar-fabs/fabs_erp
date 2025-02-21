@@ -21,6 +21,8 @@ from payroll import views as auth_views
 from security import views as role_views
 from payroll import views as payroll_views
 from payroll import views as projects
+from payroll import views
+
 
 
 
@@ -30,6 +32,12 @@ urlpatterns = [
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),
     path('users/update/<int:user_master_id>/', auth_views.UserMasterUpdate.as_view(), name='user_update'),
     path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
+
+    #seed Master urls
+    path('create_seed/', views.create_seed, name='create_seed'),
+    path('update_seed_status/<int:seed_id>/', views.update_seed_status, name='update_seed_status'),
+    path('edit_seed/<int:seed_id>/', views.edit_seed, name='edit_seed'),
+    path('get_seed/<int:seed_id>/', views.get_seed, name='get_seed'),
 
     # Role Master URLs
     path('roles/', role_views.RoleMasterList.as_view(), name='role_list'),

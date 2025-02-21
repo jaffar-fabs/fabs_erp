@@ -1,0 +1,242 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Seed Master" %}
+                {% endblock pagetitle %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-sm-4">
+                        <div class="icon-form mb-3 mb-sm-0">
+                            <span class="form-icon"><i class="ti ti-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search Contacts">
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                            <div class="dropdown me-2">
+                                <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="ti ti-package-export me-2"></i>Export
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item">
+                                                <i class="ti ti-file-type-pdf text-danger me-1"></i>Export as PDF
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item">
+                                                <i class="ti ti-file-type-xls text-green me-1"></i>Export as Excel 
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvas_add"><i class="ti ti-square-rounded-plus me-2"></i>Create</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive custom-table">
+                    <table class="table datatable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Seed Code</th>
+                                <th>Seed Module</th>
+                                <th>Seed Type</th>
+                                <th>Seed Length</th>
+                                <th>Start Number</th>
+                                <th>Next Number</th>
+                                <th>Timeline From</th>
+                                <th>Timeline To</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seed in seed_data %}
+                            <tr>
+                                <td>{{ seed.seed_code }}</td>
+                                <td>{{ seed.seed_group }}</td>
+                                <td>{{ seed.seed_type }}</td>
+                                <td>{{ seed.seed_length }}</td>
+                                <td>{{ seed.seed_start_num }}</td>
+                                <td>{{ seed.seed_next_num }}</td>
+                                <td>{{ seed.seed_timeline_from }}</td>
+                                <td>{{ seed.seed_timeline_to }}</td>
+                                <td>
+                                    <span class="badge badge-pill {% if seed.is_active %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if seed.is_active %}
+                                        Active
+                                        {% else %}
+                                        Inactive
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="dropdown table-action">
+                                        <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item edit-seed-btn" 
+                                               href="javascript:void(0);" 
+                                               data-seed-id="{{ seed.seed_id }}" 
+                                               data-bs-toggle="offcanvas" 
+                                               data-bs-target="#offcanvas_edit">
+                                               <i class="ti ti-edit text-blue"></i> Edit
+                                            </a>
+                                            <a class="dropdown-item delete-seed-btn" href="javascript:void(0);" data-seed-id="{{ seed.seed_id }}" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                                                <i class="ti ti-trash text-danger"></i> Delete
+                                            </a>
+                                            
+                                            <!-- <a class="dropdown-item" href="#"><i class="ti ti-eye text-blue-light"></i>
+                                                Preview
+                                            </a> -->
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="datatable-length"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="datatable-paginate"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block contacts_modal %}
+{% include "pages/modal/seed-modal.html" %}
+{% endblock %}
+
+<!-- Include the JavaScript at the bottom of the content block -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let deleteSeedId = null;
+
+        // Your existing JavaScript code here
+        
+        // Handle Edit button click
+        const editButtons = document.querySelectorAll('.edit-seed-btn');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const seedId = this.getAttribute('data-seed-id');
+
+                // Fetch the seed details using the seed ID
+                fetch(`/get_seed/${seedId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the form fields with fetched data
+                        document.getElementById('seed_code').value = data.seed_code;
+                        document.getElementById('hidden_seed_code').value = data.seed_code;
+                        document.getElementById('seed_group').value = data.seed_group;
+                        document.getElementById('hidden_seed_group').value = data.seed_group;
+                        document.getElementById('seed_type').value = data.seed_type;
+                        document.getElementById('hidden_seed_type').value = data.seed_type;
+                        document.getElementById('seed_prefix').value = data.seed_prefix;
+                        document.getElementById('hidden_seed_prefix').value = data.seed_prefix;
+                        document.getElementById('seed_length').value = data.seed_length;
+                        document.getElementById('hidden_seed_length').value = data.seed_length;
+                        document.getElementById('seed_start_num').value = data.seed_start_num;
+                        document.getElementById('hidden_seed_start_num').value = data.seed_start_num;
+                        document.getElementById('seed_next_num').value = data.seed_next_num;
+                        document.getElementById('seed_inc_by').value = data.seed_inc_by;
+                        document.getElementById('hidden_seed_inc_by').value = data.seed_inc_by;
+                        document.getElementById('edit_seed_timeline_from').value = data.seed_timeline_from;
+                        document.getElementById('edit_seed_timeline_to').value = data.seed_timeline_to;
+
+                        // Set the status radio buttons based on current status
+                        if (data.is_active) {
+                            document.getElementById('active').checked = true;
+                        } else {
+                            document.getElementById('inactive').checked = true;
+                        }
+
+                        // Set the form action dynamically
+                        document.querySelector('#offcanvas_edit form').action = `/edit_seed/${seedId}/`;
+                    });
+            });
+        });
+
+        // Handle Timeline From date change for Add New Seed
+        const addTimelineFromInput = document.getElementById('add_seed_timeline_from');
+        const addTimelineToInput = document.getElementById('add_seed_timeline_to');
+
+        if (addTimelineFromInput) {
+            addTimelineFromInput.addEventListener('change', function () {
+                const fromDate = new Date(this.value);
+                fromDate.setDate(fromDate.getDate() + 1); // Add one day to the from date
+                const minDate = fromDate.toISOString().split('T')[0];
+                addTimelineToInput.setAttribute('min', minDate);
+            });
+        }
+
+        // Handle Timeline From date change for Edit Seed
+        const editTimelineFromInput = document.getElementById('edit_seed_timeline_from');
+        const editTimelineToInput = document.getElementById('edit_seed_timeline_to');
+
+        if (editTimelineFromInput) {
+            editTimelineFromInput.addEventListener('change', function () {
+                const fromDate = new Date(this.value);
+                fromDate.setDate(fromDate.getDate() + 1); // Add one day to the from date
+                const minDate = fromDate.toISOString().split('T')[0];
+                editTimelineToInput.setAttribute('min', minDate);
+            });
+        }
+
+        // Handle Delete button click
+        const deleteButtons = document.querySelectorAll('.delete-seed-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                deleteSeedId = this.getAttribute('data-seed-id');
+            });
+        });
+
+        // Handle Confirm Delete button click in the modal
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        confirmDeleteButton.addEventListener('click', function () {
+            if (deleteSeedId) {
+                fetch(`/update_seed_status/${deleteSeedId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is included
+                    },
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();  // Reload the page to reflect the changes
+                    } else {
+                        alert('Error deleting seed.');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+
+
+{% endblock content %}
