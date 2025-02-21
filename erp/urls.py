@@ -22,6 +22,7 @@ from security import views as role_views
 from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
+from payroll.views import GradeMasterList
 
 
 
@@ -51,4 +52,5 @@ urlpatterns = [
     path('payroll/projects/', projects.project, name='project'),
     path("delete_project/", projects.delete_project, name="delete_project"),
     path('payroll/code_master_list/', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
+    path('payroll/grade_master/', GradeMasterList.as_view(), name='grade_master'), 
 ]

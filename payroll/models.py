@@ -143,3 +143,30 @@ class UserMaster(models.Model):
         return self.user_id
     class Meta:
         db_table = 'tbl_erp_smas_user_master'
+        
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class GradeMaster(models.Model):
+    comp_code = models.CharField(max_length=10)
+    grade_id = models.AutoField(primary_key=True)
+    grade_code = models.CharField(max_length=20, unique=True)
+    grade_desc = models.TextField(default="N/A")
+    nationality = models.CharField(max_length=50)
+    attendance_days = models.IntegerField(default=0)
+    leave_days = models.IntegerField(default=0)
+    passage_amount_adult = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    passage_amount_child = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    allowance1 = models.CharField(max_length=20)
+    allowance2 = models.CharField(max_length=20)
+    allowance3 = models.CharField(max_length=20)
+    allowance4 = models.CharField(max_length=20)
+    allowance5 = models.CharField(max_length=20)
+    allowance6 = models.CharField(max_length=20)
+    allowance7 = models.CharField(max_length=20)
+    allowance8 = models.CharField(max_length=20)
+    is_active = models.CharField(max_length=1)
+    instance_id = models.CharField(max_length=50)
+    created_by = models.IntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.grade_code

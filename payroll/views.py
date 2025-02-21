@@ -492,3 +492,85 @@ class UserMasterDelete(View):
         user.save()  
         
         return redirect('user_list')
+    
+        
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from .models import GradeMaster
+from django.utils.timezone import now
+
+class GradeMasterList(View):
+    template_name = "pages/payroll/grade_master/list.html"
+
+    def get(self, request):
+        datas = GradeMaster.objects.filter(comp_code="1000", is_active="Y")
+        return render(request, self.template_name, {'datas': datas})
+
+    def post(self, request):
+        # Check for delete request
+        if "delete_grade_id" in request.POST:
+            grade_id = request.POST.get("delete_grade_id")
+            comp_code = request.POST.get("delete_comp_code")
+            GradeMaster.objects.filter(grade_id=grade_id, comp_code=comp_code).update(is_active="N")
+            return redirect("grade_master")
+
+        # Extract form data for edit operation
+        grade_id = request.POST.get("grade_id")
+        grade_code = request.POST.get("grade_code")
+        grade_desc = request.POST.get("grade_desc")
+        nationality = request.POST.get("nationality")
+        attendance_days = request.POST.get("attendance_days") or 0
+        leave_days = request.POST.get("leave_days") or 0
+        passage_amount_adult = request.POST.get("passage_amount_adult") or 0.0
+        passage_amount_child = request.POST.get("passage_amount_child") or 0.0
+
+        # Convert Allowances
+        allowances = {
+            "allowance1": request.POST.get("allowance1") or None,
+            "allowance2": request.POST.get("allowance2") or None,
+            "allowance3": request.POST.get("allowance3") or None,
+            "allowance4": request.POST.get("allowance4") or None,
+            "allowance5": request.POST.get("allowance5") or None,
+            "allowance6": request.POST.get("allowance6") or None,
+            "allowance7": request.POST.get("allowance7") or None,
+            "allowance8": request.POST.get("allowance8") or None,
+        }
+        is_active = "Y" if "is_active" in request.POST else "N"
+
+        if grade_id:
+            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code="1000")
+            grade.grade_code = grade_code
+            grade.grade_desc = grade_desc
+            grade.nationality = nationality
+            grade.attendance_days = int(attendance_days)
+            grade.leave_days = int(leave_days)
+            grade.passage_amount_adult = float(passage_amount_adult)
+            grade.passage_amount_child = float(passage_amount_child)
+            for key, value in allowances.items():
+                setattr(grade, key, value)
+            grade.is_active = is_active
+            grade.modified_by = 1
+            grade.modified_on = now()
+            grade.save()
+        else:
+            grade = GradeMaster.objects.create(
+                comp_code='1000',
+                grade_code=grade_code,
+                grade_desc=grade_desc,
+                nationality=nationality,
+                attendance_days=int(attendance_days),
+                leave_days=int(leave_days),
+                passage_amount_adult=float(passage_amount_adult),
+                passage_amount_child=float(passage_amount_child),
+                is_active=is_active,
+                created_by=1,
+                created_on=now(),
+                instance_id='INSTANCE001',
+            )
+            for key, value in allowances.items():
+                setattr(grade, key, value)
+            grade.save()
+
+        return redirect("grade_master")
+
+
