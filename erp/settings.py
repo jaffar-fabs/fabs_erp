@@ -74,23 +74,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'erp.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ERP1',
+        'NAME': 'FABS_ERP',
         'USER': 'postgres',
-        'PASSWORD': 'Postgres',
-        'HOST': 'localhost', 
+        'PASSWORD': 'hanifa2004',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
