@@ -86,7 +86,7 @@ def edit_seed(request, seed_id):
         seed.save()
         return redirect('create_seed')
     else:
-        return render(request, 'pages/modal/payroll/seed_modal.html', {'seed': seed})
+        return render(request, 'pages/modal/payroll/seed-modal.html', {'seed': seed})
 
 def get_seed(request, seed_id):
     seed = SeedModel.objects.get(seed_id=seed_id)
@@ -104,7 +104,6 @@ def get_seed(request, seed_id):
         'is_active': seed.is_active,
     }
     return JsonResponse(data)
-
 
 
 #--------------------------------------------------
