@@ -29,7 +29,7 @@ from payroll.views import my_login_view, logout
 
 
 urlpatterns = [
-    
+    path('after-login/', my_login_view, name='after-login'),
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),
     path('', auth_views.Login.as_view(), name='login'),
