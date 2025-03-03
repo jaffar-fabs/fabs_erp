@@ -1,0 +1,277 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                {% block pagetitle %}
+                {% include "partials/page-title.html" with title="Deals Dashboard" %}
+                {% endblock pagetitle %}
+                <!-- /Page Header -->			
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 d-flex">		
+                <div class="card flex-fill">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Recently Created Deals</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">
+                                        Last 15 days
+                                    </a>
+                                    <a href="javascript:void(0);" class="dropdown-item">
+                                        Last 30 days
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table"> 
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Deal Name</th>
+                                        <th>Stage</th>
+                                        <th>Deal Value</th>
+                                        <th>Probability</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in deals_dashboard %}
+                                    <tr v-for="item in DealsTable" :key="item.id">
+                                        <td>{{record.deal_name}}</td>
+                                        <td>{{record.stage}}</td>
+                                        <td>{{record.deal_value}}</td>
+                                        <td>{{record.probability}}</td>
+                                        <td><span class="badge badge-pill {% if record.status == 'Won' %} bg-success {% else %} bg-danger {% endif %}">{{record.status}}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">		
+                <div class="card flex-fill">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Deals By Stage</h4>
+                            <div class="d-flex align-items-center flex-wrap row-gap-2">
+                                <div class="dropdown me-2">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Sales Pipeline
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">														
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Marketing Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Sales Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Email
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Chats
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Operational
+                                        </a>
+                                    </div>										
+                                </div>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Last 30 Days
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 30 Days
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 15 Days
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 7 Days
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="deals-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 d-flex">		
+                <div class="card flex-fill">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Leads By Stage</h4>
+                            <div class="d-flex align-items-center flex-wrap row-gap-2">
+                                <div class="dropdown me-2">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Marketing Pipeline
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">														
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Marketing Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Sales Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Email
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Chats
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Operational
+                                        </a>
+                                    </div>										
+                                </div>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Last 3 months
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 3 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 6 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 12 months
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="last-chart"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex">	
+                <div class="card flex-fill">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Won Deals Stage</h4>
+                            <div class="d-flex align-items-center flex-wrap row-gap-2">
+                                <div class="dropdown me-2">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Marketing Pipeline
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">														
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Marketing Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Sales Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Email
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Chats
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Operational
+                                        </a>
+                                    </div>										
+                                </div>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Last 3 months
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 3 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 6 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 12 months
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="won-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex">		
+                <div class="card w-100">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Deals by Year</h4>
+                            <div class="d-flex align-items-center flex-wrap row-gap-2">
+                                <div class="dropdown me-2">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Sales Pipeline
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                                
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Marketing Pipeline
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Sales Pipeline
+                                        </a>
+                                    </div>						
+                                </div>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                        Last 3 months
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 3 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 6 months
+                                        </a>
+                                        <a href="javascript:void(0);" class="dropdown-item">
+                                            Last 12 months
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="deals-year"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper -->
+
+{% endblock content %}

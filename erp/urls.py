@@ -23,11 +23,15 @@ from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
 from payroll.views import GradeMasterList
+from payroll.views import my_login_view, logout
 
 
 
 
 urlpatterns = [
+    path('after-login/', my_login_view, name='after-login'),
+    path('logout/', logout, name='logout'),
+    path('index', payroll_views.index, name='index'),
     path('', auth_views.Login.as_view(), name='login'),
     path('users/', auth_views.UserMasterList.as_view(), name='user_list'),
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),

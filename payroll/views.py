@@ -10,7 +10,81 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .models import CodeMaster
 from .models import SeedModel
+from django.contrib import messages
 
+def index(request):
+    deals_dashboard = [
+        {
+            "id" : 1,
+            "deal_name" : "Collins",
+            "stage" : "Conversation",
+            "deal_value" : "$04,51,000",
+            "probability" : "85%",
+            "status" : "Lost"
+        },
+        {
+            "id" : 2,
+            "deal_name" : "Konopelski",
+            "stage" : "Pipeline",
+            "deal_value" : "$14,51,000",
+            "probability" : "56%",
+            "status" : "Won"
+        },
+        {
+            "id" : 3,
+            "deal_name" : "Adams",
+            "stage" : "Won",
+            "deal_value" : "$12,51,000",
+            "probability" : "15%",
+            "status" : "Won"
+        },
+        {
+            "id" : 4,
+            "deal_name" : "Schumm",
+            "stage" : "Lost",
+            "deal_value" : "$51,000",
+            "probability" : "45%",
+            "status" : "Lost"
+        },
+        {
+            "id" : 5,
+            "deal_name" : "Wisozk",
+            "stage" : "Follow Up",
+            "deal_value" : "$67,000",
+            "probability" : "5%",
+            "status" : "Won"
+        }
+    ]
+    return render(request, 'pages/dashboard/index.html', {'deals_dashboard': deals_dashboard})
+
+def my_login_view(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        if username == "admin" and password == "12345":
+            role = "Administrator"  
+            request.session["username"] = username
+            request.session["role"] = role  
+
+            messages.success(request, "Login successful!")
+            return redirect("/index") 
+        elif username == "user" and password == "12345":
+            role = "Programmer"
+            request.session["username"] = username
+            request.session["role"] = role
+            messages.success(request, "Login successful!")
+            return redirect("/index") 
+        else:
+            messages.error(request, "Invalid username or password.")
+
+        return render(request, "auth/login.html")  
+    
+def logout(request):
+    request.session.flush()  # Clears all session data
+    messages.success(request, "You have been logged out successfully.")
+    return redirect("/")  # Redirect to login page
 
 #-------------------------------
 
