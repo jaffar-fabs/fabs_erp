@@ -11,8 +11,7 @@ from django.utils.decorators import method_decorator
 from .models import CodeMaster
 from .models import SeedModel
 from django.contrib import messages
-from .models import Menu
-
+from .models import Menu, RoleMenu
 
 def index(request):
     deals_dashboard = [
@@ -91,7 +90,7 @@ def dashboard_view(request):
     role_id = request.session.get("role_id")
 
     # Fetch menu items based on the role
-    menu = RoleMenuMapping.objects.filter(role_id=role_id)
+    menu = RoleMenu.objects.filter(role_id=role_id)
 
     menu_items = Menu.objects.filter(menu_id=menu.menu_id)
 
