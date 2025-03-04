@@ -497,45 +497,61 @@ class UserMasterList(View):
         users = UserMaster.objects.all()
         return render(request, self.template_name, {'users': users})
 
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.views import View
+from .models import UserMaster
+
 class UserMasterCreate(View):
     def post(self, request):
-        try:
-            created_by = request.POST.get('created_by')
-            modified_by = request.POST.get('modified_by')
+        user_id = request.POST.get('user_id', '').strip()
 
+        
+        if not user_id:
+            return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID is required.'})
+
+        
+        if request.POST.get("check_availability") == "true":
+            if UserMaster.objects.filter(user_id=user_id).exists():
+                return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
+            return JsonResponse({'status': 'success', 'message': 'User ID is available.'})
+
+        
+        if UserMaster.objects.filter(user_id=user_id).exists():
+            return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
+
+        try:
             user = UserMaster(
-                comp_code=request.POST.get('comp_code'),
-                user_master_id=request.POST.get('user_master_id'),  
+                comp_code=1000,
+                user_master_id=request.POST.get('user_master_id'),
                 first_name=request.POST.get('first_name'),
                 last_name=request.POST.get('last_name'),
-                user_id=request.POST.get('user_id'),
+                user_id=user_id,
                 password=request.POST.get('password'),
                 dob=request.POST.get('dob'),
                 email=request.POST.get('email'),
                 gender=request.POST.get('gender'),
-                is_active=request.POST.get('is_active') == 'on',  # Checkbox handling
-                instance_id=request.POST.get('instance_id'),
-                profile_picture=request.FILES.get('profile_picture'), 
-                created_by=created_by,
-                modified_by=modified_by,
+                is_active=request.POST.get('is_active') == 'on',
+                instance_id=100000000,
+                profile_picture=request.FILES.get('profile_picture'),
+                created_by=request.POST.get('created_by'),
+                modified_by=request.POST.get('modified_by'),
                 emp_code=request.POST.get('emp_code'),
                 user_paycycles=request.POST.get('user_paycycles')
             )
 
-            # Validate and save the instance
-            user.full_clean()  
+            user.full_clean()
             user.save()
+            return redirect("user_list")
 
-            return redirect('user_list')
-        except ValidationError as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': f'An error occurred: {str(e)}'})
-
+            return JsonResponse({'status': 'error', 'field': 'general', 'message': str(e)})
+        
 class UserMasterUpdate(View):
     def post(self, request, user_master_id):
         try:
             user = get_object_or_404(UserMaster, user_master_id=user_master_id)
+    
             user.comp_code = request.POST.get('comp_code')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
@@ -550,10 +566,13 @@ class UserMasterUpdate(View):
             user.emp_code = request.POST.get('emp_code')
             user.user_paycycles = request.POST.get('user_paycycles')
             user.is_active = request.POST.get('is_active') == 'on'  # Checkbox handling
-            user.full_clean() 
+            
+            user.full_clean()  # Validate model fields
             user.save()
+            
             return redirect('user_list')
-        except ValidationError as e:
+
+        except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
 class UserMasterDelete(View):
