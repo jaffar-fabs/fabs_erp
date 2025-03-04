@@ -202,3 +202,25 @@ class Menu(models.Model):
 
     def _str_(self):
         return self.comp_code
+    
+
+    #---------------------------------------------------------------------------------------------------------------------------------
+    class RoleMenuMapping(models.Model):
+        comp_code = models.CharField(max_length=15, default='1000')
+        roll_id = models.PositiveBigIntegerField()  
+        menu_id = models.PositiveBigIntegerField()  
+        mapping_id = models.AutoField(primary_key=True)  
+        add = models.BooleanField(null=True, blank=True)
+        view = models.BooleanField(null=True, blank=True)
+        delete = models.BooleanField(null=True, blank=True)
+        modify = models.BooleanField(null=True, blank=True)
+        instance_id = models.CharField(max_length=50)
+        is_active = models.BooleanField(default=True)
+        created_by = models.BigIntegerField()
+        created_on = models.DateTimeField(auto_now_add=True)
+        modified_by = models.BigIntegerField(null=True, blank=True)
+        modified_on = models.DateTimeField(null=True, blank=True)
+        execute = models.BooleanField(null=True, blank=True)
+
+        def __str__(self):
+            return f"Mapping {self.mapping_id} - Role {self.roll_id} - Menu {self.menu_id}"
