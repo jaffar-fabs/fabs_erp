@@ -205,11 +205,11 @@ class Menu(models.Model):
     
 
     #---------------------------------------------------------------------------------------------------------------------------------
-    class RoleMenuMapping(models.Model):
+    class Role_MenuMapping(models.Model):
         comp_code = models.CharField(max_length=15, default='1000')
-        roll_id = models.PositiveBigIntegerField()  
-        menu_id = models.PositiveBigIntegerField()  
-        mapping_id = models.AutoField(primary_key=True)  
+        role_id = models.PositiveBigIntegerField()  # Correct field name
+        menu_id = models.PositiveBigIntegerField()
+        mapping_id = models.AutoField(primary_key=True)
         add = models.BooleanField(null=True, blank=True)
         view = models.BooleanField(null=True, blank=True)
         delete = models.BooleanField(null=True, blank=True)
@@ -222,5 +222,5 @@ class Menu(models.Model):
         modified_on = models.DateTimeField(null=True, blank=True)
         execute = models.BooleanField(null=True, blank=True)
 
-        def __str__(self):
-            return f"Mapping {self.mapping_id} - Role {self.roll_id} - Menu {self.menu_id}"
+    def __str__(self):
+        return f"Mapping {self.mapping_id} - Role {self.role_id} - Menu {self.menu_id}"  # Use role_id

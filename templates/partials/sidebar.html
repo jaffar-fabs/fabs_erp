@@ -13,6 +13,7 @@
                             {% if request.session.username %}
                                 <h5>{{ request.session.username }}</h5>
                                 <h6>{{ request.session.role }}</h6>
+                                <h6>{{ request.session.role_id }}</h6>
                             {% else %}
                                 <h5>Guest</h5>
                                 <h6>Please Log In</h6>
@@ -21,6 +22,7 @@
                     </a>
                 </li>
             </ul>
+            {% if request.session.role_id == 1 %}
             <ul>
                 <li>
                     <h6 class="submenu-hdr">Main Menu</h6>
@@ -36,7 +38,7 @@
                 </li>
                 <li class="submenu">
                     <a href="javascript:void(0);"
-                       class="{% if '/users/' in request.path or '/roles/' in request.path or '/payroll/paycycle_master/' in request.path or '/projects/' in request.path or '/payroll/code_master_list/' in request.path or '/payroll/grade_master/' in request.path %} active {% endif %}">
+                       class="{% if '/users/' in request.path or '/roles/' in request.path or '/payroll/paycycle_master/' in request.path or '/projects/' in request.path or '/payroll/code_master_list/' in request.path or '/payroll/grade_master/' in request.path or '/create_seed/' in request.path %} active {% endif %}">
                         <i class="ti ti-brand-airtable"></i><span>Masters</span><span class="menu-arrow"></span>
                     </a>
                     <ul>
@@ -45,10 +47,38 @@
                         <li><a href="{% url 'payroll_paycycle_master' %}" class="{% if '/payroll/paycycle_master/' in request.path %} active {% endif %}">PayCycle Master</a></li>
                         <li><a href="{% url 'project' %}" class="{% if '/projects/' in request.path %} active {% endif %}">Project Master</a></li>
                         <li><a href="{% url 'code_master_list' %}" class="{% if '/payroll/code_master_list/' in request.path %} active {% endif %}">Code Master</a></li>
+                        <li><a href="{% url 'create_seed' %}" class="{% if '/create_seed/' in request.path %} active {% endif %}">Seed Master</a></li>
                         <li><a href="{% url 'grade_master' %}" class="{% if '/payroll/grade_master/' in request.path %} active {% endif %}">Grade Master</a></li>
                     </ul>
                 </li>                                       
             </ul>
+            {% else %}
+            <ul>
+                {% for parent in parent_menus %}
+                <li class="submenu">
+                    <a href="{% if parent.menu_url %}{{ parent.menu_url }}{% else %}javascript:void(0);{% endif %}" 
+                       class="{% if request.path == parent.menu_url %} active {% endif %}">
+                        <i class="{{ parent.icon_class }}"></i><span>{{ parent.menu_name }}</span><span class="menu-arrow"></span>
+                    </a>
+                    {% with child_menus|dictsort:"menu_id" as child_list %}
+                    {% if child_list %}
+                    <ul>
+                        {% for child in child_list %}
+                            {% if child.parent_menu_id == parent.menu_id %}
+                            <li>
+                                <a href="{{ child.menu_url }}" class="{% if request.path == child.menu_url %} active {% endif %}">
+                                    {{ child.menu_name }}
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
+                </li>
+                {% endfor %}
+            </ul>            
+            {% endif %}
         </li>
             </ul>
         </div>

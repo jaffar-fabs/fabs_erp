@@ -11,6 +11,8 @@ from django.utils.decorators import method_decorator
 from .models import CodeMaster
 from .models import SeedModel
 from django.contrib import messages
+from .models import Menu
+
 
 def index(request):
     deals_dashboard = [
@@ -65,21 +67,35 @@ def my_login_view(request):
 
         if username == "admin" and password == "12345":
             role = "Administrator"  
+            role_id = 1
             request.session["username"] = username
             request.session["role"] = role  
+            request.session["role_id"] = role_id  
 
             messages.success(request, "Login successful!")
             return redirect("/index") 
         elif username == "user" and password == "12345":
             role = "Programmer"
+            role_id = 2
             request.session["username"] = username
-            request.session["role"] = role
+            request.session["role"] = role  
+            request.session["role_id"] = role_id 
             messages.success(request, "Login successful!")
             return redirect("/index") 
         else:
             messages.error(request, "Invalid username or password.")
 
-        return render(request, "auth/login.html")  
+        return render(request, "auth/login.html") 
+
+def dashboard_view(request):
+    role_id = request.session.get("role_id")
+
+    # Fetch menu items based on the role
+    menu = RoleMenuMapping.objects.filter(role_id=role_id)
+
+    menu_items = Menu.objects.filter(menu_id=menu.menu_id)
+
+    return render(request, "partials/sidebar.html", {"menu_items": menu_items,"menu":menu}) 
     
 def logout(request):
     request.session.flush()  # Clears all session data
