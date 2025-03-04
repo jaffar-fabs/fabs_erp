@@ -85,7 +85,7 @@ class projectMatster(models.Model):
     project_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
     timeline_from = models.DateField(null=False, blank=False)
     timeline_to = models.DateField(null=False, blank=False)
-    prj_city = models.BigIntegerField()
+    prj_city = models.CharField(max_length=50, null=True, blank=True)
     consultant = models.CharField(max_length=50, null=True, blank=True)
     main_contractor = models.CharField(max_length=50, null=True, blank=True)
     sub_contractor = models.CharField(max_length=50, null=True, blank=True)

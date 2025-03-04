@@ -288,6 +288,13 @@ def project(request):
                 return redirect("project")
 
             else:
+                prj_code=request.POST.get("project_code")
+                if projectMatster.objects.filter(prj_code=prj_code).exists():
+                    return JsonResponse(
+                     {
+                         "error": "Project Code already exists"
+                         }
+                    )
                 project = projectMatster(
                 prj_code=request.POST.get("project_code"),
                 prj_name=request.POST.get("project_name"),
