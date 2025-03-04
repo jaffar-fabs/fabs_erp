@@ -106,7 +106,7 @@
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-            <input type="text" name="user_id" class="form-control" value="{{ user.user_id }}" required>
+            <input type="text" name="user_id" class="form-control" value="{{ user.user_id }}" readonly>
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Gender <span class="text-danger">*</span></label>
@@ -118,7 +118,10 @@
           <div class="form-group mb-3">
             <label class="col-form-label">Profile Picture</label>
             <input type="file" name="profile_picture" class="form-control">
-          </div>
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mt-2" width="100">
+            {% endif %}
+        </div>        
           <div class="form-group mb-3">
             <label class="col-form-label">Email <span class="text-danger">*</span></label>
             <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
@@ -132,11 +135,11 @@
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Password <span class="text-danger">*</span></label>
-            <input type="password" name="password" class="form-control" required>
+            <input type="text" name="password" class="form-control" value="{{ user.password }}" required>
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Date of Birth</label>
-            <input type="date" name="dob" class="form-control" value="{{ user.dob }}">
+            <input type="date" name="dob" class="form-control" value="{{ user.dob|date:'dd-mm-YYYY' }}">
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">User Paycycles</label>
@@ -221,85 +224,186 @@
     </button>
   </div>
   <div class="offcanvas-body">
-    <form id="addUserForm" method="post" action="{% url 'user_create' %}" enctype="multipart/form-data">
+    <form id="addUserForm" class="needs-validation" method="post" action="{% url 'user_create' %}" enctype="multipart/form-data" novalidate>
       {% csrf_token %}
+      <div id="general_error" class="alert alert-danger d-none"></div>
       <div class="row">
-        <!-- Left Column -->
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-            <input type="text" name="first_name" class="form-control" required>
+          <!-- Left Column -->
+          <div class="col-md-6">
+              <div class="form-group mb-3">
+                  <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                  <input type="text" name="first_name" class="form-control" required>
+                  <div class="invalid-feedback">Please enter a first name.</div>
+              </div>
+  
+              <div class="form-group mb-3">
+                <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+                <input type="text" name="user_id" id="user_id" class="form-control" required>
+                <div id="user_id_invalid_feedback" class="invalid-feedback"></div>
+                <div id="user_id_valid_feedback" class="valid-feedback"></div> 
+            </div>                
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                  <select name="gender" class="form-control" required>
+                      <option value="">Select Gender</option>
+                      <option value="1">Male</option>
+                      <option value="2">Female</option>
+                  </select>
+                  <div class="invalid-feedback">Please select a gender.</div>
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Profile Picture</label>
+                  <input type="file" name="profile_picture" class="form-control">
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Email <span class="text-danger">*</span></label>
+                  <input type="email" name="email" class="form-control" required>
+                  <div class="invalid-feedback">Please enter a valid email address.</div>
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Employee Code</label>
+                  <input type="text" name="emp_code" class="form-control">
+                  <input type="hidden" name="created_by" value="4">
+              </div>
           </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-            <input type="text" name="user_id" class="form-control" required>
+  
+          <!-- Right Column -->
+          <div class="col-md-6">
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Last Name</label>
+                  <input type="text" name="last_name" class="form-control">
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Password <span class="text-danger">*</span></label>
+                  <input type="password" name="password" class="form-control" required>
+                  <div class="invalid-feedback">Please enter a password.</div>
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">Date of Birth</label>
+                  <input type="date" name="dob" class="form-control">
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">User Paycycles</label>
+                  <select name="user_paycycles" class="form-control">
+                      <option value="Cycle 1">Cycle 1</option>
+                      <option value="Cycle 2">Cycle 2</option>
+                      <option value="Cycle 3">Cycle 3</option>
+                  </select>
+              </div>
+  
+              <div class="form-group mb-3">
+                  <label class="col-form-label">User Master ID</label>
+                  <input type="number" name="user_master_id" class="form-control">
+              </div>
+  
+              <div class="form-group form-check mb-3">
+                  <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
+                  <label class="form-check-label" for="is_active">Active</label>
+              </div>
           </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-            <select name="gender" class="form-control" required>
-              <option value="1">Male</option>
-              <option value="2">Female</option>
-            </select>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Profile Picture</label>
-            <input type="file" name="profile_picture" class="form-control">
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Email <span class="text-danger">*</span></label>
-            <input type="email" name="email" class="form-control" required>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Employee Code</label>
-            <input type="text" name="emp_code" class="form-control">
-            <input type="hidden" name="created_by" value="4">
-          </div>
-        </div>
-        <!-- Right Column -->
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">Last Name</label>
-            <input type="text" name="last_name" class="form-control">
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Password <span class="text-danger">*</span></label>
-            <input type="password" name="password" class="form-control" required>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Date of Birth</label>
-            <input type="date" name="dob" class="form-control">
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">User Paycycles</label>
-            <select name="user_paycycles" class="form-control">
-              <option value="Cycle 1">Cycle 1</option>
-              <option value="Cycle 2">Cycle 2</option>
-              <option value="Cycle 3">Cycle 3</option>
-            </select>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">User Master ID</label>
-            <input type="number" name="user_master_id" class="form-control">
-          </div>
-          <div class="form-group mb-3" style="display: none;">
-            <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
-            <input type="text" name="comp_code" class="form-control" value="DEFAULT_CODE">
-          </div>
-          <div class="form-group mb-3" style="display: none;">
-            <label class="col-form-label">Instance ID <span class="text-danger">*</span></label>
-            <input type="text" name="instance_id" class="form-control" value="DEFAULT_INSTANCE">
-          </div>
-          <div class="form-group form-check mb-3">
-            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
-            <label class="form-check-label" for="is_active">Active</label>
-          </div>
-        </div>
       </div>
+  
       <div class="d-flex align-items-center justify-content-end">
-        <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
       </div>
-    </form>
+  </form> 
+  <script>
+    document.getElementById("user_id").addEventListener("blur", function () {
+    let userId = this.value.trim();
+    let validFeedback = document.getElementById("user_id_valid_feedback");
+    let invalidFeedback = document.getElementById("user_id_invalid_feedback");
+
+    if (!userId) {
+        invalidFeedback.textContent = "User ID is required.";
+        invalidFeedback.style.display = "block";
+        validFeedback.style.display = "none";
+        return;
+    }
+
+    // Check availability via AJAX
+    fetch("{% url 'user_create' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: new URLSearchParams({
+            "user_id": userId,
+            "check_availability": "true",
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "error") {
+            invalidFeedback.textContent = data.message;
+            invalidFeedback.style.display = "block";
+            validFeedback.style.display = "none";
+        } else {
+            validFeedback.textContent = data.message;
+            validFeedback.style.display = "block";
+            invalidFeedback.style.display = "none";
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+
+document.getElementById("addUserForm").addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    let form = this;
+    let formData = new FormData(form);
+    let generalErrorDiv = document.getElementById("general_error");
+
+    // Hide and clear previous errors
+    document.querySelectorAll(".invalid-feedback").forEach(el => el.style.display = "none");
+    generalErrorDiv.classList.add("d-none");
+    generalErrorDiv.textContent = "";
+
+    fetch(form.action, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+        },
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "error") {
+            let fieldName = data.field;
+            if (fieldName === "general") {
+                generalErrorDiv.textContent = data.message;
+                generalErrorDiv.classList.remove("d-none");
+            } else {
+                let errorElement = document.getElementById(fieldName + "_invalid_feedback");
+                if (errorElement) {
+                    errorElement.textContent = data.message;
+                    errorElement.style.display = "block";
+                }
+            }
+        } else if (data.status === "success") {
+            window.location.href = data.redirect_url;
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        generalErrorDiv.textContent = "An unexpected error occurred. Please try again.";
+        generalErrorDiv.classList.remove("d-none");
+    });
+});
+
+  </script>   
   </div>
 </div>
+
+  
 {% endblock content %}

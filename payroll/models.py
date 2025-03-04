@@ -170,3 +170,57 @@ class GradeMaster(models.Model):
 
     def __str__(self):
         return self.grade_code
+    
+#-----------------------------------------------------------------------------------------------------------------------------------------------
+
+class Menu(models.Model):
+    menu_id = models.BigAutoField(primary_key=True)
+    comp_code = models.CharField(max_length=10, default="1001")
+    menu_name = models.CharField(max_length=50)
+    quick_path = models.BigIntegerField()
+    screen_name = models.CharField(max_length=50, null=True, blank=True)
+    url = models.CharField(max_length=100, null=True, blank=True)
+    module_id = models.CharField(max_length=50, null=True, blank=True)
+    parent_menu_id = models.CharField(max_length=50, null=True, blank=True)  
+    display_order = models.BigIntegerField()
+    instance_id = models.CharField(max_length=50)
+    buffer1 = models.CharField(max_length=10, null=True, blank=True)
+    buffer2 = models.CharField(max_length=10, null=True, blank=True)
+    buffer3 = models.CharField(max_length=10, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True) 
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True)  
+    is_add = models.BooleanField(null=True, blank=True)
+    is_view = models.BooleanField(null=True, blank=True)
+    is_edit = models.BooleanField(null=True, blank=True)
+    is_delete = models.BooleanField(null=True, blank=True)
+    is_execute = models.IntegerField(null=True, blank=True)
+    app_id = models.IntegerField(null=True, blank=True)
+    icon = models.CharField(max_length=100, null=True, blank=True)
+
+    def _str_(self):
+        return self.comp_code
+    
+
+    #---------------------------------------------------------------------------------------------------------------------------------
+    class RoleMenuMapping(models.Model):
+        comp_code = models.CharField(max_length=15, default='1000')
+        roll_id = models.PositiveBigIntegerField()  
+        menu_id = models.PositiveBigIntegerField()  
+        mapping_id = models.AutoField(primary_key=True)  
+        add = models.BooleanField(null=True, blank=True)
+        view = models.BooleanField(null=True, blank=True)
+        delete = models.BooleanField(null=True, blank=True)
+        modify = models.BooleanField(null=True, blank=True)
+        instance_id = models.CharField(max_length=50)
+        is_active = models.BooleanField(default=True)
+        created_by = models.BigIntegerField()
+        created_on = models.DateTimeField(auto_now_add=True)
+        modified_by = models.BigIntegerField(null=True, blank=True)
+        modified_on = models.DateTimeField(null=True, blank=True)
+        execute = models.BooleanField(null=True, blank=True)
+
+        def __str__(self):
+            return f"Mapping {self.mapping_id} - Role {self.roll_id} - Menu {self.menu_id}"

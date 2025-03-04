@@ -18,7 +18,7 @@
 	<!-- Logo -->
 	<div class="header-left active">
 		<a href="" class="logo logo-normal">
-			<img src="{% static 'assets/img/logo.svg' %}" alt="Logo" />
+			<img src="{% static 'assets/img/FABS.png' %}" alt="Logo" />
 			<img src="{% static 'assets/img/white-logo.svg' %}" class="white-logo" alt="Logo" />
 		</a>
 		<a href="" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}"
@@ -448,7 +448,7 @@
 					<div class="profilename">
 						<a class="dropdown-item" href="index"><i class="ti ti-layout-2"></i> Dashboard</a>
 						<a class="dropdown-item" href="profile"><i class="ti ti-user-pin"></i> My Profile</a>
-						<a class="dropdown-item" href="/"><i class="ti ti-lock"></i> Logout</a>
+						<a class="dropdown-item" href="{% url 'logout' %}"><i class="ti ti-lock"></i> Logout</a>
 					</div>
 				</div>
 			</li>
