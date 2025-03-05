@@ -715,58 +715,78 @@ def delete_project(request):
     return redirect("project")
 
 
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from django.views import View
+from .models import CodeMaster
 
 class CodeMasterList(View):
 
     template_name = "pages/payroll/code_master/code_master_list.html"
 
-    def get(self, request):
+    def get(self, request): 
         base_type_suggestions = CodeMaster.objects.filter(comp_code="999").values("base_description", "base_value").distinct()
-        base_type_comp_code = CodeMaster.objects.filter(comp_code="1000", is_active = 'Y').values("base_type").distinct()
+        base_type_comp_code = CodeMaster.objects.filter(comp_code="999").values("base_value", "base_description").distinct()
         return render(request, self.template_name, { "base_type_suggestions": base_type_suggestions, "base_type_comp_code": base_type_comp_code })
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    @csrf_exempt
     def post(self, request):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            request_type = request.POST.get("request_type")
+            if request_type == "check_base_value_exists":
+                return self.check_base_value_exists(request)
+            if request_type == "fetch_base_description":
+                return self.fetch_base_description(request)
+            elif request_type == "update_base_description":
+                return self.update_base_description(request)
+            elif request_type == "delete_base_value":
+                return self.delete_base_value(request)
             return self.handle_ajax(request)
         return self.handle_form_submission(request)
 
-    def handle_ajax(self, request):
-        base_type = request.POST.get("base_type")
+    @csrf_exempt
+    def check_base_value_exists(self, request):
         base_value = request.POST.get("base_value")
-        description = request.POST.get("description")
-        delete_flag = request.POST.get("delete")
+        base_type = request.POST.get("base_type")
+        if CodeMaster.objects.filter(base_type=base_type, base_value=base_value, comp_code="1000").exists():
+            return JsonResponse({"exists": True})
+        return JsonResponse({"exists": False})
 
-        # Handling delete request
-        if delete_flag:
-            try:
-                code_master = CodeMaster.objects.get(base_type=base_type, base_value=base_value, comp_code="1000")
-                code_master.is_active = "N"  
+    def update_base_description(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+        base_description = request.POST.get("base_description")
+        is_active = request.POST.get("is_active")
+
+        if not all([base_code, base_value, base_description, is_active]):
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+        try:
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            if code_master:
+                code_master.base_description = base_description
+                code_master.is_active = is_active
                 code_master.save()
                 return JsonResponse({"success": True})
-            except CodeMaster.DoesNotExist:
-                return JsonResponse({"success": False, "error": "Entry not found."})
-        
-        # Handling description update request
-        if description:
-            try:
-                code_master = CodeMaster.objects.get(base_type=base_type, base_value=base_value, comp_code="1000")
-                code_master.base_description = description
-                code_master.save()
-                return JsonResponse({"success": True})
-            except CodeMaster.DoesNotExist:
-                return JsonResponse({"success": False, "error": "Entry not found."})
-        else:
-            if base_value:
-                base_values = CodeMaster.objects.filter(base_type=base_type, comp_code="1000").values_list("base_value", flat=True)
-                exists = CodeMaster.objects.filter(base_value=base_value, base_type=base_type, comp_code="1000").exists()
-                return JsonResponse({"exists": exists, "base_values": list(base_values)})
             else:
-                base_values = CodeMaster.objects.filter(base_type=base_type, comp_code="1000", is_active = 'Y').values("base_value", "base_description")
-                return JsonResponse({"base_values": list(base_values)})
+                return JsonResponse({"success": False, "error": "No matching record found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+    @csrf_exempt
+    def handle_ajax(self, request):
+        base_code = request.POST.get("base_code")
+        if base_code:
+            base_values = CodeMaster.objects.filter(base_type=base_code, comp_code="1000").values("base_value", "is_active")
+            base_values_list = [{"base_value": value["base_value"], "is_active": value["is_active"]} for value in base_values]
+            return JsonResponse({"success": True, "base_values": base_values_list})
+        return JsonResponse({"success": False, "error": "Invalid base code"})
 
     def handle_form_submission(self, request):
         base_description = request.POST.get("base_description")
@@ -778,9 +798,7 @@ class CodeMasterList(View):
         base_type = base_type_obj["base_value"] if base_type_obj else None
 
         if base_type and base_value:
-            
             existing_entry = CodeMaster.objects.filter(comp_code="1000", base_type=base_type, base_value=base_value).exists()
-
             if not existing_entry:
                 CodeMaster.objects.create(
                     comp_code="1000",
@@ -792,8 +810,40 @@ class CodeMasterList(View):
                     created_by=1,
                     is_active=is_active,
                 )
-
         return redirect("code_master_list")
+
+    @csrf_exempt
+    def fetch_base_description(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+        if base_code and base_value:
+            base_description_obj = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").values("base_description", "is_active").first()
+            if base_description_obj:
+                is_active = base_description_obj["is_active"] == "Y"
+                return JsonResponse({"success": True, "base_description": base_description_obj["base_description"], "is_active": is_active})
+            return JsonResponse({"success": False, "error": "No matching record found"})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+    @csrf_exempt
+    def delete_base_value(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+
+        if not all([base_code, base_value]):
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+        try:
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            if code_master:
+                code_master.is_active = "N"
+                code_master.save()
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"success": False, "error": "No matching record found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
 
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -910,7 +960,7 @@ from .models import GradeMaster
 from django.utils.timezone import now
 
 class GradeMasterList(View):
-    template_name = "pages/payroll/grade_master/list.html"
+    template_name = "pages/payroll/grade_master/grade_master_list.html"
 
     def get(self, request):
         datas = GradeMaster.objects.filter(comp_code="1000")

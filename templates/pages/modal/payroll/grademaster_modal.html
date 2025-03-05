@@ -1,465 +1,460 @@
 {% load static %}
 
+
 <!-- Add Contact -->
-<div
-  class="offcanvas offcanvas-end offcanvas-large"
-  tabindex="-1"
-  id="offcanvas_add"
->
-  <div class="offcanvas-header border-bottom">
-    <h5 class="fw-semibold">Grade Master</h5>
-    <button
-      type="button"
-      class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
-      data-bs-dismiss="offcanvas"
-      aria-label="Close"
-    >
-      <i class="ti ti-x"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body">
-    <form method="post" action="{% url 'grade_master' %}" class="needs-validation" novalidate>
-        {% csrf_token %}
-        <div class="row">
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Grade Code <span class="text-danger">*</span></label>
-              <input type="text" name="grade_code" class="form-control"   autocomplete="off" required />
-              <div class="invalid-feedback">Please provide a Grade Code.</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Grade Desc <span class="text-danger">*</span></label>
-              <input type="text" name="grade_desc"  autocomplete="off" class="form-control"  required />
-              <div class="invalid-feedback">Please provide a Grade Desc.</div>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="mb-2">
-              <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
-              <select name="nationality" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="American">American</option>
-                <option value="Canadian">Canadian</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Nationality.</div>
-            </div>
-          </div>
-      
-          <!-- Attendance and Leave Days -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Attendance Days <span class="text-danger">*</span></label>
-              <input type="number" name="attendance_days" class="form-control"  autocomplete="off"  required />
-              <div class="invalid-feedback">Please provide a Attendance Days.</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Leave Days <span class="text-danger">*</span></label>
-              <input type="number" name="leave_days" class="form-control"  autocomplete="off"  required />
-              <div class="invalid-feedback">Please provide a Leave Days.</div>
-            </div>
-          </div>
-      
-          <!-- Passage Amount -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Passage Amount Adult <span class="text-danger">*</span></label>
-              <input type="number" name="passage_amount_adult" class="form-control"  autocomplete="off"  required />
-              <div class="invalid-feedback">Please provide a Passage Amount Adult.</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label" for="validationCustom01">Passage Amount Child <span class="text-danger">*</span></label>
-              <input type="number" name="passage_amount_child" class="form-control"  autocomplete="off"  required />
-              <div class="invalid-feedback">Please provide a Passage Amount Child.</div>
-            </div>
-          </div>
-      
-          <!-- Allowances -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 1<span class="text-danger">*</span></label>
-              <select name="allowance1" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance1.</div>
-            </div>
-          </div>
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Grade Master</h5>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'grade_master' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Grade Code <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required />
+                        <div class="invalid-feedback">Please provide a Grade Code.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Grade Desc <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
+                        <div class="invalid-feedback">Please provide a Grade Desc.</div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
+                        <select name="nationality" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="American">American</option>
+                            <option value="Canadian">Canadian</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Nationality.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
-              <select name="allowance2" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance2.</div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
-              <select name="allowance3" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance3.</div>
-            </div>
-          </div>
+                <!-- Attendance and Leave Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Attendance Days <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" required />
+                        <div class="invalid-feedback">Please provide a Attendance Days.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Leave Days <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="leave_days" class="form-control" autocomplete="off" required />
+                        <div class="invalid-feedback">Please provide a Leave Days.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
-              <select name="allowance4" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance4.</div>
-            </div>
-          </div>
+                <!-- Passage Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Adult <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
+                            required />
+                        <div class="invalid-feedback">Please provide a Passage Amount Adult.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Child <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
+                            required />
+                        <div class="invalid-feedback">Please provide a Passage Amount Child.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
-              <select name="allowance5" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance5.</div>
-            </div>
-          </div>
+                <!-- Allowances -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 1<span class="text-danger">*</span></label>
+                        <select name="allowance1" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance1.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
-              <select name="allowance6" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance6.</div>
-            </div>
-          </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
+                        <select name="allowance2" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance2.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
+                        <select name="allowance3" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance3.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
-              <select name="allowance7" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance7.</div>
-            </div>
-          </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
+                        <select name="allowance4" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance4.</div>
+                    </div>
+                </div>
 
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
-              <select name="allowance8" class="form-select" required aria-label="select example">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-              <div class="invalid-feedback">Please provide a Allowance8.</div>
-            </div>
-          </div>
-          <div class="d-flex flex-wrap"> 
-            <div class="form-check form-check-md d-flex align-items-center">
-              <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md" autocomplete="off" checked/>
-              <label class="form-check-label" for="checkebox-md">is Active</label>
-            </div> 
-          </div>
-        </div>
-         <!-- Submit Buttons -->
-         <div class="d-flex align-items-center justify-content-end">
-          <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-          <button type="submit" class="btn btn-primary">Create</button>
-        </div>
-        
-        
-        </div>
-        
-     
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
+                        <select name="allowance5" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance5.</div>
+                    </div>
+                </div>
 
-        
-      
-       
-      </form>
-      
-  </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
+                        <select name="allowance6" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance6.</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
+                        <select name="allowance7" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance7.</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
+                        <select name="allowance8" class="form-select" required aria-label="select example">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                        <div class="invalid-feedback">Please provide a Allowance8.</div>
+                    </div>
+                </div>
+                <div class="d-flex flex-wrap">
+                    <div class="form-check form-check-md d-flex align-items-center">
+                        <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md"
+                            autocomplete="off" checked />
+                        <label class="form-check-label" for="checkebox-md">is Active</label>
+                    </div>
+                </div>
+            </div>
+            <!-- Submit Buttons -->
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+
+
+    </div>
+
+
+
+
+
+
+    </form>
+
+</div>
 </div>
 <!-- /Add Contact -->
 
 
+<!-- /Edit Contact -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
-  <div class="offcanvas-header border-bottom">
-      <h5 class="fw-semibold">Edit Contact</h5>
-      <button type="button"
-          class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
-          data-bs-dismiss="offcanvas" aria-label="Close">
-          <i class="ti ti-x"></i>
-      </button>
-  </div>
-  <div class="offcanvas-body">
-      <form action="{% url 'grade_master' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="grade_id" id="grade_id" />
-        <div class="row">
-          <!-- Your input fields here --> <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Grade Code <span class="text-danger">*</span></label>
-              <input type="text" name="grade_code" class="form-control" autocomplete="off" required />
+    <div class="offcanvas-header border-bottom">
+        <h5 class="fw-semibold">Edit Contact</h5>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'grade_master' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="grade_id" id="grade_id" />
+            <div class="row">
+                <!-- Your input fields here -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Grade Code <span class="text-danger">*</span></label>
+                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Grade Desc <span class="text-danger">*</span></label>
+                        <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
+                        <select name="nationality" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="American">American</option>
+                            <option value="Canadian">Canadian</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Attendance Days <span class="text-danger">*</span></label>
+                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Leave Days <span class="text-danger">*</span></label>
+                        <input type="number" name="leave_days" class="form-control" autocomplete="off" required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passage Amount Adult <span class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
+                            required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passage Amount Child <span class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
+                            required />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 1 <span class="text-danger">*</span></label>
+                        <select name="allowance1" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
+                        <select name="allowance2" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
+                        <select name="allowance3" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
+                        <select name="allowance4" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
+                        <select name="allowance5" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
+                        <select name="allowance6" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
+                        <select name="allowance7" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
+                        <select name="allowance8" class="form-control select2">
+                            <option value="">Choose</option>
+                            <option value="Available">Available</option>
+                            <option value="Not Available">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-check-md d-flex align-items-center">
+                        <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md"
+                            autocomplete="off" />
+                        <label class="form-check-label" for="checkebox-md">is Active</label>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Grade Desc <span class="text-danger">*</span></label>
-              <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
             </div>
-          </div>
-          <div class="col-md-12">
-            <div class="mb-2">
-              <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
-              <select name="nationality" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="American">American</option>
-                <option value="Canadian">Canadian</option>
-              </select>
-            </div>
-          </div>
-         
-          <!-- Attendance and Leave Days -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Attendance Days <span class="text-danger">*</span></label>
-              <input type="number" name="attendance_days" class="form-control" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Leave Days <span class="text-danger">*</span></label>
-              <input type="number" name="leave_days" class="form-control" autocomplete="off" required />
-            </div>
-          </div>
-      
-          <!-- Passage Amount -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Passage Amount Adult <span class="text-danger">*</span></label>
-              <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off" required />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Passage Amount Child <span class="text-danger">*</span></label>
-              <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" required />
-            </div>
-          </div>
-      
-          <!-- Allowances -->
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 1 <span class="text-danger">*</span></label>
-              <select name="allowance1" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
-              <select name="allowance2" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
-              <select name="allowance3" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
-              <select name="allowance4" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
-              <select name="allowance5" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
-              <select name="allowance6" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
-              <select name="allowance7" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="mb-2">
-              <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
-              <select name="allowance8" class="form-control select2">
-                <option value="">Choose</option>
-                <option value="Available">Available</option>
-                <option value="Not Available">Not Available</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-check form-check-md d-flex align-items-center">
-            <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md" autocomplete="off" />
-            <label class="form-check-label" for="checkebox-md">is Active</label>
-        </div>
-
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </form>
-  </div>
+        </form>
+    </div>
 </div>
 <!-- /Edit Contact -->
+
+
 <!-- Delete Project -->
 <div class="modal fade" id="delete_project" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-          <div class="modal-body">
-              <div class="text-center">
-                  <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
-                      <i class="ti ti-trash-x fs-36 text-danger"></i>
-                  </div>
-                  <h4 class="mb-2">Remove Project?</h4>
-                  <p class="mb-0">Are you sure you want to remove <br> the project you selected.</p>
-                  <form id="deleteForm" method="post">
-                      {% csrf_token %}
-                      <input type="hidden" id="deleteGradeId" name="delete_grade_id">
-                      <input type="hidden" id="deleteCompCode" name="delete_comp_code" value="1000">
-                  </form>
-                  <div class="d-flex align-items-center justify-content-center mt-4">
-                      <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
-                      <a href="#" class="btn btn-danger" id="confirmDelete">Yes, Delete it</a>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-3">Remove Project?</h4>
+                    <p class="mb-0">Are you sure you want to remove <br> the project you selected.</p>
+                    <form id="deleteForm" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="deleteGradeId" name="delete_grade_id">
+                        <input type="hidden" id="deleteCompCode" name="delete_comp_code" value="1000">
+                    </form>
+                    <div class="d-flex align-items-center justify-content-center mt-4">
+                        <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                        <a href="#" class="btn btn-danger" id="confirmDelete">Yes, Delete it</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<!-- Delete Project -->
+
+
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      var deleteButtons = document.querySelectorAll(".delete-button");
-      deleteButtons.forEach(function(button) {
-          button.addEventListener("click", function() {
-              var gradeId = this.closest("tr").dataset.id;
-              document.getElementById("deleteGradeId").value = gradeId;
-          });
-      });
+    document.addEventListener("DOMContentLoaded", function () {
+        var deleteButtons = document.querySelectorAll(".delete-button");
+        deleteButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                var gradeId = this.closest("tr").dataset.id;
+                document.getElementById("deleteGradeId").value = gradeId;
+            });
+        });
 
-      document.getElementById("confirmDelete").addEventListener("click", function() {
-          document.getElementById("deleteForm").submit();
-      });
-  });
-</script>
-
-
-<!-- /Delete Project -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const editButtons = document.querySelectorAll('.edit-button');
-
-    editButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const row = button.closest('tr');
-
-            document.querySelector('#grade_id').value = row.getAttribute('data-id');
-            document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
-            document.querySelector('#offcanvas_edit input[name="grade_desc"]').value = row.getAttribute('data-desc');
-            document.querySelector('#offcanvas_edit select[name="nationality"]').value = row.getAttribute('data-nationality');
-            document.querySelector('#offcanvas_edit input[name="attendance_days"]').value = row.getAttribute('data-attendance');
-            document.querySelector('#offcanvas_edit input[name="leave_days"]').value = row.getAttribute('data-leave');
-            document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult');
-            document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child');
-
-            // Populate dropdowns for allowances
-            document.querySelector('#offcanvas_edit select[name="allowance1"]').value = row.getAttribute('data-allowance1');
-            document.querySelector('#offcanvas_edit select[name="allowance2"]').value = row.getAttribute('data-allowance2');
-            document.querySelector('#offcanvas_edit select[name="allowance3"]').value = row.getAttribute('data-allowance3');
-            document.querySelector('#offcanvas_edit select[name="allowance4"]').value = row.getAttribute('data-allowance4');
-            document.querySelector('#offcanvas_edit select[name="allowance5"]').value = row.getAttribute('data-allowance5');
-            document.querySelector('#offcanvas_edit select[name="allowance6"]').value = row.getAttribute('data-allowance6');
-            document.querySelector('#offcanvas_edit select[name="allowance7"]').value = row.getAttribute('data-allowance7');
-            document.querySelector('#offcanvas_edit select[name="allowance8"]').value = row.getAttribute('data-allowance8');
-
-            // Check if is_active is true and set checkbox accordingly
-            const isActive = row.getAttribute('data-is-active') === 'Y';
-            document.querySelector('#offcanvas_edit input[name="is_active"]').checked = isActive;
-
-            // Trigger change event to refresh select2
-            $('#offcanvas_edit .select2').trigger('change');
+        document.getElementById("confirmDelete").addEventListener("click", function () {
+            document.getElementById("deleteForm").submit();
         });
     });
-
-    // Initialize select2 on document ready and reinitialize on modal show
-    $(document).ready(function() {
-        $('.select2').select2();
-    });
-
-    $('#offcanvas_edit').on('shown.bs.offcanvas', function () {
-        $('.select2').select2();
-    });
-});
 </script>
 
-  
-  
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-button');
 
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const row = button.closest('tr');
 
+                document.querySelector('#grade_id').value = row.getAttribute('data-id');
+                document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
+                document.querySelector('#offcanvas_edit input[name="grade_desc"]').value = row.getAttribute('data-desc');
+                document.querySelector('#offcanvas_edit select[name="nationality"]').value = row.getAttribute('data-nationality');
+                document.querySelector('#offcanvas_edit input[name="attendance_days"]').value = row.getAttribute('data-attendance');
+                document.querySelector('#offcanvas_edit input[name="leave_days"]').value = row.getAttribute('data-leave');
+                document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult');
+                document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child');
 
+                // Populate dropdowns for allowances
+                document.querySelector('#offcanvas_edit select[name="allowance1"]').value = row.getAttribute('data-allowance1');
+                document.querySelector('#offcanvas_edit select[name="allowance2"]').value = row.getAttribute('data-allowance2');
+                document.querySelector('#offcanvas_edit select[name="allowance3"]').value = row.getAttribute('data-allowance3');
+                document.querySelector('#offcanvas_edit select[name="allowance4"]').value = row.getAttribute('data-allowance4');
+                document.querySelector('#offcanvas_edit select[name="allowance5"]').value = row.getAttribute('data-allowance5');
+                document.querySelector('#offcanvas_edit select[name="allowance6"]').value = row.getAttribute('data-allowance6');
+                document.querySelector('#offcanvas_edit select[name="allowance7"]').value = row.getAttribute('data-allowance7');
+                document.querySelector('#offcanvas_edit select[name="allowance8"]').value = row.getAttribute('data-allowance8');
+
+                // Check if is_active is true and set checkbox accordingly
+                const isActive = row.getAttribute('data-is-active') === 'Y';
+                document.querySelector('#offcanvas_edit input[name="is_active"]').checked = isActive;
+
+                // Trigger change event to refresh select2
+                $('#offcanvas_edit .select2').trigger('change');
+            });
+        });
+
+        // Initialize select2 on document ready and reinitialize on modal show
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+
+        $('#offcanvas_edit').on('shown.bs.offcanvas', function () {
+            $('.select2').select2();
+        });
+    });
+</script>
