@@ -913,7 +913,7 @@ class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/list.html"
 
     def get(self, request):
-        datas = GradeMaster.objects.filter(comp_code="1000", is_active="Y")
+        datas = GradeMaster.objects.filter(comp_code="1000")
         return render(request, self.template_name, {'datas': datas})
 
     def post(self, request):

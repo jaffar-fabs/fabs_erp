@@ -575,9 +575,9 @@
                                     <th>Nationality</th>
                                     <th>Attendance Days</th>
                                     <th>Leave Days</th>
-                                    {% comment %} <th>Status</th> {% endcomment %}
-                                    <th>Passage Amount Adult</th>
-                                    <th>Passage Amount Child </th>
+                                    <th>Status</th>
+                                    {% comment %} <th>Passage Amount Adult</th> {% endcomment %}
+                                    {% comment %} <th>Passage Amount Child </th> {% endcomment %}
                                     <th class="no-sort">Action</th>
                                     
                                 </tr>
@@ -598,9 +598,14 @@
                                     <td>{{record.nationality}}</td>
                                     <td>{{record.attendance_days}}</td>
                                     <td>{{record.leave_days}}</td>
-                                    {% comment %} <td>{{record.is_active}}</td> {% endcomment %}
-                                    <td>{{record.passage_amount_adult}}</td>
-                                    <td>{{record.passage_amount_child}}</td>
+                                    <td>  
+                                        <span class="badge badge-pill badge-status 
+                                        {% if record.is_active == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if record.is_active == 'Y' %} Active {% else %} Inactive {% endif %}
+                                        </span>
+                                    </td>
+                                    {% comment %} <td>{{record.passage_amount_adult}}</td> {% endcomment %}
+                                    {% comment %} <td>{{record.passage_amount_child}}</td> {% endcomment %}
                                     <td>
                                         <div class="dropdown table-action">
                                             <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
@@ -613,9 +618,6 @@
                                                 <a class="dropdown-item delete-button" href="#" data-bs-toggle="modal" data-bs-target="#delete_project">
                                                     <i class="ti ti-trash text-danger"></i> Delete
                                                 </a>                                                
-                                                {% comment %} <a class="dropdown-item" href="#">
-                                                    <i class="ti ti-eye text-blue-light"></i> Preview
-                                                </a> {% endcomment %}
                                             </div>
                                         </div>
                                     </td>
