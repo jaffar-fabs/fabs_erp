@@ -558,6 +558,7 @@
                                                     class="checkmarks"></span></label>
                                         </th>
                                         {% comment %} <th></th> {% endcomment %}
+                                        <th>Project Code</th>
                                         <th>Name</th>
                                         <th>Client</th>
                                         {% comment %} <th>Priority</th> {% endcomment %}
@@ -582,10 +583,11 @@
                                         </td> {% endcomment %}
                                         <td>
                                             <h2 class="d-flex align-items-center">
-                                                {% comment %} <a href="#" class="avatar avatar-sm border me-2">
-                                                    <img class="w-auto h-auto" src="{% static record.pro_img %}"
-                                                        alt="User Image" />
-                                                </a> {% endcomment %}
+                                                <a href="#">{{record.prj_code}}</a>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <h2 class="d-flex align-items-center">
                                                 <a href="#">{{record.prj_name}}</a>
                                             </h2>
                                         </td>
@@ -688,8 +690,8 @@
                 $("#prj_name").val(response.prj_name);
                 $("#project_description").val(response.project_description);
                 $("#project_value").val(response.project_value);
-                $("#timeline_from").val(response.timeline_from);
-                $("#timeline_to").val(response.timeline_to);
+                $("#from_date").val(response.timeline_from);
+                $("#due_date").val(response.timeline_to);
                 $("#prj_city").val(response.prj_city).trigger("change"); 
                 $("#comp_code").val(response.comp_code);
                 $("#project_id").val(response.project_id);
@@ -698,7 +700,7 @@
                 $("#sub_contractor").val(response.sub_contractor).trigger("change");
                 $("#consultant").val(response.consultant).trigger("change");
                 $("#prj_city").val(response.prj_city).trigger("change");
-                $("#error_message").val(response.error);
+                <!-- $("#error_message").val(response.error); -->
 
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);

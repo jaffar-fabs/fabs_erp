@@ -14,24 +14,30 @@
     <div class="offcanvas-body">
         <form action="{% url 'project' %}" method="POST" onsubmit="return checkProjectCode(event)">
             {% csrf_token %}
+
             <div class="row">
+                <!-- Project Code -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Code <span class="text-danger"
-                                id="error_message"></span></label>
+                        <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
                         <input class="form-control" id="project_code" name="project_code" type="text" required>
+                        <span id="project_code_error" class="text-danger"></span> <!-- Error message here -->
                     </div>
                 </div>
+
+                <!-- Project Name -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project Name <span class="text-danger">*</span></label>
                         <input type="text" name="project_name" class="form-control" required>
                     </div>
                 </div>
+
+                <!-- Project Type -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
-                        <select class="select form-control" name="project_type" required>
+                        <select class="form-select" select name="project_type" required>
                             <option value=''>Select</option>
                             <option>2</option>
                             <option>3</option>
@@ -39,16 +45,20 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Project Value -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
                         <input class="form-control" name="project_value" type="text" required>
                     </div>
                 </div>
+
+                <!-- Main Contractor -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
-                        <select class="select form-control" name="main_contractor" required>
+                        <select class="form-select" name="main_contractor" required>
                             <option value="">Select</option>
                             <option>NovaWave LLC</option>
                             <option>Silver Hawk</option>
@@ -56,10 +66,12 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Sub Contractor -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Sub Contractor <span class="text-danger">*</span></label>
-                        <select class="select form-control" name="sub_contractor" required>
+                        <select class="form-select" name="sub_contractor" required>
                             <option value="">Select</option>
                             <option>NovaWave LLC</option>
                             <option>Silver Hawk</option>
@@ -67,24 +79,25 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Start Date -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Start Date <span class="text-danger">*</span></label>
-                        <div class="icon-form">
-                            <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
-                            <input type="date" class="form-control" name="timeline_from" required>
-                        </div>
+                        <input type="date" class="form-control" name="timeline_from" id="timeline_from" required>
                     </div>
                 </div>
+
+                <!-- Due Date -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Due Date <span class="text-danger">*</span></label>
-                        <div class="icon-form">
-                            <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
-                            <input type="date" class="form-control" name="timeline_to" required>
-                        </div>
+                        <input type="date" class="form-control" name="timeline_to" id="timeline_to" required>
+                        <span id="date_error" class="text-danger"></span> <!-- Error message here -->
                     </div>
                 </div>
+
+                <!-- Consultant -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
@@ -97,10 +110,12 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Project City -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="select form-control" name="prj_city" required>
+                        <select class="form-select" name="prj_city" required>
                             <option value=''>Select</option>
                             <option>Abu Dhabi</option>
                             <option>Sharjah</option>
@@ -108,14 +123,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6 d-flex justify-content-center align-items-center">
-                    <div class="mb-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" for="is_active">Active</label>
-                        <input type="hidden" name="is_active" value="false">
-                        <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active"
-                            checked>
-                    </div>
-                </div>
+
+
+
+                <!-- Description -->
                 <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Description <span class="text-danger">*</span></label>
@@ -123,10 +134,19 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex align-items-center justify-content-end">
-                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-                <button type="submit" class="btn btn-primary edit-project-btn" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvas_edit">Create</button>
+            <!-- Active Status -->
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="col-form-label me-2" for="is_active">Active</label>
+                    <input type="hidden" name="is_active" value="false">
+                    <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active"
+                        checked>
+                </div>
+            </div>
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
             </div>
         </form>
     </div>
@@ -145,7 +165,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form action="" method="POST">
+        <form action="" id="editProjectForm"  method="POST">
             {% csrf_token %}
             {% comment %} <input type="hidden" name="_method" value="PUT"> {% endcomment %}
             <input type="hidden" name="project_id" id="project_id">
@@ -213,17 +233,20 @@
                         <label class="col-form-label">Start Date <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
-                            <input type="date" class="form-control" id="timeline_from" name="timeline_from" required>
+                            <input type="date" class="form-control" id="from_date" name="timeline_from" required>
                         </div>
+                        <span class="text-danger" id="from_date_error"></span> <!-- Error message -->
                     </div>
                 </div>
+                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Due Date <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
-                            <input type="date" class="form-control" id="timeline_to" name="timeline_to" required>
+                            <input type="date" class="form-control" id="due_date" name="timeline_to" required>
                         </div>
+                        <span class="text-danger" id="due_date_error"></span> <!-- Error message -->
                     </div>
                 </div>
 
@@ -244,11 +267,11 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="multiple-img form-control" id="prj_city" name="prj_city" required>
+                        <select class="form-select" name="prj_city" id="prj_city" required>
                             <option value=''>Select</option>
-                            <option value='2'>2</option>
-                            <option value='3'>3</option>
-                            <option value='4'>4</option>
+                            <option value="Abu Dhabi">Abu Dhabi</option>
+                            <option value="Sharjah">Sharjah</option>
+                            <option value="Umm Al Qaiwain">Umm Al Qaiwain</option>
                         </select>
                     </div>
                 </div>
@@ -369,3 +392,131 @@
 <!-- /Add New View -->
 
 
+
+<script>
+    function checkProjectCode(event) {
+        event.preventDefault(); 
+
+        let form = event.target;
+        let projectCode = document.getElementById("project_code").value;
+        let startDate = document.getElementById("timeline_from").value;
+        let dueDate = document.getElementById("timeline_to").value;
+        let projectCodeError = document.getElementById("project_code_error");
+        let dateError = document.getElementById("date_error");
+
+        projectCodeError.innerText = ""; 
+        dateError.innerText = "";
+
+        let formValid = true;
+
+        // Validate date fields
+        if (new Date(dueDate) <= new Date(startDate)) {
+            dateError.innerText = "Due Date must be greater than Start Date.";
+            formValid = false;
+        }
+        fetch("{% url 'check_project_code' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams({project_code: projectCode})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    projectCodeError.innerText = "Project Code already exists. Please enter a different one.";
+                    formValid = false;
+                }
+                if (formValid) {
+                    form.submit();
+                }
+            })
+            .catch(error => {
+                console.error("Error checking project code:", error);
+            });
+
+        return false; 
+    }
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("projectForm").addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent form submission
+    
+                let form = event.target;
+                let startDate = document.getElementById("from_date").value;
+                let dueDate = document.getElementById("due_date").value;
+                let startDateError = document.getElementById("from_date_error");
+                let dueDateError = document.getElementById("due_date_error");
+    
+                // Clear old errors
+                startDateError.innerText = "";
+                dueDateError.innerText = "";
+    
+                let formValid = true; // Assume form is valid
+    
+                // Validate Start and Due Date
+                if (!startDate) {
+                    startDateError.innerText = "Start Date is required.";
+                    formValid = false;
+                }
+                if (!dueDate) {
+                    dueDateError.innerText = "Due Date is required.";
+                    formValid = false;
+                }
+                if (new Date(dueDate) <= new Date(startDate)) {
+                    dueDateError.innerText = "Due Date must be after Start Date.";
+                    formValid = false;
+                }
+    
+                // If no errors, submit the form
+                if (formValid) {
+                    form.submit();
+                }
+    
+                return false; // Keep modal open if there are errors
+            });
+        });
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("editProjectForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent default submission
+    
+            let startDate = document.getElementById("from_date").value;
+            let dueDate = document.getElementById("due_date").value;
+            let startDateError = document.getElementById("from_date_error");
+            let dueDateError = document.getElementById("due_date_error");
+    
+            // Clear previous errors
+            startDateError.innerText = "";
+            dueDateError.innerText = "";
+    
+            let isValid = true; // Track form validity
+    
+            // Check if dates are filled
+            if (!startDate) {
+                startDateError.innerText = "Start Date is required.";
+                isValid = false;
+            }
+            if (!dueDate) {
+                dueDateError.innerText = "Due Date is required.";
+                isValid = false;
+            }
+            // Ensure Due Date is after Start Date
+            if (startDate && dueDate && new Date(dueDate) <= new Date(startDate)) {
+                dueDateError.innerText = "Due Date must be after Start Date.";
+                isValid = false;
+            }
+    
+            // Submit only if there are no errors
+            if (isValid) {
+                this.submit();
+            }
+        });
+    });
+    </script>

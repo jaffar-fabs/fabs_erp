@@ -660,12 +660,12 @@ def project(request):
 
             else:
                 prj_code=request.POST.get("project_code")
-                if projectMatster.objects.filter(prj_code=prj_code).exists():
-                    return JsonResponse(
-                     {
-                         "error": "Project Code already exists"
-                         }
-                    )
+                # if projectMatster.objects.filter(prj_code=prj_code).exists():
+                #     return JsonResponse(
+                #      {
+                #          "error": "Project Code already exists"
+                #          }
+                #     )
                 project = projectMatster(
                 prj_code=request.POST.get("project_code"),
                 prj_name=request.POST.get("project_name"),
@@ -689,6 +689,19 @@ def project(request):
     # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
     projects = projectMatster.objects.all().order_by('-created_on')
     return render(request, template_name, {'projects': projects})
+
+
+def check_project_code(request):
+    """API to check if project code already exists."""
+    if request.method == "POST":
+        project_code = request.POST.get("project_code")
+
+        if projectMatster.objects.filter(prj_code=project_code).exists():
+            return JsonResponse({"exists": True})  # Project code exists
+        else:
+            return JsonResponse({"exists": False})  # Project code is unique
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 def delete_project(request):

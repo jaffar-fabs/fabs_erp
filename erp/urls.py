@@ -56,8 +56,13 @@ urlpatterns = [
     #path ('', auth_views.Login.as_view(), name='login'),
     path('payroll/paycyle_master',payroll_views.Paycycle.as_view(),name = 'payroll_paycycle_master'),
     path('paycycle/delete/<int:process_cycle_id>/', payroll_views.Paycycle.as_view(), name='delete_paycycle'), 
+    #project Master
+
+
     path('payroll/projects/', projects.project, name='project'),
     path("delete_project/", projects.delete_project, name="delete_project"),
+    path('check-project-code/', projects.check_project_code, name='check_project_code'),
+
     path('payroll/code_master_list/', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
     path('payroll/grade_master/', GradeMasterList.as_view(), name='grade_master'), 
 ]
