@@ -11,7 +11,296 @@ from django.utils.decorators import method_decorator
 from .models import CodeMaster
 from .models import SeedModel
 from django.contrib import messages
-from .models import Menu, RoleMenu
+from .models import Menu, RoleMenu, Employee
+
+
+def employee_master(request):
+    employees = Employee.objects.all()
+    return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employees})
+
+def update_employee(request):
+    if request.method == "POST":
+        # Extract data from the form
+        employee_id = request.POST.get("employee_id")
+        earn_deduct_type = request.POST.get("earn_deduct_type")
+        earn_deduct_code = request.POST.get("earn_deduct_code")
+        payprocess_cycle = request.POST.get("payprocess_cycle")
+        payprocess_month = request.POST.get("payprocess_month")
+        comp_code = request.POST.get("comp_code")
+        emp_code = request.POST.get("emp_code")
+        labour_id = request.POST.get("labour_id")
+        labour_bank_acc_no = request.POST.get("labour_bank_acc_no")
+        emp_name = request.POST.get("emp_name")
+        father_name = request.POST.get("father_name")
+        mother_name = request.POST.get("mother_name")
+        spouse_name = request.POST.get("spouse_name")
+        emp_sex = request.POST.get("emp_sex")
+        emp_marital_status = request.POST.get("emp_marital_status")
+        emp_status = request.POST.get("emp_status")
+        emp_type = request.POST.get("emp_type")
+        dep_code = request.POST.get("dep_code")
+        prj_code = request.POST.get("prj_code")
+        desig_code = request.POST.get("desig_code")
+        grade_code = request.POST.get("grade_code")
+        basic_pay = request.POST.get("basic_pay")
+        allowance = request.POST.get("allowance")
+        dob = request.POST.get("dob")
+        date_of_join = request.POST.get("date_of_join")
+        date_of_rejoin = request.POST.get("date_of_rejoin")
+        process_cycle = request.POST.get("process_cycle")
+        ot_type = request.POST.get("ot_type")
+        addrline1 = request.POST.get("addrline1")
+        addrline2 = request.POST.get("addrline2")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        phone_no = request.POST.get("phone_no")
+        country_code = request.POST.get("country_code")
+        r_addrline1 = request.POST.get("r_addrline1")
+        r_addrline2 = request.POST.get("r_addrline2")
+        r_city = request.POST.get("r_city")
+        r_state = request.POST.get("r_state")
+        r_phone_no = request.POST.get("r_phone_no")
+        r_country_code = request.POST.get("r_country_code")
+        emp_bank = request.POST.get("emp_bank")
+        emp_bank_branch = request.POST.get("emp_bank_branch")
+        emp_acc_no = request.POST.get("emp_acc_no")
+        bank_loan = request.POST.get("bank_loan")
+        atten_type = request.POST.get("atten_type")
+        pay_process_flag = request.POST.get("pay_process_flag")
+        emp_height = request.POST.get("emp_height")
+        emp_weight = request.POST.get("emp_weight")
+        depen_count = request.POST.get("depen_count")
+        child_count = request.POST.get("child_count")
+        passport_no = request.POST.get("passport_no")
+        passport_issuedat = request.POST.get("passport_issuedat")
+        passport_validity = request.POST.get("passport_validity")
+        is_active = request.POST.get("is_active") == "on"
+        instance_id = request.POST.get("instance_id")
+        created_by = 1  # Example user ID
+        modified_by = 1  # Example user ID
+        nationality = request.POST.get("nationality")
+        family_status = request.POST.get("family_status")
+        qualification = request.POST.get("qualification")
+        religion = request.POST.get("religion")
+        amounts = request.POST.get("amounts")
+        email1 = request.POST.get("email1")
+        email2 = request.POST.get("email2")
+        locn_code = request.POST.get("locn_code")
+
+        # Create the Employee object
+        Employee.objects.create(
+            employee_id=employee_id,
+            earn_deduct_type=earn_deduct_type,
+            earn_deduct_code=earn_deduct_code,
+            payprocess_cycle=payprocess_cycle,
+            payprocess_month=payprocess_month,
+            comp_code=comp_code,
+            emp_code=emp_code,
+            labour_id=labour_id,
+            labour_bank_acc_no=labour_bank_acc_no,
+            emp_name=emp_name,
+            father_name=father_name,
+            mother_name=mother_name,
+            spouse_name=spouse_name,
+            emp_sex=emp_sex,
+            emp_marital_status=emp_marital_status,
+            emp_status=emp_status,
+            emp_type=emp_type,
+            dep_code=dep_code,
+            prj_code=prj_code,
+            desig_code=desig_code,
+            grade_code=grade_code,
+            basic_pay=basic_pay,
+            allowance=allowance,
+            dob=dob,
+            date_of_join=date_of_join,
+            date_of_rejoin=date_of_rejoin,
+            process_cycle=process_cycle,
+            ot_type=ot_type,
+            addrline1=addrline1,
+            addrline2=addrline2,
+            city=city,
+            state=state,
+            phone_no=phone_no,
+            country_code=country_code,
+            r_addrline1=r_addrline1,
+            r_addrline2=r_addrline2,
+            r_city=r_city,
+            r_state=r_state,
+            r_phone_no=r_phone_no,
+            emp_bank=emp_bank,
+            emp_bank_branch=emp_bank_branch,
+            emp_acc_no=1,
+            bank_loan=bank_loan,
+            atten_type=atten_type,
+            pay_process_flag=1,
+            emp_height=emp_height,
+            emp_weight=emp_weight,
+            depen_count=depen_count,
+            child_count=child_count,
+            passport_no=passport_no,
+            passport_issuedat=passport_issuedat,
+            passport_validity=passport_validity,
+            is_active=is_active,
+            instance_id=1,
+            created_by=created_by,
+            modified_by=modified_by,
+            nationality=nationality,
+            family_status=family_status,
+            qualification=qualification,
+            religion=religion,
+            amounts=amounts,
+            email1=email1,
+            email2=email2,
+            locn_code=locn_code
+        )
+        return redirect('/employee')  # Redirect to the same page after creation
+
+    # Fetch all employee data for display
+    employee_data = Employee.objects.all()
+    return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employee_data': employee_data})
+
+def create_employee(request):
+    if request.method == "POST":
+        # Extract data from the form
+        employee_id = request.POST.get("employee_id")
+        earn_deduct_type = request.POST.get("earn_deduct_type")
+        earn_deduct_code = request.POST.get("earn_deduct_code")
+        payprocess_cycle = request.POST.get("payprocess_cycle")
+        payprocess_month = request.POST.get("payprocess_month")
+        comp_code = request.POST.get("comp_code")
+        emp_code = request.POST.get("emp_code")
+        labour_id = request.POST.get("labour_id")
+        labour_bank_acc_no = request.POST.get("labour_bank_acc_no")
+        emp_name = request.POST.get("emp_name")
+        father_name = request.POST.get("father_name")
+        mother_name = request.POST.get("mother_name")
+        spouse_name = request.POST.get("spouse_name")
+        emp_sex = request.POST.get("emp_sex")
+        emp_marital_status = request.POST.get("emp_marital_status")
+        emp_status = request.POST.get("emp_status")
+        emp_type = request.POST.get("emp_type")
+        dep_code = request.POST.get("dep_code")
+        prj_code = request.POST.get("prj_code")
+        desig_code = request.POST.get("desig_code")
+        grade_code = request.POST.get("grade_code")
+        basic_pay = request.POST.get("basic_pay")
+        allowance = request.POST.get("allowance")
+        dob = request.POST.get("dob")
+        date_of_join = request.POST.get("date_of_join")
+        date_of_rejoin = request.POST.get("date_of_rejoin")
+        process_cycle = request.POST.get("process_cycle")
+        ot_type = request.POST.get("ot_type")
+        addrline1 = request.POST.get("addrline1")
+        addrline2 = request.POST.get("addrline2")
+        city = request.POST.get("city")
+        state = request.POST.get("state")
+        phone_no = request.POST.get("phone_no")
+        country_code = request.POST.get("country_code")
+        r_addrline1 = request.POST.get("r_addrline1")
+        r_addrline2 = request.POST.get("r_addrline2")
+        r_city = request.POST.get("r_city")
+        r_state = request.POST.get("r_state")
+        r_phone_no = request.POST.get("r_phone_no")
+        r_country_code = request.POST.get("r_country_code")
+        emp_bank = request.POST.get("emp_bank")
+        emp_bank_branch = request.POST.get("emp_bank_branch")
+        emp_acc_no = request.POST.get("emp_acc_no")
+        bank_loan = request.POST.get("bank_loan")
+        atten_type = request.POST.get("atten_type")
+        pay_process_flag = request.POST.get("pay_process_flag")
+        emp_height = request.POST.get("emp_height")
+        emp_weight = request.POST.get("emp_weight")
+        depen_count = request.POST.get("depen_count")
+        child_count = request.POST.get("child_count")
+        passport_no = request.POST.get("passport_no")
+        passport_issuedat = request.POST.get("passport_issuedat")
+        passport_validity = request.POST.get("passport_validity")
+        is_active = request.POST.get("is_active") == "on"
+        instance_id = request.POST.get("instance_id")
+        created_by = 1  # Example user ID
+        modified_by = 1  # Example user ID
+        nationality = request.POST.get("nationality")
+        family_status = request.POST.get("family_status")
+        qualification = request.POST.get("qualification")
+        religion = request.POST.get("religion")
+        amounts = request.POST.get("amounts")
+        email1 = request.POST.get("email1")
+        email2 = request.POST.get("email2")
+        locn_code = request.POST.get("locn_code")
+
+        # Create the Employee object
+        Employee.objects.create(
+            employee_id=employee_id,
+            earn_deduct_type=earn_deduct_type,
+            earn_deduct_code=earn_deduct_code,
+            payprocess_cycle=payprocess_cycle,
+            payprocess_month=payprocess_month,
+            comp_code=comp_code,
+            emp_code=emp_code,
+            labour_id=labour_id,
+            labour_bank_acc_no=labour_bank_acc_no,
+            emp_name=emp_name,
+            father_name=father_name,
+            mother_name=mother_name,
+            spouse_name=spouse_name,
+            emp_sex=emp_sex,
+            emp_marital_status=emp_marital_status,
+            emp_status=emp_status,
+            emp_type=emp_type,
+            dep_code=dep_code,
+            prj_code=prj_code,
+            desig_code=desig_code,
+            grade_code=grade_code,
+            basic_pay=basic_pay,
+            allowance=allowance,
+            dob=dob,
+            date_of_join=date_of_join,
+            date_of_rejoin=date_of_rejoin,
+            process_cycle=process_cycle,
+            ot_type=ot_type,
+            addrline1=addrline1,
+            addrline2=addrline2,
+            city=city,
+            state=state,
+            phone_no=phone_no,
+            country_code=country_code,
+            r_addrline1=r_addrline1,
+            r_addrline2=r_addrline2,
+            r_city=r_city,
+            r_state=r_state,
+            r_phone_no=r_phone_no,
+            emp_bank=emp_bank,
+            emp_bank_branch=emp_bank_branch,
+            emp_acc_no=1,
+            bank_loan=bank_loan,
+            atten_type=atten_type,
+            pay_process_flag=1,
+            emp_height=emp_height,
+            emp_weight=emp_weight,
+            depen_count=depen_count,
+            child_count=child_count,
+            passport_no=passport_no,
+            passport_issuedat=passport_issuedat,
+            passport_validity=passport_validity,
+            is_active=is_active,
+            instance_id=1,
+            created_by=created_by,
+            modified_by=modified_by,
+            nationality=nationality,
+            family_status=family_status,
+            qualification=qualification,
+            religion=religion,
+            amounts=amounts,
+            email1=email1,
+            email2=email2,
+            locn_code=locn_code
+        )
+        return redirect('/employee')  # Redirect to the same page after creation
+
+    # Fetch all employee data for display
+    employee_data = Employee.objects.all()
+    return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employee_data': employee_data})
 
 def index(request):
     deals_dashboard = [
@@ -72,7 +361,7 @@ def my_login_view(request):
             request.session["role_id"] = role_id  
 
             messages.success(request, "Login successful!")
-            return redirect("/index") 
+            return redirect("/index",dashboard_view(request)) 
         elif username == "user" and password == "12345":
             role = "Programmer"
             role_id = 2
@@ -80,21 +369,15 @@ def my_login_view(request):
             request.session["role"] = role  
             request.session["role_id"] = role_id 
             messages.success(request, "Login successful!")
-            return redirect("/index") 
+            return redirect("/index",dashboard_view(request)) 
         else:
             messages.error(request, "Invalid username or password.")
 
         return render(request, "auth/login.html") 
 
 def dashboard_view(request):
-    role_id = request.session.get("role_id")
-
-    # Fetch menu items based on the role
-    menu = RoleMenu.objects.filter(role_id=role_id)
-
-    menu_items = Menu.objects.filter(menu_id=menu.menu_id)
-
-    return render(request, "partials/sidebar.html", {"menu_items": menu_items,"menu":menu}) 
+    menu_data = list(Menu.objects.all())
+    return render(request, 'partials/sidebar.html', {'menu_data': menu_data})
     
 def logout(request):
     request.session.flush()  # Clears all session data

@@ -53,31 +53,31 @@
                 </li>                                       
             </ul>
             {% else %}
-            <ul>
-                {% for parent in parent_menus %}
-                <li class="submenu">
-                    <a href="{% if parent.menu_url %}{{ parent.menu_url }}{% else %}javascript:void(0);{% endif %}" 
-                       class="{% if request.path == parent.menu_url %} active {% endif %}">
-                        <i class="{{ parent.icon_class }}"></i><span>{{ parent.menu_name }}</span><span class="menu-arrow"></span>
-                    </a>
-                    {% with child_menus|dictsort:"menu_id" as child_list %}
-                    {% if child_list %}
+            {% if menu_data %}
+    <ul>
+        {% for menu in menu_data %}
+            <li>{{ menu.screen_name }}</li>  <!-- Adjust based on the fields in your Menu model -->
+        {% endfor %}
+            </ul>
+        {% else %}
+            <p>No menus available.</p>
+        {% endif %}
+
+            <!-- <ul>
+                <li>
+                    <h6 class="submenu-hdr">Main Menu</h6>
                     <ul>
-                        {% for child in child_list %}
-                            {% if child.parent_menu_id == parent.menu_id %}
-                            <li>
-                                <a href="{{ child.menu_url }}" class="{% if request.path == child.menu_url %} active {% endif %}">
-                                    {{ child.menu_name }}
+                        {% for menu in menu_data %}
+                            <li class="submenu">
+                                <a href="javascript:void(0);" class="{% if request.path == '/index' %} active {% endif %}">
+                                    <i class="ti ti-layout-2"></i><span>Dashboard</span><span class="menu-arrow"></span>
                                 </a>
                             </li>
-                            {% endif %}
+                        {% empty %}
+                            <li>No menus available</li>  
                         {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
-                </li>
-                {% endfor %}
-            </ul>            
+                    </ul>                    
+                     -->
             {% endif %}
         </li>
             </ul>
