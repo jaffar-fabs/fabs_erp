@@ -186,9 +186,9 @@ def create_employee(request):
         grade_code = request.POST.get("grade_code")
         basic_pay = request.POST.get("basic_pay")
         allowance = request.POST.get("allowance")
-        dob = request.POST.get("dob")
-        date_of_join = request.POST.get("date_of_join")
-        date_of_rejoin = request.POST.get("date_of_rejoin")
+        dob = request.POST.get("dob") or None
+        date_of_join = request.POST.get("date_of_join") or None
+        date_of_rejoin = request.POST.get("date_of_rejoin") or None
         process_cycle = request.POST.get("process_cycle")
         ot_type = request.POST.get("ot_type")
         addrline1 = request.POST.get("addrline1")
@@ -376,8 +376,17 @@ def my_login_view(request):
         return render(request, "auth/login.html") 
 
 def dashboard_view(request):
-    menu_data = list(Menu.objects.all())
-    return render(request, 'partials/sidebar.html', {'menu_data': menu_data})
+    try:
+        role_id = request.session.get("role_id")
+        menu_ids = RoleMenu.objects.filter(role_id=role_id, view = True).values_list('menu_id', flat=True)
+        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__isnull=True).order_by('display_order').values('menu_id', 'screen_name'))
+        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__isnull=False, parent_menu_id__in=menu_ids).order_by('display_order').values('menu_id', 'screen_name', 'url','parent_menu_id'))
+        response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data }
+    except Exception as e:
+        response_data = {'status': 'error', 'msg': str(e)}
+
+    return JsonResponse(response_data)
+
     
 def logout(request):
     request.session.flush()  # Clears all session data
@@ -824,29 +833,25 @@ class UserMasterCreate(View):
     def post(self, request):
         user_id = request.POST.get('user_id', '').strip()
 
-        
         if not user_id:
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID is required.'})
 
-        
         if request.POST.get("check_availability") == "true":
             if UserMaster.objects.filter(user_id=user_id).exists():
                 return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
             return JsonResponse({'status': 'success', 'message': 'User ID is available.'})
 
-        
         if UserMaster.objects.filter(user_id=user_id).exists():
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
 
         try:
             user = UserMaster(
                 comp_code=1000,
-                user_master_id=request.POST.get('user_master_id'),
                 first_name=request.POST.get('first_name'),
                 last_name=request.POST.get('last_name'),
                 user_id=user_id,
                 password=request.POST.get('password'),
-                dob=request.POST.get('dob'),
+                dob=request.POST.get('dob') or None,  # Make DOB optional
                 email=request.POST.get('email'),
                 gender=request.POST.get('gender'),
                 is_active=request.POST.get('is_active') == 'on',
@@ -864,7 +869,7 @@ class UserMasterCreate(View):
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'field': 'general', 'message': str(e)})
-        
+
 class UserMasterUpdate(View):
     def post(self, request, user_master_id):
         try:
@@ -875,7 +880,7 @@ class UserMasterUpdate(View):
             user.last_name = request.POST.get('last_name')
             user.user_id = request.POST.get('user_id')
             user.password = request.POST.get('password')
-            user.dob = request.POST.get('dob')
+            user.dob = request.POST.get('dob') or None  # Make DOB optional
             user.email = request.POST.get('email')
             user.gender = request.POST.get('gender')
             user.instance_id = request.POST.get('instance_id')
@@ -883,16 +888,16 @@ class UserMasterUpdate(View):
             user.modified_by = request.POST.get('modified_by')
             user.emp_code = request.POST.get('emp_code')
             user.user_paycycles = request.POST.get('user_paycycles')
-            user.is_active = request.POST.get('is_active') == 'on'  # Checkbox handling
+            user.is_active = request.POST.get('is_active') == 'on'
             
-            user.full_clean()  # Validate model fields
+            user.full_clean()
             user.save()
             
             return redirect('user_list')
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
-
+        
 class UserMasterDelete(View):
     def post(self, request, user_master_id):
         

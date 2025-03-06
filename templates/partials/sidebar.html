@@ -53,34 +53,16 @@
                 </li>                                       
             </ul>
             {% else %}
-            {% if menu_data %}
-    <ul>
-        {% for menu in menu_data %}
-            <li>{{ menu.screen_name }}</li>  <!-- Adjust based on the fields in your Menu model -->
-        {% endfor %}
-            </ul>
-        {% else %}
-            <p>No menus available.</p>
-        {% endif %}
 
-            <!-- <ul>
+            <ul>
                 <li>
                     <h6 class="submenu-hdr">Main Menu</h6>
-                    <ul>
-                        {% for menu in menu_data %}
-                            <li class="submenu">
-                                <a href="javascript:void(0);" class="{% if request.path == '/index' %} active {% endif %}">
-                                    <i class="ti ti-layout-2"></i><span>Dashboard</span><span class="menu-arrow"></span>
-                                </a>
-                            </li>
-                        {% empty %}
-                            <li>No menus available</li>  
-                        {% endfor %}
-                    </ul>                    
-                     -->
-            {% endif %}
-        </li>
+                    <ul class="menu">
+                        
+                    </ul>                            
+            </li>
             </ul>
+            {% endif %}
         </div>
     </div>
 </div>

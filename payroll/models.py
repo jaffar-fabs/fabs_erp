@@ -218,7 +218,7 @@ class CodeMaster(models.Model):
 
 class UserMaster(models.Model):
     comp_code = models.CharField(max_length=15)
-    user_master_id = models.BigIntegerField(primary_key=True)
+    user_master_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     user_id = models.CharField(max_length=50, unique=True)
@@ -277,7 +277,7 @@ class Menu(models.Model):
     screen_name = models.CharField(max_length=50, null=True, blank=True)
     url = models.CharField(max_length=100, null=True, blank=True)
     module_id = models.CharField(max_length=50, null=True, blank=True)
-    parent_menu_id = models.CharField(max_length=50, null=True, blank=True)  
+    parent_menu_id = models.BigIntegerField(null=True, blank=True)  
     display_order = models.BigIntegerField()
     instance_id = models.CharField(max_length=50)
     buffer1 = models.CharField(max_length=10, null=True, blank=True)
