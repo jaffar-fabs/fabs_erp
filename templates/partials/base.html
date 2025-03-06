@@ -99,10 +99,9 @@
 
                     $('ul.menu').append(menu_html);
 
-                    // After appending new HTML, apply submenu toggle functionality
+                    
                     $('li.submenu > a').on('click', function () {
                         var $submenu = $(this).next('ul');
-                        // Toggle the submenu (show/hide)
                         $submenu.slideToggle();
                         $(this).parent().toggleClass('active');
                     });
