@@ -23,7 +23,7 @@ from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
 from payroll.views import GradeMasterList
-from payroll.views import my_login_view, logout, employee_master,create_employee,update_employee,dashboard_view
+from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view
 
 
 
@@ -31,8 +31,8 @@ from payroll.views import my_login_view, logout, employee_master,create_employee
 urlpatterns = [
     path('sidebar', dashboard_view),
     path('employee',employee_master,name ='employee_master'),
-    path('create_employee/', create_employee, name='create_employee'),
-    path('update_employee/<int:employee_id>/', update_employee, name='update_employee'),
+    path('create_employee/', save_employee, name='create_employee'),
+    path('update_employee/<int:employee_id>/', save_employee, name='update_employee'),
     path('after-login/', my_login_view, name='after-login'),
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),
