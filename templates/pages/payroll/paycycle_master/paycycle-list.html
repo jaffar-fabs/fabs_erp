@@ -55,7 +55,7 @@
             </div>
             <div class="card-body">
                 <!-- Filter -->
-                <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-4">
+                <!-- <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2 mb-4">
                     <div class="d-flex align-items-center flex-wrap row-gap-2">
                         <div class="dropdown me-2">
                             <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"><i
@@ -551,7 +551,7 @@
                             <a href="#"><i class="ti ti-grid-dots"></i></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- /Filter -->
                 <!-- Contact List -->
                 <div class="table-responsive custom-table">
@@ -564,12 +564,12 @@
                                     </label>
                                 </th>
                                 <th class="no-sort"></th>
-                                <th>Process Cycle</th>
-                                <th>Pay Description</th>
-                                <th>Pay Process Month</th>
+                                <th>Pay Cycle Code</th>
+                                <th>Process Description</th>
+                                <th>Month & Year</th>
                                 <th>From Date</th>
                                 <th>To Date</th>
-                                <th>Attendance</th>
+                                <!-- <th>Attendance</th> -->
                                 <th>Status</th>
                                 <th class="text-end">Action</th>
                             </tr>
@@ -596,14 +596,14 @@
                                         class="badge badge-tag {% if record.Tag == 'Collab' %} badge-success-light {% elif record.Tag == 'Promotion' %} badge-purple-light {% else %} badge-warning-light {% endif %}">
                                         {{ record.date_to|date:"d-M-Y" }}
                                     </span></td>
-                                <td>{{record.attendance_uom}}</td>
+                                <!-- <td>{{record.attendance_uom}}</td> -->
                                 <td>
-                                    <span
-                                        class="badge badge-pill badge-status 
-                                                        {% if record.is_active %} bg-success {% else %} bg-danger {% endif %}">
-                                        {% if record.is_active %} Active {% else %} Inactive {% endif %}
+                                    <span class="badge badge-pill badge-status 
+                                        {% if record.is_active == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if record.is_active == 'Y' %} Active {% else %} Inactive {% endif %}
                                     </span>
                                 </td>
+                                
 
                                 <td>
                                     <div class="dropdown table-action">

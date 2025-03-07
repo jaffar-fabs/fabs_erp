@@ -98,6 +98,7 @@ def __str__(self):
 
 
 
+
 class PaycycleMaster(models.Model):
     comp_code = models.CharField(max_length=20, null=False, blank=False)
     process_cycle_id = models.BigIntegerField(null=False, blank=False)
@@ -107,10 +108,10 @@ class PaycycleMaster(models.Model):
     date_from = models.DateField(null=False, blank=False)
     date_to = models.DateField(null=False, blank=False)
     process_date = models.DateField(null=True, blank=True)
-    process_comp_flag = models.BigIntegerField(null=False, blank=False)
+    process_comp_flag = models.CharField(max_length=20, null=False, blank=False)
     hours_per_day = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
     days_per_month = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    attendance_uom = models.BigIntegerField(null=False, blank=False)
+    attendance_uom = models.CharField(max_length=20, null=False, blank=False)
     instance_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, null=False, blank=False)
     max_mn_hrs = models.IntegerField(null=True, blank=True)
     max_an_hrs = models.IntegerField(null=True, blank=True)
@@ -134,6 +135,7 @@ class PaycycleMaster(models.Model):
     def __str__(self):
         return self.comp_code
     
+
 
 
 #------------------------------------------------------------------------------------------
@@ -277,7 +279,7 @@ class Menu(models.Model):
     screen_name = models.CharField(max_length=50, null=True, blank=True)
     url = models.CharField(max_length=100, null=True, blank=True)
     module_id = models.CharField(max_length=50, null=True, blank=True)
-    parent_menu_id = models.BigIntegerField(null=True, blank=True)  
+    parent_menu_id = models.CharField(null=True, blank=True)  
     display_order = models.BigIntegerField()
     instance_id = models.CharField(max_length=50)
     buffer1 = models.CharField(max_length=10, null=True, blank=True)
