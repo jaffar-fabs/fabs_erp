@@ -25,9 +25,16 @@ from payroll import views
 from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
+from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view
+
+
 
 
 urlpatterns = [
+    path('sidebar', dashboard_view),
+    path('employee',employee_master,name ='employee_master'),
+    path('create_employee/', save_employee, name='create_employee'),
+    path('update_employee/<int:employee_id>/', save_employee, name='update_employee'),
     path('after-login/', my_login_view, name='after-login'),
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),

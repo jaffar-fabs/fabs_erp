@@ -89,24 +89,19 @@
     <div class="offcanvas-body">
         <form id="editForm">
             <div class="mb-3">
-                <label for="baseTypeInput" class="form-label">Base Type</label>
-                <input type="text" class="form-control" id="baseTypeInput" name="base_type" readonly>
+                <label for="baseCodeInput" class="form-label">Base Code</label>
+                <input type="text" class="form-control" id="baseCodeInput" name="base_code" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="baseDescriptionInput" class="form-label">Base Description</label>
+                <input type="text" class="form-control" id="baseDescriptionInput" name="base_description" readonly>
             </div>
             <div class="mb-3">
                 <div class="pipe-title d-flex align-items-center justify-content-between">
-                    <h5 class="form-title">Base Values</h5>
+                    <label for="baseDescriptionInput" class="form-label">Base Values</label>
                 </div>
                 <div class="pipeline-listing">
                     <div class="pipeline-item">
-                        <p><i class="ti ti-grip-vertical"></i> Inpipeline</p>
-                        <div class="action-pipeline">
-                            <a href="#" class="edit-base-value" data-bs-toggle="modal" data-bs-target="#edit_stage">
-                                <i class="ti ti-edit text-blue"></i>Edit
-                            </a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#delete_stage">
-                                <i class="ti ti-trash text-danger"></i>Delete
-                            </a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -132,6 +127,12 @@
                         <label for="editStageNameInput" class="form-label">Base Description *</label>
                         <input type="text" class="form-control" id="editStageNameInput" name="base_description"
                             autocomplete="off">
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
+                            <label class="form-check-label" for="is_active">Is Active</label>
+                        </div>
                     </div>
                     <input type="hidden" id="baseValueInput" name="base_value">
                     <input type="hidden" id="baseTypeInput" name="base_type">
@@ -172,146 +173,165 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".edit-btn").forEach(function (button) {
-            button.addEventListener("click", function () {
-                let baseType = this.getAttribute("data-base");
-                document.getElementById("baseTypeInput").value = baseType;
+        let editButtons = document.querySelectorAll(".edit-btn");
+        let deleteButtons = document.querySelectorAll(".delete-btn");
+        let confirmDeleteBtn = document.querySelector("#confirmDeleteBtn");
+        let baseCodeInput = document.querySelector("#offcanvas_edit input[name='base_code']");
+        let baseDescriptionInput = document.querySelector("#offcanvas_edit input[name='base_description']");
+        let pipelineListing = document.querySelector(".pipeline-listing");
+        let deleteBaseCode, deleteBaseValue;
 
-                // AJAX Request to Fetch Base Values and Descriptions
-                fetch("", {
+        if (editButtons && baseCodeInput && baseDescriptionInput && pipelineListing) {
+            editButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    let baseCode = this.getAttribute("data-base_code");
+                    let baseDescription = this.getAttribute("data-base_description");
+                    baseCodeInput.value = baseCode;
+                    baseDescriptionInput.value = baseDescription.toUpperCase();
+                    fetchBaseValues(baseCode);
+                })
+            })
+
+            function fetchBaseValues(baseCode) {
+                let formData = new FormData();
+                formData.append("base_code", baseCode);
+
+                fetch("{% url 'code_master_list' %}", {
                     method: "POST",
                     headers: {
                         "X-Requested-With": "XMLHttpRequest",
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "X-CSRFToken": "{{ csrf_token }}"
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
                     },
-                    body: new URLSearchParams({
-                        "base_type": baseType
-                    })
+                    body: formData
                 })
                     .then(response => response.json())
                     .then(data => {
-                        let pipelineListing = document.querySelector(".pipeline-listing");
-                        pipelineListing.innerHTML = "";
+                        if (data.success) { displayBaseValues(data.base_values, baseCode) }
+                    })
+            }
 
-                        if (data.base_values && data.base_values.length > 0) {
-                            data.base_values.forEach(item => {
-                                let value = item.base_value;
-                                let description = item.base_description;
-                                let pipelineItem = document.createElement("div");
-                                pipelineItem.classList.add("pipeline-item");
-                                pipelineItem.innerHTML = `
-                            <p><i class="ti ti-grip-vertical"></i> ${value}</p>
+            function displayBaseValues(baseValues, baseCode) {
+                pipelineListing.innerHTML = "";
+                if (baseValues.length === 0) {
+                    let noValuesMessage = document.createElement("div");
+                    noValuesMessage.className = "pipeline-item";
+                    noValuesMessage.textContent = "No base values found.";
+                    pipelineListing.appendChild(noValuesMessage);
+                }
+                else {
+                    baseValues.forEach(value => {
+                        let item = document.createElement("div");
+                        item.className = "pipeline-item";
+                        let isActiveBadge = value.is_active === "Y" ? "bg-success" : "bg-danger";
+                        let isActiveText = value.is_active === "Y" ? "Active" : "Inactive";
+                        item.innerHTML = `
+                            <p><i class="ti ti-grip-vertical"></i> ${value.base_value}</p>
                             <div class="action-pipeline">
-                                <a href="#" class="edit-base-value" data-base-type="${baseType}" data-base-value="${value}" data-description="${description}" data-bs-toggle="modal" data-bs-target="#edit_stage">
-                                    <i class="ti ti-edit text-blue"></i> Edit
+                                <a>
+                                    <span class="badge badge-pill ${isActiveBadge}">
+                                        ${isActiveText}
+                                    </span>
                                 </a>
-                                <a href="#" class="delete-base-value" data-base-type="${baseType}" data-base-value="${value}" data-bs-toggle="modal" data-bs-target="#delete_stage">
-                                    <i class="ti ti-trash text-danger"></i> Delete
+                                <a href="#" class="edit-base-value" data-base_code="${baseCode}" data-base_value="${value.base_value}" data-bs-toggle="modal" data-bs-target="#edit_stage">
+                                    <i class="ti ti-edit text-blue"></i>Edit
+                                </a>
+                                <a href="#" class="delete-base-value" data-base_code="${baseCode}" data-base_value="${value.base_value}" data-bs-toggle="modal" data-bs-target="#delete_stage">
+                                    <i class="ti ti-trash text-danger"></i>Delete
                                 </a>
                             </div>
                         `;
-                                pipelineListing.appendChild(pipelineItem);
-                            });
-
-                            // Attach event listeners to the new edit buttons
-                            document.querySelectorAll(".edit-base-value").forEach(function (editButton) {
-                                editButton.addEventListener("click", function () {
-                                    let baseType = this.getAttribute("data-base-type");
-                                    let baseValue = this.getAttribute("data-base-value");
-                                    let description = this.getAttribute("data-description");
-
-                                    // Populate the edit modal fields
-                                    let editStageNameInput = document.getElementById("editStageNameInput");
-                                    if (editStageNameInput) { editStageNameInput.value = description; }
-
-                                    // Set hidden input values for baseType and baseValue
-                                    let baseTypeInput = document.getElementById("baseTypeInput");
-                                    let baseValueInput = document.getElementById("baseValueInput");
-
-                                    if (baseTypeInput) { baseTypeInput.value = baseType; }
-                                    if (baseValueInput) { baseValueInput.value = baseValue; }
-                                });
-                            });
-
-                            // Attach event listeners to the new delete buttons
-                            document.querySelectorAll(".delete-base-value").forEach(function (deleteButton) {
-                                deleteButton.addEventListener("click", function () {
-                                    let baseType = document.getElementById("baseTypeInput").value;
-                                    let baseValue = this.getAttribute("data-base-value");
-
-                                    // Set values for delete confirmation modal
-                                    let confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
-                                    confirmDeleteBtn.setAttribute("data-base-type", baseType);
-                                    confirmDeleteBtn.setAttribute("data-base-value", baseValue);
-                                });
-                            });
-
-                        } else { pipelineListing.innerHTML = "<p>No base values found.</p>"; }
+                        pipelineListing.appendChild(item);
                     })
-                    .catch(error => console.error("Error fetching base values:", error));
+
+                    document.querySelectorAll(".edit-base-value").forEach(button => {
+                        button.addEventListener("click", function () {
+                            let baseCode = this.getAttribute("data-base_code");
+                            let baseValue = this.getAttribute("data-base_value");
+                            fetchBaseDescription(baseCode, baseValue);
+                        })
+                    })
+
+                    document.querySelectorAll(".delete-base-value").forEach(button => {
+                        button.addEventListener("click", function () {
+                            deleteBaseCode = this.getAttribute("data-base_code");
+                            deleteBaseValue = this.getAttribute("data-base_value");
+                        })
+                    })
+                }
+            }
+
+            function fetchBaseDescription(baseCode, baseValue) {
+                let formData = new FormData();
+                formData.append("base_code", baseCode);
+                formData.append("base_value", baseValue);
+                formData.append("request_type", "fetch_base_description");
+
+                fetch("{% url 'code_master_list' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.querySelector("#editStageForm input[name='base_description']").value = data.base_description;
+                            document.querySelector("#editStageForm input[name='base_value']").value = baseValue;
+                            document.querySelector("#editStageForm input[name='base_type']").value = baseCode;
+                            document.querySelector("#editStageForm input[name='is_active']").checked = data.is_active;
+                        }
+                    });
+            }
+
+            document.querySelector("#editStageForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                let formData = new FormData(this);
+                formData.append("request_type", "update_base_description");
+
+                let isActive = document.querySelector("#editStageForm input[name='is_active']").checked ? "Y" : "N";
+                formData.set("is_active", isActive);
+
+                let baseCode = document.querySelector("#editStageForm input[name='base_type']").value;
+                formData.set("base_code", baseCode);
+
+                fetch("{% url 'code_master_list' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.reload();
+                        }
+                    });
             });
-        });
 
-        // Save changes button event listener
-        document.getElementById("editStageForm").addEventListener("submit", function (e) {
-            e.preventDefault();
+            confirmDeleteBtn.addEventListener("click", function () {
+                let formData = new FormData();
+                formData.append("base_code", deleteBaseCode);
+                formData.append("base_value", deleteBaseValue);
+                formData.append("request_type", "delete_base_value");
 
-            let baseType = document.getElementById("baseTypeInput").value;
-            let baseValue = document.getElementById("baseValueInput").value;
-            let newDescription = document.getElementById("editStageNameInput").value;
-
-            // AJAX Request to update the value
-            fetch("", {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: new URLSearchParams({
-                    "base_type": baseType,
-                    "base_value": baseValue,
-                    "description": newDescription
+                fetch("{% url 'code_master_list' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+                    },
+                    body: formData
                 })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) { window.location.reload() }
+                    })
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log("Value updated successfully!");
-                        location.reload();
-                    } else {
-                        console.error("Error updating value:", data.error);
-                    }
-                })
-                .catch(error => console.error("Error updating value:", error));
-        });
-
-        // Perform delete operation on confirmation
-        document.getElementById("confirmDeleteBtn").addEventListener("click", function () {
-            let baseType = this.getAttribute("data-base-type");
-            let baseValue = this.getAttribute("data-base-value");
-
-            fetch("", {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: new URLSearchParams({
-                    "base_type": baseType,
-                    "base_value": baseValue,
-                    "comp_code": "1000",
-                    "delete": true
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) { location.reload() }
-                    else { console.error("Error deleting value:", data.error); }
-                })
-                .catch(error => console.error("Error deleting value:", error));
-        });
-    });
+        }
+    })
 </script>

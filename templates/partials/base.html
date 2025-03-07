@@ -53,4 +53,66 @@
     {% endblock theme_settings %}
       
   </body>
+  
+  <script type="text/javascript">
+    $(document).ready(function () {
+        // alert('a');
+        $.ajax({
+            type: 'GET',
+            url: '/sidebar',
+            success: function (response) {
+                if (response.status == "success" && response.parent_menu_data.length > 0) {
+                    console.log(response);
+
+                    var parent_menu_data = response.parent_menu_data;
+                    var child_menu_data = response.child_menu_data;
+                    var menu_html = '';
+
+                    $('ul.menu').empty(); // Clear existing menu
+
+                    $.each(parent_menu_data, function (index, parent) {
+                        var submenu_html = '';
+
+                        // Find child menus related to this parent
+                        var children = child_menu_data.filter(child => child.parent_menu_id === parent.menu_id);
+                        console.log(children)
+
+                        if (children.length > 0) {
+                            submenu_html += '<ul>';
+                            $.each(children, function (childIndex, child) {
+                                submenu_html += `<li><a href="${child.url}">${child.screen_name}</a></li>`;
+                            });
+                            submenu_html += '</ul>';
+                        }
+
+                        menu_html += `
+                            <li class="submenu">
+                                <a href="javascript:void(0);">
+                                    <i class="ti ti-layout-2"></i>
+                                    <span>${parent.screen_name}</span>
+                                    <span class="menu-arrow"></span>
+                                </a>
+                                ${submenu_html}
+                            </li>
+                        `;
+                    });
+
+                    $('ul.menu').append(menu_html);
+
+                    
+                    $('li.submenu > a').on('click', function () {
+                        var $submenu = $(this).next('ul');
+                        $submenu.slideToggle();
+                        $(this).parent().toggleClass('active');
+                    });
+
+                }
+            },
+            error: function () {
+                console.error('Failed to load sidebar menu.');
+            }
+        });
+    });
+</script>
+
 </html>

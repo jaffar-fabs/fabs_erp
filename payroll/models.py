@@ -2,6 +2,79 @@ from django.db import models
 from django.utils.timezone import now
 import uuid
 
+class Employee(models.Model):
+        employee_id = models.AutoField(primary_key=True)
+        earn_deduct_type = models.CharField(max_length=50, blank=True, null=True)  # Replaced ForeignKey with CharField
+        earn_deduct_code = models.CharField(max_length=50, default='1')  # Replaced ForeignKey with CharField
+        payprocess_cycle = models.CharField(max_length=50,blank=True, null=True)  # Replaced ForeignKey with CharField
+        payprocess_month = models.CharField(max_length=50, default='1')  # Replaced ForeignKey with CharField
+        comp_code = models.CharField(max_length=20)
+        emp_code = models.CharField(max_length=50,blank=True, null=True)
+        labour_id = models.CharField(max_length=50, blank=True, null=True)
+        labour_bank_acc_no = models.CharField(max_length=20, blank=True, null=True)
+        emp_name = models.CharField(max_length=100)
+        father_name = models.CharField(max_length=50, blank=True, null=True)
+        mother_name = models.CharField(max_length=50, blank=True, null=True)
+        spouse_name = models.CharField(max_length=50, blank=True, null=True)
+        emp_sex = models.CharField(max_length=50, default='1')  # Replaced ForeignKey with CharField
+        emp_marital_status = models.CharField(max_length=50, default='1')  # Replaced ForeignKey with CharField
+        emp_status = models.CharField(max_length=50,blank=True, null=True)
+        emp_type = models.BigIntegerField(null=True, blank=True)
+        dep_code = models.CharField(max_length=50, default='1')  # Replaced ForeignKey with CharField
+        prj_code = models.CharField(max_length=50,blank=True, null=True)
+        desig_code = models.CharField(max_length=50,blank=True, null=True)
+        grade_code = models.CharField(max_length=50,blank=True, null=True)
+        basic_pay = models.BigIntegerField()
+        allowance = models.BigIntegerField()
+        dob = models.DateField(blank=True, null=True)
+        date_of_join = models.DateField(blank=True, null=True)
+        date_of_rejoin = models.DateField(blank=True, null=True)
+        process_cycle = models.CharField(max_length=50,blank=True, null=True)
+        ot_type = models.CharField(max_length=50, blank=True, null=True)
+        addrline1 = models.CharField(max_length=50, blank=True, null=True)
+        addrline2 = models.CharField(max_length=50, blank=True, null=True)
+        city = models.CharField(max_length=50, blank=True, null=True)
+        state = models.CharField(max_length=50, blank=True, null=True)
+        phone_no = models.CharField(max_length=20, blank=True, null=True)
+        country_code = models.CharField(max_length=50,blank=True, null=True)
+        r_addrline1 = models.CharField(max_length=50, blank=True, null=True)
+        r_addrline2 = models.CharField(max_length=50, blank=True, null=True)
+        r_city = models.CharField(max_length=50, blank=True, null=True)
+        r_state = models.CharField(max_length=50, blank=True, null=True)
+        r_phone_no = models.CharField(max_length=20, blank=True, null=True)
+        r_country_code = models.CharField(max_length=50)
+        emp_bank = models.CharField(max_length=50, blank=True, null=True)
+        emp_bank_branch = models.CharField(max_length=50, blank=True, null=True)
+        emp_acc_no = models.BigIntegerField(null=True,blank=True)
+        bank_loan = models.BigIntegerField(blank=True, null=True)
+        atten_type = models.BigIntegerField(blank=True, null=True)
+        pay_process_flag = models.IntegerField(blank=True, null=True)
+        emp_height = models.CharField(max_length=50,blank=True, null=True)
+        emp_weight = models.CharField(max_length=50,blank=True, null=True)
+        depen_count = models.BigIntegerField(blank=True, null=True)
+        child_count = models.BigIntegerField(blank=True, null=True)
+        passport_no = models.CharField(max_length=50, blank=True, null=True)
+        passport_issuedat = models.CharField(max_length=50, blank=True, null=True)
+        passport_validity = models.DateField(auto_now_add=True, null=True)
+        is_active = models.BooleanField(default=True)
+        instance_id = models.CharField(max_length=50, default='NEWID()', null=True)
+        created_on = models.DateField(auto_now_add=True, null=True)
+        modified_on = models.DateField(blank=True, null=True)
+        nationality = models.CharField(max_length=50, default='1')
+        family_status = models.CharField(max_length=50, default='1')
+        qualification = models.CharField(max_length=50, blank=True, null=True)
+        religion = models.CharField(max_length=50, default='1')
+        amounts = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+        email1 = models.CharField(max_length=150)
+        email2 = models.CharField(max_length=150,blank=True, null=True)
+        locn_code = models.CharField(max_length=50, blank=True, null=True)
+        created_by = models.BigIntegerField(default=1)
+        modified_by = models.BigIntegerField(null=True, blank=True)
+
+
+        def str(self):
+            return self.emp_code
+
 
 class RoleMenu(models.Model):
         comp_code = models.CharField(max_length=15, default='1000')
@@ -145,7 +218,7 @@ class CodeMaster(models.Model):
 
 class UserMaster(models.Model):
     comp_code = models.CharField(max_length=15)
-    user_master_id = models.BigIntegerField(primary_key=True)
+    user_master_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     user_id = models.CharField(max_length=50, unique=True)
@@ -204,7 +277,7 @@ class Menu(models.Model):
     screen_name = models.CharField(max_length=50, null=True, blank=True)
     url = models.CharField(max_length=100, null=True, blank=True)
     module_id = models.CharField(max_length=50, null=True, blank=True)
-    parent_menu_id = models.CharField(max_length=50, null=True, blank=True)  
+    parent_menu_id = models.BigIntegerField(null=True, blank=True)  
     display_order = models.BigIntegerField()
     instance_id = models.CharField(max_length=50)
     buffer1 = models.CharField(max_length=10, null=True, blank=True)
@@ -225,6 +298,7 @@ class Menu(models.Model):
 
     def _str_(self):
         return self.comp_code
+        
     
 
     #---------------------------------------------------------------------------------------------------------------------------------

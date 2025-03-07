@@ -21,6 +21,98 @@ from .models import (
     UserMaster,
 )
 
+from .models import Menu, RoleMenu, Employee
+
+
+def employee_master(request):
+    # Fetch all employee data for display
+    employee_data = Employee.objects.all()
+    return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
+
+def save_employee(request, employee_id=None):
+    if request.method == "POST":
+        # If employee_id is provided, we are updating
+        if employee_id:
+            employee = get_object_or_404(Employee, employee_id=employee_id)
+        else:  # If employee_id is not provided, we are creating
+            employee = Employee()  # Create a new instance
+
+
+        # Common fields to extract
+        employee.earn_deduct_type = request.POST.get("earn_deduct_type")
+        employee.earn_deduct_code = request.POST.get("earn_deduct_code")
+        employee.payprocess_cycle = request.POST.get("payprocess_cycle")
+        employee.payprocess_month = request.POST.get("payprocess_month")
+        employee.comp_code = request.POST.get("comp_code")
+        employee.emp_code = request.POST.get("emp_code")
+        employee.labour_id = request.POST.get("labour_id")
+        employee.labour_bank_acc_no = request.POST.get("labour_bank_acc_no")
+        employee.emp_name = request.POST.get("emp_name")
+        employee.father_name = request.POST.get("father_name")
+        employee.mother_name = request.POST.get("mother_name")
+        employee.spouse_name = request.POST.get("spouse_name")
+        employee.emp_sex = request.POST.get("emp_sex")
+        employee.emp_marital_status = request.POST.get("emp_marital_status")
+        employee.emp_status = request.POST.get("emp_status")
+        employee.emp_type = request.POST.get("emp_type") or None
+        employee.dep_code = request.POST.get("dep_code")
+        employee.prj_code = request.POST.get("prj_code")
+        employee.desig_code = request.POST.get("desig_code")
+        employee.grade_code = request.POST.get("grade_code")
+        employee.basic_pay = request.POST.get("basic_pay") or None
+        employee.allowance = request.POST.get("allowance") or None
+        employee.dob = request.POST.get("dob") or None
+        employee.date_of_join = request.POST.get("date_of_join") or None
+        employee.date_of_rejoin = request.POST.get("date_of_rejoin") or None
+        employee.process_cycle = request.POST.get("process_cycle")
+        employee.ot_type = request.POST.get("ot_type")
+        employee.addrline1 = request.POST.get("addrline1")
+        employee.addrline2 = request.POST.get("addrline2")
+        employee.city = request.POST.get("city")
+        employee.state = request.POST.get("state")
+        employee.phone_no = request.POST.get("phone_no")
+        employee.country_code = request.POST.get("country_code")
+        employee.r_addrline1 = request.POST.get("r_addrline1")
+        employee.r_addrline2 = request.POST.get("r_addrline2")
+        employee.r_city = request.POST.get("r_city")
+        employee.r_state = request.POST.get("r_state")
+        employee.r_phone_no = request.POST.get("r_phone_no")
+        employee.r_country_code = 1
+        employee.emp_bank = request.POST.get("emp_bank")
+        employee.emp_bank_branch = request.POST.get("emp_bank_branch")
+        employee.emp_acc_no = request.POST.get("emp_acc_no")
+        employee.bank_loan = request.POST.get("bank_loan")
+        employee.atten_type = request.POST.get("atten_type")
+        employee.pay_process_flag = request.POST.get("pay_process_flag")
+        employee.emp_height = request.POST.get("emp_height")
+        employee.emp_weight = request.POST.get("emp_weight")
+        employee.depen_count = request.POST.get("depen_count") or None
+        employee.child_count = request.POST.get("child_count") or None
+        employee.passport_no = request.POST.get("passport_no")
+        employee.passport_issuedat = request.POST.get("passport_issuedat")
+        employee.passport_validity = request.POST.get("passport_validity") or None
+        employee.is_active = request.POST.get("is_active") == "on"
+        employee.created_by = 1  # Example user ID
+        employee.modified_by = 1  # Example user ID
+        employee.created_on = request.POST.get("created_on") or None
+        employee.modified_on = request.POST.get("modified_on") or None
+        employee.nationality = request.POST.get("nationality")
+        employee.family_status = request.POST.get("family_status")
+        employee.qualification = request.POST.get("qualification")
+        employee.religion = request.POST.get("religion")
+        employee.amounts = request.POST.get("amounts")
+        employee.email1 = request.POST.get("email1")
+        employee.email2 = request.POST.get("email2")
+        employee.locn_code = request.POST.get("locn_code")
+
+        # Save the employee object
+        employee.save()
+
+        return redirect('/employee')  # Redirect to the employee list or detail page
+
+    # If the request method is not POST, render the form with existing employee data if editing
+    employee_data = Employee.objects.all()
+    return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
 
 def index(request):
     deals_dashboard = [
@@ -81,7 +173,7 @@ def my_login_view(request):
             request.session["role_id"] = role_id  
 
             messages.success(request, "Login successful!")
-            return redirect("/index") 
+            return redirect("/index",dashboard_view(request)) 
         elif username == "user" and password == "12345":
             role = "Programmer"
             role_id = 2
@@ -89,21 +181,24 @@ def my_login_view(request):
             request.session["role"] = role  
             request.session["role_id"] = role_id 
             messages.success(request, "Login successful!")
-            return redirect("/index") 
+            return redirect("/index",dashboard_view(request)) 
         else:
             messages.error(request, "Invalid username or password.")
 
         return render(request, "auth/login.html") 
 
 def dashboard_view(request):
-    role_id = request.session.get("role_id")
+    try:
+        role_id = request.session.get("role_id")
+        menu_ids = RoleMenu.objects.filter(role_id=role_id, view = True).values_list('menu_id', flat=True)
+        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__isnull=True).order_by('display_order').values('menu_id', 'screen_name'))
+        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__isnull=False, parent_menu_id__in=menu_ids).order_by('display_order').values('menu_id', 'screen_name', 'url','parent_menu_id'))
+        response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data }
+    except Exception as e:
+        response_data = {'status': 'error', 'msg': str(e)}
 
-    # Fetch menu items based on the role
-    menu = RoleMenu.objects.filter(role_id=role_id)
+    return JsonResponse(response_data)
 
-    menu_items = Menu.objects.filter(menu_id=menu.menu_id)
-
-    return render(request, "partials/sidebar.html", {"menu_items": menu_items,"menu":menu}) 
     
 def logout(request):
     request.session.flush()  # Clears all session data
@@ -512,58 +607,78 @@ def holidayEdit(request):
 
 
 
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.http import JsonResponse
+from django.views import View
+from .models import CodeMaster
 
 class CodeMasterList(View):
 
     template_name = "pages/payroll/code_master/code_master_list.html"
 
-    def get(self, request):
+    def get(self, request): 
         base_type_suggestions = CodeMaster.objects.filter(comp_code="999").values("base_description", "base_value").distinct()
-        base_type_comp_code = CodeMaster.objects.filter(comp_code="1000", is_active = 'Y').values("base_type").distinct()
+        base_type_comp_code = CodeMaster.objects.filter(comp_code="999").values("base_value", "base_description").distinct()
         return render(request, self.template_name, { "base_type_suggestions": base_type_suggestions, "base_type_comp_code": base_type_comp_code })
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+    @csrf_exempt
     def post(self, request):
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            request_type = request.POST.get("request_type")
+            if request_type == "check_base_value_exists":
+                return self.check_base_value_exists(request)
+            if request_type == "fetch_base_description":
+                return self.fetch_base_description(request)
+            elif request_type == "update_base_description":
+                return self.update_base_description(request)
+            elif request_type == "delete_base_value":
+                return self.delete_base_value(request)
             return self.handle_ajax(request)
         return self.handle_form_submission(request)
 
-    def handle_ajax(self, request):
-        base_type = request.POST.get("base_type")
+    @csrf_exempt
+    def check_base_value_exists(self, request):
         base_value = request.POST.get("base_value")
-        description = request.POST.get("description")
-        delete_flag = request.POST.get("delete")
+        base_type = request.POST.get("base_type")
+        if CodeMaster.objects.filter(base_type=base_type, base_value=base_value, comp_code="1000").exists():
+            return JsonResponse({"exists": True})
+        return JsonResponse({"exists": False})
 
-        # Handling delete request
-        if delete_flag:
-            try:
-                code_master = CodeMaster.objects.get(base_type=base_type, base_value=base_value, comp_code="1000")
-                code_master.is_active = "N"  
+    def update_base_description(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+        base_description = request.POST.get("base_description")
+        is_active = request.POST.get("is_active")
+
+        if not all([base_code, base_value, base_description, is_active]):
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+        try:
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            if code_master:
+                code_master.base_description = base_description
+                code_master.is_active = is_active
                 code_master.save()
                 return JsonResponse({"success": True})
-            except CodeMaster.DoesNotExist:
-                return JsonResponse({"success": False, "error": "Entry not found."})
-        
-        # Handling description update request
-        if description:
-            try:
-                code_master = CodeMaster.objects.get(base_type=base_type, base_value=base_value, comp_code="1000")
-                code_master.base_description = description
-                code_master.save()
-                return JsonResponse({"success": True})
-            except CodeMaster.DoesNotExist:
-                return JsonResponse({"success": False, "error": "Entry not found."})
-        else:
-            if base_value:
-                base_values = CodeMaster.objects.filter(base_type=base_type, comp_code="1000").values_list("base_value", flat=True)
-                exists = CodeMaster.objects.filter(base_value=base_value, base_type=base_type, comp_code="1000").exists()
-                return JsonResponse({"exists": exists, "base_values": list(base_values)})
             else:
-                base_values = CodeMaster.objects.filter(base_type=base_type, comp_code="1000", is_active = 'Y').values("base_value", "base_description")
-                return JsonResponse({"base_values": list(base_values)})
+                return JsonResponse({"success": False, "error": "No matching record found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
+    @csrf_exempt
+    def handle_ajax(self, request):
+        base_code = request.POST.get("base_code")
+        if base_code:
+            base_values = CodeMaster.objects.filter(base_type=base_code, comp_code="1000").values("base_value", "is_active")
+            base_values_list = [{"base_value": value["base_value"], "is_active": value["is_active"]} for value in base_values]
+            return JsonResponse({"success": True, "base_values": base_values_list})
+        return JsonResponse({"success": False, "error": "Invalid base code"})
 
     def handle_form_submission(self, request):
         base_description = request.POST.get("base_description")
@@ -575,9 +690,7 @@ class CodeMasterList(View):
         base_type = base_type_obj["base_value"] if base_type_obj else None
 
         if base_type and base_value:
-            
             existing_entry = CodeMaster.objects.filter(comp_code="1000", base_type=base_type, base_value=base_value).exists()
-
             if not existing_entry:
                 CodeMaster.objects.create(
                     comp_code="1000",
@@ -589,8 +702,40 @@ class CodeMasterList(View):
                     created_by=1,
                     is_active=is_active,
                 )
-
         return redirect("code_master_list")
+
+    @csrf_exempt
+    def fetch_base_description(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+        if base_code and base_value:
+            base_description_obj = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").values("base_description", "is_active").first()
+            if base_description_obj:
+                is_active = base_description_obj["is_active"] == "Y"
+                return JsonResponse({"success": True, "base_description": base_description_obj["base_description"], "is_active": is_active})
+            return JsonResponse({"success": False, "error": "No matching record found"})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+    @csrf_exempt
+    def delete_base_value(self, request):
+        base_code = request.POST.get("base_code")
+        base_value = request.POST.get("base_value")
+
+        if not all([base_code, base_value]):
+            return JsonResponse({"success": False, "error": "Invalid input data"})
+
+        try:
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            if code_master:
+                code_master.is_active = "N"
+                code_master.save()
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"success": False, "error": "No matching record found"})
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)})
+
 
 
 class Login(View):
@@ -615,29 +760,25 @@ class UserMasterCreate(View):
     def post(self, request):
         user_id = request.POST.get('user_id', '').strip()
 
-        
         if not user_id:
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID is required.'})
 
-        
         if request.POST.get("check_availability") == "true":
             if UserMaster.objects.filter(user_id=user_id).exists():
                 return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
             return JsonResponse({'status': 'success', 'message': 'User ID is available.'})
 
-        
         if UserMaster.objects.filter(user_id=user_id).exists():
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
 
         try:
             user = UserMaster(
                 comp_code=1000,
-                user_master_id=request.POST.get('user_master_id'),
                 first_name=request.POST.get('first_name'),
                 last_name=request.POST.get('last_name'),
                 user_id=user_id,
                 password=request.POST.get('password'),
-                dob=request.POST.get('dob'),
+                dob=request.POST.get('dob') or None,  # Make DOB optional
                 email=request.POST.get('email'),
                 gender=request.POST.get('gender'),
                 is_active=request.POST.get('is_active') == 'on',
@@ -655,7 +796,7 @@ class UserMasterCreate(View):
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'field': 'general', 'message': str(e)})
-        
+
 class UserMasterUpdate(View):
     def post(self, request, user_master_id):
         try:
@@ -666,7 +807,7 @@ class UserMasterUpdate(View):
             user.last_name = request.POST.get('last_name')
             user.user_id = request.POST.get('user_id')
             user.password = request.POST.get('password')
-            user.dob = request.POST.get('dob')
+            user.dob = request.POST.get('dob') or None  # Make DOB optional
             user.email = request.POST.get('email')
             user.gender = request.POST.get('gender')
             user.instance_id = request.POST.get('instance_id')
@@ -674,16 +815,16 @@ class UserMasterUpdate(View):
             user.modified_by = request.POST.get('modified_by')
             user.emp_code = request.POST.get('emp_code')
             user.user_paycycles = request.POST.get('user_paycycles')
-            user.is_active = request.POST.get('is_active') == 'on'  # Checkbox handling
+            user.is_active = request.POST.get('is_active') == 'on'
             
-            user.full_clean()  # Validate model fields
+            user.full_clean()
             user.save()
             
             return redirect('user_list')
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
-
+        
 class UserMasterDelete(View):
     def post(self, request, user_master_id):
         
@@ -701,10 +842,10 @@ from .models import GradeMaster
 from django.utils.timezone import now
 
 class GradeMasterList(View):
-    template_name = "pages/payroll/grade_master/list.html"
+    template_name = "pages/payroll/grade_master/grade_master_list.html"
 
     def get(self, request):
-        datas = GradeMaster.objects.filter(comp_code="1000", is_active="Y")
+        datas = GradeMaster.objects.filter(comp_code="1000")
         return render(request, self.template_name, {'datas': datas})
 
     def post(self, request):
