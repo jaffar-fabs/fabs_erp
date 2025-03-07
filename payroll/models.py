@@ -229,3 +229,21 @@ class Menu(models.Model):
 
     #---------------------------------------------------------------------------------------------------------------------------------
     
+
+    #Holiday Master
+class HolidayMaster(models.Model):
+        comp_code = models.CharField(max_length=50)
+        unique_id = models.BigAutoField(primary_key=True)
+        holiday = models.CharField(max_length=50, blank=True, null=True)
+        holiday_type = models.BigIntegerField()
+        holiday_date = models.DateField()
+        holiday_day = models.CharField(max_length=50)
+        holiday_description = models.CharField(max_length=300)
+        is_active = models.BooleanField(default=True)
+        created_by = models.BigIntegerField()
+        created_on = models.DateTimeField(auto_now_add=True)
+        modified_by = models.BigIntegerField(blank=True, null=True)
+        modified_on = models.DateTimeField(blank=True, null=True)
+
+        def __str__(self):
+            return f"{self.holiday} ({self.holiday_date})"

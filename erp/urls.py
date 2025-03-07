@@ -24,8 +24,7 @@ from payroll import views as projects
 from payroll import views
 from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
-
-
+from payroll import views as Holiday
 
 
 urlpatterns = [
@@ -62,4 +61,11 @@ urlpatterns = [
 
     path('payroll/code_master_list/', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
     path('payroll/grade_master/', GradeMasterList.as_view(), name='grade_master'), 
+
+    #Holdday Master
+
+    path('payroll/holiday_list/', views.holidayList, name='holiday_master'),
+    path('payroll/holiday_create/', views.holidayCreate, name='holiday_create'),
+    path('payroll/holiday_edit/', views.holidayEdit, name='holiday_edit'),
+
 ]

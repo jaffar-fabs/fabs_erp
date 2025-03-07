@@ -1,17 +1,26 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import PaycycleMaster
 from django.utils.timezone import now
-from datetime import datetime
 from django.http import JsonResponse
-from .models import projectMatster
-import  uuid
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from .models import CodeMaster
-from .models import SeedModel
 from django.contrib import messages
-from .models import Menu, RoleMenu
+from django.core.exceptions import ValidationError
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import uuid
+from datetime import datetime
+
+# Single import statement for models
+from .models import (
+    PaycycleMaster,
+    projectMatster,
+    HolidayMaster,
+    CodeMaster,
+    SeedModel,
+    Menu,
+    RoleMenu,
+    UserMaster,
+)
+
 
 def index(request):
     deals_dashboard = [
@@ -348,7 +357,7 @@ def project(request):
             })
         
         except Exception as e:
-            print(f" Error: {str(e)}")  
+            print(f" Error project Edit: {str(e)}")  
         
     
     if request.method == "POST":
@@ -405,7 +414,9 @@ def project(request):
 
     # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
     projects = projectMatster.objects.all().order_by('-created_on')
-    return render(request, template_name, {'projects': projects})
+    project_count=projectMatster.objects.all()
+    # print("COUNT ",project_count)
+    return render(request, template_name, {'projects': projects,'project_count':project_count})
 
 
 def check_project_code(request):
@@ -430,6 +441,75 @@ def delete_project(request):
             project.is_active = False  
             project.save()
     return redirect("project")
+
+# Holiday Master -------------------------
+
+# class HolidayMaster(View):
+def holidayList( request):
+    template_name="pages/payroll/holiday_master/holiday_list.html"
+    holidays_list=HolidayMaster.objects.all().order_by('-created_on')
+    return render(request,template_name, {'holidays':holidays_list})
+        
+
+def holidayCreate(request):
+    if request.method == "POST":
+        holiday = HolidayMaster(
+            comp_code=request.POST.get("comp_code", "1000"),
+            holiday=request.POST.get("holiday"),
+            holiday_type=request.POST.get("holiday_type"),
+            holiday_date=request.POST.get("holiday_date"),
+            holiday_day=request.POST.get("holiday_day"),
+            holiday_description=request.POST.get("holiday_description"),
+            is_active=request.POST.get("is_active") == "Active",
+            created_by=1,
+        )
+        holiday.save()
+
+        # ✅ Redirect after saving
+        return redirect('holiday_master')
+
+    # ✅ Redirect GET requests too
+    return redirect('holiday_master')    
+
+def holidayEdit(request):
+    if request.method == "GET":
+        uniqe_id = request.GET.get("holiday_id")
+    try:
+            holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id))
+            # print(holiday.holiday_day,"DAY")
+            return JsonResponse({
+                "holiday_id":holiday.unique_id,
+                "holiday": holiday.holiday,
+                "holiday_day": holiday.holiday_day,
+                "holiday_date": holiday.holiday_date,
+                "holiday_description": holiday.holiday_description,
+                "holiday_type": holiday.holiday_type,
+                "is_active": holiday.is_active,
+                "comp_code": holiday.comp_code,
+            })
+                    
+    except Exception as e:
+            print(f" Error project Edit: {str(e)}")  
+
+    if request.method == "POST":
+            holiday_id=request.POST.get("holiday_id")
+            if HolidayMaster.objects.filter(unique_id=holiday_id).exists():
+                holiday = get_object_or_404(HolidayMaster, unique_id=int(holiday_id))
+                holiday.holiday = request.POST.get("holiday", holiday.holiday)
+                holiday.holiday_date = request.POST.get("holiday_date", holiday.holiday_date)
+                holiday.holiday_day = request.POST.get("holiday_day", holiday.holiday_day)
+                holiday.holiday_type = request.POST.get("holiday_type", holiday.holiday_type)
+                holiday.holiday_description = request.POST.get("holiday_description", holiday.holiday_description)
+                holiday.created_by = 1;
+                holiday.comp_code = 1000;
+                holiday.is_active = request.POST.get("is_active") == "Active"
+                holiday.save()
+                return redirect("holiday_master")
+
+
+
+
+
 
 
 
@@ -512,12 +592,6 @@ class CodeMasterList(View):
 
         return redirect("code_master_list")
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-from .models import UserMaster
-from django.http import JsonResponse
-from django.core.exceptions import ValidationError
 
 class Login(View):
     template_name = 'auth/login.html'
