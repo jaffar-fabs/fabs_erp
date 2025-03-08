@@ -80,6 +80,6 @@ urlpatterns = [
     
     #Menu Master
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
-
+    path('permission/', payroll_views.permission_view, name='permission'),
 
 ]

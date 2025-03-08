@@ -1007,3 +1007,13 @@ class MenuMaster(View):
 
         return redirect("menu_list")
 
+
+def permission_view(request):
+    role_name = request.GET.get('role_name', 'No role name provided')
+    # Filter active menu items
+    active_menus = Menu.objects.filter(is_active=True)
+    context = {
+        'role_name': role_name,
+        'active_menus': active_menus,
+    }
+    return render(request, 'pages/security/role/permission.html', context)
