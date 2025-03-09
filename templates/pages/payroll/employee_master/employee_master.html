@@ -91,364 +91,17 @@
                                                         data-bs-target="#offcanvas_edit_{{ employee.employee_id }}">
                                                             <i class="ti ti-edit text-blue"></i> Edit
                                                         </a>
-                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_employee_{{ employee.id }}"><i
+                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_employee_{{ employee.employee_id }}"><i
                                                             class="ti ti-trash text-danger"></i> Delete</a>
+                                                     
                                                 </div>
                                             </div>
                                         </td>
                                     </tr>
                                     <!-- Edit Employee Offcanvas -->
-                                    <div class="offcanvas offcanvas-end offcanvas-larger" id="offcanvas_edit_{{ employee.employee_id }}">
-                                        <div class="offcanvas-header border-bottom">
-                                            <h5 class="offcanvas-title">Edit Employee</h5>
-                                            <button type="button"   
-                                                class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
-                                                data-bs-dismiss="offcanvas" aria-label="Close">
-                                                <i class="ti ti-x"></i>
-                                            </button>
-                                        </div>
-                                        <div class="offcanvas-body">
-                                        
-                                            <form id="editEmployeeForm_{{ employee.employee_id }}" method="post" action="{% url 'update_employee' employee.employee_id %}" enctype="multipart/form-data">
-                                                {% csrf_token %}
-
-                                                <!-- Collapsible Sections -->
-                                                <div class="accordion" id="employeeAccordion">
-                                                    <!-- Personal Details -->
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingPersonalDetails">
-                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
-                                                                Personal Details
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
-                                                            <div class="accordion-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
-                                                                        <input type="text" name="employee_id" class="form-control" readonly value="{{ employee.employee_id }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                                                        <input type="text" name="emp_name" class="form-control" required value="{{ employee.emp_name }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                                                        <select name="emp_sex" class="form-control" required>
-                                                                            <option value="1" {% if employee.emp_sex == 1 %}selected{% endif %}>Male</option>
-                                                                            <option value="2" {% if employee.emp_sex == 2 %}selected{% endif %}>Female</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Date of Birth</label>
-                                                                        <input type="date" name="dob" class="form-control" value="{{ employee.dob }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Marital Status</label>
-                                                                        <select name="emp_marital_status" class="form-control">
-                                                                            <option value="1" {% if employee.emp_marital_status == 1 %}selected{% endif %}>Single</option>
-                                                                            <option value="2" {% if employee.emp_marital_status == 2 %}selected{% endif %}>Married</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Father's Name</label>
-                                                                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Mother's Name</label>
-                                                                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Spouse's Name</label>
-                                                                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Nationality</label>
-                                                                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Religion</label>
-                                                                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Contact Information -->
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingContactInfo">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactInfo" aria-expanded="false" aria-controls="collapseContactInfo">
-                                                                Contact Information
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapseContactInfo" class="accordion-collapse collapse" aria-labelledby="headingContactInfo" data-bs-parent="#employeeAccordion">
-                                                            <div class="accordion-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Email 1 <span class="text-danger">*</span></label>
-                                                                        <input type="email" name="email1" class="form-control" required value="{{ employee.email1 }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Email 2</label>
-                                                                        <input type="email" name="email2" class="form-control" value="{{ employee.email2 }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Phone Number</label>
-                                                                        <input type="text" name="phone_no" class="form-control" value="{{ employee.phone_no }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Address Line 1</label>
-                                                                        <input type="text" name="addrline1" class="form-control" value="{{ employee.addrline1 }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Address Line 2</label>
-                                                                        <input type="text" name="addrline2" class="form-control" value="{{ employee.addrline2 }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">City</label>
-                                                                        <input type="text" name="city" class="form-control" value="{{ employee.city }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">State</label>
-                                                                        <input type="text" name="state" class="form-control" value="{{ employee.state }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Country Code</label>
-                                                                        <input type="text" name="country_code" class="form-control" value="{{ employee.country_code }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Residential Address Line 1</label>
-                                                                        <input type="text" name="r_addrline1" class="form-control" value="{{ employee.r_addrline1 }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Residential Address Line 2</label>
-                                                                        <input type="text" name="r_addrline2" class="form-control" value="{{ employee.r_addrline2 }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Employment Information -->
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingEmploymentInfo">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmploymentInfo" aria-expanded="false" aria-controls="collapseEmploymentInfo">
-                                                                Employment Information
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapseEmploymentInfo" class="accordion-collapse collapse" aria-labelledby="headingEmploymentInfo" data-bs-parent="#employeeAccordion">
-                                                            <div class="accordion-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Earn/Deduct Type</label>
-                                                                        <input type="text" name="earn_deduct_type" class="form-control" value="{{ employee.earn_deduct_type }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Earn/Deduct Code</label>
-                                                                        <input type="text" name="earn_deduct_code" class="form-control" value="{{ employee.earn_deduct_code }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Pay Process Cycle</label>
-                                                                        <input type="text" name="payprocess_cycle" class="form-control" value="{{ employee.payprocess_cycle }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Pay Process Month</label>
-                                                                        <input type="text" name="payprocess_month" class="form-control" value="{{ employee.payprocess_month }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Company Code</label>
-                                                                        <input type="text" name="comp_code" class="form-control" value="{{ employee.comp_code }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Employee Code</label>
-                                                                        <input type="text" name="emp_code" class="form-control" value="{{ employee.emp_code }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Labour ID</label>
-                                                                        <input type="text" name="labour_id" class="form-control" value="{{ employee.labour_id }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Labour Bank Account No</label>
-                                                                        <input type="text" name="labour_bank_acc_no" class="form-control" value="{{ employee.labour_bank_acc_no }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Employee Type</label>
-                                                                        <input type="number" name="emp_type" class="form-control" value="{{ employee.emp_type }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Department Code</label>
-                                                                        <input type="text" name="dep_code" class="form-control" value="{{ employee.dep_code }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Health & Family Information -->
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingHealthFamily">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealthFamily" aria-expanded="false" aria-controls="collapseHealthFamily">
-                                                                Health & Family Information
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapseHealthFamily" class="accordion-collapse collapse" aria-labelledby="headingHealthFamily" data-bs-parent="#employeeAccordion">
-                                                            <div class="accordion-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Height</label>
-                                                                        <input type="text" name="emp_height" class="form-control" value="{{ employee.emp_height }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Weight</label>
-                                                                        <input type="text" name="emp_weight" class="form-control" value="{{ employee.emp_weight }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Dependent Count</label>
-                                                                        <input type="number" name="depen_count" class="form-control" value="{{ employee.depen_count }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Child Count</label>
-                                                                        <input type="number" name="child_count" class="form-control" value="{{ employee.child_count }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Passport No</label>
-                                                                        <input type="text" name="passport_no" class="form-control" value="{{ employee.passport_no }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Passport Issued At</label>
-                                                                        <input type="text" name="passport_issuedat" class="form-control" value="{{ employee.passport_issuedat }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Passport Validity</label>
-                                                                        <input type="date" name="passport_validity" class="form-control" value="{{ employee.passport_validity }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Family Status</label>
-                                                                        <input type="text" name="family_status" class="form-control" value="{{ employee.family_status }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Status & Other -->
-                                                    <div class="accordion-item">
-                                                        <h2 class="accordion-header" id="headingStatusOther">
-                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatusOther" aria-expanded="false" aria-controls="collapseStatusOther">
-                                                                Status & Other
-                                                            </button>
-                                                        </h2>
-                                                        <div id="collapseStatusOther" class="accordion-collapse collapse" aria-labelledby="headingStatusOther" data-bs-parent="#employeeAccordion">
-                                                            <div class="accordion-body">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Employee Status</label>
-                                                                        <input type="text" name="emp_status" class="form-control" value="{{ employee.emp_status }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Project Code</label>
-                                                                        <input type="text" name="prj_code" class="form-control" value="{{ employee.prj_code }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Designation Code</label>
-                                                                        <input type="text" name="desig_code" class="form-control" value="{{ employee.desig_code }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Grade Code</label>
-                                                                        <input type="text" name="grade_code" class="form-control" value="{{ employee.grade_code }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Basic Pay</label>
-                                                                        <input type="number" name="basic_pay" class="form-control" value="{{ employee.basic_pay }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Allowance</label>
-                                                                        <input type="number" name="allowance" class="form-control" value="{{ employee.allowance }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Date of Joining</label>
-                                                                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Date of Rejoin</label>
-                                                                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin }}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row mb-3">
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">Process Cycle</label>
-                                                                        <input type="text" name="process_cycle" class="form-control" value="{{ employee.process_cycle }}">
-                                                                    </div>
-                                                                    <div class="col-md-6">
-                                                                        <label class="col-form-label">OT Type</label>
-                                                                        <input type="text" name="ot_type" class="form-control" value="{{ employee.ot_type }}">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group mt-4">
-                                                    <button type="submit" class="btn btn-primary">Update Employee</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <!-- /Edit Employee Offcanvas -->
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add Employee Offcanvas -->
-<div class="offcanvas offcanvas-end offcanvas-larger" id="offcanvas_add">
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit_{{ employee.employee_id }}">
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title">Add Employee</h5>
+        <h4>Edit Employee</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -456,11 +109,12 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="addEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data">
+        <form id="editEmployeeForm_{{ employee.employee_id }}" method="post" action="{% url 'update_employee' employee.employee_id %}" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
             <div class="accordion" id="employeeAccordion">
+
                 <!-- Personal Details -->
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingPersonalDetails">
@@ -470,60 +124,74 @@
                     </h2>
                     <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <!-- <label class="col-form-label">Employee ID <span class="text-danger">*</span></label> -->
-                                    <input type="hidden" name="employee_id" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee ID <span class="text-danger">*</span></label>
+                                        <input type="text" name="employee_id" class="form-control" readonly value="{{ employee.employee_id }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="emp_name" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                    <select name="emp_sex" class="form-control" required>
-                                        <option value="1">Male</option>
-                                        <option value="2">Female</option>
-                                    </select>
+                                    <div class="mb-3">
+                                        <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="emp_name" class="form-control" required value="{{ employee.emp_name }}">
+                                        <div class="invalid-feedback">Please provide a first name.</div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Date of Birth</label>
-                                    <input type="date" name="dob" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Marital Status</label>
-                                    <select name="emp_marital_status" class="form-control">
-                                        <option value="1">Single</option>
-                                        <option value="2">Married</option>
-                                    </select>
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                                        <select name="emp_sex" class="form-select" required>
+                                            <option value="1" {% if employee.emp_sex == 1 %}selected{% endif %}>Male</option>
+                                            <option value="2" {% if employee.emp_sex == 2 %}selected{% endif %}>Female</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a gender.</div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Father's Name</label>
-                                    <input type="text" name="father_name" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Mother's Name</label>
-                                    <input type="text" name="mother_name" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Birth</label>
+                                        <input type="date" name="dob" class="form-control" value="{{ employee.dob }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Spouse's Name</label>
-                                    <input type="text" name="spouse_name" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Marital Status</label>
+                                        <select name="emp_marital_status" class="form-select">
+                                            <option value="1" {% if employee.emp_marital_status == 1 %}selected{% endif %}>Single</option>
+                                            <option value="2" {% if employee.emp_marital_status == 2 %}selected{% endif %}>Married</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Nationality</label>
-                                    <input type="text" name="nationality" class="form-control" value="1">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Father's Name</label>
+                                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Religion</label>
-                                    <input type="text" name="religion" class="form-control" value="1">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Mother's Name</label>
+                                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Spouse's Name</label>
+                                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Nationality</label>
+                                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Religion</label>
+                                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -539,54 +207,67 @@
                     </h2>
                     <div id="collapseContactInfo" class="accordion-collapse collapse" aria-labelledby="headingContactInfo" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Email 1 <span class="text-danger">*</span></label>
-                                    <input type="email" name="email1" class="form-control" required>
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Email 1 <span class="text-danger">*</span></label>
+                                        <input type="email" name="email1" class="form-control" required value="{{ employee.email1 }}">
+                                        <div class="invalid-feedback">Please provide a valid email.</div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Email 2</label>
-                                    <input type="email" name="email2" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Phone Number</label>
-                                    <input type="text" name="phone_no" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Email 2</label>
+                                        <input type="email" name="email2" class="form-control" value="{{ employee.email2 }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Address Line 1</label>
-                                    <input type="text" name="addrline1" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Address Line 2</label>
-                                    <input type="text" name="addrline2" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Phone Number</label>
+                                        <input type="text" name="phone_no" class="form-control" value="{{ employee.phone_no }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">City</label>
-                                    <input type="text" name="city" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">State</label>
-                                    <input type="text" name="state" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Address Line 1</label>
+                                        <input type="text" name="addrline1" class="form-control" value="{{ employee.addrline1 }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Country Code</label>
-                                    <input type="text" name="country_code" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Residential Address Line 1</label>
-                                    <input type="text" name="r_addrline1" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Address Line 2</label>
+                                        <input type="text" name="addrline2" class="form-control" value="{{ employee.addrline2 }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Residential Address Line 2</label>
-                                    <input type="text" name="r_addrline2" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">City</label>
+                                        <input type="text" name="city" class="form-control" value="{{ employee.city }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">State</label>
+                                        <input type="text" name="state" class="form-control" value="{{ employee.state }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Country Code</label>
+                                        <input type="text" name="country_code" class="form-control" value="{{ employee.country_code }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Residential Address Line 1</label>
+                                        <input type="text" name="r_addrline1" class="form-control" value="{{ employee.r_addrline1 }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Residential Address Line 2</label>
+                                        <input type="text" name="r_addrline2" class="form-control" value="{{ employee.r_addrline2 }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -602,54 +283,66 @@
                     </h2>
                     <div id="collapseEmploymentInfo" class="accordion-collapse collapse" aria-labelledby="headingEmploymentInfo" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Earn/Deduct Type</label>
-                                    <input type="text" name="earn_deduct_type" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Earn/Deduct Type</label>
+                                        <input type="text" name="earn_deduct_type" class="form-control" value="{{ employee.earn_deduct_type }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Earn/Deduct Code</label>
-                                    <input type="text" name="earn_deduct_code" class="form-control" value="1">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Pay Process Cycle</label>
-                                    <input type="text" name="payprocess_cycle" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Earn/Deduct Code</label>
+                                        <input type="text" name="earn_deduct_code" class="form-control" value="{{ employee.earn_deduct_code }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Pay Process Month</label>
-                                    <input type="text" name="payprocess_month" class="form-control" value="1">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Company Code</label>
-                                    <input type="text" name="comp_code" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Pay Process Cycle</label>
+                                        <input type="text" name="payprocess_cycle" class="form-control" value="{{ employee.payprocess_cycle }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Employee Code</label>
-                                    <input type="text" name="emp_code" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Labour ID</label>
-                                    <input type="text" name="labour_id" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Pay Process Month</label>
+                                        <input type="text" name="payprocess_month" class="form-control" value="{{ employee.payprocess_month }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Labour Bank Account No</label>
-                                    <input type="text" name="labour_bank_acc_no" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Employee Type</label>
-                                    <input type="number" name="emp_type" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Company Code</label>
+                                        <input type="text" name="comp_code" class="form-control" value="{{ employee.comp_code }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Department Code</label>
-                                    <input type="text" name="dep_code" class="form-control" value="1">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Code</label>
+                                        <input type="text" name="emp_code" class="form-control" value="{{ employee.emp_code }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Labour ID</label>
+                                        <input type="text" name="labour_id" class="form-control" value="{{ employee.labour_id }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Labour Bank Account No</label>
+                                        <input type="text" name="labour_bank_acc_no" class="form-control" value="{{ employee.labour_bank_acc_no }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Type</label>
+                                        <input type="number" name="emp_type" class="form-control" value="{{ employee.emp_type }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Department Code</label>
+                                        <input type="text" name="dep_code" class="form-control" value="{{ employee.dep_code }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -665,44 +358,54 @@
                     </h2>
                     <div id="collapseHealthFamily" class="accordion-collapse collapse" aria-labelledby="headingHealthFamily" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Height</label>
-                                    <input type="text" name="emp_height" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Height</label>
+                                        <input type="text" name="emp_height" class="form-control" value="{{ employee.emp_height }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Weight</label>
-                                    <input type="text" name="emp_weight" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Dependent Count</label>
-                                    <input type="number" name="depen_count" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Weight</label>
+                                        <input type="text" name="emp_weight" class="form-control" value="{{ employee.emp_weight }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Child Count</label>
-                                    <input type="number" name="child_count" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Passport No</label>
-                                    <input type="text" name="passport_no" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Dependent Count</label>
+                                        <input type="number" name="depen_count" class="form-control" value="{{ employee.depen_count }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Passport Issued At</label>
-                                    <input type="text" name="passport_issuedat" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Passport Validity</label>
-                                    <input type="date" name="passport_validity" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Child Count</label>
+                                        <input type="number" name="child_count" class="form-control" value="{{ employee.child_count }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Family Status</label>
-                                    <input type="text" name="family_status" class="form-control" value="1">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport No</label>
+                                        <input type="text" name="passport_no" class="form-control" value="{{ employee.passport_no }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Issued At</label>
+                                        <input type="text" name="passport_issuedat" class="form-control" value="{{ employee.passport_issuedat }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Validity</label>
+                                        <input type="date" name="passport_validity" class="form-control" value="{{ employee.passport_validity }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Family Status</label>
+                                        <input type="text" name="family_status" class="form-control" value="{{ employee.family_status }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -718,54 +421,66 @@
                     </h2>
                     <div id="collapseStatusOther" class="accordion-collapse collapse" aria-labelledby="headingStatusOther" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Employee Status</label>
-                                    <input type="text" name="emp_status" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Status</label>
+                                        <input type="text" name="emp_status" class="form-control" value="{{ employee.emp_status }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Project Code</label>
-                                    <input type="text" name="prj_code" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Designation Code</label>
-                                    <input type="text" name="desig_code" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Project Code</label>
+                                        <input type="text" name="prj_code" class="form-control" value="{{ employee.prj_code }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Grade Code</label>
-                                    <input type="text" name="grade_code" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Basic Pay</label>
-                                    <input type="number" name="basic_pay" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Designation Code</label>
+                                        <input type="text" name="desig_code" class="form-control" value="{{ employee.desig_code }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Allowance</label>
-                                    <input type="number" name="allowance" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Date of Joining</label>
-                                    <input type="date" name="date_of_join" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Grade Code</label>
+                                        <input type="text" name="grade_code" class="form-control" value="{{ employee.grade_code }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">Date of Rejoin</label>
-                                    <input type="date" name="date_of_rejoin" class="form-control">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="col-form-label">Process Cycle</label>
-                                    <input type="text" name="process_cycle" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Basic Pay</label>
+                                        <input type="number" name="basic_pay" class="form-control" value="{{ employee.basic_pay }}">
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="col-form-label">OT Type</label>
-                                    <input type="text" name="ot_type" class="form-control">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Allowance</label>
+                                        <input type="number" name="allowance" class="form-control" value="{{ employee.allowance }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Joining</label>
+                                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Process Cycle</label>
+                                        <input type="text" name="process_cycle" class="form-control" value="{{ employee.process_cycle }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">OT Type</label>
+                                        <input type="text" name="ot_type" class="form-control" value="{{ employee.ot_type }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -773,7 +488,440 @@
                 </div>
             </div>
 
-            <div class="form-group mt-4">
+            <div class="d-flex align-items-center justify-content-end mt-4">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Employee</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Edit Employee Offcanvas -->
+
+<!-- Delete Employee Modal -->
+<div class="modal fade" id="delete_employee_{{ employee.employee_id }}" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEmployeeModalLabel">Deactivate Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to deactivate this employee?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deactivateEmployeeForm_{{ employee.employee_id }}" method="post" action="{% url 'deactivate_employee' employee.employee_id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Deactivate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Employee Modal -->
+
+
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Employee Offcanvas -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Employee</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <!-- Collapsible Sections -->
+            <div class="accordion" id="employeeAccordion">
+
+                <!-- Personal Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingPersonalDetails">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
+                            Personal Details
+                        </button>
+                    </h2>
+                    <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+                                        <input type="text" name="emp_name" class="form-control" required>
+                                        <div class="invalid-feedback">Please provide a first name.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                                        <select name="emp_sex" class="form-select" required>
+                                            <option value="">Select</option>
+                                            <option value="1">Male</option>
+                                            <option value="2">Female</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a gender.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Birth</label>
+                                        <input type="date" name="dob" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Marital Status</label>
+                                        <select name="emp_marital_status" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="1">Single</option>
+                                            <option value="2">Married</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Father's Name</label>
+                                        <input type="text" name="father_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Mother's Name</label>
+                                        <input type="text" name="mother_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Spouse's Name</label>
+                                        <input type="text" name="spouse_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Nationality</label>
+                                        <input type="text" name="nationality" class="form-control" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Religion</label>
+                                        <input type="text" name="religion" class="form-control" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingContactInfo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactInfo" aria-expanded="false" aria-controls="collapseContactInfo">
+                            Contact Information
+                        </button>
+                    </h2>
+                    <div id="collapseContactInfo" class="accordion-collapse collapse" aria-labelledby="headingContactInfo" data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Email 1 <span class="text-danger">*</span></label>
+                                        <input type="email" name="email1" class="form-control" required>
+                                        <div class="invalid-feedback">Please provide a valid email.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Email 2</label>
+                                        <input type="email" name="email2" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Phone Number</label>
+                                        <input type="text" name="phone_no" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Address Line 1</label>
+                                        <input type="text" name="addrline1" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Address Line 2</label>
+                                        <input type="text" name="addrline2" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">City</label>
+                                        <input type="text" name="city" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">State</label>
+                                        <input type="text" name="state" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Country Code</label>
+                                        <input type="text" name="country_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Residential Address Line 1</label>
+                                        <input type="text" name="r_addrline1" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Residential Address Line 2</label>
+                                        <input type="text" name="r_addrline2" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employment Information -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEmploymentInfo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmploymentInfo" aria-expanded="false" aria-controls="collapseEmploymentInfo">
+                            Employment Information
+                        </button>
+                    </h2>
+                    <div id="collapseEmploymentInfo" class="accordion-collapse collapse" aria-labelledby="headingEmploymentInfo" data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Earn/Deduct Type</label>
+                                        <input type="text" name="earn_deduct_type" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Earn/Deduct Code</label>
+                                        <input type="text" name="earn_deduct_code" class="form-control" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Pay Process Cycle</label>
+                                        <input type="text" name="payprocess_cycle" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Pay Process Month</label>
+                                        <input type="text" name="payprocess_month" class="form-control" value="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Company Code</label>
+                                        <input type="text" name="comp_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Code</label>
+                                        <input type="text" name="emp_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Labour ID</label>
+                                        <input type="text" name="labour_id" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Labour Bank Account No</label>
+                                        <input type="text" name="labour_bank_acc_no" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Type</label>
+                                        <input type="number" name="emp_type" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Department Code</label>
+                                        <input type="text" name="dep_code" class="form-control" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Health & Family Information -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingHealthFamily">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealthFamily" aria-expanded="false" aria-controls="collapseHealthFamily">
+                            Health & Family Information
+                        </button>
+                    </h2>
+                    <div id="collapseHealthFamily" class="accordion-collapse collapse" aria-labelledby="headingHealthFamily" data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Height</label>
+                                        <input type="text" name="emp_height" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Weight</label>
+                                        <input type="text" name="emp_weight" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Dependent Count</label>
+                                        <input type="number" name="depen_count" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Child Count</label>
+                                        <input type="number" name="child_count" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport No</label>
+                                        <input type="text" name="passport_no" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Issued At</label>
+                                        <input type="text" name="passport_issuedat" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Validity</label>
+                                        <input type="date" name="passport_validity" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Family Status</label>
+                                        <input type="text" name="family_status" class="form-control" value="1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Other -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingStatusOther">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatusOther" aria-expanded="false" aria-controls="collapseStatusOther">
+                            Status & Other
+                        </button>
+                    </h2>
+                    <div id="collapseStatusOther" class="accordion-collapse collapse" aria-labelledby="headingStatusOther" data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Status</label>
+                                        <input type="text" name="emp_status" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Project Code</label>
+                                        <input type="text" name="prj_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Designation Code</label>
+                                        <input type="text" name="desig_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Grade Code</label>
+                                        <input type="text" name="grade_code" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Basic Pay</label>
+                                        <input type="number" name="basic_pay" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Allowance</label>
+                                        <input type="number" name="allowance" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Joining</label>
+                                        <input type="date" name="date_of_join" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Process Cycle</label>
+                                        <input type="text" name="process_cycle" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">OT Type</label>
+                                        <input type="text" name="ot_type" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end mt-4">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
                 <button type="submit" class="btn btn-primary">Add Employee</button>
             </div>
         </form>

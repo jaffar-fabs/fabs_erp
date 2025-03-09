@@ -91,7 +91,7 @@ def save_employee(request, employee_id=None):
         employee.passport_no = request.POST.get("passport_no")
         employee.passport_issuedat = request.POST.get("passport_issuedat")
         employee.passport_validity = request.POST.get("passport_validity") or None
-        employee.is_active = request.POST.get("is_active") == "on"
+        employee.is_active = True
         employee.created_by = 1  # Example user ID
         employee.modified_by = 1  # Example user ID
         employee.created_on = request.POST.get("created_on") or None
@@ -113,6 +113,16 @@ def save_employee(request, employee_id=None):
     # If the request method is not POST, render the form with existing employee data if editing
     employee_data = Employee.objects.all()
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
+
+def deactivate_employee(request, employee_id):
+    if request.method == 'POST':
+        # Get the Employee object
+        employee = get_object_or_404(Employee, employee_id=employee_id)
+        # Update is_active to False
+        employee.is_active = False
+        employee.save()
+        messages.success(request, 'Employee deactivated successfully!')
+    return redirect('/employee')  # Redirect to the employee list page
 
 def index(request):
     deals_dashboard = [
@@ -778,7 +788,7 @@ class UserMasterCreate(View):
                 last_name=request.POST.get('last_name'),
                 user_id=user_id,
                 password=request.POST.get('password'),
-                dob=request.POST.get('dob') or None,  # Make DOB optional
+                dob=request.POST.get('dob') or None, 
                 email=request.POST.get('email'),
                 gender=request.POST.get('gender'),
                 is_active=request.POST.get('is_active') == 'on',
