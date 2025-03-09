@@ -25,7 +25,13 @@ from payroll import views
 from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
+<<<<<<< HEAD
 from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee
+=======
+from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view
+from payroll.views import MenuMaster
+
+>>>>>>> de812e77939f0b1dc2f17d133f8a90dbcc21a9e3
 
 
 
@@ -75,5 +81,10 @@ urlpatterns = [
     path('payroll/holiday_list/', views.holidayList, name='holiday_master'),
     path('payroll/holiday_create/', views.holidayCreate, name='holiday_create'),
     path('payroll/holiday_edit/', views.holidayEdit, name='holiday_edit'),
+    
+    
+    #Menu Master
+    path("menu_master/", MenuMaster.as_view(), name="menu_list"),
+    path('permission/', payroll_views.permission_view, name='permission'),
 
 ]
