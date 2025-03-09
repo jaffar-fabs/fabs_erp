@@ -306,7 +306,7 @@ class Paycycle(View):
     template_name = "pages/payroll/paycycle_master/paycycle-list.html"
 
     def get(self, request):
-        paycycle_list = PaycycleMaster.objects.filter(comp_code='1000', is_active="Y")
+        paycycle_list = PaycycleMaster.objects.all().order_by('-created_on')
         return render(request, self.template_name, {"paycycle_list": paycycle_list})
 
     def post(self, request):
@@ -314,17 +314,17 @@ class Paycycle(View):
         process_description = request.POST.get('process_description')
         process_cycle = request.POST.get('process_cycle')
         pay_process_month = request.POST.get('pay_process_month')
-        date_from = self.parse_date(request.POST.get('date_from'))
-        date_to = self.parse_date(request.POST.get('date_to'))
-        process_date = self.parse_date(request.POST.get('process_date'))
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        process_date = request.POST.get('process_date')
         attendance_uom = request.POST.get('attendance_uom')
         default_project = request.POST.get('default_project')
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
         hours_per_day = request.POST.get('hours_per_day')
         days_per_month = request.POST.get('days_per_month')
-        travel_time = request.POST.get('travel_time')
-        lunch_break = request.POST.get('lunch_break')
+        travel_time = request.POST.get('travel_time') or None
+        lunch_break = request.POST.get('lunch_break') or None
         ot_eligible = request.POST.get('ot_eligible')
         ot2_eligible = request.POST.get('ot2_eligible')
         max_mn_hrs = request.POST.get('max_mn_hrs')
@@ -333,7 +333,7 @@ class Paycycle(View):
         ot1_amt = request.POST.get('ot1_amt')
         max_ot2_hrs = request.POST.get('max_ot2_hrs')
         ot2_amt = request.POST.get('ot2_amt')
-        process_comp_flag = int(request.POST.get('process_comp_flag', 0))
+        process_comp_flag = request.POST.get('process_comp_flag')
         is_active = "Y" if "is_active" in request.POST else "N"
         
         if process_cycle_id:
@@ -415,6 +415,7 @@ class Paycycle(View):
     def get_next_process_cycle_id(self):
         auto_paycycle_id = PaycycleMaster.objects.filter(comp_code='1000').order_by('-process_cycle_id').first()
         return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
+    
     
 
 
@@ -925,3 +926,103 @@ def holidayEdit(request):
                 holiday.save()
                 return redirect("holiday_master")
 
+
+
+
+class MenuMaster(View):
+    template_name = "pages/security/menu_master/menu_list.html"
+
+    def get(self, request):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            menu_name = request.GET.get('menu_name', None)
+            exists = Menu.objects.filter(menu_name=menu_name).exists()
+            return JsonResponse({'exists': exists})
+
+        menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name')
+        parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
+        return render(request, self.template_name, {"menu_list": menu_list, "parent_menus": parent_menus})
+    
+    def post(self, request):
+        menu_id = request.POST.get('menu_id')
+        menu_name = request.POST.get('menu_name')
+        quick_path = request.POST.get('quick_path')
+        screen_name = request.POST.get('screen_name')
+        url = request.POST.get('url')
+        module_id = request.POST.get('module_id')
+        parent_menu_id = request.POST.get('parent_menu_id')
+        display_order = request.POST.get('display_order')
+        instance_id = request.POST.get('instance_id')
+        buffer1 = request.POST.get('buffer1')
+        buffer2 = request.POST.get('buffer2')
+        buffer3 = request.POST.get('buffer3')
+        is_active = True if "is_active" in request.POST else False
+        is_add = True if "is_add" in request.POST else False
+        is_view = True if "is_view" in request.POST else False
+        is_edit = True if "is_edit" in request.POST else False
+        is_delete = True if "is_delete" in request.POST else False
+        is_execute = True if "is_execute" in request.POST else False
+        app_id = request.POST.get('app_id')
+        icon = request.POST.get('icon')
+
+        if menu_id:
+            menu = get_object_or_404(Menu, menu_id=menu_id)
+            menu.menu_name = menu_name
+            menu.quick_path = quick_path
+            menu.screen_name = screen_name
+            menu.url = url
+            menu.module_id = module_id
+            menu.parent_menu_id = parent_menu_id
+            menu.display_order = display_order
+            menu.instance_id = instance_id
+            menu.buffer1 = buffer1
+            menu.buffer2 = buffer2
+            menu.buffer3 = buffer3
+            menu.is_active = is_active
+            menu.is_add = is_add
+            menu.is_view = is_view
+            menu.is_edit = is_edit
+            menu.is_delete = is_delete
+            menu.is_execute = is_execute
+            menu.app_id = app_id
+            menu.icon = icon
+            menu.modified_by = 1
+            menu.modified_on = now()
+            menu.save()
+        else:
+            Menu.objects.create(
+                comp_code="1001",
+                menu_name=menu_name,
+                quick_path=quick_path,
+                screen_name=screen_name,
+                url=url,
+                module_id=module_id,
+                parent_menu_id=parent_menu_id,
+                display_order=display_order,
+                instance_id="1",
+                buffer1=buffer1,
+                buffer2=buffer2,
+                buffer3=buffer3,
+                is_active=is_active,
+                is_add=is_add,
+                is_view=is_view,
+                is_edit=is_edit,
+                is_delete=is_delete,
+                is_execute=is_execute,
+                app_id=app_id,
+                icon=icon,
+                created_by=1,
+                created_on=now(),
+            )
+
+        return redirect("menu_list")
+
+
+def permission_view(request):
+    role_name = request.GET.get('role_name', 'No role name provided')
+    # Filter active menu items
+    active_menus = Menu.objects.filter(is_active=True)
+    context = {
+        'role_name': role_name,
+        'active_menus': active_menus,
+    }
+    return render(request, 'pages/security/role/permission.html', context)

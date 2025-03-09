@@ -1,199 +1,237 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 {% block content %}
-  <div class="page-wrapper">
-    <div class="content">
-      <div class="row">
-        <div class="col-md-12">
-          <!-- Page Header -->
-          <div class="page-header">
-            <div class="row align-items-center">
-              <div class="col-8">
-                <h4 class="page-title">Role Master<span class="count-title">{{ roles.count }}</span></h4>
-              </div>
-              <div class="col-4 text-end">
-                <div class="head-icons">
-                  <a href="{% url 'role_list' %}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Refresh"><i class="ti ti-refresh-dot"></i></a>
-                  <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Collapse" id="collapse-header"><i class="ti ti-chevrons-up"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- /Page Header -->
+<div class="page-wrapper">
+	<div class="content">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- Page Header -->
+				<div class="page-header">
+					<div class="row align-items-center">
+						<div class="col-8">
+							<h4 class="page-title">Role Master<span class="count-title">{{ roles.count }}</span></h4>
+						</div>
+						<div class="col-4 text-end">
+							<div class="head-icons">
+								<a href="{% url 'role_list' %}" data-bs-toggle="tooltip" data-bs-placement="top"
+									data-bs-original-title="Refresh"><i class="ti ti-refresh-dot"></i></a>
+								<a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
+									data-bs-original-title="Collapse" id="collapse-header"><i
+										class="ti ti-chevrons-up"></i></a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Page Header -->
 
-          <div class="card">
-            <div class="card-header">
-              <!-- Search -->
-              <div class="row align-items-center">
-                <div class="col-sm-4">
-                  <div class="icon-form mb-3 mb-sm-0">
-                    <span class="form-icon"><i class="ti ti-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search Role" />
-                  </div>
-                </div>
-                <div class="col-sm-8">
-                  <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
-                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add_role"><i class="ti ti-square-rounded-plus me-2"></i>Add Role</a>
-                  </div>
-                </div>
-              </div>
-              <!-- /Search -->
-            </div>
+				<div class="card">
+					<div class="card-header">
+						<!-- Search -->
+						<div class="row align-items-center">
+							<div class="col-sm-4">
+								<div class="icon-form mb-3 mb-sm-0">
+									<span class="form-icon"><i class="ti ti-search"></i></span>
+									<input type="text" class="form-control" placeholder="Search Role" />
+								</div>
+							</div>
+							<div class="col-sm-8">
+								<div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+									<a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+										data-bs-target="#offcanvas_add_role"><i
+											class="ti ti-square-rounded-plus me-2"></i>Add Role</a>
+								</div>
+							</div>
+						</div>
+						<!-- /Search -->
+					</div>
 
-            <div class="card-body">
-              <!-- Manage Roles List -->
-              <div class="table-responsive custom-table">
-                <table class="table datatable">
-                  <thead class="thead-light">
-                    <tr>
-                      <th>Role Name</th>
-                      <th>Role Description</th>
-                      <th>Created On</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for role in roles %}
-                    <tr>
-                      <td>{{ role.role_name }}</td>
-                      <td>{{ role.role_description }}</td>
-                      <td>{{ role.created_on }}</td>
-                      <td>
-                        <span class="badge {% if role.is_active %}badge-pill badge-status bg-success{% else %}badge-pill badge-status bg-danger{% endif %}">
-                          {% if role.is_active %}Active{% else %}Inactive{% endif %}
-                        </span>
-                      </td>
-                      <td>
-                        <div class="dropdown table-action">
-                          <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-                          <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_edit_{{ role.id }}"><i class="ti ti-edit text-blue"></i> Edit</a>
-                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_role_{{ role.id }}"><i class="ti ti-trash text-danger"></i> Delete</a>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+					<div class="card-body">
+						<!-- Manage Roles List -->
+						<div class="table-responsive custom-table">
+							<table class="table datatable">
+								<thead class="thead-light">
+									<tr>
+										<th>Role Name</th>
+										<th>Role Description</th>
+										<th>Created On</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for role in roles %}
+									<tr>
+										<td>{{ role.role_name }}</td>
+										<td>{{ role.role_description }}</td>
+										<td>{{ role.created_on }}</td>
+										<td>
+											<span
+												class="badge {% if role.is_active %}badge-pill badge-status bg-success{% else %}badge-pill badge-status bg-danger{% endif %}">
+												{% if role.is_active %}Active{% else %}Inactive{% endif %}
+											</span>
+										</td>
+										<td>
+											<div class="dropdown table-action">
+												<a href="#" class="action-icon" data-bs-toggle="dropdown"
+													aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+												<div class="dropdown-menu dropdown-menu-right">
+													<a class="dropdown-item" href="javascript:void(0);"
+														data-bs-toggle="offcanvas"
+														data-bs-target="#offcanvas_edit_{{ role.id }}"><i
+															class="ti ti-edit text-blue"></i> Edit</a>
+													<a class="dropdown-item" href="#" data-bs-toggle="modal"
+														data-bs-target="#delete_role_{{ role.id }}"><i
+															class="ti ti-trash text-danger"></i> Delete</a>
+															<a class="dropdown-item" href="{% url 'permission' %}?role_name={{ role.role_name }}" data-role_name="{{ role.role_name }}">
+																<i class="ti ti-shield text-success"></i> Permission
+															</a>
+															
+												</div>
+											</div>
+										</td>
+									</tr>
 
-                    <!-- Edit Role Offcanvas -->
-                    <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit_{{ role.id }}">
-                      <div class="offcanvas-header border-bottom">
-                        <h5 class="offcanvas-title">Edit Role</h5>
-                        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-                          <i class="ti ti-x"></i>
-                        </button>
-                      </div>
-                      <div class="offcanvas-body">
-                        <form id="editRoleForm_{{ role.id }}" method="post" action="{% url 'role_update' role.id %}" enctype="multipart/form-data">
-                          {% csrf_token %}
-                          <div class="row">
-                            <div class="col-md-12">
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Role Name <span class="text-danger">*</span></label>
-                                <input type="text" name="role_name" class="form-control" value="{{ role.role_name }}" required>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Role Description <span class="text-danger">*</span></label>
-                                <textarea name="role_description" class="form-control" required>{{ role.role_description }}</textarea>
-                              </div>
-                              <div class="form-group mb-3" style="display: none;">
-                                <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
-                                <input type="text" name="comp_code" class="form-control" value="{{ role.comp_code }}" readonly>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Modified By</label>
-                                <input type="number" name="modified_by" class="form-control" value="{{ role.modified_by }}">
-                              </div>
-                              <div class="form-group form-check">
-                                <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ role.id }}" {% if role.is_active %}checked{% endif %}>
-                                <label class="form-check-label" for="is_active_{{ role.id }}">Active</label>
-                            </div>
-                            </div>
-                          </div>
-                          <div class="d-flex align-items-center justify-content-end">
-                            <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Update</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                    <!-- /Edit Role Offcanvas -->
+									<!-- Edit Role Offcanvas -->
+									<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1"
+										id="offcanvas_edit_{{ role.id }}">
+										<div class="offcanvas-header border-bottom">
+											<h5 class="offcanvas-title">Edit Role</h5>
+											<button type="button"
+												class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+												data-bs-dismiss="offcanvas" aria-label="Close">
+												<i class="ti ti-x"></i>
+											</button>
+										</div>
+										<div class="offcanvas-body">
+											<form id="editRoleForm_{{ role.id }}" method="post"
+												action="{% url 'role_update' role.id %}" enctype="multipart/form-data">
+												{% csrf_token %}
+												<div class="row">
+													<div class="col-md-12">
+														<div class="form-group mb-3">
+															<label class="col-form-label">Role Name <span
+																	class="text-danger">*</span></label>
+															<input type="text" name="role_name" class="form-control"
+																value="{{ role.role_name }}" required>
+														</div>
+														<div class="form-group mb-3">
+															<label class="col-form-label">Role Description <span
+																	class="text-danger">*</span></label>
+															<textarea name="role_description" class="form-control"
+																required>{{ role.role_description }}</textarea>
+														</div>
+														<div class="form-group mb-3" style="display: none;">
+															<label class="col-form-label">Company Code <span
+																	class="text-danger">*</span></label>
+															<input type="text" name="comp_code" class="form-control"
+																value="{{ role.comp_code }}" readonly>
+														</div>
+														<div class="form-group mb-3">
+															<label class="col-form-label">Modified By</label>
+															<input type="number" name="modified_by" class="form-control"
+																value="{{ role.modified_by }}">
+														</div>
+														<div class="form-group form-check">
+															<input type="checkbox" name="is_active"
+																class="form-check-input" id="is_active_{{ role.id }}"
+																{%if role.is_active %}checked{% endif %}>
+															<label class="form-check-label"
+																for="is_active_{{ role.id }}">Active</label>
+														</div>
+													</div>
+												</div>
+												<div class="d-flex align-items-center justify-content-end">
+													<button type="button" data-bs-dismiss="offcanvas"
+														class="btn btn-light me-2">Cancel</button>
+													<button type="submit" class="btn btn-primary">Update</button>
+												</div>
+											</form>
+										</div>
+									</div>
+									<!-- /Edit Role Offcanvas -->
 
-                    <!-- Delete Role Modal -->
-                    <div class="modal fade" id="delete_role_{{ role.id }}" tabindex="-1" aria-labelledby="deleteRoleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="deleteRoleModalLabel">Deactivate Role</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            Are you sure you want to deactivate this role?
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form id="deleteRoleForm_{{ role.id }}" method="post" action="{% url 'role_delete' role.id %}">
-                              {% csrf_token %}
-                              <button type="submit" class="btn btn-danger">Deactivate</button>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- /Delete Role Modal -->
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              <!-- /Manage Roles List -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+									<!-- Delete Role Modal -->
+									<div class="modal fade" id="delete_role_{{ role.id }}" tabindex="-1"
+										aria-labelledby="deleteRoleModalLabel" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="deleteRoleModalLabel">Deactivate Role
+													</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"
+														aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													Are you sure you want to deactivate this role?
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary"
+														data-bs-dismiss="modal">Cancel</button>
+													<form id="deleteRoleForm_{{ role.id }}" method="post"
+														action="{% url 'role_delete' role.id %}">
+														{% csrf_token %}
+														<button type="submit" class="btn btn-danger">Deactivate</button>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /Delete Role Modal -->
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+						<!-- /Manage Roles List -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-  <!-- Add Role Offcanvas -->
-  <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add_role">
-    <div class="offcanvas-header border-bottom">
-      <h5 class="offcanvas-title">Add Role</h5>
-      <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-        <i class="ti ti-x"></i>
-      </button>
-    </div>
-    <div class="offcanvas-body">
-      <form id="addRoleForm" method="post" action="{% url 'role_create' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group mb-3">
-              <label class="col-form-label">Role Name <span class="text-danger">*</span></label>
-              <input type="text" name="role_name" class="form-control" required>
-            </div>
-            <div class="form-group mb-3">
-              <label class="col-form-label">Role Description <span class="text-danger">*</span></label>
-              <textarea name="role_description" class="form-control" required></textarea>
-            </div>
-            <div class="form-group mb-3" style="display: none;">
-              <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
-              <input type="text" name="comp_code" class="form-control" value="1000">
-            </div>
-            <div class="form-group mb-3">
-              <label class="col-form-label">Created By</label>
-              <input type="number" name="created_by" class="form-control" value="4">
-            </div>
-            <div class="form-group form-check mb-3">
-              <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
-              <label class="form-check-label" for="is_active">Active</label>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex align-items-center justify-content-end">
-          <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<!-- Add Role Offcanvas -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add_role">
+	<div class="offcanvas-header border-bottom">
+		<h5 class="offcanvas-title">Add Role</h5>
+		<button type="button"
+			class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+			data-bs-dismiss="offcanvas" aria-label="Close">
+			<i class="ti ti-x"></i>
+		</button>
+	</div>
+	<div class="offcanvas-body">
+		<form id="addRoleForm" method="post" action="{% url 'role_create' %}" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group mb-3">
+						<label class="col-form-label">Role Name <span class="text-danger">*</span></label>
+						<input type="text" name="role_name" class="form-control" required>
+					</div>
+					<div class="form-group mb-3">
+						<label class="col-form-label">Role Description <span class="text-danger">*</span></label>
+						<textarea name="role_description" class="form-control" required></textarea>
+					</div>
+					<div class="form-group mb-3" style="display: none;">
+						<label class="col-form-label">Company Code <span class="text-danger">*</span></label>
+						<input type="text" name="comp_code" class="form-control" value="1000">
+					</div>
+					<div class="form-group mb-3">
+						<label class="col-form-label">Created By</label>
+						<input type="number" name="created_by" class="form-control" value="4">
+					</div>
+					<div class="form-group form-check mb-3">
+						<input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
+						<label class="form-check-label" for="is_active">Active</label>
+					</div>
+				</div>
+			</div>
+			<div class="d-flex align-items-center justify-content-end">
+				<button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+				<button type="submit" class="btn btn-primary">Save</button>
+			</div>
+		</form>
+	</div>
+</div>
 
 {% endblock content %}
