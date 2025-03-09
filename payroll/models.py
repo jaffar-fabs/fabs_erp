@@ -309,7 +309,7 @@ class HolidayMaster(models.Model):
         comp_code = models.CharField(max_length=50)
         unique_id = models.BigAutoField(primary_key=True)
         holiday = models.CharField(max_length=50, blank=True, null=True)
-        holiday_type = models.BigIntegerField()
+        holiday_type = models.CharField(max_length=50, blank=True, null=True)
         holiday_date = models.DateField()
         holiday_day = models.CharField(max_length=50)
         holiday_description = models.CharField(max_length=300)
