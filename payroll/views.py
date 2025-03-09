@@ -541,67 +541,6 @@ def delete_project(request):
 # Holiday Master -------------------------
 
 # class HolidayMaster(View):
-def holidayList( request):
-    template_name="pages/payroll/holiday_master/holiday_list.html"
-    holidays_list=HolidayMaster.objects.all().order_by('-created_on')
-    return render(request,template_name, {'holidays':holidays_list})
-        
-
-def holidayCreate(request):
-    if request.method == "POST":
-        holiday = HolidayMaster(
-            comp_code=request.POST.get("comp_code", "1000"),
-            holiday=request.POST.get("holiday"),
-            holiday_type=request.POST.get("holiday_type"),
-            holiday_date=request.POST.get("holiday_date"),
-            holiday_day=request.POST.get("holiday_day"),
-            holiday_description=request.POST.get("holiday_description"),
-            is_active=request.POST.get("is_active") == "Active",
-            created_by=1,
-        )
-        holiday.save()
-
-        # ✅ Redirect after saving
-        return redirect('holiday_master')
-
-    # ✅ Redirect GET requests too
-    return redirect('holiday_master')    
-
-def holidayEdit(request):
-    if request.method == "GET":
-        uniqe_id = request.GET.get("holiday_id")
-    try:
-            holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id))
-            # print(holiday.holiday_day,"DAY")
-            return JsonResponse({
-                "holiday_id":holiday.unique_id,
-                "holiday": holiday.holiday,
-                "holiday_day": holiday.holiday_day,
-                "holiday_date": holiday.holiday_date,
-                "holiday_description": holiday.holiday_description,
-                "holiday_type": holiday.holiday_type,
-                "is_active": holiday.is_active,
-                "comp_code": holiday.comp_code,
-            })
-                    
-    except Exception as e:
-            print(f" Error project Edit: {str(e)}")  
-
-    if request.method == "POST":
-            holiday_id=request.POST.get("holiday_id")
-            if HolidayMaster.objects.filter(unique_id=holiday_id).exists():
-                holiday = get_object_or_404(HolidayMaster, unique_id=int(holiday_id))
-                holiday.holiday = request.POST.get("holiday", holiday.holiday)
-                holiday.holiday_date = request.POST.get("holiday_date", holiday.holiday_date)
-                holiday.holiday_day = request.POST.get("holiday_day", holiday.holiday_day)
-                holiday.holiday_type = request.POST.get("holiday_type", holiday.holiday_type)
-                holiday.holiday_description = request.POST.get("holiday_description", holiday.holiday_description)
-                holiday.created_by = 1;
-                holiday.comp_code = 1000;
-                holiday.is_active = request.POST.get("is_active") == "Active"
-                holiday.save()
-                return redirect("holiday_master")
-
 
 
 
@@ -918,6 +857,76 @@ class GradeMasterList(View):
 
         return redirect("grade_master")
 
+
+# HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
+
+def holidayList( request):
+    template_name="pages/payroll/holiday_master/holiday_list.html"
+    holidays_list=HolidayMaster.objects.all().order_by('-created_on')
+    holiday_type=CodeMaster.objects.filter(comp_code="1000",base_type ='HOLIDAY');
+    print(holiday_type,"Type")
+    return render(request,template_name, {'holidays':holidays_list,'holidayTypes':holiday_type})
+        
+
+def holidayCreate(request):
+
+    if request.method == "POST":
+        # holiDay=request.POST.get("holiday");
+        # holiday_date=request.get("holiday_date");
+        # if HolidayMaster.objects.filter(holiday=holiDay,holiday_date=holiday_date).exists():
+            
+        holiday = HolidayMaster(
+            comp_code=request.POST.get("comp_code", "1000"),
+            holiday=request.POST.get("holiday"),
+            holiday_type=request.POST.get("holiday_type"),
+            holiday_date=request.POST.get("holiday_date"),
+            holiday_day=request.POST.get("holiday_day"),
+            holiday_description=request.POST.get("holiday_description"),
+            is_active=request.POST.get("is_active") == "Active",
+            created_by=1,
+        )
+        holiday.save()
+
+        # Redirect after saving
+        return redirect('holiday_master')
+
+    # Redirect GET requests too
+    return redirect('holiday_master')    
+
+def holidayEdit(request):
+    if request.method == "GET":
+        uniqe_id = request.GET.get("holiday_id")
+    try:
+            holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id))
+            # print(holiday.holiday_day,"DAY")
+            return JsonResponse({
+                "holiday_id":holiday.unique_id,
+                "holiday": holiday.holiday,
+                "holiday_day": holiday.holiday_day,
+                "holiday_date": holiday.holiday_date,
+                "holiday_description": holiday.holiday_description,
+                "holiday_type": holiday.holiday_type,
+                "is_active": holiday.is_active,
+                "comp_code": holiday.comp_code,
+            })
+                    
+    except Exception as e:
+            print(f" Error project Edit: {str(e)}")  
+
+    if request.method == "POST":
+            holiday_id=request.POST.get("holiday_id")
+            if HolidayMaster.objects.filter(unique_id=holiday_id).exists():
+                holiday = get_object_or_404(HolidayMaster, unique_id=int(holiday_id))
+                holiday.holiday = request.POST.get("holiday", holiday.holiday)
+                holiday.holiday_date = request.POST.get("holiday_date", holiday.holiday_date)
+                holiday.holiday_day = request.POST.get("holiday_day", holiday.holiday_day)
+                holiday.holiday_type = request.POST.get("holiday_type", holiday.holiday_type)
+                holiday.holiday_description = request.POST.get("holiday_description", holiday.holiday_description)
+                holiday.created_by = 1;
+                holiday.comp_code = 1000;
+                holiday.is_active = request.POST.get("is_active") == "Active"
+                holiday.save()
+                return redirect("holiday_master")
 
 
 
