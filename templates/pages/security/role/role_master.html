@@ -82,10 +82,9 @@
 													<a class="dropdown-item" href="#" data-bs-toggle="modal"
 														data-bs-target="#delete_role_{{ role.id }}"><i
 															class="ti ti-trash text-danger"></i> Delete</a>
-															<a class="dropdown-item" href="{% url 'permission' %}?role_name={{ role.role_name }}" data-role_name="{{ role.role_name }}">
-																<i class="ti ti-shield text-success"></i> Permission
-															</a>
-															
+													<a class="dropdown-item" href="{% url 'permission' %}?role_name={{ role.role_name }}" data-role_name="{{ role.role_name }}">
+														<i class="ti ti-shield text-success"></i> Permission
+													</a>
 												</div>
 											</div>
 										</td>
@@ -112,7 +111,7 @@
 															<label class="col-form-label">Role Name <span
 																	class="text-danger">*</span></label>
 															<input type="text" name="role_name" class="form-control"
-																value="{{ role.role_name }}" required>
+																value="{{ role.role_name }}" required disabled>
 														</div>
 														<div class="form-group mb-3">
 															<label class="col-form-label">Role Description <span
@@ -134,7 +133,7 @@
 														<div class="form-group form-check">
 															<input type="checkbox" name="is_active"
 																class="form-check-input" id="is_active_{{ role.id }}"
-																{%if role.is_active %}checked{% endif %}>
+																{% if role.is_active %}checked{% endif %}>
 															<label class="form-check-label"
 																for="is_active_{{ role.id }}">Active</label>
 														</div>
@@ -207,6 +206,7 @@
 					<div class="form-group mb-3">
 						<label class="col-form-label">Role Name <span class="text-danger">*</span></label>
 						<input type="text" name="role_name" class="form-control" required>
+						<div id="role_name_error" class="text-danger" style="display: none;">Role name already exists.</div>
 					</div>
 					<div class="form-group mb-3">
 						<label class="col-form-label">Role Description <span class="text-danger">*</span></label>
@@ -233,5 +233,35 @@
 		</form>
 	</div>
 </div>
+
+<!-- JavaScript for Role Name Validation -->
+<script>
+	document.getElementById("addRoleForm").addEventListener("submit", function (event) {
+		event.preventDefault();
+
+		let form = this;
+		let formData = new FormData(form);
+		let roleNameError = document.getElementById("role_name_error");
+
+		fetch(form.action, {
+			method: "POST",
+			headers: {
+				"X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+			},
+			body: formData,
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.status === "error" && data.message === "Role name already exists.") {
+				roleNameError.style.display = "block";
+			} else if (data.status === "success") {
+				window.location.href = data.redirect_url;
+			}
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
+	});
+</script>
 
 {% endblock content %}

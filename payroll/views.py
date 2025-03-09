@@ -756,6 +756,8 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views import View
 from .models import UserMaster
+from django.urls import reverse
+
 
 class UserMasterCreate(View):
     def post(self, request):
@@ -793,7 +795,7 @@ class UserMasterCreate(View):
 
             user.full_clean()
             user.save()
-            return redirect("user_list")
+            return JsonResponse({'status': 'success', 'redirect_url': reverse('user_list')})
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'field': 'general', 'message': str(e)})

@@ -87,95 +87,95 @@
                       </td>
                     </tr>
                     <!-- Edit User Offcanvas -->
-                    <div class="offcanvas offcanvas-end offcanvas-large" id="offcanvas_edit_{{ user.user_master_id }}">
-                      <div class="offcanvas-header border-bottom">
-                        <h5 class="offcanvas-title">Edit User</h5>
-                        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-                          <i class="ti ti-x"></i>
-                        </button>
-                      </div>
-                      <div class="offcanvas-body">
-                        <form id="editUserForm_{{ user.user_master_id }}" method="post" action="{% url 'user_update' user.user_master_id %}" enctype="multipart/form-data">
-                          {% csrf_token %}
-                          <div class="row">
-                            <!-- Left Column -->
-                            <div class="col-md-6">
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-                                <input type="text" name="user_id" class="form-control" value="{{ user.user_id }}" readonly>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                <select name="gender" class="form-control" required>
-                                  <option value="1" {% if user.gender == 1 %}selected{% endif %}>Male</option>
-                                  <option value="2" {% if user.gender == 2 %}selected{% endif %}>Female</option>
-                                </select>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Profile Picture</label>
-                                <input type="file" name="profile_picture" class="form-control">
-                                {% if user.profile_picture %}
-                                  <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mt-2" width="100">
-                                {% endif %}
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
-                              </div>
-                            </div>
-                            <!-- Right Column -->
-                            <div class="col-md-6">
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Password <span class="text-danger">*</span></label>
-                                <input type="text" name="password" class="form-control" value="{{ user.password }}" required>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Date of Birth</label>
-                                <input type="date" name="dob" class="form-control" value="{{ user.dob|date:'Y-m-d' }}">
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">User Paycycles</label>
-                                <select name="user_paycycles" class="form-control">
-                                  <option value="Cycle 1" {% if user.user_paycycles == "Cycle 1" %}selected{% endif %}>Cycle 1</option>
-                                  <option value="Cycle 2" {% if user.user_paycycles == "Cycle 2" %}selected{% endif %}>Cycle 2</option>
-                                  <option value="Cycle 3" {% if user.user_paycycles == "Cycle 3" %}selected{% endif %}>Cycle 3</option>
-                                </select>
-                              </div>
-                              <div class="form-group mb-3" style="display: none;">
-                                <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
-                                <input type="text" name="comp_code" class="form-control" value="{{ user.comp_code }}" readonly>
-                              </div>
-                              <div class="form-group mb-3" style="display: none;">
-                                <label class="col-form-label">Instance ID <span class="text-danger">*</span></label>
-                                <input type="text" name="instance_id" class="form-control" value="{{ user.instance_id }}" readonly>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Employee Code</label>
-                                <input type="text" name="emp_code" class="form-control" value="{{ user.emp_code }}">
-                                <input type="hidden" name="created_by" value="{{ user.created_by }}">
-                              </div>
-                              <div class="form-group form-check">
-                                <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ user.user_master_id }}" {% if user.is_active %}checked{% endif %}>
-                                <label class="form-check-label" for="is_active_{{ user.user_master_id }}">Active</label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="d-flex align-items-center justify-content-end">
-                            <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Update</button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                    <!-- /Edit User Offcanvas -->
+<div class="offcanvas offcanvas-end offcanvas-large" id="offcanvas_edit_{{ user.user_master_id }}">
+  <div class="offcanvas-header border-bottom">
+    <h5 class="offcanvas-title">Edit User</h5>
+    <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="ti ti-x"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <form id="editUserForm_{{ user.user_master_id }}" method="post" action="{% url 'user_update' user.user_master_id %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" required>
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+            <input type="text" name="user_id" class="form-control" value="{{ user.user_id }}" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+            <select name="gender" class="form-control" required>
+              <option value="1" {% if user.gender == 1 %}selected{% endif %}>Male</option>
+              <option value="2" {% if user.gender == 2 %}selected{% endif %}>Female</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Profile Picture</label>
+            <input type="file" name="profile_picture" class="form-control">
+            {% if user.profile_picture %}
+              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mt-2" width="100">
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+        </div>
+        <!-- Right Column -->
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="col-form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Password <span class="text-danger">*</span></label>
+            <input type="password" name="password" class="form-control" value="{{ user.password }}" required>
+            <div id="password_invalid_feedback_edit_{{ user.user_master_id }}" class="invalid-feedback"></div>
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Date of Birth</label>
+            <input type="date" name="dob" class="form-control" value="{{ user.dob|date:'Y-m-d' }}">
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">User Paycycles</label>
+            <select name="user_paycycles" class="form-control">
+              <option value="Cycle 1" {% if user.user_paycycles == "Cycle 1" %}selected{% endif %}>Cycle 1</option>
+              <option value="Cycle 2" {% if user.user_paycycles == "Cycle 2" %}selected{% endif %}>Cycle 2</option>
+              <option value="Cycle 3" {% if user.user_paycycles == "Cycle 3" %}selected{% endif %}>Cycle 3</option>
+            </select>
+          </div>
+          <div class="form-group mb-3" style="display: none;">
+            <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
+            <input type="text" name="comp_code" class="form-control" value="{{ user.comp_code }}" readonly>
+          </div>
+          <div class="form-group mb-3" style="display: none;">
+            <label class="col-form-label">Instance ID <span class="text-danger">*</span></label>
+            <input type="text" name="instance_id" class="form-control" value="{{ user.instance_id }}" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label class="col-form-label">Employee Code</label>
+            <input type="text" name="emp_code" class="form-control" value="{{ user.emp_code }}">
+            <input type="hidden" name="created_by" value="{{ user.created_by }}">
+          </div>
+          <div class="form-group form-check">
+            <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ user.user_master_id }}" {% if user.is_active %}checked{% endif %}>
+            <label class="form-check-label" for="is_active_{{ user.user_master_id }}">Active</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center justify-content-end">
+        <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
 
                     <!-- Delete User Modal -->
                     <div class="modal fade" id="delete_user_{{ user.user_master_id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
@@ -272,7 +272,7 @@
             <div class="form-group mb-3">
               <label class="col-form-label">Password <span class="text-danger">*</span></label>
               <input type="password" name="password" class="form-control" required>
-              <div class="invalid-feedback">Please enter a password.</div>
+              <div id="password_invalid_feedback" class="invalid-feedback"></div>
             </div>
             <div class="form-group mb-3">
               <label class="col-form-label">Date of Birth</label>
@@ -298,84 +298,148 @@
         </div>
       </form>
       <script>
-        document.getElementById("user_id").addEventListener("blur", function () {
-        let userId = this.value.trim();
-        let validFeedback = document.getElementById("user_id_valid_feedback");
-        let invalidFeedback = document.getElementById("user_id_invalid_feedback");
-    
-        if (!userId) {
-            invalidFeedback.textContent = "User ID is required.";
-            invalidFeedback.style.display = "block";
-            validFeedback.style.display = "none";
-            return;
+        // Password Validation Function
+        function validatePassword(password) {
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
         }
-    
-        fetch("{% url 'user_create' %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-            },
-            body: new URLSearchParams({
-                "user_id": userId,
-                "check_availability": "true",
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "error") {
-                invalidFeedback.textContent = data.message;
+
+        // User ID Availability Check
+        document.getElementById("user_id").addEventListener("blur", function () {
+            let userId = this.value.trim();
+            let validFeedback = document.getElementById("user_id_valid_feedback");
+            let invalidFeedback = document.getElementById("user_id_invalid_feedback");
+
+            if (!userId) {
+                invalidFeedback.textContent = "User ID is required.";
                 invalidFeedback.style.display = "block";
                 validFeedback.style.display = "none";
-            } else {
-                validFeedback.textContent = data.message;
-                validFeedback.style.display = "block";
-                invalidFeedback.style.display = "none";
+                return;
             }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    });
-    
-    document.getElementById("addUserForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-    
-        let form = this;
-        let formData = new FormData(form);
-        let generalErrorDiv = document.getElementById("general_error");
-    
-        document.querySelectorAll(".invalid-feedback").forEach(el => el.style.display = "none");
-        generalErrorDiv.classList.add("d-none");
-        generalErrorDiv.textContent = "";
-    
-        fetch(form.action, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
-            },
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "error") {
-                let fieldName = data.field;
-                if (fieldName === "general") {
-                    generalErrorDiv.textContent = data.message;
-                    generalErrorDiv.classList.remove("d-none");
+
+            fetch("{% url 'user_create' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                },
+                body: new URLSearchParams({
+                    "user_id": userId,
+                    "check_availability": "true",
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "error") {
+                    invalidFeedback.textContent = data.message;
+                    invalidFeedback.style.display = "block";
+                    validFeedback.style.display = "none";
                 } else {
-                    let errorElement = document.getElementById(fieldName + "_invalid_feedback");
-                    if (errorElement) {
-                        errorElement.textContent = data.message;
-                        errorElement.style.display = "block";
+                    validFeedback.textContent = data.message;
+                    validFeedback.style.display = "block";
+                    invalidFeedback.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+        // Form Submission with Password Validation
+        document.getElementById("addUserForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let form = this;
+            let formData = new FormData(form);
+            let generalErrorDiv = document.getElementById("general_error");
+            let password = formData.get("password");
+
+            // Password Validation
+            if (!validatePassword(password)) {
+                let passwordError = document.getElementById("password_invalid_feedback");
+                passwordError.textContent = "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.";
+                passwordError.style.display = "block";
+                return;
+            }
+
+            document.querySelectorAll(".invalid-feedback").forEach(el => el.style.display = "none");
+            generalErrorDiv.classList.add("d-none");
+            generalErrorDiv.textContent = "";
+
+            fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "error") {
+                    let fieldName = data.field;
+                    if (fieldName === "general") {
+                        generalErrorDiv.textContent = data.message;
+                        generalErrorDiv.classList.remove("d-none");
+                    } else {
+                        let errorElement = document.getElementById(fieldName + "_invalid_feedback");
+                        if (errorElement) {
+                            errorElement.textContent = data.message;
+                            errorElement.style.display = "block";
+                        }
+                    }
+                } else if (data.status === "success") {
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
                     }
                 }
-            } else if (data.status === "success") {
-                window.location.href = data.redirect_url;
-            }
-        })
-       
-    });
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+        // Edit User Form Submission with Password Validation and Redirect
+        document.querySelectorAll("[id^=editUserForm_]").forEach(form => {
+      form.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          let formData = new FormData(form);
+          let password = formData.get("password");
+
+          // Password Validation
+          if (!validatePassword(password)) {
+              let passwordError = document.getElementById("password_invalid_feedback_edit_" + form.id.split("_").pop());
+              passwordError.textContent = "Password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.";
+              passwordError.style.display = "block";
+              return;
+          }
+
+          fetch(form.action, {
+              method: "POST",
+              headers: {
+                  "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+              },
+              body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.status === "error") {
+                  alert(data.message); // Show error message if any
+              } else if (data.status === "success") {
+                  // Redirect to the user list page after successful update
+                  window.location.href = "{% url 'user_list' %}";
+              }
+          })
+          .catch(error => {
+              console.error("Error:", error);
+          });
+      });
+  });
       </script>   
       </div>
     </div>
