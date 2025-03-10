@@ -157,10 +157,10 @@ def my_login_view(request):
         try:
             user = UserMaster.objects.get(user_id=username, is_active=True)
 
-            if password == user.password:  # ❌ Insecure: Plaintext password check
+            if password == user.password:  
                 request.session["username"] = user.user_id
-                request.session["role"] = "Administrator" if user.user_id == "admin" else "Programmer"
-                request.session["role_id"] = 1 if user.user_id == "admin" else 2
+                request.session["role"] = "Administrator" if user.user_id == "admin1" else "Programmer"
+                request.session["role_id"] = 1 if user.user_id == "admin1" else 2
                 
                 messages.success(request, "Login successful!")
                 return redirect("/index")
