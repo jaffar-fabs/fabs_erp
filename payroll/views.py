@@ -37,73 +37,53 @@ def save_employee(request, employee_id=None):
         else:  # If employee_id is not provided, we are creating
             employee = Employee()  # Create a new instance
 
-
         # Common fields to extract
-        employee.earn_deduct_type = request.POST.get("earn_deduct_type")
-        employee.earn_deduct_code = request.POST.get("earn_deduct_code")
-        employee.payprocess_cycle = request.POST.get("payprocess_cycle")
-        employee.payprocess_month = request.POST.get("payprocess_month")
-        employee.comp_code = request.POST.get("comp_code")
         employee.emp_code = request.POST.get("emp_code")
-        employee.labour_id = request.POST.get("labour_id")
-        employee.labour_bank_acc_no = request.POST.get("labour_bank_acc_no")
-        employee.emp_name = request.POST.get("emp_name")
+        employee.emp_name = request.POST.get("emp_name_passport")
+        employee.surname = request.POST.get("surname")
+        employee.dob = request.POST.get("dob") or None
+        employee.emp_sex = request.POST.get("emp_sex")
+        employee.emp_status = request.POST.get("emp_status")
         employee.father_name = request.POST.get("father_name")
         employee.mother_name = request.POST.get("mother_name")
-        employee.spouse_name = request.POST.get("spouse_name")
-        employee.emp_sex = request.POST.get("emp_sex")
+        employee.nationality = request.POST.get("nationality")
+        employee.religion = request.POST.get("religion")
+        employee.qualification = request.POST.get("qualification")
         employee.emp_marital_status = request.POST.get("emp_marital_status")
-        employee.emp_status = request.POST.get("emp_status")
-        employee.emp_type = request.POST.get("emp_type") or None
-        employee.dep_code = request.POST.get("dep_code")
-        employee.prj_code = request.POST.get("prj_code")
-        employee.desig_code = request.POST.get("desig_code")
-        employee.grade_code = request.POST.get("grade_code")
+        employee.spouse_name = request.POST.get("spouse_name")
+        employee.height = request.POST.get("height") or None
+        employee.weight = request.POST.get("weight") or None
+        employee.family_status = request.POST.get("family_status") or None
+        employee.res_country_code = request.POST.get("res_country_code") or None
+        employee.res_phone_no = request.POST.get("res_phone_no") or None
+        employee.res_addr_line1 = request.POST.get("res_addr_line1")
+        employee.res_addr_line2 = request.POST.get("res_addr_line2")
+        employee.res_city = request.POST.get("res_city")
+        employee.res_state = request.POST.get("res_state")
+        employee.local_country_code = request.POST.get("local_country_code")
+        employee.local_phone_no = request.POST.get("local_phone_no")
+        employee.local_addr_line1 = request.POST.get("local_addr_line1")
+        employee.local_addr_line2 = request.POST.get("local_addr_line2")
+        employee.labour_id = request.POST.get("labour_id")
+        employee.process_cycle = request.POST.get("process_cycle")
         employee.basic_pay = request.POST.get("basic_pay") or None
         employee.allowance = request.POST.get("allowance") or None
-        employee.dob = request.POST.get("dob") or None
+        employee.grade_code = request.POST.get("grade_code")
+        employee.designation = request.POST.get("designation")
+        employee.department = request.POST.get("department")
         employee.date_of_join = request.POST.get("date_of_join") or None
         employee.date_of_rejoin = request.POST.get("date_of_rejoin") or None
-        employee.process_cycle = request.POST.get("process_cycle")
-        employee.ot_type = request.POST.get("ot_type")
-        employee.addrline1 = request.POST.get("addrline1")
-        employee.addrline2 = request.POST.get("addrline2")
-        employee.city = request.POST.get("city")
-        employee.state = request.POST.get("state")
-        employee.phone_no = request.POST.get("phone_no")
-        employee.country_code = request.POST.get("country_code")
-        employee.r_addrline1 = request.POST.get("r_addrline1")
-        employee.r_addrline2 = request.POST.get("r_addrline2")
-        employee.r_city = request.POST.get("r_city")
-        employee.r_state = request.POST.get("r_state")
-        employee.r_phone_no = request.POST.get("r_phone_no")
-        employee.r_country_code = 1
-        employee.emp_bank = request.POST.get("emp_bank")
-        employee.emp_bank_branch = request.POST.get("emp_bank_branch")
-        employee.emp_acc_no = request.POST.get("emp_acc_no")
-        employee.bank_loan = request.POST.get("bank_loan")
-        employee.atten_type = request.POST.get("atten_type")
-        employee.pay_process_flag = request.POST.get("pay_process_flag")
-        employee.emp_height = request.POST.get("emp_height")
-        employee.emp_weight = request.POST.get("emp_weight")
-        employee.depen_count = request.POST.get("depen_count") or None
+        employee.depend_count = request.POST.get("depend_count") or None
         employee.child_count = request.POST.get("child_count") or None
-        employee.passport_no = request.POST.get("passport_no")
-        employee.passport_issuedat = request.POST.get("passport_issuedat")
-        employee.passport_validity = request.POST.get("passport_validity") or None
-        employee.is_active = True
+        employee.employee_bank = request.POST.get("employee_bank")
+        employee.bank_branch = request.POST.get("bank_branch")
+        employee.account_no = request.POST.get("account_no")
+        employee.bank_loan = request.POST.get("bank_loan")
+        # employee.is_active = True
         employee.created_by = 1  # Example user ID
         employee.modified_by = 1  # Example user ID
         employee.created_on = request.POST.get("created_on") or None
         employee.modified_on = request.POST.get("modified_on") or None
-        employee.nationality = request.POST.get("nationality")
-        employee.family_status = request.POST.get("family_status")
-        employee.qualification = request.POST.get("qualification")
-        employee.religion = request.POST.get("religion")
-        employee.amounts = request.POST.get("amounts")
-        employee.email1 = request.POST.get("email1")
-        employee.email2 = request.POST.get("email2")
-        employee.locn_code = request.POST.get("locn_code")
 
         # Save the employee object
         employee.save()
@@ -170,32 +150,26 @@ def index(request):
     return render(request, 'pages/dashboard/index.html', {'deals_dashboard': deals_dashboard})
 
 def my_login_view(request):
-
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        if username == "admin" and password == "12345":
-            role = "Administrator"  
-            role_id = 1
-            request.session["username"] = username
-            request.session["role"] = role  
-            request.session["role_id"] = role_id  
+        try:
+            user = UserMaster.objects.get(user_id=username, is_active=True)
 
-            messages.success(request, "Login successful!")
-            return redirect("/index",dashboard_view(request)) 
-        elif username == "user" and password == "12345":
-            role = "Programmer"
-            role_id = 2
-            request.session["username"] = username
-            request.session["role"] = role  
-            request.session["role_id"] = role_id 
-            messages.success(request, "Login successful!")
-            return redirect("/index",dashboard_view(request)) 
-        else:
+            if password == user.password:  # ❌ Insecure: Plaintext password check
+                request.session["username"] = user.user_id
+                request.session["role"] = "Administrator" if user.user_id == "admin" else "Programmer"
+                request.session["role_id"] = 1 if user.user_id == "admin" else 2
+                
+                messages.success(request, "Login successful!")
+                return redirect("/index")
+            else:
+                messages.error(request, "Invalid username or password.")
+        except UserMaster.DoesNotExist:
             messages.error(request, "Invalid username or password.")
 
-        return render(request, "auth/login.html") 
+    return render(request, "auth/login.html")
 
 def dashboard_view(request):
     try:

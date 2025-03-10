@@ -3,77 +3,65 @@ from django.utils.timezone import now
 import uuid
 
 class Employee(models.Model):
-        
-    employee_id = models.AutoField(primary_key=True)
-    earn_deduct_type = models.CharField(max_length=50, blank=True, null=True)
-    earn_deduct_code = models.CharField(max_length=50, default='1')  
-    payprocess_cycle = models.CharField(max_length=50,blank=True, null=True) 
-    payprocess_month = models.CharField(max_length=50, default='1')  
-    comp_code = models.CharField(max_length=20)
-    emp_code = models.CharField(max_length=50,blank=True, null=True)
-    labour_id = models.CharField(max_length=50, blank=True, null=True)
-    labour_bank_acc_no = models.CharField(max_length=20, blank=True, null=True)
-    emp_name = models.CharField(max_length=100)
-    father_name = models.CharField(max_length=50, blank=True, null=True)
-    mother_name = models.CharField(max_length=50, blank=True, null=True)
-    spouse_name = models.CharField(max_length=50, blank=True, null=True)
-    emp_sex = models.CharField(max_length=50, default='1')  
-    emp_marital_status = models.CharField(max_length=50, default='1')  
-    emp_status = models.CharField(max_length=50,blank=True, null=True)
-    emp_type = models.BigIntegerField(null=True, blank=True)
-    dep_code = models.CharField(max_length=50, default='1')  
-    prj_code = models.CharField(max_length=50,blank=True, null=True)
-    desig_code = models.CharField(max_length=50,blank=True, null=True)
-    grade_code = models.CharField(max_length=50,blank=True, null=True)
-    basic_pay = models.BigIntegerField()
-    allowance = models.BigIntegerField()
-    dob = models.DateField(blank=True, null=True)
-    date_of_join = models.DateField(blank=True, null=True)
-    date_of_rejoin = models.DateField(blank=True, null=True)
-    process_cycle = models.CharField(max_length=50,blank=True, null=True)
-    ot_type = models.CharField(max_length=50, blank=True, null=True)
-    addrline1 = models.CharField(max_length=50, blank=True, null=True)
-    addrline2 = models.CharField(max_length=50, blank=True, null=True)
-    city = models.CharField(max_length=50, blank=True, null=True)
-    state = models.CharField(max_length=50, blank=True, null=True)
-    phone_no = models.CharField(max_length=20, blank=True, null=True)
-    country_code = models.CharField(max_length=50,blank=True, null=True)
-    r_addrline1 = models.CharField(max_length=50, blank=True, null=True)
-    r_addrline2 = models.CharField(max_length=50, blank=True, null=True)
-    r_city = models.CharField(max_length=50, blank=True, null=True)
-    r_state = models.CharField(max_length=50, blank=True, null=True)
-    r_phone_no = models.CharField(max_length=20, blank=True, null=True)
-    r_country_code = models.CharField(max_length=50)
-    emp_bank = models.CharField(max_length=50, blank=True, null=True)
-    emp_bank_branch = models.CharField(max_length=50, blank=True, null=True)
-    emp_acc_no = models.BigIntegerField(null=True,blank=True)
-    bank_loan = models.BigIntegerField(blank=True, null=True)
-    atten_type = models.BigIntegerField(blank=True, null=True)
-    pay_process_flag = models.IntegerField(blank=True, null=True)
-    emp_height = models.CharField(max_length=50,blank=True, null=True)
-    emp_weight = models.CharField(max_length=50,blank=True, null=True)
-    depen_count = models.BigIntegerField(blank=True, null=True)
-    child_count = models.BigIntegerField(blank=True, null=True)
-    passport_no = models.CharField(max_length=50, blank=True, null=True)
-    passport_issuedat = models.CharField(max_length=50, blank=True, null=True)
-    passport_validity = models.DateField(auto_now_add=True, null=True)
-    is_active = models.BooleanField(default=True)
-    instance_id = models.CharField(max_length=50, default='NEWID()', null=True)
-    created_on = models.DateField(auto_now_add=True, null=True)
-    modified_on = models.DateField(blank=True, null=True)
-    nationality = models.CharField(max_length=50, default='1')
-    family_status = models.CharField(max_length=50, default='1')
-    qualification = models.CharField(max_length=50, blank=True, null=True)
-    religion = models.CharField(max_length=50, default='1')
-    amounts = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
-    email1 = models.CharField(max_length=150)
-    email2 = models.CharField(max_length=150,blank=True, null=True)
-    locn_code = models.CharField(max_length=50, blank=True, null=True)
-    created_by = models.BigIntegerField(default=1)
-    modified_by = models.BigIntegerField(null=True, blank=True)
+    employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
+    emp_code = models.CharField(max_length=50, blank=True, null=True)  # Employee code
+    emp_name = models.CharField(max_length=100)  # Employee name (as per passport)
+    surname = models.CharField(max_length=50, blank=True, null=True)  # Surname
+    dob = models.DateField(blank=True, null=True)  # Date of birth
+    emp_sex = models.CharField(max_length=1, choices=[('1', 'Male'), ('2', 'Female')], default='1')  # Gender
+    emp_status = models.CharField(max_length=50, blank=True, null=True)  # Employment status
+    father_name = models.CharField(max_length=50, blank=True, null=True)  # Father's name
+    mother_name = models.CharField(max_length=50, blank=True, null=True)  # Mother's name
+    nationality = models.CharField(max_length=50, blank=True, null=True)  # Nationality
+    religion = models.CharField(max_length=50, blank=True, null=True)  # Religion
+    qualification = models.CharField(max_length=50, blank=True, null=True)  # Qualification
+    emp_marital_status = models.CharField(max_length=1, choices=[('1', 'Single'), ('2', 'Married')], default='1')  # Marital status
+    spouse_name = models.CharField(max_length=50, blank=True, null=True)  # Spouse's name
+    height = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Height in cm
+    weight = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Weight in kg
+    family_status = models.CharField(max_length=50, blank=True, null=True)  # Family status
 
-    def str(self):
-        return self.emp_code
+    # Residential Address
+    res_country_code = models.CharField(max_length=10, blank=True, null=True)  # Residential country code
+    res_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Residential phone number
+    res_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 1
+    res_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 2
+    res_city = models.CharField(max_length=50, blank=True, null=True)  # Residential city
+    res_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
+
+    # Local Residence
+    local_country_code = models.CharField(max_length=10, blank=True, null=True)  # Local country code
+    local_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Local phone number
+    local_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 1
+    local_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 2
+
+    # Payment Details
+    labour_id = models.CharField(max_length=50, blank=True, null=True)  # Labour ID
+    process_cycle = models.CharField(max_length=50, blank=True, null=True)  # Payment process cycle
+    basic_pay = models.DecimalField(max_digits=10, decimal_places=2)  # Basic pay
+    allowance = models.DecimalField(max_digits=10, decimal_places=2)  # Allowance
+    grade_code = models.CharField(max_length=1, choices=[('A', 'A'), ('B', 'B'), ('C', 'C')], blank=True, null=True)  # Grade code
+    designation = models.CharField(max_length=50, blank=True, null=True)  # Designation
+    department = models.CharField(max_length=50, blank=True, null=True)  # Department
+    date_of_join = models.DateField(blank=True, null=True)  # Date of joining
+    date_of_rejoin = models.DateField(blank=True, null=True)  # Date of rejoining
+    depend_count = models.IntegerField(blank=True, null=True)  # Dependent count
+    child_count = models.IntegerField(blank=True, null=True)  # Child count
+
+    # Account Details
+    employee_bank = models.CharField(max_length=100, blank=True, null=True)  # Employee bank
+    bank_branch = models.CharField(max_length=100, blank=True, null=True)  # Bank branch
+    account_no = models.CharField(max_length=20, blank=True, null=True)  # Account number
+    bank_loan = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Bank loan
+
+    # Audit Fields
+    created_by = models.BigIntegerField(default=1)  # Created by
+    modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
+    created_on = models.DateTimeField(auto_now_add=True, null=True)  # Created on
+    modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
+
+    def __str__(self):
+        return f"{self.emp_name} ({self.emp_code})"
 
 # ------------------------------------------------------------------------------------------------------------
 
