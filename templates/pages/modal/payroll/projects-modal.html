@@ -418,7 +418,7 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": "{{ csrf_token }}"
+                "X-CSRFToken": "{{ csrf_token }}" 
             },
             body: new URLSearchParams({project_code: projectCode})
         })

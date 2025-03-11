@@ -12,123 +12,52 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form action="{% url 'holiday_create' %}" method="POST" onsubmit="return checkProjectCode(event)">
+        <form action="{% url 'holiday_create' %}" method="POST" id="holidayForm">
             {% csrf_token %}
-
+        
             <div class="row">
-                <!-- Project Code -->
+                <!-- Holiday Name -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday <span class="text-danger">*</span></label>
+                        <!-- Notice: ID is "project_code" as in your original form -->
                         <input class="form-control" id="project_code" name="holiday" type="text" required>
-                        <span id="project_code_error" class="text-danger"></span> <!-- Error message here -->
+                        <!-- Error span for holiday duplication -->
+                        <span id="project_code_error" class="text-danger"></span>
                     </div>
                 </div>
-
-                <!-- Project Name -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Holiday type <span class="text-danger">*</span></label>
-                        <input type="text" name="project_name" class="form-control" required>
-                    </div>
-                </div> -->
-
-                <!-- Project Type -->
+        
+                <!-- Holiday Type -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday type <span class="text-danger">*</span></label>
-                        <select class="form-select" select name="holiday_type" required>
-                            <option value=''>Select</option>
-                            <!-- <option>2</option>
-                            <option>3</option>
-                            <option>4</option> -->
+                        <select class="form-select" name="holiday_type" required>
+                            <option value="">Select</option>
                             {% for holiday_type in holidayTypes %}
-                                <option>{{holiday_type.base_value}}</option>
+                                <option>{{ holiday_type.base_value }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-
-                <!-- Project Value -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
-                        <input class="form-control" name="project_value" type="text" required>
-                    </div>
-                </div> -->
-
-                <!-- Main Contractor -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
-                        <select class="form-select" name="main_contractor" required>
-                            <option value="">Select</option>
-                            <option>NovaWave LLC</option>
-                            <option>Silver Hawk</option>
-                            <option>Harbor View</option>
-                        </select>
-                    </div>
-                </div> -->
-
-                <!-- Sub Contractor -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Sub Contractor <span class="text-danger">*</span></label>
-                        <select class="form-select" name="sub_contractor" required>
-                            <option value="">Select</option>
-                            <option>NovaWave LLC</option>
-                            <option>Silver Hawk</option>
-                            <option>Harbor View</option>
-                        </select>
-                    </div>
-                </div> -->
-
-                <!-- Start Date -->
+        
+                <!-- Holiday Date -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" name="holiday_date" id="holiday_date" required>
+                        <!-- You can add an error span here if needed -->
+                        <!-- <span id="date_error" class="text-danger"></span> -->
                     </div>
                 </div>
-
-                <!-- Due Date -->
+        
+                <!-- Holiday Day -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday Day <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" readonly name="holiday_day" id="holiday_day" required>
-                        <!-- <span id="date_error" class="text-danger"></span> Error message here -->
                     </div>
                 </div>
-
-                <!-- Consultant -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
-                        <select class="multiple-img form-control" multiple name="consultant" required>
-                            <option>Darlee Robertson</option>
-                            <option>Sharon Roy</option>
-                            <option>Vaughan</option>
-                            <option>Jessica</option>
-                            <option>Carol Thomas</option>
-                        </select>
-                    </div>
-                </div> -->
-
-                <!-- Project City -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="form-select" name="prj_city" required>
-                            <option value=''>Select</option>
-                            <option>Abu Dhabi</option>
-                            <option>Sharjah</option>
-                            <option>Umm Al Qaiwain</option>
-                        </select>
-                    </div>
-                </div> -->
-
-
-
+        
                 <!-- Description -->
                 <div class="col-md-12">
                     <div class="mb-3">
@@ -142,8 +71,7 @@
                 <div class="mb-3 d-flex align-items-center">
                     <label class="col-form-label me-2" for="is_active">Is Active</label>
                     <input type="hidden" name="is_active" value="false">
-                    <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active"
-                        checked>
+                    <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active" checked>
                 </div>
             </div>
             <!-- Buttons -->
@@ -152,6 +80,7 @@
                 <button type="submit" class="btn btn-primary">Create</button>
             </div>
         </form>
+        
     </div>
 </div>
 <!-- /Add New Project -->
@@ -421,4 +350,71 @@
         document.getElementById("holiday_days").value = dayName;
 
     });
+
+   
+    
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("holidayForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent form submission
+    
+            let form = event.target;
+            // Read holiday from the input with id "project_code"
+            let holidayName = document.getElementById("project_code").value.trim();
+            let holidayDate = document.getElementById("holiday_date").value.trim();
+            // Use the error span with id "project_code_error"
+            let holidayError = document.getElementById("project_code_error");
+            
+            // Clear previous error messages
+            if (holidayError) holidayError.innerText = "";
+    
+            let formValid = true;
+    
+            // Validate fields
+            if (!holidayName) {
+                if (holidayError) holidayError.innerText = "Holiday name is required.";
+                formValid = false;
+            }
+            if (!holidayDate) {
+                // Optionally, add error handling for holiday date if needed
+                formValid = false;
+            }
+    
+            // If form is still valid, proceed with AJAX request
+            if (formValid) {
+                fetch("{% url 'check_holiday' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        // Ensure CSRF token is properly set; you could also use:
+                        // "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: new URLSearchParams({
+                        holiday: holidayName,
+                        holiday_date: holidayDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (holidayError) holidayError.innerText = "Holiday already exists. Please choose a different one.";
+                        formValid = false;
+                    }
+    
+                    if (formValid) {
+                        form.submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking holiday:", error);
+                });
+            }
+    
+            return false; // Prevent default submission if errors exist
+        });
+    });
+    </script>
+    
