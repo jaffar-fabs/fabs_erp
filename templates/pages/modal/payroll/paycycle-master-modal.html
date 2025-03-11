@@ -21,12 +21,9 @@
                                 <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
                                 <select class="form-select" required aria-label="select example" name="process_cycle">
                                     <option value="">Select</option>
-                                    <option value="101">101</option>
-                                    <option value="102">102</option>
-                                    <option value="103">103</option>
-                                    <option value="ABC">ABC</option>
-                                    <option value="XYZ">XYZ</option>
-                                    <option value="123ABC">123ABC</option>
+                                    {% for paycycle in paycycle_data %}
+                                        <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
+                                    {% endfor %}
                                 </select>
                                 <div class="invalid-feedback">Please provide a process cycle.</div>
                             </div>
@@ -54,9 +51,9 @@
                             <label class="col-form-label">Process Comp Flag<span class="text-danger"> *</span></label>
                             <select class="form-select" required aria-label="select example" name="process_comp_flag">
                                 <option value="">Select</option>
-                                <option value="Initial">Initial</option>
-                                <option value="Processing">Processing</option>
-                                <option value="Completed">Completed</option>
+                                    {% for pf in pf_data %}
+                                        <option value="{{ pf.base_value }}">{{ pf.base_description }}</option>
+                                    {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please provide a process comp flag.</div>
                         </div>
@@ -90,8 +87,9 @@
                             <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
                             <select class="form-select" required aria-label="select example" name="attendance_uom">
                                 <option value="">Select</option>
-                                <option value="Days">Days</option>
-                                <option value="Hours">Hours</option>
+                                    {% for uom in at_uom_data %}
+                                        <option value="{{ uom.base_value }}">{{ uom.base_description }}</option>
+                                    {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please provide a attendance uom.</div>
                         </div>
@@ -112,9 +110,9 @@
                             <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
                             <select class="form-select" required aria-label="select example" name="default_project">
                                 <option value="">Select</option>
-                                <option value="NovaWave LLC">NovaWave LLC</option>
-                                <option value="Silver Hawk">Silver Hawk</option>
-                                <option value="Harbor View">Harbor View</option>
+                                    {% for pro_data in project_data %}
+                                        <option value="{{ pro_data.prj_code }}">{{ pro_data.prj_name }}</option>
+                                    {% endfor %}
                             </select>
                             <div class="invalid-feedback">Please provide a default project.</div>
                         </div>
@@ -363,16 +361,16 @@
                     <!-- Form fields for editing -->
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
-                            <select class="select2" name="process_cycle" id="edit_process_cycle">
+                            <label class="col-form-label">Process Cycle <span class="text-danger">*</span></label>
+                            <select class="select2" name="process_cycle" id="edit_process_cycle" required>
                                 <option value="">Select</option>
-                                <option value="101">101</option>
-                                <option value="102">102</option>
-                                <option value="103">103</option>
-                                <option value="ABC">ABC</option>
-                                <option value="XYZ">XYZ</option>
-                                <option value="123ABC">123ABC</option>
+                                {% for paycycle in paycycle_data %}
+                                    <option value="{{ paycycle.base_value }}" {% if paycycle.base_value == employee.process_cycle %}selected{% endif %}>
+                                        {{ paycycle.base_description }}
+                                    </option>
+                                {% endfor %}
                             </select>
+
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -392,13 +390,14 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Process Comp Flag<span class="text-danger"> *</span></label>
-                            <select class="form-select" required aria-label="select example" name="process_comp_flag"
-                                id="edit_process_comp_flag">
+                            <select class="form-select" required aria-label="select example" name="process_comp_flag" id="edit_process_comp_flag">
                                 <option value="">Select</option>
-                                <option value="Initial">Initial</option>
-                                <option value="Processing">Processing</option>
-                                <option value="Completed">Completed</option>
-                            </select>
+                                {% for pf in pf_data %}
+                                    <option value="{{ pf.base_value }}" {% if pf.base_value == employee.process_comp_flag %}selected{% endif %}>
+                                        {{ pf.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>                            
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -426,12 +425,14 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
-                            <select class="form-select" required aria-label="select example" name="attendance_uom"
-                                id="edit_attendance_uom">
+                            <select class="form-select" required aria-label="select example" name="attendance_uom" id="edit_attendance_uom">
                                 <option value="">Select</option>
-                                <option value="Days">Days</option>
-                                <option value="Hours">Hours</option>
-                            </select>
+                                {% for uom in at_uom_data %}
+                                    <option value="{{ uom.base_value }}" {% if uom.base_value == employee.attendance_uom %}selected{% endif %}>
+                                        {{ uom.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>                            
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -451,9 +452,11 @@
                             <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
                             <select class="select" name="default_project" id="edit_default_project">
                                 <option value="">Select</option>
-                                <option value="NovaWave LLC">NovaWave LLC</option>
-                                <option value="Silver Hawk">Silver Hawk</option>
-                                <option value="Harbor View">Harbor View</option>
+                                        {% for pro_data in project_data %}
+                                            <option value="{{ pro_data.prj_code }}" {% if pro_data.prj_code == user.project_code %}selected{% endif %}>
+                                                {{ pro_data.prj_name }}
+                                            </option>
+                                        {% endfor %}
                             </select>
                         </div>
                     </div>

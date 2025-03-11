@@ -8,6 +8,7 @@ def employee_document_path(instance, filename):
     return os.path.join('employee_documents', instance.emp_code, filename)
 
 class Employee(models.Model):
+    comp_code = models.CharField(max_length=15, default=1000)
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
     emp_code = models.CharField(max_length=50, blank=True, null=True)  # Employee code
     emp_name = models.CharField(max_length=100)  # Employee name (as per passport)
@@ -20,7 +21,7 @@ class Employee(models.Model):
     nationality = models.CharField(max_length=50, blank=True, null=True)  # Nationality
     religion = models.CharField(max_length=50, blank=True, null=True)  # Religion
     qualification = models.CharField(max_length=50, blank=True, null=True)  # Qualification
-    emp_marital_status = models.CharField(max_length=1, choices=[('1', 'Single'), ('2', 'Married')], default='1')  # Marital status
+    emp_marital_status = models.CharField(max_length=150, blank=True, null=True)  # Marital status
     spouse_name = models.CharField(max_length=50, blank=True, null=True)  # Spouse's name
     height = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Height in cm
     weight = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Weight in kg
@@ -78,6 +79,7 @@ class Employee(models.Model):
     visa_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Visa document upload
     emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
     work_permit_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Work permit document upload
+    profile_picture = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Profile pictur
 
     # Audit Fields
     created_by = models.BigIntegerField(default=1)  # Created by
@@ -252,7 +254,7 @@ class UserMaster(models.Model):
     password = models.CharField(max_length=50)
     dob = models.DateField(blank=True, null=True)
     email = models.EmailField(max_length=50, unique=True)
-    gender = models.BigIntegerField()
+    gender = models.CharField(max_length=150, null=True)
     is_active = models.BooleanField()
     instance_id = models.CharField(max_length=50)
     profile_picture = models.CharField(max_length=100, blank=True, null=True)

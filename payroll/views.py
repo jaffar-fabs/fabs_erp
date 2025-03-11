@@ -25,7 +25,6 @@ from .models import (
 
 from .models import Menu, RoleMenu, Employee
 
-
 def employee_master(request):
     # Fetch all employee data for display
     employee_data = Employee.objects.all()
@@ -108,6 +107,7 @@ def save_employee(request, employee_id=None):
         employee.visa_document = request.FILES.get("visa_document")  # Handle visa document upload
         employee.emirate_document = request.FILES.get("emirate_document")  # Handle emirate document upload
         employee.work_permit_document = request.FILES.get("work_permit_document")  # Handle work permit document upload
+        employee.profile_picture =  request.FILES.get("profile_picture")
 
         employee.created_by = 1 
         employee.modified_by = 1
@@ -219,6 +219,7 @@ def dashboard_view(request):
     
 def logout(request):
     request.session.flush()  # Clears all session data
+    # request.session.destroy()
     messages.success(request, "You have been logged out successfully.")
     return redirect("/")  # Redirect to login page
 

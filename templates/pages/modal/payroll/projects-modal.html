@@ -38,10 +38,12 @@
                     <div class="mb-3">
                         <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
                         <select class="form-select" select name="project_type" required>
-                            <option value=''>Select</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
+                            <option value="">Select</option>
+                            {% for type in pro_type_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -116,10 +118,12 @@
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
                         <select class="form-select" name="prj_city" required>
-                            <option value=''>Select</option>
-                            <option>Abu Dhabi</option>
-                            <option>Sharjah</option>
-                            <option>Umm Al Qaiwain</option>
+                            <option value="">Select</option>
+                            {% for city in pro_city_data %}
+                                <option value="{{ city.base_value }}">
+                                    {{ city.base_description }}
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -189,10 +193,12 @@
                     <div class="mb-3">
                         <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
                         <select class="select form-control" id="project_type" name="project_type" required>
-                            <option value=''>Select</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
+                                <option value="">Select</option>
+                                {% for type in pro_type_data %}
+                                    <option value="{{ type.base_value }}" {% if type.base_value == user.project_type %}selected{% endif %}>
+                                        {{ type.base_description }}
+                                    </option>
+                                {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -268,10 +274,12 @@
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
                         <select class="form-select" name="prj_city" id="prj_city" required>
-                            <option value=''>Select</option>
-                            <option value="Abu Dhabi">Abu Dhabi</option>
-                            <option value="Sharjah">Sharjah</option>
-                            <option value="Umm Al Qaiwain">Umm Al Qaiwain</option>
+                            <option value="">Select</option>
+                                {% for city in pro_city_data %}
+                                    <option value="{{ city.base_value }}" {% if city.base_value == user.prj_city %}selected{% endif %}>
+                                        {{ city.base_description }}
+                                    </option>
+                                {% endfor %}
                         </select>
                     </div>
                 </div>

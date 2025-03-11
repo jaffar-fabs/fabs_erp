@@ -64,12 +64,12 @@
                       <td>{{ user.last_name }}</td>
                       <td>{{ user.email }}</td>
                       <td>
-                        {% if user.gender == 1 %}
-                          Male
-                        {% else %}
-                          Female
-                        {% endif %}
-                      </td>                      
+                        {% for gender in gender_data %}
+                            {% if user.gender == gender.base_value %}
+                                {{ gender.base_description }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>                                       
                       <td>
                         <span class="badge {% if user.is_active %}badge-pill badge-status bg-success{% else %}badge-pill badge-status bg-danger{% endif %}">
                           {% if user.is_active %}Active{% else %}Inactive{% endif %}
@@ -111,9 +111,13 @@
           <div class="form-group mb-3">
             <label class="col-form-label">Gender <span class="text-danger">*</span></label>
             <select name="gender" class="form-control" required>
-              <option value="1" {% if user.gender == 1 %}selected{% endif %}>Male</option>
-              <option value="2" {% if user.gender == 2 %}selected{% endif %}>Female</option>
-            </select>
+              <option value="">Select</option>
+              {% for gender in gender_data %}
+              <option value="{{ gender.base_value }}" {% if user.gender == gender.base_value %}selected{% endif %}>
+                  {{ gender.base_description }}
+              </option>
+              {% endfor %}
+          </select>          
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Profile Picture</label>
@@ -145,9 +149,12 @@
           <div class="form-group mb-3">
             <label class="col-form-label">User Paycycles</label>
             <select name="user_paycycles" class="form-control">
-              <option value="Cycle 1" {% if user.user_paycycles == "Cycle 1" %}selected{% endif %}>Cycle 1</option>
-              <option value="Cycle 2" {% if user.user_paycycles == "Cycle 2" %}selected{% endif %}>Cycle 2</option>
-              <option value="Cycle 3" {% if user.user_paycycles == "Cycle 3" %}selected{% endif %}>Cycle 3</option>
+              <option value="">Select</option>
+              {% for paycycle in paycycle_data %}
+              <option value="{{ paycycle.base_value }}" {% if employee.process_cycle == paycycle.base_value %}selected{% endif %}>
+                  {{ paycycle.base_description }}
+              </option>
+              {% endfor %}
             </select>
           </div>
           <div class="form-group mb-3" style="display: none;">
@@ -160,9 +167,16 @@
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Employee Code</label>
-            <input type="text" name="emp_code" class="form-control" value="{{ user.emp_code }}">
+            <select name="emp_code" class="form-control" required>
+                <option value="">Select</option>
+                {% for employee in employee_data %}
+                    <option value="{{ employee.emp_code }}" {% if user.emp_code == employee.emp_code %}selected{% endif %}>
+                        {{ employee.emp_code }} - {{ employee.emp_name }}
+                    </option>
+                {% endfor %}
+            </select>
             <input type="hidden" name="created_by" value="{{ user.created_by }}">
-          </div>
+        </div>
           <div class="form-group form-check">
             <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ user.user_master_id }}" {% if user.is_active %}checked{% endif %}>
             <label class="form-check-label" for="is_active_{{ user.user_master_id }}">Active</label>
@@ -242,9 +256,10 @@
             <div class="form-group mb-3">
               <label class="col-form-label">Gender <span class="text-danger">*</span></label>
               <select name="gender" class="form-control" required>
-                <option value="">Select Gender</option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
+                <option value="">Select</option>
+                            {% for gender in gender_data %}
+                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                            {% endfor %}
               </select>
               <div class="invalid-feedback">Please select a gender.</div>
             </div>
@@ -259,8 +274,15 @@
             </div>
             <div class="form-group mb-3">
               <label class="col-form-label">Employee Code</label>
-              <input type="text" name="emp_code" class="form-control">
-              <input type="hidden" name="created_by" value="4">
+                <select name="emp_code" class="form-control" required>
+                    <option value="">Select</option>
+                    {% for employee in employee_data %}
+                        <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <input type="hidden" name="created_by" value="4">
+
             </div>
           </div>
           <!-- Right Column -->
@@ -281,10 +303,13 @@
             <div class="form-group mb-3">
               <label class="col-form-label">User Paycycles</label>
               <select name="user_paycycles" class="form-control">
-                <option value="Cycle 1">Cycle 1</option>
-                <option value="Cycle 2">Cycle 2</option>
-                <option value="Cycle 3">Cycle 3</option>
-              </select>
+                <option value="">Select</option>
+                {% for paycycle in paycycle_data %}
+                <option value="{{ paycycle.base_value }}" {% if employee.process_cycle == paycycle.base_value %}selected{% endif %}>
+                    {{ paycycle.base_description }}
+                </option>
+                {% endfor %}
+            </select>            
             </div>
             <div class="form-group form-check mb-3">
               <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
