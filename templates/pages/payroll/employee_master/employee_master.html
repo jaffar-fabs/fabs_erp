@@ -134,7 +134,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                                        <input type="text" name="emp_code" class="form-control" required value="{{ employee.emp_code }}">
+                                        <input type="text" name="emp_code" class="form-control" required value="{{ employee.emp_code }}" readonly>
                                         <div class="invalid-feedback">Please provide an employee code.</div>
                                     </div>
                                 </div>
@@ -347,14 +347,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Basic Pay</label>
-                                        <input type="number" name="basic_pay" class="form-control" value="{{ employee.basic_pay }}">
+                                        <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
+                                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" value="{{ employee.basic_pay }}" id="basicPay">
+                                        <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Allowance</label>
-                                        <input type="number" name="allowance" class="form-control" value="{{ employee.allowance }}">
+                                        <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
+                                        <input type="number" name="allowance" class="form-control" required min="0" step="0.01" value="{{ employee.allowance }}" id="allowance">
+                                        <div class="invalid-feedback">Please enter a valid allowance amount (greater than or equal to 0).</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -977,16 +979,18 @@
                 <!-- Basic Pay -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Basic Pay</label>
-                        <input type="number" name="basic_pay" class="form-control">
+                        <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
+                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicPay">
+                        <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                     </div>
                 </div>
 
                 <!-- Allowance -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Allowance</label>
-                        <input type="number" name="allowance" class="form-control">
+                        <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
+                        <input type="number" name="allowance" class="form-control" required min="0" step="0.01" id="allowance">
+                        <div class="invalid-feedback">Please enter a valid allowance amount (greater than or equal to 0).</div>
                     </div>
                 </div>
 

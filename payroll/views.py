@@ -8,6 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 from datetime import datetime
+import os
+from django.conf import settings
 
 # Single import statement for models
 from .models import (
@@ -34,9 +36,16 @@ def save_employee(request, employee_id=None):
         
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
+            # Update modified fields
+            employee.modified_by = 1  # Replace with actual user ID if available
+            employee.modified_on = request.POST.get("modified_on") or None
         else:  
             employee = Employee()  
+            # Set created fields
+            employee.created_by = 1  # Replace with actual user ID if available
+            employee.created_on = request.POST.get("created_on") or None
 
+            
         # Common fields to extract
         employee.emp_code = request.POST.get("emp_code")
         employee.emp_name = request.POST.get("emp_name_passport")
@@ -78,8 +87,8 @@ def save_employee(request, employee_id=None):
         employee.employee_bank = request.POST.get("employee_bank")
         employee.bank_branch = request.POST.get("bank_branch")
         employee.account_no = request.POST.get("account_no")
-        employee.bank_loan = request.POST.get("bank_loan")
-        # employee.is_active = True
+        employee.bank_loan = request.POST.get("bank_loan") or None
+
         # Travel Document Details
         employee.passport_document = request.FILES.get("passport_document")  # Handle file upload
         employee.passport_details = request.POST.get("passport_details")
@@ -100,15 +109,21 @@ def save_employee(request, employee_id=None):
         employee.emirate_document = request.FILES.get("emirate_document")  # Handle emirate document upload
         employee.work_permit_document = request.FILES.get("work_permit_document")  # Handle work permit document upload
 
-
         employee.created_by = 1 
         employee.modified_by = 1
         employee.created_on = request.POST.get("created_on") or None
         employee.modified_on = request.POST.get("modified_on") or None
 
+        # Save the employee instance before creating the folder
         employee.save()
 
+        # Create a folder for the new employee if it's a new entry
+        if not employee_id:
+            employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', employee.emp_code)
+            os.makedirs(employee_folder_path, exist_ok=True)
+
         return redirect('/employee') 
+
     employee_data = Employee.objects.all()
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
 
