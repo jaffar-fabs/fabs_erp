@@ -54,7 +54,7 @@
                                     <tr>
                                         <th>Employee ID</th>
                                         <th>First Name</th>
-                                        <th>Last Name</th>
+                                        <th>Sur Name</th>
                                         <th>Email</th>
                                         <th>Gender</th>
                                         <th>Status</th>
@@ -68,7 +68,7 @@
                                     <tr>
                                         <td>{{ employee.employee_id }}</td>
                                         <td>{{ employee.emp_name }}</td>
-                                        <td>{{ employee.last_name }}</td>
+                                        <td>{{ employee.surname }}</td>
                                         <td>{{ employee.email }}</td>
                                         <td>
                                             {% if employee.emp_sex == '1' %}Male{% else %}Female{% endif %}
@@ -393,13 +393,13 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Date of Join</label>
-                                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join }}">
+                                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join|date:'Y-m-d' }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Date of Rejoin</label>
-                                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin }}">
+                                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin|date:'Y-m-d' }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -457,6 +457,221 @@
                         </div>
                     </div>
                 </div>
+            
+                <!-- Travel Document Detail -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTravelDocumentDetail">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail" aria-expanded="false" aria-controls="collapseTravelDocumentDetail">
+            Travel Document Detail
+        </button>
+    </h2>
+    <div id="collapseTravelDocumentDetail" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Document Upload</label>
+                        <input type="file" name="passport_document" class="form-control" accept="application/pdf,image/*">
+                        
+                        {% if employee.passport_document %}
+                            <div class="mt-2">
+                                <strong>Current Document:</strong>
+                                <a href="{{ employee.passport_document.url }}" target="_blank" download="{{ employee.passport_document.name }}">
+                                    Download
+                                </a>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Preview:</strong>
+                                {% if employee.passport_document.url %}
+                                    <img src="{{ employee.passport_document.url }}" alt="Passport Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                {% elif employee.passport_document.url %}
+                                    <iframe src="{{ employee.passport_document.url }}" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                                {% else %}
+                                    <p>Preview not available for this file type.</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Details</label>
+                        <input type="text" name="passport_details" class="form-control" value="{{ employee.passport_details }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Issued Date</label>
+                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Expiry Date</label>
+                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visa Details -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingVisaDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
+            Visa Details
+        </button>
+    </h2>
+    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa No</label>
+                        <input type="text" name="visa_no" class="form-control" value="{{ employee.visa_no }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Issued</label>
+                        <input type="date" name="visa_issued" class="form-control" value="{{ employee.visa_issued|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Expiry</label>
+                        <input type="date" name="visa_expiry" class="form-control" value="{{ employee.visa_expiry|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Issued</label>
+                        <input type="date" name="emirate_issued" class="form-control" value="{{ employee.emirate_issued|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Expiry</label>
+                        <input type="date" name="emirate_expiry" class="form-control" value="{{ employee.emirate_expiry|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Document Upload</label>
+                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
+                        
+                        {% if employee.visa_document %}
+                            <div class="mt-2">
+                                <strong>Current Document:</strong>
+                                <a href="{{ employee.visa_document.url }}" target="_blank" download="{{ employee.visa_document.name }}">
+                                    Download
+                                </a>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Preview:</strong>
+                                {% if employee.visa_document.url %}
+                                    <img src="{{ employee.visa_document.url }}" alt="Visa Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                {% elif employee.visa_document.url %}
+                                    <iframe src="{{ employee.visa_document.url }}" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                                {% else %}
+                                    <p>Preview not available for this file type.</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Document Upload</label>
+                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
+                        
+                        {% if employee.emirate_document %}
+                            <div class="mt-2">
+                                <strong>Current Document:</strong>
+                                <a href="{{ employee.emirate_document.url }}" target="_blank" download="{{ employee.emirate_document.name }}">
+                                    Download
+                                </a>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Preview:</strong>
+                                {% if employee.emirate_document.url %}
+                                    <img src="{{ employee.emirate_document.url }}" alt="Emirate Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                {% elif employee.emirate_document.url %}
+                                    <iframe src="{{ employee.emirate_document.url }}" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                                {% else %}
+                                    <p>Preview not available for this file type.</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">UID Number</label>
+                        <input type="text" name="uid_number" class="form-control" value="{{ employee.uid_number }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Number</label>
+                        <input type="text" name="mohra_number" class="form-control" value="{{ employee.mohra_number }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Number</label>
+                        <input type="text" name="work_permit_number" class="form-control" value="{{ employee.work_permit_number }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Expiry</label>
+                        <input type="date" name="work_permit_expiry" class="form-control" value="{{ employee.work_permit_expiry|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Document Upload</label>
+                        <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
+                        
+                        {% if employee.work_permit_document %}
+                            <div class="mt-2">
+                                <strong>Current Document:</strong>
+                                <a href="{{ employee.work_permit_document.url }}" target="_blank" download="{{ employee.work_permit_document.name }}">
+                                    Download
+                                </a>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <strong>Preview:</strong>
+                                {% if employee.work_permit_document.url %}
+                                    <img src="{{ employee.work_permit_document.url }}" alt="Work Permit Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                {% elif employee.work_permit_document.url %}
+                                    <iframe src="{{ employee.work_permit_document.url }}" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                                {% else %}
+                                    <p>Preview not available for this file type.</p>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
 
             <div class="d-flex align-items-center justify-content-end mt-4">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
@@ -889,6 +1104,134 @@
         </div>
     </div>
 </div>
+
+<!-- Travel Document Detail -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTravelDocumentDetail">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail" aria-expanded="false" aria-controls="collapseTravelDocumentDetail">
+            Travel Document Detail
+        </button>
+    </h2>
+    <div id="collapseTravelDocumentDetail" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Document Upload</label>
+                        <input type="file" name="passport_document" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Details</label>
+                        <input type="text" name="passport_details" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Issued Date</label>
+                        <input type="date" name="issued_date" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Expiry Date</label>
+                        <input type="date" name="expiry_date" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Visa Details -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingVisaDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
+            Visa Details
+        </button>
+    </h2>
+    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa No</label>
+                        <input type="text" name="visa_no" class="form-control" placeholder="Enter Visa Number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Issued</label>
+                        <input type="date" name="visa_issued" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Expiry</label>
+                        <input type="date" name="visa_expiry" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Issued</label>
+                        <input type="date" name="emirate_issued" class="form-control" placeholder="Enter Emirate Issued">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Expiry</label>
+                        <input type="date" name="emirate_expiry" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Document Upload</label>
+                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Document Upload</label>
+                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">UID Number</label>
+                        <input type="text" name="uid_number" class="form-control" placeholder="Enter UID Number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Number</label>
+                        <input type="text" name="mohra_number" class="form-control" placeholder="Enter Mohra Number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Number</label>
+                        <input type="text" name="work_permit_number" class="form-control" placeholder="Enter Work Permit Number">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Expiry</label>
+                        <input type="date" name="work_permit_expiry" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Permit Document Upload</label>
+                        <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
 
             <div class="d-flex align-items-center justify-content-end mt-4">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>

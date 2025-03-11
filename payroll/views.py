@@ -31,11 +31,11 @@ def employee_master(request):
 
 def save_employee(request, employee_id=None):
     if request.method == "POST":
-        # If employee_id is provided, we are updating
+        
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
-        else:  # If employee_id is not provided, we are creating
-            employee = Employee()  # Create a new instance
+        else:  
+            employee = Employee()  
 
         # Common fields to extract
         employee.emp_code = request.POST.get("emp_code")
@@ -80,17 +80,35 @@ def save_employee(request, employee_id=None):
         employee.account_no = request.POST.get("account_no")
         employee.bank_loan = request.POST.get("bank_loan")
         # employee.is_active = True
-        employee.created_by = 1  # Example user ID
-        employee.modified_by = 1  # Example user ID
+        # Travel Document Details
+        employee.passport_document = request.FILES.get("passport_document")  # Handle file upload
+        employee.passport_details = request.POST.get("passport_details")
+        employee.issued_date = request.POST.get("issued_date") or None
+        employee.expiry_date = request.POST.get("expiry_date") or None
+
+        # Handle Visa Details
+        employee.visa_no = request.POST.get("visa_no")
+        employee.visa_issued = request.POST.get("visa_issued") or None
+        employee.visa_expiry = request.POST.get("visa_expiry") or None
+        employee.emirate_issued = request.POST.get("emirate_issued") or None
+        employee.emirate_expiry = request.POST.get("emirate_expiry") or None
+        employee.uid_number = request.POST.get("uid_number")
+        employee.mohra_number = request.POST.get("mohra_number")
+        employee.work_permit_number = request.POST.get("work_permit_number")
+        employee.work_permit_expiry = request.POST.get("work_permit_expiry") or None
+        employee.visa_document = request.FILES.get("visa_document")  # Handle visa document upload
+        employee.emirate_document = request.FILES.get("emirate_document")  # Handle emirate document upload
+        employee.work_permit_document = request.FILES.get("work_permit_document")  # Handle work permit document upload
+
+
+        employee.created_by = 1 
+        employee.modified_by = 1
         employee.created_on = request.POST.get("created_on") or None
         employee.modified_on = request.POST.get("modified_on") or None
 
-        # Save the employee object
         employee.save()
 
-        return redirect('/employee')  # Redirect to the employee list or detail page
-
-    # If the request method is not POST, render the form with existing employee data if editing
+        return redirect('/employee') 
     employee_data = Employee.objects.all()
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
 
@@ -99,7 +117,7 @@ def deactivate_employee(request, employee_id):
         # Get the Employee object
         employee = get_object_or_404(Employee, employee_id=employee_id)
         # Update is_active to False
-        employee.is_active = False
+        employee.emp_status = 'inactive'
         employee.save()
         messages.success(request, 'Employee deactivated successfully!')
     return redirect('/employee')  # Redirect to the employee list page

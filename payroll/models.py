@@ -54,6 +54,27 @@ class Employee(models.Model):
     account_no = models.CharField(max_length=20, blank=True, null=True)  # Account number
     bank_loan = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Bank loan
 
+    # Travel Document Details
+    passport_document = models.FileField(upload_to='employee_documents/passport_documents/', blank=True, null=True)  # Passport document upload
+    passport_details = models.CharField(max_length=100, blank=True, null=True)  # Passport details
+    issued_date = models.DateField(blank=True, null=True)  # Issued date
+    expiry_date = models.DateField(blank=True, null=True)  # Expiry date
+
+
+    # New fields for Visa Details
+    visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
+    visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
+    visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
+    emirate_issued = models.DateField( blank=True, null=True)  # Emirate issued
+    emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
+    uid_number = models.CharField(max_length=50, blank=True, null=True)  # UID number
+    mohra_number = models.CharField(max_length=50, blank=True, null=True)  # Mohra number
+    work_permit_number = models.CharField(max_length=50, blank=True, null=True)  # Work permit number
+    work_permit_expiry = models.DateField(blank=True, null=True)  # Work permit expiry date
+    visa_document = models.FileField(upload_to='employee_documents/visa_documents/', blank=True, null=True)  # Visa document upload
+    emirate_document = models.FileField(upload_to='employee_documents/emirate_documents/', blank=True, null=True)  # Emirate document upload
+    work_permit_document = models.FileField(upload_to='employee_documents/work_permit_documents/', blank=True, null=True)  # Work permit document upload
+
     # Audit Fields
     created_by = models.BigIntegerField(default=1)  # Created by
     modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
