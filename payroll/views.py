@@ -924,7 +924,7 @@ class MenuMaster(View):
             exists = Menu.objects.filter(menu_name=menu_name).exists()
             return JsonResponse({'exists': exists})
 
-        menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name')
+        menu_list = Menu.objects.all()
         parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
         return render(request, self.template_name, {"menu_list": menu_list, "parent_menus": parent_menus})
     
