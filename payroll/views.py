@@ -534,7 +534,6 @@ def project(request):
 
 
 def check_project_code(request):
-    """API to check if project code already exists."""
     if request.method == "POST":
         project_code = request.POST.get("project_code")
 
@@ -889,9 +888,7 @@ def holidayList( request):
 def holidayCreate(request):
 
     if request.method == "POST":
-        # holiDay=request.POST.get("holiday");
-        # holiday_date=request.get("holiday_date");
-        # if HolidayMaster.objects.filter(holiday=holiDay,holiday_date=holiday_date).exists():
+        
             
         holiday = HolidayMaster(
             comp_code=request.POST.get("comp_code", "1000"),
@@ -946,7 +943,18 @@ def holidayEdit(request):
                 holiday.save()
                 return redirect("holiday_master")
 
+def check_holiday(request):
+    if request.method == "POST":
+        holiday = request.POST.get("holiday")
+        holiday_date = request.POST.get("holiday_date")
+        # print to check incoming values
 
+        if HolidayMaster.objects.filter(holiday=holiday, holiday_date=holiday_date).exists():
+            return JsonResponse({"exists": True})  # Duplicate found
+        else:
+            return JsonResponse({"exists": False})  # Unique entry
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 class MenuMaster(View):
@@ -1046,3 +1054,4 @@ def permission_view(request):
         'active_menus': active_menus,
     }
     return render(request, 'pages/security/role/permission.html', context)
+

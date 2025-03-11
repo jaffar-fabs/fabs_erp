@@ -79,7 +79,7 @@ urlpatterns = [
     path('payroll/holiday_list/', views.holidayList, name='holiday_master'),
     path('payroll/holiday_create/', views.holidayCreate, name='holiday_create'),
     path('payroll/holiday_edit/', views.holidayEdit, name='holiday_edit'),
-    
+    path('check_holiday/', views.check_holiday, name='check_holiday'),    
     
     #Menu Master
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
