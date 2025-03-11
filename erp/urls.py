@@ -25,9 +25,11 @@ from payroll import views
 from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
+from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee
 from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view
 from payroll.views import MenuMaster
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 
@@ -37,6 +39,7 @@ urlpatterns = [
     path('employee',employee_master,name ='employee_master'),
     path('create_employee/', save_employee, name='create_employee'),
     path('update_employee/<int:employee_id>/', save_employee, name='update_employee'),
+    path('deactivate_employee/<str:employee_id>/', deactivate_employee, name='deactivate_employee'),
     path('after-login/', my_login_view, name='after-login'),
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),
@@ -83,3 +86,7 @@ urlpatterns = [
     path('permission/', payroll_views.permission_view, name='permission'),
 
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
