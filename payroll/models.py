@@ -46,7 +46,7 @@ class Employee(models.Model):
     process_cycle = models.CharField(max_length=50, blank=True, null=True)  # Payment process cycle
     basic_pay = models.DecimalField(max_digits=10, decimal_places=2)  # Basic pay
     allowance = models.DecimalField(max_digits=10, decimal_places=2)  # Allowance
-    grade_code = models.CharField(max_length=1, choices=[('A', 'A'), ('B', 'B'), ('C', 'C')], blank=True, null=True)  # Grade code
+    grade_code = models.CharField(max_length=150, blank=True, null=True)  # Grade code
     designation = models.CharField(max_length=50, blank=True, null=True)  # Designation
     department = models.CharField(max_length=50, blank=True, null=True)  # Department
     date_of_join = models.DateField(blank=True, null=True)  # Date of joining
