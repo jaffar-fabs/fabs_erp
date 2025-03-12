@@ -881,7 +881,6 @@ def holidayList( request):
     template_name="pages/payroll/holiday_master/holiday_list.html"
     holidays_list=HolidayMaster.objects.all().order_by('-created_on')
     holiday_type=CodeMaster.objects.filter(comp_code="1000",base_type ='HOLIDAY');
-    print(holiday_type,"Type")
     return render(request,template_name, {'holidays':holidays_list,'holidayTypes':holiday_type})
         
 
