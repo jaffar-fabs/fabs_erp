@@ -31,10 +31,17 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday type <span class="text-danger">*</span></label>
+<<<<<<< HEAD
+                        <select class="form-select" select name="holiday_type" required>
+                            <option value="">Select</option>
+                            {% for holiday_type in hol_type_data %}
+                                <option value="{{ holiday_type.base_value }}">{{ holiday_type.base_description }}</option>
+=======
                         <select class="form-select" name="holiday_type" required>
                             <option value="">Select</option>
                             {% for holiday_type in holidayTypes %}
                                 <option>{{ holiday_type.base_value }}</option>
+>>>>>>> 66a04d4d01c3bef42af4dcf1bfa215101323c56f
                             {% endfor %}
                         </select>
                     </div>
@@ -120,10 +127,13 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Holiday Type <span class="text-danger">*</span></label>
-                        <select class="select form-control" id="e_holiday_type" name="holiday_type" required>
-                            <option value=''>Select</option>
+                        <select class="form-control select" id="e_holiday_type" name="holiday_type" required>
+                            <option value="">Select</option>
                             {% for holiday_type in holidayTypes %}
-                                <option value={{holiday_type.base_value}}>{{holiday_type.base_value}}</option>
+                                <option value="{{ holiday_type.base_value }}" 
+                                        {% if holiday_type.base_value == user.holiday_type %}selected{% endif %}>
+                                    {{ holiday_type.base_value }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>

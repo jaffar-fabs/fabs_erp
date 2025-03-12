@@ -14,9 +14,9 @@
                                 <h5>{{ request.session.username }}</h5>
                                 <h6>{{ request.session.role }}</h6>
                                 <h6>{{ request.session.role_id }}</h6>
-                            {% else %}
-                                <h5>Guest</h5>
-                                <h6>Please Log In</h6>
+                                {% else %}
+                                <meta http-equiv="refresh" content="0,url={% url 'login' %}">
+                                <!-- <p>You will be redirected to the login page in 5 seconds.</p> -->
                             {% endif %}
                         </div>
                     </a>

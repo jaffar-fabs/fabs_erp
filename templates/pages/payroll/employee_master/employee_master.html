@@ -71,20 +71,26 @@
                                         <td>{{ employee.surname }}</td>
                                         <td>{{ employee.email }}</td>
                                         <td>
-                                            {% if employee.emp_sex == '1' %}Male{% else %}Female{% endif %}
+                                            {% for gender in gender_data %}
+                                                {% if employee.emp_sex == gender.base_value %}
+                                                    {{ gender.base_description }}
+                                                {% endif %}
+                                            {% endfor %}
+
                                         </td>
                                         <td>
-                                            <span class="badge badge-pill 
-                                            {% if employee.emp_status == 'active' %}
-                                                bg-success
-                                            {% elif employee.emp_status == 'inactive' %}
-                                                bg-danger
-                                            {% elif employee.emp_status == 'on_leave' %}
-                                                bg-warning
-                                            {% endif %}">
-                                            {{ employee.emp_status|capfirst }}
-                                        </span>
-                                        </td>
+                                            {% for status in status_data %}
+                                                {% if employee.emp_status == status.base_value %}
+                                                    <span class="badge badge-pill 
+                                                        {% if status.base_value == 'ACTIVE' %} bg-success
+                                                        {% elif status.base_value == 'INACTIVE' %} bg-danger
+                                                        {% elif status.base_value == 'ON_LEAVE' %} bg-warning
+                                                        {% else %} bg-secondary {% endif %}">
+                                                        {{ status.base_description|capfirst }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>                                        
                                         <td>{{ employee.dob }}</td>
                                         <td>{{ employee.created_on }}</td>
                                         <td>
@@ -122,135 +128,164 @@
             <div class="accordion" id="employeeAccordion">
 
                 <!-- Personal Details -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingPersonalDetails">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
-                            Personal Details
-                        </button>
-                    </h2>
-                    <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                                        <input type="text" name="emp_code" class="form-control" required value="{{ employee.emp_code }}" readonly>
-                                        <div class="invalid-feedback">Please provide an employee code.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                                        <input type="text" name="emp_name_passport" class="form-control" required value="{{ employee.emp_name }}">
-                                        <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                                        <input type="text" name="surname" class="form-control" required value="{{ employee.surname }}">
-                                        <div class="invalid-feedback">Please provide a surname.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                                        <input type="date" name="dob" class="form-control" required value="{{ employee.dob|date:'Y-m-d' }}">
-                                        <div class="invalid-feedback">Please provide a date of birth.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                        <select name="emp_sex" class="form-select" required>
-                                            <option value="">Select</option>
-                                            <option value="1" {% if employee.emp_sex == '1' %}selected{% endif %}>Male</option>
-                                            <option value="2" {% if employee.emp_sex == '2' %}selected{% endif %}>Female</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a gender.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                                        <select name="emp_status" class="form-select" required>
-                                            <option value="">Select</option>
-                                            <option value="active" {% if employee.emp_status == 'active' %}selected{% endif %}>Active</option>
-                                            <option value="inactive" {% if employee.emp_status == 'inactive' %}selected{% endif %}>Inactive</option>
-                                            <option value="on_leave" {% if employee.emp_status == 'on_leave' %}selected{% endif %}>On Leave</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a status.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Father's Name</label>
-                                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Mother's Name</label>
-                                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Nationality</label>
-                                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Religion</label>
-                                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Qualification</label>
-                                        <input type="text" name="qualification" class="form-control" value="{{ employee.qualification }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Marital Status <span class="text-danger">*</span></label>
-                                        <select name="emp_marital_status" class="form-select" required>
-                                            <option value="">Select</option>
-                                            <option value="1" {% if employee.emp_marital_status == '1' %}selected{% endif %}>Single</option>
-                                            <option value="2" {% if employee.emp_marital_status == '2' %}selected{% endif %}>Married</option>
-                                        </select>
-                                        <div class="invalid-feedback">Please select a marital status.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Spouse's Name</label>
-                                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Height (cm)</label>
-                                        <input type="number" name="height" class="form-control" value="{{ employee.height }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Weight (kg)</label>
-                                        <input type="number" name="weight" class="form-control" value="{{ employee.weight }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Family Status</label>
-                                        <input type="text" name="family_status" class="form-control" value="{{ employee.family_status }}">
-                                    </div>
-                                </div>
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingPersonalDetails">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
+            Personal Details
+        </button>
+    </h2>
+    <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        {% if employee.profile_picture %}
+                            <div class="mt-2">
+                                <strong>Current Picture:</strong>
+                                <a href="{{ employee.profile_picture.url }}" target="_blank" download="{{ employee.profile_picture.name }}">
+                                    Download
+                                </a>
                             </div>
-                        </div>
+                            
+                            <div class="mt-2">
+                                <strong>Preview:</strong>
+                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                            </div>
+                        {% else %}
+                            <div class="mt-2 text-muted">No profile picture uploaded.</div>
+                        {% endif %}
+                        <label class="col-form-label">Profile Picture</label>
+                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
+                        <input type="text" name="emp_code" class="form-control" required value="{{ employee.emp_code }}" readonly>
+                        <div class="invalid-feedback">Please provide an employee code.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
+                        <input type="text" name="emp_name_passport" class="form-control" required value="{{ employee.emp_name }}">
+                        <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
+                        <input type="text" name="surname" class="form-control" required value="{{ employee.surname }}">
+                        <div class="invalid-feedback">Please provide a surname.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
+                        <input type="date" name="dob" class="form-control" required value="{{ employee.dob|date:'Y-m-d' }}">
+                        <div class="invalid-feedback">Please provide a date of birth.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                        <select name="emp_sex" class="form-select" required>
+                            <option value="">Select</option>
+                            {% for gender in gender_data %}
+                            <option value="{{ gender.base_value }}" {% if employee.emp_sex == gender.base_value %}selected{% endif %}>
+                                {{ gender.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a gender.</div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
+                        <select name="emp_status" class="form-select" required>
+                            <option value="">Select</option>
+                            {% for status in status_data %}
+                            <option value="{{ status.base_value }}" {% if employee.emp_status == status.base_value %}selected{% endif %}>
+                                {{ status.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a status.</div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Father's Name</label>
+                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mother's Name</label>
+                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Nationality</label>
+                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Religion</label>
+                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Qualification</label>
+                        <input type="text" name="qualification" class="form-control" value="{{ employee.qualification }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Marital Status <span class="text-danger">*</span></label>
+                        <select name="emp_marital_status" class="form-select" required>
+                            <option value="">Select</option>
+                            {% for status in mar_status_data %}
+                            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
+                                {{ status.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a marital status.</div>
+                    </div>                    
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Spouse's Name</label>
+                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Height (cm)</label>
+                        <input type="number" name="height" class="form-control" value="{{ employee.height }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Weight (kg)</label>
+                        <input type="number" name="weight" class="form-control" value="{{ employee.weight }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Family Status</label>
+                        <input type="text" name="family_status" class="form-control" value="{{ employee.family_status }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Contact Information -->
                 <div class="accordion-item">
@@ -338,12 +373,14 @@
                                     <div class="mb-3">
                                         <label class="col-form-label">Process Cycle</label>
                                         <select name="process_cycle" class="form-control">
-                                            <option value="">Select Process Cycle</option>
-                                            <option value="monthly" {% if employee.process_cycle == 'monthly' %}selected{% endif %}>Monthly</option>
-                                            <option value="biweekly" {% if employee.process_cycle == 'biweekly' %}selected{% endif %}>Bi-Weekly</option>
-                                            <option value="weekly" {% if employee.process_cycle == 'weekly' %}selected{% endif %}>Weekly</option>
+                                            <option value="">Select</option>
+                                            {% for paycycle in paycycle_data %}
+                                            <option value="{{ paycycle.base_value }}" {% if employee.process_cycle == paycycle.base_value %}selected{% endif %}>
+                                                {{ paycycle.base_description }}
+                                            </option>
+                                            {% endfor %}
                                         </select>
-                                    </div>
+                                    </div>                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -363,34 +400,40 @@
                                     <div class="mb-3">
                                         <label class="col-form-label">Grade Code</label>
                                         <select name="grade_code" class="form-control">
-                                            <option value="">Select Grade</option>
-                                            <option value="A" {% if employee.grade_code == 'A' %}selected{% endif %}>A</option>
-                                            <option value="B" {% if employee.grade_code == 'B' %}selected{% endif %}>B</option>
-                                            <option value="C" {% if employee.grade_code == 'C' %}selected{% endif %}>C</option>
+                                            <option value="">Select</option>
+                                            {% for grade in grade_code_data %}
+                                            <option value="{{ grade.grade_code }}" {% if employee.grade_code == grade.grade_code %}selected{% endif %}>
+                                                {{ grade.grade_desc }}
+                                            </option>
+                                            {% endfor %}
                                         </select>
-                                    </div>
+                                    </div>                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Designation</label>
                                         <select name="designation" class="form-control">
-                                            <option value="">Select Designation</option>
-                                            <option value="manager" {% if employee.designation == 'manager' %}selected{% endif %}>Manager</option>
-                                            <option value="supervisor" {% if employee.designation == 'supervisor' %}selected{% endif %}>Supervisor</option>
-                                            <option value="worker" {% if employee.designation == 'worker' %}selected{% endif %}>Worker</option>
+                                            <option value="">Select</option>
+                                            {% for desig in desig_data %}
+                                            <option value="{{ desig.base_value }}" {% if employee.designation == desig.base_value %}selected{% endif %}>
+                                                {{ desig.base_description }}
+                                            </option>
+                                            {% endfor %}
                                         </select>
-                                    </div>
+                                    </div>                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Department</label>
                                         <select name="department" class="form-control">
-                                            <option value="">Select Department</option>
-                                            <option value="hr" {% if employee.department == 'hr' %}selected{% endif %}>HR</option>
-                                            <option value="finance" {% if employee.department == 'finance' %}selected{% endif %}>Finance</option>
-                                            <option value="production" {% if employee.department == 'production' %}selected{% endif %}>Production</option>
+                                            <option value="">Select</option>
+                                            {% for dept in dept_data %}
+                                            <option value="{{ dept.base_value }}" {% if employee.department == dept.base_value %}selected{% endif %}>
+                                                {{ dept.base_description }}
+                                            </option>
+                                            {% endfor %}
                                         </select>
-                                    </div>
+                                    </div>                                    
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -452,7 +495,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Bank Loan</label>
-                                        <input type="text" name="bank_loan" class="form-control" value="{{ employee.bank_loan }}">
+                                        <input type="text" name="bank_loan" class="form-control" value="{{ employee.bank_loan|default:'' }}">
                                     </div>
                                 </div>
                             </div>
@@ -750,6 +793,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Profile Picture</label>
+                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
+                        <div class="invalid-feedback">Please upload a profile picture.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
                         <input type="text" name="emp_code" class="form-control" required>
                         <div class="invalid-feedback">Please provide an employee code.</div>
@@ -781,8 +831,9 @@
                         <label class="col-form-label">Gender <span class="text-danger">*</span></label>
                         <select name="emp_sex" class="form-select" required>
                             <option value="">Select</option>
-                            <option value="1">Male</option>
-                            <option value="2">Female</option>
+                            {% for gender in gender_data %}
+                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a gender.</div>
                     </div>
@@ -793,9 +844,9 @@
                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
                         <select name="emp_status" class="form-select" required>
                             <option value="">Select</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="on_leave">On Leave</option>
+                            {% for statuses in status_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a status.</div>
                     </div>
@@ -837,8 +888,9 @@
                         <label class="col-form-label">Marital Status <span class="text-danger">*</span></label>
                         <select name="emp_marital_status" class="form-select" required>
                             <option value="">Select</option>
-                            <option value="1">Single</option>
-                            <option value="2">Married</option>
+                            {% for statuses in mar_status_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a marital status.</div>
                     </div>
@@ -968,10 +1020,10 @@
                     <div class="mb-3">
                         <label class="col-form-label">Process Cycle</label>
                         <select name="process_cycle" class="form-control">
-                            <option value="">Select Process Cycle</option>
-                            <option value="monthly">Monthly</option>
-                            <option value="biweekly">Bi-Weekly</option>
-                            <option value="weekly">Weekly</option>
+                            <option value="">Select</option>
+                            {% for paycycle in paycycle_data %}
+                                <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -999,10 +1051,10 @@
                     <div class="mb-3">
                         <label class="col-form-label">Grade Code</label>
                         <select name="grade_code" class="form-control">
-                            <option value="">Select Grade</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
+                            <option value="">Select</option>
+                            {% for statuses in grade_code_data %}
+                                <option value="{{ statuses.grade_code }}">{{ statuses.grade_desc }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -1012,10 +1064,10 @@
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
                         <select name="designation" class="form-control">
-                            <option value="">Select Designation</option>
-                            <option value="manager">Manager</option>
-                            <option value="supervisor">Supervisor</option>
-                            <option value="worker">Worker</option>
+                            <option value="">Select</option>
+                            {% for statuses in desig_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -1025,10 +1077,10 @@
                     <div class="mb-3">
                         <label class="col-form-label">Department</label>
                         <select name="department" class="form-control">
-                            <option value="">Select Department</option>
-                            <option value="hr">HR</option>
-                            <option value="finance">Finance</option>
-                            <option value="production">Production</option>
+                            <option value="">Select</option>
+                            {% for statuses in dept_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
