@@ -32,20 +32,16 @@ def employee_master(request):
 
 def save_employee(request, employee_id=None):
     if request.method == "POST":
-        
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
-            # Update modified fields
             employee.modified_by = 1  # Replace with actual user ID if available
             employee.modified_on = request.POST.get("modified_on") or None
-        else:  
-            employee = Employee()  
-            # Set created fields
+        else:
+            employee = Employee()
             employee.created_by = 1  # Replace with actual user ID if available
             employee.created_on = request.POST.get("created_on") or None
-
-            
-        # Common fields to extract
+        
+        # Assign values from request
         employee.emp_code = request.POST.get("emp_code")
         employee.emp_name = request.POST.get("emp_name_passport")
         employee.surname = request.POST.get("surname")
@@ -88,13 +84,17 @@ def save_employee(request, employee_id=None):
         employee.account_no = request.POST.get("account_no")
         employee.bank_loan = request.POST.get("bank_loan") or None
 
-        # Travel Document Details
-        employee.passport_document = request.FILES.get("passport_document")  # Handle file upload
+        # File fields
+        employee.passport_document = request.FILES.get("passport_document") or employee.passport_document
+        employee.visa_document = request.FILES.get("visa_document") or employee.visa_document
+        employee.emirate_document = request.FILES.get("emirate_document") or employee.emirate_document
+        employee.work_permit_document = request.FILES.get("work_permit_document") or employee.work_permit_document
+        employee.profile_picture = request.FILES.get("profile_picture") or employee.profile_picture
+
+        # Additional details
         employee.passport_details = request.POST.get("passport_details")
         employee.issued_date = request.POST.get("issued_date") or None
         employee.expiry_date = request.POST.get("expiry_date") or None
-
-        # Handle Visa Details
         employee.visa_no = request.POST.get("visa_no")
         employee.visa_issued = request.POST.get("visa_issued") or None
         employee.visa_expiry = request.POST.get("visa_expiry") or None
@@ -104,25 +104,16 @@ def save_employee(request, employee_id=None):
         employee.mohra_number = request.POST.get("mohra_number")
         employee.work_permit_number = request.POST.get("work_permit_number")
         employee.work_permit_expiry = request.POST.get("work_permit_expiry") or None
-        employee.visa_document = request.FILES.get("visa_document")  # Handle visa document upload
-        employee.emirate_document = request.FILES.get("emirate_document")  # Handle emirate document upload
-        employee.work_permit_document = request.FILES.get("work_permit_document")  # Handle work permit document upload
-        employee.profile_picture =  request.FILES.get("profile_picture")
 
-        employee.created_by = 1 
-        employee.modified_by = 1
-        employee.created_on = request.POST.get("created_on") or None
-        employee.modified_on = request.POST.get("modified_on") or None
-
-        # Save the employee instance before creating the folder
+        # Save employee
         employee.save()
 
-        # Create a folder for the new employee if it's a new entry
+        # Create folder if new employee
         if not employee_id:
             employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', employee.emp_code)
             os.makedirs(employee_folder_path, exist_ok=True)
 
-        return redirect('/employee') 
+        return redirect('/employee')
 
     employee_data = Employee.objects.all()
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
