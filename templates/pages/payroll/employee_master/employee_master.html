@@ -1297,4 +1297,42 @@
     </div>
 </div>
 <!-- /Add Employee Offcanvas -->
+ <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Validate Date of Birth
+        const dobFields = document.querySelectorAll('input[name="dob"]');
+        dobFields.forEach(field => {
+            field.addEventListener('change', function () {
+                const dob = new Date(this.value);
+                const today = new Date();
+                if (dob > today) {
+                    alert('Date of Birth cannot be a future date.');
+                    this.value = '';
+                }
+            });
+        });
+
+        // Validate Amount Fields
+        const amountFields = document.querySelectorAll('input[type="number"]');
+        amountFields.forEach(field => {
+            field.addEventListener('input', function () {
+                if (this.value < 0) {
+                    alert('Amount cannot be negative.');
+                    this.value = '';
+                }
+            });
+        });
+
+        // Validate Document Numbers
+        const documentFields = document.querySelectorAll('input[type="text"]');
+        documentFields.forEach(field => {
+            field.addEventListener('input', function () {
+                if (this.name.includes('number') && this.value < 0) {
+                    alert('Document number cannot be negative.');
+                    this.value = '';
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

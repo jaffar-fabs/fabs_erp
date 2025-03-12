@@ -65,9 +65,8 @@
                     console.log(response);
 
                     var parent_menu_data = response.parent_menu_data;
-                    console.log(parent_menu_data)
                     var child_menu_data = response.child_menu_data;
-                    console.log(child_menu_data)
+                    // console.log(child_menu_data)
                     var menu_html = '';
 
                     $('ul.menu').empty(); // Clear existing menu
@@ -76,7 +75,7 @@
                         var submenu_html = '';
 
                         // Find child menus related to this parent
-                        var children = child_menu_data.filter(child => child.parent_menu_id === parent.menu_id);
+                        var children = child_menu_data.filter(child => parseInt(child.parent_menu_id,10) === parent.menu_id);
                         console.log(children)
 
                         if (children.length > 0) {
