@@ -26,7 +26,6 @@ from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
 from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee
-from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view
 from payroll.views import MenuMaster
 from django.conf import settings
 from django.conf.urls.static import static
