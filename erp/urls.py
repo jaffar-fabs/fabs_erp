@@ -84,6 +84,13 @@ urlpatterns = [
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
     path('permission/', payroll_views.permission_view, name='permission'),
 
+    # User Role Mapping URLs
+    path('user-role-mappings/', role_views.user_role_mapping_list, name='user_role_mapping_list'),
+    path('user-role-mappings/create/', role_views.UserRoleMappingCreate.as_view(), name='user_role_mapping_create'),
+    path('user-role-mappings/update/<int:mappingid>/', role_views.UserRoleMappingUpdate.as_view(), name='user_role_mapping_update'),
+    path('user-role-mappings/delete/<int:mappingid>/', role_views.UserRoleMappingDelete.as_view(), name='user_role_mapping_delete'),
+
+
 ]
 
 

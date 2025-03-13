@@ -48,3 +48,27 @@ class Menu(models.Model):
 
     def _str_(self):
         return self.comp_code
+    
+
+from django.db import models
+
+class UserRoleMapping(models.Model):
+    comp_code = models.CharField(max_length=15, null=False)
+    mappingid = models.BigAutoField(primary_key=True)
+    userid = models.BigIntegerField(null=False)
+    roleid = models.BigIntegerField(null=False)
+    role_start_date = models.DateField(blank=True, null=True)
+    role_to_date = models.DateField(blank=True, null=True)
+    instance_id = models.CharField(max_length=50, blank=True, null=True)
+    is_default_role = models.BooleanField(blank=True, null=True)
+    is_active = models.BooleanField(null=False)
+    created_by = models.BigIntegerField(null=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(blank=True, null=True)
+    modified_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.comp_code} - {self.userid} - {self.roleid}"
+
+    class Meta:
+        db_table = 'tbl_erp_smas_user_role_mapping'
