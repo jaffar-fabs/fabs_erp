@@ -1,7 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
 
-
 {% block content %}
 <!-- Page Wrapper -->
 <div class="page-wrapper">
@@ -558,12 +557,6 @@
                     <table class="table datatable">
                         <thead class="thead-light">
                             <tr>
-                                <th class="no-sort">
-                                    <label class="checkboxs"><input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
-                                <th class="no-sort"></th>
                                 <th>Pay Cycle Code</th>
                                 <th>Process Description</th>
                                 <th>Month & Year</th>
@@ -577,14 +570,6 @@
                         <tbody>
                             {% for record in paycycle_list %}
                             <tr>
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" /><span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <div class="set-star rating-select"><i class="fa fa-star"></i></div>
-                                </td>
                                 <td>{{record.process_cycle}}</td>
                                 <td>{{record.process_description}}</td>
                                 <td>{{record.pay_process_month}}</td>
@@ -603,8 +588,6 @@
                                         {% if record.is_active == 'Y' %} Active {% else %} Inactive {% endif %}
                                     </span>
                                 </td>
-                                
-
                                 <td>
                                     <div class="dropdown table-action">
                                         <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
@@ -667,8 +650,6 @@
     </div>
 </div>
 <!-- /Page Wrapper -->
-
-
 
 {% block contacts_modal %}
 {% include "pages/modal/payroll/paycycle-master-modal.html" %}

@@ -25,7 +25,7 @@ from payroll import views
 from payroll.views import GradeMasterList
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
-from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee
+from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee,check_emp_code
 from payroll.views import MenuMaster
 from django.conf import settings
 from django.conf.urls.static import static
@@ -83,7 +83,8 @@ urlpatterns = [
     #Menu Master
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
     path('permission/', payroll_views.permission_view, name='permission'),
-
+    path('check-emp-code/', check_emp_code, name='check_emp_code'),
+    path('check_grade_code/', views.check_grade_code, name='check_grade_code'),
 ]
 
 
