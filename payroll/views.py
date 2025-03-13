@@ -25,12 +25,18 @@ from .models import (
 
 from .models import Menu, RoleMenu, Employee
 
+COMP_CODE = None  # Initialize COMP_CODE
+
 def employee_master(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     # Fetch all employee data for display
-    employee_data = Employee.objects.all()
+    employee_data = Employee.objects.filter(comp_code=COMP_CODE)
     return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
 
 def save_employee(request, employee_id=None):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
@@ -115,10 +121,12 @@ def save_employee(request, employee_id=None):
 
         return redirect('/employee')
 
-    employee_data = Employee.objects.all()
+    employee_data = Employee.objects.filter(comp_code=COMP_CODE)
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
 
 def deactivate_employee(request, employee_id):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == 'POST':
         # Get the Employee object
         employee = get_object_or_404(Employee, employee_id=employee_id)
@@ -181,10 +189,14 @@ def my_login_view(request):
         try:
             user = UserMaster.objects.get(user_id=username, is_active=True)
 
-            if password == user.password:  
+            if password == user.password:
                 request.session["username"] = user.user_id
                 request.session["role"] = "Administrator" if user.user_id == "admin1" else "Programmer"
                 request.session["role_id"] = 1 if user.user_id == "admin1" else 2
+                request.session["comp_code"] = user.comp_code  # Set comp_code in session
+
+                global COMP_CODE
+                COMP_CODE = user.comp_code  # Assign session comp_code to global COMP_CODE
                 
                 messages.success(request, "Login successful!")
                 return redirect("/index")
@@ -196,11 +208,13 @@ def my_login_view(request):
     return render(request, "auth/login.html")
 
 def dashboard_view(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     try:
         role_id = request.session.get("role_id")
         menu_ids = RoleMenu.objects.filter(role_id=role_id, view = True).values_list('menu_id', flat=True)
-        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name'))
-        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__in= str(menu_ids)).exclude(parent_menu_id = 'No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url','parent_menu_id'))
+        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent', comp_code=COMP_CODE).order_by('display_order').values('menu_id', 'screen_name'))
+        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__in= str(menu_ids), comp_code=COMP_CODE).exclude(parent_menu_id = 'No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url','parent_menu_id'))
         response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data }
     except Exception as e:
         response_data = {'status': 'error', 'msg': str(e)}
@@ -219,6 +233,8 @@ def logout(request):
 #Seed Master View
 
 def create_seed(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         seed_code = request.POST.get("seed_code")
         seed_group = request.POST.get("seed_group")
@@ -236,7 +252,7 @@ def create_seed(request):
         modified_by = 1  # Example user ID
 
         SeedModel.objects.create(
-            comp_code="1000",
+            comp_code=COMP_CODE,
             seed_code=seed_code,
             seed_group=seed_group,
             seed_type=seed_type,
@@ -253,19 +269,23 @@ def create_seed(request):
         )
         return redirect('create_seed')
 
-    seed_data = SeedModel.objects.all()
+    seed_data = SeedModel.objects.filter(comp_code=COMP_CODE)
     return render(request, 'pages/payroll/seed_master/seedmaster.html', {'seed_data': seed_data})
 
 def update_seed_status(request, seed_id):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == 'POST':
-        seed = get_object_or_404(SeedModel, seed_id=seed_id)
+        seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
         seed.is_active = False
         seed.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'}, status=400)
 
 def edit_seed(request, seed_id):
-    seed = get_object_or_404(SeedModel, seed_id=seed_id)
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
+    seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
 
     if request.method == 'POST':
         seed.seed_code = request.POST.get('seed_code')
@@ -291,7 +311,9 @@ def edit_seed(request, seed_id):
         return render(request, 'pages/modal/payroll/seed-modal.html', {'seed': seed})
 
 def get_seed(request, seed_id):
-    seed = SeedModel.objects.get(seed_id=seed_id)
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
+    seed = SeedModel.objects.get(seed_id=seed_id, comp_code=COMP_CODE)
     data = {
         'seed_code': seed.seed_code,
         'seed_group': seed.seed_group,
@@ -315,10 +337,14 @@ class Paycycle(View):
     template_name = "pages/payroll/paycycle_master/paycycle-list.html"
 
     def get(self, request):
-        paycycle_list = PaycycleMaster.objects.all().order_by('-created_on')
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
+        paycycle_list = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
         return render(request, self.template_name, {"paycycle_list": paycycle_list})
 
     def post(self, request):
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
         process_cycle_id = request.POST.get('process_cycle_id')
         process_description = request.POST.get('process_description')
         process_cycle = request.POST.get('process_cycle')
@@ -346,7 +372,7 @@ class Paycycle(View):
         is_active = "Y" if "is_active" in request.POST else "N"
         
         if process_cycle_id:
-            paycycle = get_object_or_404(PaycycleMaster, process_cycle_id=process_cycle_id)
+            paycycle = get_object_or_404(PaycycleMaster, process_cycle_id=process_cycle_id, comp_code=COMP_CODE)
             paycycle.process_description = process_description
             paycycle.process_cycle = process_cycle
             paycycle.pay_process_month = pay_process_month
@@ -376,7 +402,7 @@ class Paycycle(View):
             paycycle.save()
         else:
             PaycycleMaster.objects.create(
-                comp_code='1000',
+                comp_code=COMP_CODE,
                 process_description=process_description,
                 process_cycle_id=self.get_next_process_cycle_id(),
                 process_cycle=process_cycle,
@@ -409,7 +435,9 @@ class Paycycle(View):
         return redirect("payroll_paycycle_master")
 
     def delete(self, request, process_cycle_id):
-        paycycle = get_object_or_404(PaycycleMaster, process_cycle_id=process_cycle_id)
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
+        paycycle = get_object_or_404(PaycycleMaster, process_cycle_id=process_cycle_id, comp_code=COMP_CODE)
         paycycle.is_active = "N"
         paycycle.save()
         return JsonResponse({"status": "success", "message": "Paycycle deactivated successfully."})
@@ -421,8 +449,10 @@ class Paycycle(View):
         except (ValueError, TypeError):
             return None
 
-    def get_next_process_cycle_id(self):
-        auto_paycycle_id = PaycycleMaster.objects.filter(comp_code='1000').order_by('-process_cycle_id').first()
+    def get_next_process_cycle_id(request,self):
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
+        auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
         return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
     
@@ -430,6 +460,8 @@ class Paycycle(View):
 
 
 def project(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     template_name = 'pages/payroll/project_master/projects.html'
 
    
@@ -441,7 +473,7 @@ def project(request):
             
 
         try:
-            project = get_object_or_404(projectMatster, project_id=int(project_id))
+            project = get_object_or_404(projectMatster, project_id=int(project_id), comp_code=COMP_CODE)
             return JsonResponse({
                 "project_id": project.project_id,
                 "prj_code": project.prj_code,
@@ -468,8 +500,8 @@ def project(request):
     if request.method == "POST":
         
             project_id = request.POST.get("project_id")
-            if projectMatster.objects.filter(project_id=project_id).exists():
-                project = get_object_or_404(projectMatster, project_id=int(project_id))
+            if projectMatster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
+                project = get_object_or_404(projectMatster, project_id=int(project_id), comp_code=COMP_CODE)
 
                 project.prj_code = request.POST.get("project_code", project.prj_code)
                 project.prj_name = request.POST.get("project_name", project.prj_name)
@@ -511,24 +543,26 @@ def project(request):
                 main_contractor=request.POST.get("main_contractor", "Not Assigned"),
                 sub_contractor=request.POST.get("sub_contractor", "Not Assigned"),
                 is_active=request.POST.get("is_active") == "Active",
-                comp_code=request.POST.get("comp_code", "1000"),
+                comp_code=COMP_CODE,
                 )
                 project.save()
             return redirect("project")
 
 
     # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
-    projects = projectMatster.objects.all().order_by('-created_on')
-    project_count=projectMatster.objects.all()
+    projects = projectMatster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
+    project_count=projectMatster.objects.filter(comp_code=COMP_CODE)
     # print("COUNT ",project_count)
     return render(request, template_name, {'projects': projects,'project_count':project_count})
 
 
 def check_project_code(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         project_code = request.POST.get("project_code")
 
-        if projectMatster.objects.filter(prj_code=project_code).exists():
+        if projectMatster.objects.filter(prj_code=project_code, comp_code=COMP_CODE).exists():
             return JsonResponse({"exists": True})  # Project code exists
         else:
             return JsonResponse({"exists": False})  # Project code is unique
@@ -537,11 +571,13 @@ def check_project_code(request):
 
 
 def delete_project(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         project_id = request.POST.get("project_id")
 
         if project_id:
-            project = get_object_or_404(projectMatster, project_id=project_id)
+            project = get_object_or_404(projectMatster, project_id=project_id, comp_code=COMP_CODE)
             project.is_active = False  
             project.save()
     return redirect("project")
@@ -594,7 +630,7 @@ class CodeMasterList(View):
     def check_base_value_exists(self, request):
         base_value = request.POST.get("base_value")
         base_type = request.POST.get("base_type")
-        if CodeMaster.objects.filter(base_type=base_type, base_value=base_value, comp_code="1000").exists():
+        if CodeMaster.objects.filter(base_type=base_type, base_value=base_value, comp_code=COMP_CODE).exists():
             return JsonResponse({"exists": True})
         return JsonResponse({"exists": False})
 
@@ -608,7 +644,7 @@ class CodeMasterList(View):
             return JsonResponse({"success": False, "error": "Invalid input data"})
 
         try:
-            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code=COMP_CODE).first()
             if code_master:
                 code_master.base_description = base_description
                 code_master.is_active = is_active
@@ -623,7 +659,7 @@ class CodeMasterList(View):
     def handle_ajax(self, request):
         base_code = request.POST.get("base_code")
         if base_code:
-            base_values = CodeMaster.objects.filter(base_type=base_code, comp_code="1000").values("base_value", "is_active")
+            base_values = CodeMaster.objects.filter(base_type=base_code, comp_code=COMP_CODE).values("base_value", "is_active")
             base_values_list = [{"base_value": value["base_value"], "is_active": value["is_active"]} for value in base_values]
             return JsonResponse({"success": True, "base_values": base_values_list})
         return JsonResponse({"success": False, "error": "Invalid base code"})
@@ -638,10 +674,10 @@ class CodeMasterList(View):
         base_type = base_type_obj["base_value"] if base_type_obj else None
 
         if base_type and base_value:
-            existing_entry = CodeMaster.objects.filter(comp_code="1000", base_type=base_type, base_value=base_value).exists()
+            existing_entry = CodeMaster.objects.filter(comp_code=COMP_CODE, base_type=base_type, base_value=base_value).exists()
             if not existing_entry:
                 CodeMaster.objects.create(
-                    comp_code="1000",
+                    comp_code=COMP_CODE,
                     base_type=base_type,
                     base_value=base_value,
                     base_description=description,
@@ -657,7 +693,7 @@ class CodeMasterList(View):
         base_code = request.POST.get("base_code")
         base_value = request.POST.get("base_value")
         if base_code and base_value:
-            base_description_obj = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").values("base_description", "is_active").first()
+            base_description_obj = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code=COMP_CODE).values("base_description", "is_active").first()
             if base_description_obj:
                 is_active = base_description_obj["is_active"] == "Y"
                 return JsonResponse({"success": True, "base_description": base_description_obj["base_description"], "is_active": is_active})
@@ -674,7 +710,7 @@ class CodeMasterList(View):
             return JsonResponse({"success": False, "error": "Invalid input data"})
 
         try:
-            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code="1000").first()
+            code_master = CodeMaster.objects.filter(base_type=base_code, base_value=base_value, comp_code=COMP_CODE).first()
             if code_master:
                 code_master.is_active = "N"
                 code_master.save()
@@ -696,7 +732,8 @@ class UserMasterList(View):
     template_name = 'pages/payroll/user/user_master.html'
 
     def get(self, request):
-        users = UserMaster.objects.all()
+        users = UserMaster.objects.filter(comp_code=COMP_CODE)
+        print(users)
         return render(request, self.template_name, {'users': users})
 
 from django.http import JsonResponse
@@ -714,16 +751,16 @@ class UserMasterCreate(View):
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID is required.'})
 
         if request.POST.get("check_availability") == "true":
-            if UserMaster.objects.filter(user_id=user_id).exists():
+            if UserMaster.objects.filter(user_id=user_id, comp_code=COMP_CODE).exists():
                 return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
             return JsonResponse({'status': 'success', 'message': 'User ID is available.'})
 
-        if UserMaster.objects.filter(user_id=user_id).exists():
+        if UserMaster.objects.filter(user_id=user_id, comp_code=COMP_CODE).exists():
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
 
         try:
             user = UserMaster(
-                comp_code=1000,
+                comp_code=COMP_CODE,
                 first_name=request.POST.get('first_name'),
                 last_name=request.POST.get('last_name'),
                 user_id=user_id,
@@ -750,7 +787,7 @@ class UserMasterCreate(View):
 class UserMasterUpdate(View):
     def post(self, request, user_master_id):
         try:
-            user = get_object_or_404(UserMaster, user_master_id=user_master_id)
+            user = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
     
             user.comp_code = request.POST.get('comp_code')
             user.first_name = request.POST.get('first_name')
@@ -778,7 +815,7 @@ class UserMasterUpdate(View):
 class UserMasterDelete(View):
     def post(self, request, user_master_id):
         
-        user = get_object_or_404(UserMaster, user_master_id=user_master_id)
+        user = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
         
         user.is_active = False
         user.save()  
@@ -795,7 +832,7 @@ class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
     def get(self, request):
-        datas = GradeMaster.objects.filter(comp_code="1000")
+        datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
         return render(request, self.template_name, {'datas': datas})
 
     def post(self, request):
@@ -830,7 +867,7 @@ class GradeMasterList(View):
         is_active = "Y" if "is_active" in request.POST else "N"
 
         if grade_id:
-            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code="1000")
+            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code=COMP_CODE)
             grade.grade_code = grade_code
             grade.grade_desc = grade_desc
             grade.nationality = nationality
@@ -846,7 +883,7 @@ class GradeMasterList(View):
             grade.save()
         else:
             grade = GradeMaster.objects.create(
-                comp_code='1000',
+                comp_code=COMP_CODE,
                 grade_code=grade_code,
                 grade_desc=grade_desc,
                 nationality=nationality,
@@ -869,19 +906,22 @@ class GradeMasterList(View):
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
 def holidayList( request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     template_name="pages/payroll/holiday_master/holiday_list.html"
-    holidays_list=HolidayMaster.objects.all().order_by('-created_on')
-    holiday_type=CodeMaster.objects.filter(comp_code="1000",base_type ='HOLIDAY');
+    holidays_list=HolidayMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
+    holiday_type=CodeMaster.objects.filter(comp_code=COMP_CODE,base_type ='HOLIDAY')
     return render(request,template_name, {'holidays':holidays_list,'holidayTypes':holiday_type})
         
 
 def holidayCreate(request):
-
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         
             
         holiday = HolidayMaster(
-            comp_code=request.POST.get("comp_code", "1000"),
+            comp_code=COMP_CODE,
             holiday=request.POST.get("holiday"),
             holiday_type=request.POST.get("holiday_type"),
             holiday_date=request.POST.get("holiday_date"),
@@ -899,10 +939,12 @@ def holidayCreate(request):
     return redirect('holiday_master')    
 
 def holidayEdit(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "GET":
         uniqe_id = request.GET.get("holiday_id")
     try:
-            holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id))
+            holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id), comp_code=COMP_CODE)
             # print(holiday.holiday_day,"DAY")
             return JsonResponse({
                 "holiday_id":holiday.unique_id,
@@ -920,26 +962,28 @@ def holidayEdit(request):
 
     if request.method == "POST":
             holiday_id=request.POST.get("holiday_id")
-            if HolidayMaster.objects.filter(unique_id=holiday_id).exists():
-                holiday = get_object_or_404(HolidayMaster, unique_id=int(holiday_id))
+            if HolidayMaster.objects.filter(unique_id=holiday_id, comp_code=COMP_CODE).exists():
+                holiday = get_object_or_404(HolidayMaster, unique_id=int(holiday_id), comp_code=COMP_CODE)
                 holiday.holiday = request.POST.get("holiday", holiday.holiday)
                 holiday.holiday_date = request.POST.get("holiday_date", holiday.holiday_date)
                 holiday.holiday_day = request.POST.get("holiday_day", holiday.holiday_day)
                 holiday.holiday_type = request.POST.get("holiday_type", holiday.holiday_type)
                 holiday.holiday_description = request.POST.get("holiday_description", holiday.holiday_description)
                 holiday.created_by = 1;
-                holiday.comp_code = 1000;
+                holiday.comp_code = COMP_CODE;
                 holiday.is_active = request.POST.get("is_active") == "Active"
                 holiday.save()
                 return redirect("holiday_master")
 
 def check_holiday(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     if request.method == "POST":
         holiday = request.POST.get("holiday")
         holiday_date = request.POST.get("holiday_date")
         # print to check incoming values
 
-        if HolidayMaster.objects.filter(holiday=holiday, holiday_date=holiday_date).exists():
+        if HolidayMaster.objects.filter(holiday=holiday, holiday_date=holiday_date, comp_code=COMP_CODE).exists():
             return JsonResponse({"exists": True})  # Duplicate found
         else:
             return JsonResponse({"exists": False})  # Unique entry
@@ -951,16 +995,20 @@ class MenuMaster(View):
     template_name = "pages/security/menu_master/menu_list.html"
 
     def get(self, request):
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             menu_name = request.GET.get('menu_name', None)
-            exists = Menu.objects.filter(menu_name=menu_name).exists()
+            exists = Menu.objects.filter(menu_name=menu_name, comp_code=COMP_CODE).exists()
             return JsonResponse({'exists': exists})
 
-        menu_list = Menu.objects.all()
-        parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
+        menu_list = Menu.objects.filter(comp_code=COMP_CODE)
+        parent_menus = Menu.objects.filter(comp_code=COMP_CODE).values_list('menu_name', flat=True).distinct()
         return render(request, self.template_name, {"menu_list": menu_list, "parent_menus": parent_menus})
     
     def post(self, request):
+        global COMP_CODE
+        COMP_CODE = request.session.get("comp_code")
         menu_id = request.POST.get('menu_id')
         menu_name = request.POST.get('menu_name')
         quick_path = request.POST.get('quick_path')
@@ -983,7 +1031,7 @@ class MenuMaster(View):
         icon = request.POST.get('icon')
 
         if menu_id:
-            menu = get_object_or_404(Menu, menu_id=menu_id)
+            menu = get_object_or_404(Menu, menu_id=menu_id, comp_code=COMP_CODE)
             menu.menu_name = menu_name
             menu.quick_path = quick_path
             menu.screen_name = screen_name
@@ -1008,7 +1056,7 @@ class MenuMaster(View):
             menu.save()
         else:
             Menu.objects.create(
-                comp_code="1001",
+                comp_code=COMP_CODE,
                 menu_name=menu_name,
                 quick_path=quick_path,
                 screen_name=screen_name,
@@ -1036,9 +1084,11 @@ class MenuMaster(View):
 
 
 def permission_view(request):
+    global COMP_CODE
+    COMP_CODE = request.session.get("comp_code")
     role_name = request.GET.get('role_name', 'No role name provided')
     # Filter active menu items
-    active_menus = Menu.objects.filter(is_active=True)
+    active_menus = Menu.objects.filter(is_active=True, comp_code=COMP_CODE)
     context = {
         'role_name': role_name,
         'active_menus': active_menus,
