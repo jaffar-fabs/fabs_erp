@@ -245,19 +245,18 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Marital Status <span class="text-danger">*</span></label>
-                        <select name="emp_marital_status" class="form-select" required>
-                            <option value="">Select</option>
-                            {% for status in mar_status_data %}
-                            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
-                                {{ status.base_description }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a marital status.</div>
-                    </div>                    
-                </div>
+    <div class="mb-3">
+        <label class="col-form-label">Marital Status</label>
+        <select name="emp_marital_status" class="form-select">
+            <option value="">Select</option>
+            {% for status in mar_status_data %}
+            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
+                {{ status.base_description }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Spouse's Name</label>
@@ -800,7 +799,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_code" class="form-control" required>
+                        <input type="text" id="emp_code" name="emp_code" class="form-control" required>
                         <div class="invalid-feedback">Please provide an employee code.</div>
                     </div>
                 </div>
@@ -883,17 +882,18 @@
                 </div>
                 <!-- Marital Status moved after Qualification -->
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Marital Status <span class="text-danger">*</span></label>
-                        <select name="emp_marital_status" class="form-select" required>
-                            <option value="">Select</option>
-                            {% for statuses in mar_status_data %}
-                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a marital status.</div>
-                    </div>
-                </div>
+    <div class="mb-3">
+        <label class="col-form-label">Marital Status</label>
+        <select name="emp_marital_status" class="form-select">
+            <option value="">Select</option>
+            {% for status in mar_status_data %}
+            <option value="{{ status.base_value }}">
+                {{ status.base_description }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Spouse's Name</label>
@@ -1021,7 +1021,7 @@
                         <select name="process_cycle" class="form-control">
                             <option value="">Select</option>
                             {% for paycycle in paycycle_data %}
-                                <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
+                                <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -1332,6 +1332,61 @@
                 }
             });
         });
+
+        // Validate mandatory fields
+        const forms = document.querySelectorAll('.needs-validation');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (event) {
+                const mandatoryFields = form.querySelectorAll('[required]');
+                let missingFields = [];
+                mandatoryFields.forEach(field => {
+                    if (!field.value) {
+                        missingFields.push(field.previousElementSibling.innerText.replace('*', '').trim());
+                    }
+                });
+                if (missingFields.length > 0) {
+                    alert(`Please fill out the following fields: ${missingFields.join(', ')}`);
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }, false);
+        });
     });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Cache the submit button
+    var submitButton = $('button[type="submit"]');
+
+    $('#emp_code').on('input', function() {
+        var empCode = $(this).val();
+        if (empCode.length > 0) {
+            $.ajax({
+                url: "{% url 'check_emp_code' %}",
+                data: {
+                    'emp_code': empCode
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data.exists) {
+                        $('#emp_code').addClass('is-invalid');
+                        $('#emp_code').removeClass('is-valid');
+                        $('#emp_code').next('.invalid-feedback').text('Employee code already exists.').show();
+                        submitButton.prop('disabled', true); // Disable the submit button
+                    } else {
+                        $('#emp_code').removeClass('is-invalid').addClass('is-valid');
+                        $('#emp_code').next('.invalid-feedback').text('').hide();
+                        submitButton.prop('disabled', false); // Enable the submit button
+                    }
+                }
+            });
+        } else {
+            $('#emp_code').removeClass('is-invalid').removeClass('is-valid');
+            $('#emp_code').next('.invalid-feedback').text('').hide();
+            submitButton.prop('disabled', false); // Enable the submit button if input is empty
+        }
+    });
+});
 </script>
 {% endblock %}

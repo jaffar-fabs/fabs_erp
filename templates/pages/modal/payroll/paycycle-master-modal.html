@@ -96,10 +96,10 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Process Date <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Process Date</label>
                             <div class="icon-form">
                                 <span class="form-icon"></i></span>
-                                <input type="date" class="form-control" name="process_date" autocomplete="off" required>
+                                <input type="date" class="form-control" name="process_date" autocomplete="off">
                                 <div class="invalid-feedback">Please provide a process date.</div>
                                 <div id="date-error-process" class="text-danger"></div>
                             </div>
@@ -107,8 +107,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
-                            <select class="form-select" required aria-label="select example" name="default_project">
+                            <label class="col-form-label">Default Project</label>
+                            <select class="form-select" aria-label="select example" name="default_project">
                                 <option value="">Select</option>
                                     {% for pro_data in project_data %}
                                         <option value="{{ pro_data.prj_code }}">{{ pro_data.prj_name }}</option>
@@ -119,119 +119,117 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Start Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Start Time</label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
-                                <input type="time" class="form-control" name="start_time" autocomplete="off" required>
+                                <input type="time" class="form-control" name="start_time" autocomplete="off">
                                 <div class="invalid-feedback">Please provide a start time.</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">End Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label">End Time</label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
-                                <input type="time" class="form-control" name="end_time" autocomplete="off" required>
-                                <div class="invalid-feedback">Please provide a end time.</div>
+                                <input type="time" class="form-control" name="end_time" autocomplete="off">
+                                <div class="invalid-feedback">Please provide an end time.</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Hours Per Day<span class="text-danger"> *</span></label>
-                            <input class="form-control" type="number" name="hours_per_day" autocomplete="off" required>
-                            <div class="invalid-feedback">Please provide a hours per day.</div>
+                            <label class="col-form-label">Hours Per Day</label>
+                            <input class="form-control" type="number" name="hours_per_day" autocomplete="off">
+                            <div class="invalid-feedback">Please provide hours per day.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Days Per Month<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Days Per Month</label>
                             <input class="form-control" type="number" name="days_per_month" id="days_per_month"
-                                autocomplete="off" required>
-                            <div class="invalid-feedback">Please provide a days per month.</div>
+                                autocomplete="off">
+                            <div class="invalid-feedback">Please provide days per month.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Transportation Time(Travel)<span class="text-danger">
-                                    *</span></label>
+                            <label class="col-form-label">Transportation Time(Travel)</label>
                             <input class="form-control" type="number" name="travel_time" autocomplete="off">
                             <!-- <div class="invalid-feedback">Please provide a transportation time.</div> -->
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Lunch Break (In Minutes)<span class="text-danger">
-                                    *</span></label>
+                            <label class="col-form-label">Lunch Break (In Minutes)</label>
                             <input class="form-control" type="number" name="lunch_break" autocomplete="off">
                             <!-- <div class="invalid-feedback">Please provide a lunch break.</div> -->
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max Mn Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max Mn Hrs</label>
                             <input class="form-control" type="number" name="max_mn_hrs" id="max_mn_hrs"
-                                autocomplete="off" required>
-                            <div class="invalid-feedback">Please provide a max mn hrs.</div>
+                                autocomplete="off">
+                            <div class="invalid-feedback">Please provide max mn hrs.</div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max An Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max An Hrs</label>
                             <input class="form-control" type="number" name="max_an_hrs" id="max_an_hrs"
-                                autocomplete="off" required>
-                            <div class="invalid-feedback">Please provide a max an hrs.</div>
+                                autocomplete="off">
+                            <div class="invalid-feedback">Please provide max an hrs.</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT1 Eligible<span class="text-danger">*</span></label>
-                            <select class="form-select" required aria-label="select example" name="ot_eligible"
+                            <label class="col-form-label">OT1 Eligible</label>
+                            <select class="form-select" aria-label="select example" name="ot_eligible"
                                 id="add_ot_eligible" onchange="changeOTFields('ot1');">
                                 <option value="">Select</option>
                                 <option value="Y">Y</option>
                                 <option value="N">N</option>
                             </select>
-                            <div class="invalid-feedback">Please provide a ot1 eligible.</div>
+                            <div class="invalid-feedback">Please provide ot1 eligible.</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max OT1 Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max OT1 Hrs</label>
                             <input class="form-control" type="number" name="max_ot1_hrs" id="max_ot1_hrs"
                                 autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT1 Amt<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">OT1 Amt</label>
                             <input class="form-control" type="number" name="ot1_amt" id="ot1_amt" autocomplete="off"
                                 disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT2 Eligible<span class="text-danger">*</span></label>
-                            <select class="form-select" required aria-label="select example" name="ot2_eligible"
+                            <label class="col-form-label">OT2 Eligible</label>
+                            <select class="form-select" aria-label="select example" name="ot2_eligible"
                                 id="add_ot2_eligible" onchange="changeOTFields('ot2');">
                                 <option value="">Select</option>
                                 <option value="Y">Y</option>
                                 <option value="N">N</option>
                             </select>
-                            <div class="invalid-feedback">Please provide a ot2 eligible.</div>
+                            <div class="invalid-feedback">Please provide ot2 eligible.</div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max OT2 Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max OT2 Hrs</label>
                             <input class="form-control" type="number" name="max_ot2_hrs" id="max_ot2_hrs"
                                 autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT2 Amt<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">OT2 Amt</label>
                             <input class="form-control" type="number" name="ot2_amt" id="ot2_amt" autocomplete="off"
                                 disabled>
                         </div>
@@ -437,7 +435,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Process Date <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Process Date</label>
                             <div class="icon-form">
                                 <span class="form-icon"></i></span>
                                 <input type="date" class="form-control" name="process_date" id="edit_process_date"
@@ -449,7 +447,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Default Project<span class="text-danger">*</span></label>
+                            <label class="col-form-label">Default Project</label>
                             <select class="select" name="default_project" id="edit_default_project">
                                 <option value="">Select</option>
                                         {% for pro_data in project_data %}
@@ -462,7 +460,7 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Start Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label">Start Time</label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
                                 <input type="time" class="form-control" name="start_time" id="edit_start_time"
@@ -472,7 +470,7 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">End Time <span class="text-danger">*</span></label>
+                            <label class="col-form-label">End Time</label>
                             <div class="icon-form">
                                 <span class="form-icon"><i class=""></i></span>
                                 <input type="time" class="form-control" name="end_time" id="edit_end_time"
@@ -482,51 +480,49 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Hours Per Day<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Hours Per Day</label>
                             <input class="form-control" type="number" name="hours_per_day" id="edit_hours_per_day"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Days Per Month<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Days Per Month</label>
                             <input class="form-control" type="number" name="days_per_month" id="edit_days_per_month"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Transportation Time(Travel)<span class="text-danger">
-                                    *</span></label>
+                            <label class="col-form-label">Transportation Time(Travel)</label>
                             <input class="form-control" type="number" name="travel_time" id="edit_travel_time"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Lunch Break (In Minutes)<span class="text-danger">
-                                    *</span></label>
+                            <label class="col-form-label">Lunch Break (In Minutes)</label>
                             <input class="form-control" type="number" name="lunch_break" id="edit_lunch_break"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max Mn Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max Mn Hrs</label>
                             <input class="form-control" type="number" name="max_mn_hrs" id="edit_max_mn_hrs"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="col-form-label">Max An Hrs<span class="text-danger"> *</span></label>
+                        <div class="mb3">
+                            <label class="col-form-label">Max An Hrs</label>
                             <input class="form-control" type="number" name="max_an_hrs" id="edit_max_an_hrs"
                                 autocomplete="off">
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT1 Eligible<span class="text-danger">*</span></label>
+                            <label class="col-form-label">OT1 Eligible</label>
                             <select class="select2" name="ot_eligible" id="edit_ot_eligible"
                                 onchange="toggleOTFields('ot1');">
                                 <option value="">Select</option>
@@ -537,21 +533,21 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max OT1 Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max OT1 Hrs</label>
                             <input class="form-control" type="number" name="max_ot1_hrs" id="edit_max_ot1_hrs"
                                 autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT1 Amt<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">OT1 Amt</label>
                             <input class="form-control" type="number" name="ot1_amt" id="edit_ot1_amt"
                                 autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT2 Eligible<span class="text-danger">*</span></label>
+                            <label class="col-form-label">OT2 Eligible</label>
                             <select class="select2" name="ot2_eligible" id="edit_ot2_eligible"
                                 onchange="toggleOTFields('ot2');">
                                 <option value="">Select</option>
@@ -562,14 +558,14 @@
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">Max OT2 Hrs<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">Max OT2 Hrs</label>
                             <input class="form-control" type="number" name="max_ot2_hrs" id="edit_max_ot2_hrs"
                                 autocomplete="off" disabled>
                         </div>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <div class="mb-3">
-                            <label class="col-form-label">OT2 Amt<span class="text-danger"> *</span></label>
+                            <label class="col-form-label">OT2 Amt</label>
                             <input class="form-control" type="number" name="ot2_amt" id="edit_ot2_amt"
                                 autocomplete="off" disabled>
                         </div>

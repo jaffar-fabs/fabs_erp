@@ -1,7 +1,6 @@
 {% extends "partials/base.html" %}
 {% load static %}
 
-
 {% block content %}
 <!-- Page Wrapper -->
 <div class="page-wrapper">
@@ -59,12 +58,6 @@
                     <table class="table datatable">
                         <thead class="thead-light">
                             <tr>
-                                <th class="no-sort">
-                                    <label class="checkboxs"><input type="checkbox" id="select-all">
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </th>
-                                <th class="no-sort"></th>
                                 <th>Grade Code</th>
                                 <th>Grade Desc</th>
                                 <th>Nationality</th>
@@ -86,14 +79,6 @@
                                 data-allowance5="{{record.allowance5}}" data-allowance6="{{record.allowance6}}"
                                 data-allowance7="{{record.allowance7}}" data-allowance8="{{record.allowance8}}"
                                 data-is-active="{{record.is_active}}">
-                                <td>
-                                    <label class="checkboxs">
-                                        <input type="checkbox" /><span class="checkmarks"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <div class="set-star rating-select"><i class="fa fa-star"></i></div>
-                                </td>
                                 <td>{{record.grade_code}}</td>
                                 <td>{{record.grade_desc}}</td>
                                 <td>{{record.nationality}}</td>
@@ -145,7 +130,6 @@
     </div>
 </div>
 <!-- /Page Wrapper -->
-
 
 {% block contacts_modal %}
 {% include "pages/modal/payroll/grademaster_modal.html" %}

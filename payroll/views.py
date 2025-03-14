@@ -21,10 +21,10 @@ from .models import (
     Menu,
     RoleMenu,
     UserMaster,
-    CompanyMaster
+    CompanyMaster,
+    GradeMaster, 
+    Employee # Add GradeMaster model
 )
-
-from .models import Menu, RoleMenu, Employee
 
 COMP_CODE = None  # Initialize COMP_CODE
 
@@ -982,7 +982,6 @@ def check_holiday(request):
     if request.method == "POST":
         holiday = request.POST.get("holiday")
         holiday_date = request.POST.get("holiday_date")
-        # print to check incoming values
 
         if HolidayMaster.objects.filter(holiday=holiday, holiday_date=holiday_date, comp_code=COMP_CODE).exists():
             return JsonResponse({"exists": True})  # Duplicate found
@@ -1219,3 +1218,18 @@ def check_company_code(request):
     company_code = request.GET.get('company_code')
     exists = CompanyMaster.objects.filter(company_code=company_code).exists()
     return JsonResponse({"exists": exists})
+def check_emp_code(request):
+    emp_code = request.GET.get('emp_code', None)
+    if emp_code:
+        exists = Employee.objects.filter(emp_code=emp_code).exists()
+        return JsonResponse({'exists': exists})
+    return JsonResponse({'exists': False})
+
+@csrf_exempt
+def check_grade_code(request):
+    if request.method == "POST":
+        grade_code = request.POST.get("grade_code")
+        comp_code = request.session.get("comp_code")
+        exists = GradeMaster.objects.filter(grade_code=grade_code, comp_code=comp_code).exists()
+        return JsonResponse({"exists": exists})
+    return JsonResponse({"error": "Invalid request"}, status=400)

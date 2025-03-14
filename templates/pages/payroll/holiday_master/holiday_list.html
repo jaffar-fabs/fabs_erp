@@ -553,20 +553,14 @@
                             <table class="table datatable">
                                 <thead class="">
                                     <tr>
-                                        <th class="">
-                                            <label class="checkboxs"><input type="checkbox" id="select-all"><span
-                                                    class="checkmarks"></span></label>
-                                        </th>
-                                        <!-- {% comment %} <th></th> {% endcomment %} -->
+                                        <!-- Remove the checkbox column -->
+                                        <!-- <th class="">
+                                            <label class="checkboxs"><input type="checkbox" id="select-all"><span class="checkmarks"></span></label>
+                                        </th> -->
                                         <th>Holiday</th>
                                         <th>Holiday Type</th>
-                                        <th> Hoiday Date</th>
-
+                                        <th>Holiday Date</th>
                                         <th>Holiday Day</th>
-                                        <!-- {% comment %} <th>Priority</th> {% endcomment %} -->
-                                        <!-- <th></th> -->
-                                        <!-- <th>Type</th> -->
-                                        <!-- {% comment %} <th>Pipeline Stage</th> {% endcomment %} -->
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -574,14 +568,12 @@
                                 <tbody>
                                     {% for record in holidays %}
                                     <tr>
-                                        <td>
+                                        <!-- Remove the checkbox column -->
+                                        <!-- <td>
                                             <label class="checkboxs">
                                                 <input type="checkbox" /><span class="checkmarks"></span>
                                             </label>
-                                        </td>
-                                        {% comment %} <td>
-                                            <div class="set-star rating-select"><i class="fa fa-star"></i></div>
-                                        </td> {% endcomment %}
+                                        </td> -->
                                         <td>
                                             <h2 class="d-flex align-items-center">
                                                 <a href="#">{{record.holiday}}</a>
@@ -592,35 +584,8 @@
                                                 <a href="#">{{record.holiday_type}}</a>
                                             </h2>
                                         </td>
-                                        <!-- <td>
-                                            <h2 class="d-flex align-items-center">
-                                                {% comment %} <a href="#" class="avatar avatar-sm border me-2">
-                                                    <img class="w-auto h-auto" src="{% static record.client_img %}"
-                                                        alt="User Image" />
-                                                </a> {% endcomment %}
-                                                <a href="#">{{record.main_contractor}}</a>
-                                            </h2>
-                                        </td> -->
-                                        <!-- {% comment %} <td>
-                                            <span
-                                                class="priority badge badge-tag {% if record.priority == 'High' %} badge-danger-light {% elif record.priority == 'Medium' %} badge-warning-light {% else %} badge-success-light {% endif %}">
-                                                <i class="ti ti-square-rounded-filled"></i>{{record.priority}}</span>
-                                        </td> {% endcomment %} -->
                                         <td>{{record.holiday_date|date:"d-M-Y"}}</td>
-
                                         <td>{{record.holiday_day}}</td>
-
-                                        <!-- <td>{{record.timeline_to|date:"d-M-Y"}}</td> -->
-                                        <!-- {% comment %} <td>{{record.project_id}} hidden</td> {% endcomment %} -->
-                                        <!-- {% comment %} <td>
-                                            <div class="pipeline-progress d-flex align-items-center">
-                                                <div class="progress">
-                                                    <div class="progress-bar {% if record.stage == 'Plan' %} progress-bar-violet {% elif record.stage == 'Develop' %} progress-bar-info {% elif record.stage == 'Completed' %} progress-bar-success {% else %} progress-bar-warning {% endif %}"
-                                                        role="progressbar"></div>
-                                                </div>
-                                                <span>{{record.stage}}</span>
-                                            </div>
-                                        </td> {% endcomment %} -->
                                         <td>
                                             <span
                                                 class="badge badge-pill badge-status 

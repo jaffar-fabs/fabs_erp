@@ -45,8 +45,8 @@
                     <div class="mb-3">
                         <label class="col-form-label">Holiday Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control" name="holiday_date" id="holiday_date" required>
-                        <!-- You can add an error span here if needed -->
-                        <!-- <span id="date_error" class="text-danger"></span> -->
+                        <!-- Error span for holiday date duplication -->
+                        <span id="holiday_date_error" class="text-danger"></span>
                     </div>
                 </div>
         
@@ -369,9 +369,11 @@
             let holidayDate = document.getElementById("holiday_date").value.trim();
             // Use the error span with id "project_code_error"
             let holidayError = document.getElementById("project_code_error");
+            let holidayDateError = document.getElementById("holiday_date_error");
             
             // Clear previous error messages
             if (holidayError) holidayError.innerText = "";
+            if (holidayDateError) holidayDateError.innerText = "";
     
             let formValid = true;
     
@@ -381,7 +383,7 @@
                 formValid = false;
             }
             if (!holidayDate) {
-                // Optionally, add error handling for holiday date if needed
+                if (holidayDateError) holidayDateError.innerText = "Holiday date is required.";
                 formValid = false;
             }
     
@@ -404,6 +406,7 @@
                 .then(data => {
                     if (data.exists) {
                         if (holidayError) holidayError.innerText = "Holiday already exists. Please choose a different one.";
+                        if (holidayDateError) holidayDateError.innerText = "Holiday already exists on this date.";
                         formValid = false;
                     }
     
@@ -420,4 +423,3 @@
         });
     });
     </script>
-    

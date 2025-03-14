@@ -553,10 +553,10 @@
                             <table class="table datatable">
                                 <thead class="">
                                     <tr>
-                                        <th class="">
-                                            <label class="checkboxs"><input type="checkbox" id="select-all"><span
-                                                    class="checkmarks"></span></label>
-                                        </th>
+                                        <!-- Remove the checkbox column -->
+                                        <!-- <th class="">
+                                            <label class="checkboxs"><input type="checkbox" id="select-all"><span class="checkmarks"></span></label>
+                                        </th> -->
                                         {% comment %} <th></th> {% endcomment %}
                                         <th>Project Code</th>
                                         <th>Name</th>
@@ -573,11 +573,12 @@
                                 <tbody>
                                     {% for record in projects %}
                                     <tr>
-                                        <td>
+                                        <!-- Remove the checkbox column -->
+                                        <!-- <td>
                                             <label class="checkboxs">
                                                 <input type="checkbox" /><span class="checkmarks"></span>
                                             </label>
-                                        </td>
+                                        </td> -->
                                         {% comment %} <td>
                                             <div class="set-star rating-select"><i class="fa fa-star"></i></div>
                                         </td> {% endcomment %}
