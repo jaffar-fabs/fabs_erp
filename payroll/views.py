@@ -833,8 +833,16 @@ class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
     def get(self, request):
-        datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            grade_code = request.GET.get('grade_code', None)
+            data = {
+                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code="1000").exists()
+            }
+            return JsonResponse(data)
+
+        datas = GradeMaster.objects.filter(comp_code="1000")
         return render(request, self.template_name, {'datas': datas})
+
 
     def post(self, request):
         # Check for delete request
@@ -868,7 +876,7 @@ class GradeMasterList(View):
         is_active = "Y" if "is_active" in request.POST else "N"
 
         if grade_id:
-            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code=COMP_CODE)
+            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code="1000")
             grade.grade_code = grade_code
             grade.grade_desc = grade_desc
             grade.nationality = nationality
@@ -884,7 +892,7 @@ class GradeMasterList(View):
             grade.save()
         else:
             grade = GradeMaster.objects.create(
-                comp_code=COMP_CODE,
+                comp_code='1000',
                 grade_code=grade_code,
                 grade_desc=grade_desc,
                 nationality=nationality,
