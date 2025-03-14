@@ -7,6 +7,10 @@ def employee_document_path(instance, filename):
     # Construct the path using the employee's code
     return os.path.join('employee_documents', instance.emp_code, filename)
 
+def company_logo_upload_path(instance, filename):
+    safe_code = str(instance.company_code).replace(" ", "_").replace("/", "_")
+    return os.path.join('company_logos', safe_code, filename)
+
 class Employee(models.Model):
     comp_code = models.CharField(max_length=15, default=1000)
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
@@ -106,7 +110,7 @@ class RoleMenu(models.Model):
     modify = models.BooleanField(null=True, blank=True)
     instance_id = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
-    created_by = models.BigIntegerField()
+    created_by = models.BigIntegerField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(null=True, blank=True)
@@ -286,14 +290,14 @@ class GradeMaster(models.Model):
     leave_days = models.IntegerField(default=0)
     passage_amount_adult = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     passage_amount_child = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    allowance1 = models.CharField(max_length=20)
-    allowance2 = models.CharField(max_length=20)
-    allowance3 = models.CharField(max_length=20)
-    allowance4 = models.CharField(max_length=20)
-    allowance5 = models.CharField(max_length=20)
-    allowance6 = models.CharField(max_length=20)
-    allowance7 = models.CharField(max_length=20)
-    allowance8 = models.CharField(max_length=20)
+    allowance1 = models.CharField(max_length=20 , null=True)
+    allowance2 = models.CharField(max_length=20 , null=True)
+    allowance3 = models.CharField(max_length=20 , null=True)
+    allowance4 = models.CharField(max_length=20 , null=True)
+    allowance5 = models.CharField(max_length=20 , null=True)
+    allowance6 = models.CharField(max_length=20 , null=True)
+    allowance7 = models.CharField(max_length=20 , null=True)
+    allowance8 = models.CharField(max_length=20 , null=True)
     is_active = models.CharField(max_length=1)
     instance_id = models.CharField(max_length=50)
     created_by = models.IntegerField()
@@ -357,3 +361,41 @@ class HolidayMaster(models.Model):
 
         def __str__(self):
             return f"{self.holiday} ({self.holiday_date})"
+
+
+#-----------------------------------
+# Company Master
+
+
+class CompanyMaster(models.Model):
+    company_id = models.BigAutoField(primary_key=True)
+    company_code = models.CharField(max_length=15)
+    company_name = models.CharField(max_length=100)
+    company_status = models.CharField(max_length=5)
+    inception_date = models.CharField(max_length=200)
+    labour_ministry_id = models.CharField(max_length=50, blank=True, null=True)
+    labour_bank_acc_no = models.CharField(max_length=50, blank=True, null=True)
+    currency_code = models.CharField(max_length=5)
+    address_line1 = models.CharField(max_length=50, blank=True, null=True)
+    address_line2 = models.CharField(max_length=50, blank=True, null=True)
+    address_line_city = models.CharField(max_length=50, blank=True, null=True)
+    address_line_state = models.CharField(max_length=50, blank=True, null=True)
+    country_code = models.CharField(max_length=5)
+    telephone1 = models.CharField(max_length=20, blank=True, null=True)
+    telephone2 = models.CharField(max_length=20, blank=True, null=True)
+    fax_number = models.CharField(max_length=20, blank=True, null=True)
+    mail_id = models.CharField(max_length=40, blank=True, null=True)
+    social_media_id = models.CharField(max_length=50, blank=True, null=True)
+    instance_id = models.CharField(max_length=50, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(blank=True, null=True)
+    modified_on = models.DateTimeField(blank=True, null=True)
+    image_url = models.ImageField(upload_to=company_logo_upload_path, blank=True, null=True)
+    salary_roundoff = models.CharField(max_length=50, blank=True, null=True)
+    logo_blob = models.BinaryField(blank=True, null=True)
+    po_box = models.CharField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return self.company_name
