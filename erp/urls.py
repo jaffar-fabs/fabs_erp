@@ -92,6 +92,7 @@ urlpatterns = [
     path('user-role-mappings/update/<int:mappingid>/', role_views.UserRoleMappingUpdate.as_view(), name='user_role_mapping_update'),
     path('user-role-mappings/delete/<int:mappingid>/', role_views.UserRoleMappingDelete.as_view(), name='user_role_mapping_delete'),
 
+    path('payroll/attendance_upload/', payroll_views.attendance_upload, name='attendance_upload'),
 ]
 
 

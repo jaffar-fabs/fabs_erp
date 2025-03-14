@@ -1,0 +1,88 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Attendance Upload" %}
+                {% endblock pagetitle %}
+                <!-- /Page Header -->
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Upload Attendance Data</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Select Paycycle</label>
+                                <select class="form-control" name="paycycle">
+                                    <option value="">Select Paycycle</option>
+                                    {% for paycycle in paycycle_data %}
+                                            <option value="{{ paycycle.base_value }}" {% if employee.process_cycle == paycycle.base_value %}selected{% endif %}>
+                                                {{ paycycle.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Upload Excel File</label>
+                                <input type="file" class="form-control" name="excel_file">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary">Process</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="reset" class="btn btn-secondary">Upload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% if table_data %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="card-title">Uploaded Data</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                {% for key in table_data.0.keys %}
+                                <th>{{ key }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in table_data %}
+                            <tr>
+                                {% for value in row.values %}
+                                <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- /Page Wrapper -->
+{% endblock content %}

@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.utils.timezone import now
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
 import uuid
 from datetime import datetime
 import os
 from django.conf import settings
+from django.template import loader
+from django.http import HttpResponse
+import pandas as pd
 
 # Single import statement for models
 from .models import (
@@ -22,7 +26,7 @@ from .models import (
     RoleMenu,
     UserMaster,
     GradeMaster, 
-    Employee # Add GradeMaster model
+    Employee
 )
 
 COMP_CODE = None  # Initialize COMP_CODE
@@ -1109,3 +1113,23 @@ def check_grade_code(request):
         exists = GradeMaster.objects.filter(grade_code=grade_code, comp_code=comp_code).exists()
         return JsonResponse({"exists": exists})
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
+def attendance_upload(request):
+    if request.method == 'POST':
+        paycycle = request.POST.get('paycycle')
+        excel_file = request.FILES.get('excel_file')
+        
+        # Process the uploaded file
+        if excel_file:
+            df = pd.read_excel(excel_file)
+            table_data = df.to_dict(orient='records')
+            return render(request, 'pages/payroll/attendance_upload/attendance_upload.html', {
+                'paycycle_data': Paycycle.objects.all(),
+                'table_data': table_data
+            })
+    
+    return render(request, 'pages/payroll/attendance_upload/attendance_upload.html', {
+        'paycycle_data': Paycycle.objects.all()
+    })
