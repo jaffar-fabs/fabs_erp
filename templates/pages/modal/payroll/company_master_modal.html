@@ -1,0 +1,677 @@
+{% load static %}
+
+
+<!-- Add New Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Company</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'company_add' %}" method="POST" id="companyForm" enctype="multipart/form-data">
+            {% csrf_token %}
+        
+            <div class="row">
+                <!-- Company Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
+                        <input class="form-control" name="company_code" type="text" required>
+                        <div id="company_code_error" class="text-danger mt-1"></div>
+                    </div>
+                </div>
+        
+                <!-- Company Name -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+                        <input class="form-control" name="company_name" type="text" required>
+                    </div>
+                </div>
+        
+                <!-- Company Status -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Status <span class="text-danger">*</span></label>
+                        <select class="form-select" name="company_status" required>
+                            <option value="Ac">Active</option>
+                            <option value="Pe">Pending</option>
+                            <option value="In">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+        
+                <!-- Inception Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Inception Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="inception_date" required>
+                    </div>
+                </div>
+        
+                <!-- Currency Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Currency Code <span class="text-danger">*</span></label>
+                        <input class="form-control" name="currency_code" type="text" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
+                        <input class="form-control" name="country_code" type="text" required>
+                    </div>
+                </div>
+        
+                <!-- Labour Ministry ID -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labour Ministry ID</label>
+                        <input class="form-control" name="labour_ministry_id" type="text">
+                    </div>
+                </div>
+                
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labour Account Number</label>
+                        <input class="form-control" name="labour_ministry_id" type="text">
+                    </div>
+                </div>
+        
+                <!-- Logo Image URL -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Logo Image URL</label>
+                        <input class="form-control" name="image_url" type="file">
+                    </div>
+                </div>
+        
+                <!-- Address Fields -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Address Line 1</label>
+                        <input class="form-control" name="address_line1" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Address Line 2</label>
+                        <input class="form-control" name="address_line2" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">City</label>
+                        <input class="form-control" name="address_line_city" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">State</label>
+                        <input class="form-control" name="address_line_state" type="text">
+                    </div>
+                </div>
+        
+                <!-- Contact Details -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Telephone 1</label>
+                        <input class="form-control" name="telephone1" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Telephone 2</label>
+                        <input class="form-control" name="telephone2" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Fax Number</label>
+                        <input class="form-control" name="fax_number" type="text">
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Salary Roundoff</label>
+                        <input class="form-control" name="fax_number" type="text">
+                    </div>
+                </div>
+        
+                <!-- Email and Social Media -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Email</label>
+                        <input class="form-control" name="mail_id" type="email">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Social Media ID</label>
+                        <input class="form-control" name="social_media_id" type="text">
+                    </div>
+                </div>
+        
+                <!-- PO Box -->
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">PO Box</label>
+                        <textarea class="form-control" rows="4" name="po_box"></textarea>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="mb-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" for="is_active">Is Active</label>
+                        <input type="hidden" name="is_active" value="false">
+                        <input type="checkbox" class="form-check-input"  value="Active" name="is_active"  id="is_active" checked>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Add New Project -->
+
+
+<!-- Edit Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Holiday</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'company_edit' %}" method="POST" enctype="multipart/form-data" id="companyForm">
+            {% csrf_token %}
+            <input class="form-control"    id="company_id" name="company_id" type="hidden" required>
+            
+            <div class="row">
+                <!-- Company Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Code <span class="text-danger">*</span></label>
+                        <input class="form-control"  readonly id="company_code" name="company_code" type="text" required>
+                    </div>
+                </div>
+        
+                <!-- Company Name -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Name <span class="text-danger">*</span></label>
+                        <input class="form-control" id="company_name" name="company_name" type="text" required>
+                    </div>
+                </div>
+        
+                <!-- Company Status -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Company Status <span class="text-danger">*</span></label>
+                        <select class="form-select" name="company_status" id="company_status" required>
+                            <option value="Ac">Active</option>
+                            <option value="Pe">Pending</option>
+                            <option value="In">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+        
+                <!-- Inception Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Inception Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control"id="inception_date" name="inception_date" required>
+                    </div>
+                </div>
+        
+                <!-- Currency Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Currency Code <span class="text-danger">*</span></label>
+                        <input class="form-control" id="currency_code" name="currency_code" type="text" required>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
+                        <input class="form-control" id="country_code" name="country_code" type="text" required>
+                    </div>
+                </div>
+        
+                <!-- Labour Ministry ID -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labour Ministry ID</label>
+                        <input class="form-control" id="labour_ministry_id" name="labour_ministry_id" type="text">
+                    </div>
+                </div>
+                
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labour Account Number</label>
+                        <input class="form-control" id="labour_bank_acc_no" name="labour_bank_acc_no" type="text">
+                    </div>
+                </div>
+        
+                <!-- Logo Image URL -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Logo Image URL</label>
+                        <input class="form-control" id="image_url" name="image_url" type="file" accept="image/*">
+                        <img id="image_preview" src="{{ company.image_url }}" alt="Company Logo" class="img-thumbnail mt-2" style="max-height: 100px;">
+                    </div>
+                </div>
+                
+        
+                <!-- Address Fields -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Address Line 1</label>
+                        <input class="form-control" id="address_line1" name="address_line1" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Address Line 2</label>
+                        <input class="form-control" id="address_line2" name="address_line2" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">City</label>
+                        <input class="form-control" id="address_line_city" name="address_line_city" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">State</label>
+                        <input class="form-control" id="address_line_state" name="address_line_state" type="text">
+                    </div>
+                </div>
+        
+                <!-- Contact Details -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Telephone 1</label>
+                        <input class="form-control" id="telephone1" name="telephone1" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Telephone 2</label>
+                        <input class="form-control" id="telephone2" name="telephone2" type="text">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Fax Number</label>
+                        <input class="form-control" id="fax_number" name="fax_number" type="text">
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Salary Roundoff</label>
+                        <input class="form-control" id="salary_roundoff" name="salary_roundoff" type="text">
+                    </div>
+                </div>
+        
+                <!-- Email and Social Media -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Email</label>
+                        <input class="form-control" id="mail_id" name="mail_id" type="email">
+                    </div>
+                </div>
+        
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Social Media ID</label>
+                        <input class="form-control" id="social_media_id" name="social_media_id" type="text">
+                    </div>
+                </div>
+        
+                <!-- PO Box -->
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">PO Box</label>
+                        <textarea class="form-control" id="po_box" rows="4" name="po_box"></textarea>
+                    </div>
+                </div>
+
+
+
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                    <div class="mb-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" for="is_active">Active</label>
+                        <input type="hidden" name="is_active" value="false">
+                        <input type="checkbox" class="form-check-input" id="is_Active" name="is_active" value="Active"
+                            {% if is_active %}checked{% endif %}>
+                    </div>
+                </div>
+
+            </div>
+        
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<!-- /Edit Project -->
+
+
+<!-- Delete Project -->
+<div class="modal fade" id="delete_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Project?</h4>
+                    <p class="mb-0">Are you sure you want to remove this project?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_project' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="project_id" id="delete_project_id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Delete Project -->
+
+
+<!-- Create Project -->
+<div class="modal custom-modal fade" id="create_project" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 m-0 justify-content-end">
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="success-message text-center">
+                    <div class="success-popup-icon bg-light-blue">
+                        <i class="ti ti-atom-2"></i>
+                    </div>
+                    <h3>Project Created Successfully!!!</h3>
+                    <p>View the details of project, created</p>
+                    <div class="col-lg-12 text-center modal-btn">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <a href="#" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Create Project -->
+
+
+<!-- Add New View -->
+<div class="modal custom-modal fade" id="save_view" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New View</h5>
+                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="projects">
+                    <div class="mb-3">
+                        <label class="col-form-label">View Name</label>
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="modal-btn text-end">
+                        <a href="#" class="btn btn-light" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit" class="btn btn-danger">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Add New View -->
+
+
+
+<!-- <script>
+    document.getElementById("holiday_date").addEventListener("change", function () {
+        let dateValue = this.value;
+        let date = new Date(dateValue);
+        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        let dayName = days[date.getDay()];
+        document.getElementById("holiday_day").value = dayName;
+
+    });
+    document.getElementById("holiday_dates").addEventListener("change", function () {
+        let dateValue = this.value;
+        let date = new Date(dateValue);
+        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        let dayName = days[date.getDay()];
+        document.getElementById("holiday_days").value = dayName;
+
+    });
+
+   
+    
+</script> -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("holidayForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent form submission
+    
+            let form = event.target;
+            // Read holiday from the input with id "project_code"
+            let holidayName = document.getElementById("project_code").value.trim();
+            let holidayDate = document.getElementById("holiday_date").value.trim();
+            // Use the error span with id "project_code_error"
+            let holidayError = document.getElementById("project_code_error");
+            
+            // Clear previous error messages
+            if (holidayError) holidayError.innerText = "";
+    
+            let formValid = true;
+    
+            // Validate fields
+            if (!holidayName) {
+                if (holidayError) holidayError.innerText = "Holiday name is required.";
+                formValid = false;
+            }
+            if (!holidayDate) {
+                // Optionally, add error handling for holiday date if needed
+                formValid = false;
+            }
+    
+            // If form is still valid, proceed with AJAX request
+            if (formValid) {
+                fetch("{% url 'check_holiday' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        // Ensure CSRF token is properly set; you could also use:
+                        // "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: new URLSearchParams({
+                        holiday: holidayName,
+                        holiday_date: holidayDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (holidayError) holidayError.innerText = "Holiday already exists. Please choose a different one.";
+                        formValid = false;
+                    }
+    
+                    if (formValid) {
+                        form.submit();
+                    }
+                })
+                .catch(error => {
+                    console.error("Error checking holiday:", error);
+                });
+            }
+    
+            return false; // Prevent default submission if errors exist
+        });
+    });
+
+
+
+    $(document).ready(function () {
+        // Show preview of selected image
+        $("#image_url").on("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#image_preview").attr("src", e.target.result).show();
+                };
+                reader.readAsDataURL(file); // Preview the uploaded image
+            }
+        });
+    
+        $(".edit-project-btn").click(function (event) {
+            event.preventDefault();
+            var company_id = $(this).data("id");
+    
+            $.ajax({
+                url: "/payroll/edit_company/",
+                type: "GET",
+                data: { 'company_id': company_id },
+                success: function (response) {
+                    console.log(response.image_url);
+    
+                    $("#company_id").val(response.company_id);
+                    $("#company_name").val(response.company_name);
+                    $("#company_code").val(response.company_code);
+                    $("#inception_date").val(response.inception_date);
+    
+                    const imagePath = response.image_url ? window.location.origin + response.image_url : "";
+                    $("#image_preview").attr("src", imagePath).show();
+    
+                    $("#company_status").val(response.company_status).trigger("change");
+                    $("#labour_ministry_id").val(response.labour_ministry_id);
+    
+                    let isActive = response.is_active === true;
+                    $("#is_Active").prop("checked", isActive);
+    
+                    var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+                    offcanvasElement.show();
+                },
+                error: function (xhr, status, error) {
+                    console.error("error :", xhr.responseText);
+                }
+            });
+        });
+    });
+
+
+    $("#image_url").change(function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $("#image_preview").attr("src", e.target.result).show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+
+    $(document).ready(function () {
+        let companyCodeValid = false;  // Flag to track validation status
+    
+        $('input[name="company_code"]').on('blur', function () {
+            let companyCode = $(this).val();
+            let errorElement = $("#company_code_error");
+    
+            if (companyCode.trim() === "") {
+                errorElement.text("");  // Clear error if empty
+                companyCodeValid = false;
+                return;
+            }
+    
+            $.ajax({
+                url: "/payroll/check_company_code/",
+                type: "GET",
+                data: { company_code: companyCode },
+                async: false,  // Ensure AJAX finishes before continuing
+                success: function (response) {
+                    if (response.exists) {
+                        errorElement.text("Company code already exists. Please choose another.").css("color", "red");
+                        companyCodeValid = false;
+                    } else {
+                        errorElement.text("Company code available.").css("color", "green");
+                        companyCodeValid = true;
+                    }
+                },
+                error: function () {
+                    errorElement.text("Error checking company code. Please try again.").css("color", "red");
+                    companyCodeValid = false;
+                }
+            });
+        });
+    
+        // Prevent form submission if company code is invalid
+        $("#companyForm").on("submit", function (event) {
+            if (!companyCodeValid) {
+                event.preventDefault();  // Prevent form submission
+                $("#company_code_error").text("Company code must be available to submit.").css("color", "red");
+            }
+        });
+    });
+    
+    
+    
+    </script>
+    

@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime
 import os
 from django.conf import settings
-
+from django.core.files.storage import FileSystemStorage
 # Single import statement for models
 from .models import (
     PaycycleMaster,
@@ -21,6 +21,7 @@ from .models import (
     Menu,
     RoleMenu,
     UserMaster,
+    CompanyMaster
 )
 
 from .models import Menu, RoleMenu, Employee
@@ -1095,3 +1096,126 @@ def permission_view(request):
     }
     return render(request, 'pages/security/role/permission.html', context)
 
+# ----- Company Master
+
+def company_master(request):
+    template_name  = "pages/payroll/company_master/company_list.html"
+    companies=CompanyMaster.objects.all().order_by('-created_on')
+    count=CompanyMaster.objects.all().count()
+    return render(request, template_name,{'companies':companies})
+
+def add_company(request):
+    if request.method == "POST":
+        CompanyMaster.objects.create(
+            company_code=request.POST.get("company_code"),
+            company_name=request.POST.get("company_name"),
+            company_status=request.POST.get("company_status"),
+            inception_date=request.POST.get("inception_date"),
+            currency_code=request.POST.get("currency_code"),
+            country_code=request.POST.get("country_code"),
+            labour_ministry_id=request.POST.get("labour_ministry_id"),
+            labour_bank_acc_no=request.POST.get("labour_account_number"),
+            image_url=request.FILES.get("image_url"),
+            address_line1=request.POST.get("address_line1"),
+            address_line2=request.POST.get("address_line2"),
+            address_line_city=request.POST.get("address_line_city"),
+            address_line_state=request.POST.get("address_line_state"),
+            telephone1=request.POST.get("telephone1"),
+            telephone2=request.POST.get("telephone2"),
+            fax_number=request.POST.get("fax_number"),
+            salary_roundoff=request.POST.get("salary_roundoff"),
+            mail_id=request.POST.get("mail_id"),
+            social_media_id=request.POST.get("social_media_id"),
+            po_box=request.POST.get("po_box"),
+            is_active=request.POST.get("is_active") == "Active",
+            created_by=1,
+
+        )
+        return redirect('company_list')
+    
+    return redirect('company_list')
+
+def company_edit(request):
+    if request.method == "GET":
+        company_id = request.GET.get("company_id")
+        print("id",company_id)
+        try:
+            company = get_object_or_404(CompanyMaster, company_id=int(company_id))
+            
+            return JsonResponse({
+                "company_id": company.company_id,
+                "company_code": company.company_code,
+                "company_name": company.company_name,
+                "inception_date": company.inception_date,
+                "company_status":company.company_status,
+                "labour_ministry_id": company.labour_ministry_id,
+                "labour_bank_acc_no": company.labour_bank_acc_no,
+                "image_url": f"{settings.MEDIA_URL}{company.image_url}" if company.image_url else "",  # ✅ Add media URL
+                # "image_url": company.image_url,
+                "currency_code": company.currency_code,
+                "address_line1": company.address_line1,
+                "address_line2": company.address_line2,
+                "address_line_city": company.address_line_city,
+                "address_line_state": company.address_line_state,
+                "country_code": company.country_code,
+                "telephone1": company.telephone1,
+                "telephone2": company.telephone2,
+                "fax_number": company.fax_number,
+                "mail_id": company.mail_id,
+                "social_media_id": company.social_media_id,
+                "instance_id": company.instance_id,
+                "salary_roundoff": company.salary_roundoff,
+                "po_box": company.po_box,
+                "is_active": company.is_active
+            })
+
+        except Exception as e:
+            print(f"Error in company_edit: {str(e)}")
+            return JsonResponse({"error": "Company data not found."}, status=404)
+        
+    if request.method == "POST":
+        comp_id = request.POST.get('company_id')
+        try:
+            company = get_object_or_404(CompanyMaster, company_id=int(comp_id))
+            if 'image_url' in request.FILES:
+                image_file = request.FILES['image_url']
+                file_path = f'company_logos/{company.company_code}/{image_file.name}'
+                company.image_url.save(file_path, image_file, save=True)
+
+            company.company_code = request.POST.get('company_code', company.company_code)
+            company.company_name = request.POST.get('company_name', company.company_name)
+            company.inception_date = request.POST.get('inception_date', company.inception_date)
+            company.company_status = request.POST.get('company_status', company.company_status)
+            company.labour_ministry_id = request.POST.get('labour_ministry_id', company.labour_ministry_id)
+            company.labour_bank_acc_no = request.POST.get('labour_bank_acc_no', company.labour_bank_acc_no)
+            company.currency_code = request.POST.get('currency_code', company.currency_code)
+            company.address_line1 = request.POST.get('address_line1', company.address_line1)
+            company.address_line2 = request.POST.get('address_line2', company.address_line2)
+            company.address_line_city = request.POST.get('address_line_city', company.address_line_city)
+            company.address_line_state = request.POST.get('address_line_state', company.address_line_state)
+            company.country_code = request.POST.get('country_code', company.country_code)
+            company.telephone1 = request.POST.get('telephone1', company.telephone1)
+            company.telephone2 = request.POST.get('telephone2', company.telephone2)
+            company.fax_number = request.POST.get('fax_number', company.fax_number)
+            company.mail_id = request.POST.get('mail_id', company.mail_id)
+            company.social_media_id = request.POST.get('social_media_id', company.social_media_id)
+            company.instance_id = request.POST.get('instance_id', company.instance_id)
+            company.salary_roundoff = request.POST.get('salary_roundoff', company.salary_roundoff)
+            company.po_box = request.POST.get('po_box', company.po_box)
+            company.is_active = request.POST.get("is_active") == "Active"
+
+            company.save()
+
+            return redirect('company_list')
+
+        except Exception as e:
+            print(f"Error updating company data: {str(e)}")
+            return JsonResponse({"error": "Error updating company data."}, status=500)
+
+    return redirect('company_list')
+
+
+def check_company_code(request):
+    company_code = request.GET.get('company_code')
+    exists = CompanyMaster.objects.filter(company_code=company_code).exists()
+    return JsonResponse({"exists": exists})

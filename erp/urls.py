@@ -84,6 +84,13 @@ urlpatterns = [
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
     path('permission/', payroll_views.permission_view, name='permission'),
 
+    # Comapny Master
+    path('payroll/company_list/', views.company_master, name='company_list'),
+    path('payroll/add_company/', views.add_company, name='company_add'),
+    path('payroll/edit_company/', views.company_edit, name='company_edit'),
+    path('payroll/check_company_code/', views.check_company_code, name='check_company_code'),
+
+
 ]
 
 
