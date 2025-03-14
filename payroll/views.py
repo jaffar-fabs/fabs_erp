@@ -1083,17 +1083,77 @@ class MenuMaster(View):
         return redirect("menu_list")
 
 
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Menu, RoleMenu
+from security.models import RoleMaster
+import json
+
 def permission_view(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
     role_name = request.GET.get('role_name', 'No role name provided')
-    # Filter active menu items
-    active_menus = Menu.objects.filter(is_active=True, comp_code=COMP_CODE)
+    try:
+        role = RoleMaster.objects.get(role_name=role_name)
+    except RoleMaster.DoesNotExist:
+        role = None
+
+    # Filter active menu items and paginate the results
+    active_menus = Menu.objects.filter(is_active=True)
+    paginator = Paginator(active_menus, 10)  # Show 10 items per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get unique module_id values
+    module_ids = Menu.objects.filter(is_active=True).values('module_id').distinct()
+
     context = {
         'role_name': role_name,
-        'active_menus': active_menus,
+        'role_id': role.id if role else 'No role ID',  # Pass the role ID
+        'active_menus': page_obj,  # Pass the paginated menus
+        'module_ids': module_ids,  # Pass the unique module_ids
     }
+
     return render(request, 'pages/security/role/permission.html', context)
+
+@csrf_exempt
+def update_role_menu(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            role_id = data.get('role_id')
+            changes = data.get('changes')
+            created_by = request.user.id if request.user.is_authenticated else 1  # Default user ID
+
+            for change in changes:
+                menu_id = change.get('menu_id')
+                permission = change.get('permission')
+                is_checked = change.get('is_checked')
+
+                if role_id and menu_id and permission:
+                    role_menu, created = RoleMenu.objects.get_or_create(role_id=role_id, menu_id=menu_id)
+                    setattr(role_menu, permission, is_checked)
+                    if created:
+                        role_menu.created_by = created_by
+                    role_menu.save()
+                    
+                    # Debugging line
+                    print(f"Updated RoleMenu: {role_menu.menu_id} {permission}={is_checked}")
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            error_message = f"Error updating role menu: {e}"
+            print(error_message)
+            return JsonResponse({'success': False, 'error': error_message})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+def get_menus_by_module(request, module_id):
+    menus = Menu.objects.filter(module_id=module_id, is_active=True).values(
+        'menu_id', 'menu_name', 'is_add', 'is_edit', 'is_view', 'is_delete'
+    )
+    return JsonResponse({'menus': list(menus)})
+
 
 # ----- Company Master
 

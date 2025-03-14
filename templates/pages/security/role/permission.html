@@ -1,9 +1,11 @@
 {% extends 'partials/base.html' %}
 {% load static %}
 {% block content %}
+{% csrf_token %}
 
 <div class="page-wrapper">
     <div class="content">
+        <!-- Page Header -->
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
@@ -25,6 +27,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Card Content -->
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
@@ -33,18 +36,27 @@
                                     <h4>Role Name : <span class="text-danger">{{ role_name }}</span></h4>
                                 </div>
                             </div>
-                            <div class="col-md-7 col-sm-8">
-                                <div class="text-sm-end">
-                                    <label class="checkboxs d-flex align-items-center justify-content-sm-end">
-                                        <input type="checkbox" />
-                                        <span class="checkmarks position-relative d-flex me-2"></span>Allow All Modules
-                                    </label>
+                            <div class="col-md-5 col-sm-4">
+                                <div class="mb-3">
+                                    <select id="module-select" class="select2">
+                                        <option>Choose Module ID</option>
+                                        {% for module_id in module_ids %}
+                                        <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive custom-table">
+                            <select id="module-select" class="select2">
+                                <option>Choose Module ID</option>
+                                {% for module_id in module_ids %}
+                                <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
+                                {% endfor %}
+                            </select>
+                    
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
@@ -54,7 +66,6 @@
                                             </label>
                                         </th>
                                         <th>Menu Name</th>
-                                        <!-- <th>Menu Id</th> -->
                                         <th>Create</th>
                                         <th>Edit</th>
                                         <th>View</th>
@@ -62,48 +73,8 @@
                                         <th>Allow All</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {% for menu in active_menus %}
-                                    <tr>
-                                        <td class="sorting_1">
-                                            <label class="checkboxs"><input type="checkbox" />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                        <td>{{ menu.menu_name }}</td>
-                                        <!-- <td>{{ menu.menu_id }}</td> -->
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" data-menu-id="{{ menu.menu_id }}" data-permission="create" {% if not menu.is_add %}disabled{% endif %} />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" data-menu-id="{{ menu.menu_id }}" data-permission="edit" {% if not menu.is_edit %}disabled{% endif %} />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" data-menu-id="{{ menu.menu_id }}" data-permission="view" {% if not menu.is_view %}disabled{% endif %} />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" data-menu-id="{{ menu.menu_id }}" data-permission="delete" {% if not menu.is_delete %}disabled{% endif %} />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox" />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
+                                <tbody id="menu-list">
+                                    <!-- Dynamic menu list based on module ID -->
                                 </tbody>
                             </table>
                         </div>
@@ -125,36 +96,118 @@
     </div>
 </div>
 
-{% endblock content %}
-
-
 <script>
-    
-	document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.card-body input[type="checkbox"]').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() 
-        {
-            var menuId = this.getAttribute('data-menu-id');
-            var permissionType = this.getAttribute('data-permission');
-            var isChecked = this.checked;
-            var roleName = document.querySelector('.text-danger').textContent;
-            var formData = new FormData();
-            formData.append('role_name', roleName);
-            formData.append('menu_id', menuId);
-            formData.append('permission_type', permissionType);
-            formData.append('is_checked', isChecked);
+    document.addEventListener('DOMContentLoaded', function () {
+        const moduleSelect = document.getElementById('module-select');
+        const menuList = document.getElementById('menu-list');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-            fetch(window.location.href, {
-                method: 'POST',
-                body: formData,
+        moduleSelect.addEventListener('change', function () {
+            const selectedModuleId = this.value;
+            fetch(`/get_menus_by_module/${selectedModuleId}/`, {
+                method: 'GET',
                 headers: {
-                    'X-CSRFToken': getCookie('csrftoken')
+                    'X-CSRFToken': csrftoken
                 }
-            }).then(response => response.json()).then(data => {
-                if (data.status === 'success') { console.log('Permission updated successfully') }
             })
-        })
-    })
-})
+            .then(response => response.json())
+            .then(data => {
+                menuList.innerHTML = '';
+                data.menus.forEach(menu => {
+                    const row = `
+                    <tr>
+                        <td class="sorting_1">
+                            <label class="checkboxs"><input type="checkbox" />
+                                <span class="checkmarks"></span>
+                            </label>
+                        </td>
+                        <td>${menu.menu_name}</td>
+                        <td>
+    <label class="checkboxs">
+        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="add" ${menu.is_add ? 'checked' : ''} />
+        <span class="checkmarks"></span>
+    </label>
+</td>
+<td>
+    <label class="checkboxs">
+        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="modify" ${menu.is_edit ? 'checked' : ''} />
+        <span class="checkmarks"></span>
+    </label>
+</td>
+<td>
+    <label class="checkboxs">
+        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="view" ${menu.is_view ? 'checked' : ''} />
+        <span class="checkmarks"></span>
+    </label>
+</td>
+<td>
+    <label class="checkboxs">
+        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="delete" ${menu.is_delete ? 'checked' : ''} />
+        <span class="checkmarks"></span>
+    </label>
+</td>
 
+                        <td>
+                            <label class="checkboxs"><input type="checkbox" />
+                                <span class="checkmarks"></span>
+                            </label>
+                        </td>
+                    </tr>`;
+                    menuList.insertAdjacentHTML('beforeend', row);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        const changes = [];
+
+        menuList.addEventListener('change', function (event) {
+    if (event.target.type === 'checkbox' && event.target.dataset.menuId) {
+        const menuId = event.target.dataset.menuId;
+        const permission = event.target.dataset.permission;
+        const isChecked = event.target.checked;
+
+        console.log(`Menu ID: ${menuId}, Permission: ${permission}, Checked: ${isChecked}`); // Debugging line
+
+        changes.push({
+            menu_id: menuId,
+            permission: permission,
+            is_checked: isChecked
+        });
+    }
+});
+
+
+        const saveButton = document.querySelector('.btn.btn-primary');
+        saveButton.addEventListener('click', function () {
+            if (changes.length > 0) {
+                fetch("{% url 'update_role_menu' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        role_id: '{{ role_id }}',
+                        changes: changes
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('RoleMenu updated successfully');
+                        // Provide user feedback, e.g., show a success message
+                    } else {
+                        console.error('Failed to update RoleMenu:', data.error);
+                        // Provide user feedback, e.g., show an error message
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
 </script>
+
+
+
+{% endblock content %}

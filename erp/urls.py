@@ -97,7 +97,8 @@ urlpatterns = [
     path('payroll/add_company/', views.add_company, name='company_add'),
     path('payroll/edit_company/', views.company_edit, name='company_edit'),
     path('payroll/check_company_code/', views.check_company_code, name='check_company_code'),
-
+    path('update_role_menu/', payroll_views.update_role_menu, name='update_role_menu'),
+    path('get_menus_by_module/<str:module_id>/', payroll_views.get_menus_by_module, name='get_menus_by_module'),
 
 ]
 

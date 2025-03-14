@@ -110,7 +110,7 @@ class RoleMenu(models.Model):
     modify = models.BooleanField(null=True, blank=True)
     instance_id = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
-    created_by = models.BigIntegerField()
+    created_by = models.BigIntegerField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(null=True, blank=True)
