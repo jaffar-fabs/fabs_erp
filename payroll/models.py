@@ -380,7 +380,7 @@ class CompanyMaster(models.Model):
     address_line2 = models.CharField(max_length=50, blank=True, null=True)
     address_line_city = models.CharField(max_length=50, blank=True, null=True)
     address_line_state = models.CharField(max_length=50, blank=True, null=True)
-    country_code = models.CharField(max_length=5)
+    country_code = models.CharField(max_length=20, blank=True, null=True)
     telephone1 = models.CharField(max_length=20, blank=True, null=True)
     telephone2 = models.CharField(max_length=20, blank=True, null=True)
     fax_number = models.CharField(max_length=20, blank=True, null=True)
@@ -399,3 +399,31 @@ class CompanyMaster(models.Model):
 
     def __str__(self):
         return self.company_name
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Worker Attendance Register
+
+class WorkerAttendanceRegister(models.Model):
+    comp_code = models.CharField(max_length=50)
+    unique_id = models.BigAutoField(primary_key=True)
+    employee_code = models.CharField(max_length=50)
+    pay_cycle = models.CharField(max_length=100)
+    pay_process_month = models.CharField(max_length=50)
+    project_code = models.CharField(max_length=50, blank=True, null=True)
+    date = models.DateField()
+    attendance_type = models.BigIntegerField()
+    morning = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    afternoon = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ot1 = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    ot2 = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(blank=True, null=True)
+    modified_on = models.DateTimeField(blank=True, null=True)
+    in_time = models.CharField(max_length=20, blank=True, null=True)
+    out_time = models.CharField(max_length=20, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.employee_code} - {self.date}"

@@ -8,12 +8,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta  # Import timedelta
 import os
 from django.conf import settings
 from django.template import loader
 from django.http import HttpResponse
 import pandas as pd
+from zipfile import BadZipFile
 
 from django.core.files.storage import FileSystemStorage
 # Single import statement for models
@@ -28,21 +29,25 @@ from .models import (
     UserMaster,
     CompanyMaster,
     GradeMaster, 
-    Employee
+    Employee,
+    WorkerAttendanceRegister
 )
 
-COMP_CODE = None  # Initialize COMP_CODE
+# Initialize COMP_CODE globally
+COMP_CODE = None
 
-def employee_master(request):
+def set_comp_code(request):
     global COMP_CODE
     COMP_CODE = request.session.get("comp_code")
+
+def employee_master(request):
+    set_comp_code(request)
     # Fetch all employee data for display
     employee_data = Employee.objects.filter(comp_code=COMP_CODE)
     return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
 
 def save_employee(request, employee_id=None):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
@@ -131,8 +136,7 @@ def save_employee(request, employee_id=None):
     return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
 
 def deactivate_employee(request, employee_id):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == 'POST':
         # Get the Employee object
         employee = get_object_or_404(Employee, employee_id=employee_id)
@@ -143,6 +147,7 @@ def deactivate_employee(request, employee_id):
     return redirect('/employee')  # Redirect to the employee list page
 
 def index(request):
+    set_comp_code(request)
     deals_dashboard = [
         {
             "id" : 1,
@@ -201,10 +206,9 @@ def my_login_view(request):
                 request.session["role_id"] = 1 if user.user_id == "admin1" else 2
                 request.session["comp_code"] = user.comp_code  # Set comp_code in session
 
-                global COMP_CODE
-                COMP_CODE = user.comp_code  # Assign session comp_code to global COMP_CODE
+                set_comp_code(request)
                 
-                messages.success(request, "Login successful!")
+                # messages.success(request, "Login successful!")
                 return redirect("/index")
             else:
                 messages.error(request, "Invalid username or password.")
@@ -214,24 +218,21 @@ def my_login_view(request):
     return render(request, "auth/login.html")
 
 def dashboard_view(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     try:
         role_id = request.session.get("role_id")
-        menu_ids = RoleMenu.objects.filter(role_id=role_id, view = True).values_list('menu_id', flat=True)
+        menu_ids = RoleMenu.objects.filter(role_id=role_id, view=True).values_list('menu_id', flat=True)
         parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent', comp_code=COMP_CODE).order_by('display_order').values('menu_id', 'screen_name'))
-        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__in= str(menu_ids), comp_code=COMP_CODE).exclude(parent_menu_id = 'No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url','parent_menu_id'))
-        response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data }
+        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id__in=str(menu_ids), comp_code=COMP_CODE).exclude(parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url', 'parent_menu_id'))
+        response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data}
     except Exception as e:
         response_data = {'status': 'error', 'msg': str(e)}
 
     return JsonResponse(response_data)
 
-    
 def logout(request):
     request.session.flush()  # Clears all session data
-    # request.session.destroy()
-    messages.success(request, "You have been logged out successfully.")
+    # messages.success(request, "You have been logged out successfully.")
     return redirect("/")  # Redirect to login page
 
 #-------------------------------
@@ -239,8 +240,7 @@ def logout(request):
 #Seed Master View
 
 def create_seed(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         seed_code = request.POST.get("seed_code")
         seed_group = request.POST.get("seed_group")
@@ -279,8 +279,7 @@ def create_seed(request):
     return render(request, 'pages/payroll/seed_master/seedmaster.html', {'seed_data': seed_data})
 
 def update_seed_status(request, seed_id):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == 'POST':
         seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
         seed.is_active = False
@@ -289,8 +288,7 @@ def update_seed_status(request, seed_id):
     return JsonResponse({'status': 'failed'}, status=400)
 
 def edit_seed(request, seed_id):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
 
     if request.method == 'POST':
@@ -317,8 +315,7 @@ def edit_seed(request, seed_id):
         return render(request, 'pages/modal/payroll/seed-modal.html', {'seed': seed})
 
 def get_seed(request, seed_id):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     seed = SeedModel.objects.get(seed_id=seed_id, comp_code=COMP_CODE)
     data = {
         'seed_code': seed.seed_code,
@@ -343,14 +340,12 @@ class Paycycle(View):
     template_name = "pages/payroll/paycycle_master/paycycle-list.html"
 
     def get(self, request):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         paycycle_list = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
         return render(request, self.template_name, {"paycycle_list": paycycle_list})
 
     def post(self, request):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         process_cycle_id = request.POST.get('process_cycle_id')
         process_description = request.POST.get('process_description')
         process_cycle = request.POST.get('process_cycle')
@@ -441,8 +436,7 @@ class Paycycle(View):
         return redirect("payroll_paycycle_master")
 
     def delete(self, request, process_cycle_id):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         paycycle = get_object_or_404(PaycycleMaster, process_cycle_id=process_cycle_id, comp_code=COMP_CODE)
         paycycle.is_active = "N"
         paycycle.save()
@@ -456,8 +450,7 @@ class Paycycle(View):
             return None
 
     def get_next_process_cycle_id(request,self):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
         return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
@@ -466,8 +459,7 @@ class Paycycle(View):
 
 
 def project(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     template_name = 'pages/payroll/project_master/projects.html'
 
    
@@ -563,8 +555,7 @@ def project(request):
 
 
 def check_project_code(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         project_code = request.POST.get("project_code")
 
@@ -577,8 +568,7 @@ def check_project_code(request):
 
 
 def delete_project(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         project_id = request.POST.get("project_id")
 
@@ -732,7 +722,7 @@ class Login(View):
     template_name = 'auth/login.html'
     
     def get(self, request):
-        return render(request, self.template_name)
+        return render(self.request, self.template_name)
 
 class UserMasterList(View):
     template_name = 'pages/payroll/user/user_master.html'
@@ -920,8 +910,7 @@ class GradeMasterList(View):
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
 def holidayList( request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     template_name="pages/payroll/holiday_master/holiday_list.html"
     holidays_list=HolidayMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
     holiday_type=CodeMaster.objects.filter(comp_code=COMP_CODE,base_type ='HOLIDAY')
@@ -929,8 +918,7 @@ def holidayList( request):
         
 
 def holidayCreate(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         
             
@@ -953,8 +941,7 @@ def holidayCreate(request):
     return redirect('holiday_master')    
 
 def holidayEdit(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "GET":
         uniqe_id = request.GET.get("holiday_id")
     try:
@@ -990,8 +977,7 @@ def holidayEdit(request):
                 return redirect("holiday_master")
 
 def check_holiday(request):
-    global COMP_CODE
-    COMP_CODE = request.session.get("comp_code")
+    set_comp_code(request)
     if request.method == "POST":
         holiday = request.POST.get("holiday")
         holiday_date = request.POST.get("holiday_date")
@@ -1008,8 +994,7 @@ class MenuMaster(View):
     template_name = "pages/security/menu_master/menu_list.html"
 
     def get(self, request):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             menu_name = request.GET.get('menu_name', None)
             exists = Menu.objects.filter(menu_name=menu_name, comp_code=COMP_CODE).exists()
@@ -1020,8 +1005,7 @@ class MenuMaster(View):
         return render(request, self.template_name, {"menu_list": menu_list, "parent_menus": parent_menus})
     
     def post(self, request):
-        global COMP_CODE
-        COMP_CODE = request.session.get("comp_code")
+        set_comp_code(request)
         menu_id = request.POST.get('menu_id')
         menu_name = request.POST.get('menu_name')
         quick_path = request.POST.get('quick_path')
@@ -1171,15 +1155,17 @@ def get_menus_by_module(request, module_id):
 # ----- Company Master
 
 def company_master(request):
-    template_name  = "pages/payroll/company_master/company_list.html"
-    companies=CompanyMaster.objects.all().order_by('-created_on')
-    count=CompanyMaster.objects.all().count()
-    return render(request, template_name,{'companies':companies})
+    set_comp_code(request)
+    template_name = "pages/payroll/company_master/company_list.html"
+    companies = CompanyMaster.objects.filter(company_code=COMP_CODE).order_by('-created_on')
+    count = CompanyMaster.objects.filter(company_code=COMP_CODE).count()
+    return render(request, template_name, {'companies': companies, 'count': count})
 
 def add_company(request):
+    set_comp_code(request)
     if request.method == "POST":
         CompanyMaster.objects.create(
-            company_code=request.POST.get("company_code"),
+            company_code=COMP_CODE,
             company_name=request.POST.get("company_name"),
             company_status=request.POST.get("company_status"),
             inception_date=request.POST.get("inception_date"),
@@ -1201,29 +1187,26 @@ def add_company(request):
             po_box=request.POST.get("po_box"),
             is_active=request.POST.get("is_active") == "Active",
             created_by=1,
-
         )
         return redirect('company_list')
     
     return redirect('company_list')
 
 def company_edit(request):
+    set_comp_code(request)
     if request.method == "GET":
         company_id = request.GET.get("company_id")
-        print("id",company_id)
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(company_id))
-            
+            company = get_object_or_404(CompanyMaster, company_id=int(company_id), comp_code=COMP_CODE)
             return JsonResponse({
                 "company_id": company.company_id,
                 "company_code": company.company_code,
                 "company_name": company.company_name,
                 "inception_date": company.inception_date,
-                "company_status":company.company_status,
+                "company_status": company.company_status,
                 "labour_ministry_id": company.labour_ministry_id,
                 "labour_bank_acc_no": company.labour_bank_acc_no,
-                "image_url": f"{settings.MEDIA_URL}{company.image_url}" if company.image_url else "",  # ✅ Add media URL
-                # "image_url": company.image_url,
+                "image_url": f"{settings.MEDIA_URL}{company.image_url}" if company.image_url else "",
                 "currency_code": company.currency_code,
                 "address_line1": company.address_line1,
                 "address_line2": company.address_line2,
@@ -1240,7 +1223,6 @@ def company_edit(request):
                 "po_box": company.po_box,
                 "is_active": company.is_active
             })
-
         except Exception as e:
             print(f"Error in company_edit: {str(e)}")
             return JsonResponse({"error": "Company data not found."}, status=404)
@@ -1248,7 +1230,7 @@ def company_edit(request):
     if request.method == "POST":
         comp_id = request.POST.get('company_id')
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(comp_id))
+            company = get_object_or_404(CompanyMaster, company_id=int(comp_id), comp_code=COMP_CODE)
             if 'image_url' in request.FILES:
                 image_file = request.FILES['image_url']
                 file_path = f'company_logos/{company.company_code}/{image_file.name}'
@@ -1314,15 +1296,121 @@ def attendance_upload(request):
         paycycle = request.POST.get('paycycle')
         excel_file = request.FILES.get('excel_file')
         
+        if not paycycle:
+            messages.error(request, "Paycycle is mandatory.")
+            return redirect('attendance_upload')
+        
+        # Set paycycle in session
+        request.session['paycycle'] = paycycle
+
         # Process the uploaded file
         if excel_file:
-            df = pd.read_excel(excel_file)
-            table_data = df.to_dict(orient='records')
-            return render(request, 'pages/payroll/attendance_upload/attendance_upload.html', {
-                'paycycle_data': Paycycle.objects.all(),
-                'table_data': table_data
-            })
+            try:
+                df = pd.read_excel(excel_file, engine='openpyxl')
+                required_columns = ["S.No", "Emp Code", "Start Date", "End Date", "Project", "Attendance_type", "Morning", "Afternoon", "OT1", "OT2"]
+                
+                if all(column in df.columns for column in required_columns):
+                    df['Error'] = ''  # Add a temporary column for error messages
+                    error_data = []
+
+                    for index, row in df.iterrows():
+                        emp_code = row['Emp Code']
+                        if not Employee.objects.filter(emp_code=emp_code, process_cycle=paycycle).exists():
+                            df.at[index, 'Error'] += 'Invalid Emp Code for the selected paycycle. '
+                        if row.isnull().any():
+                            df.at[index, 'Error'] += 'Some columns are null. '
+
+                        if df.at[index, 'Error']:
+                            error_row = row.to_dict()
+                            error_row['Error'] = df.at[index, 'Error']
+                            error_data.append(error_row)
+
+                    table_data = df[df['Error'] == ''].drop(columns=['Error']).astype(str).to_dict(orient='records')
+                    error_data = pd.DataFrame(error_data).astype(str).to_dict(orient='records')
+
+                    request.session['table_data'] = table_data
+                    request.session['error_data'] = error_data
+                    return redirect('attendance_upload')
+                else:
+                    messages.error(request, "Excel format is invalid. Please ensure all required columns are present.")
+            except BadZipFile:
+                messages.error(request, "The uploaded file is not a valid Excel file.")
     
+    table_data = request.session.get('table_data', None)
+    error_data = request.session.get('error_data', None)
     return render(request, 'pages/payroll/attendance_upload/attendance_upload.html', {
-        'paycycle_data': Paycycle.objects.all()
+        'table_data': table_data,
+        'error_data': error_data
     })
+
+def upload_attendance_data(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        paycycle = request.session.get('paycycle')
+        table_data = request.session.get('table_data', [])
+        print('table', table_data)
+
+        if not paycycle:
+            messages.error(request, "Paycycle is mandatory.")
+            return redirect('attendance_upload')
+
+        try:
+            paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
+            vMonth = paycycle_master.pay_process_month
+            vMaxHours = paycycle_master.hours_per_day
+            vOTHrs = paycycle_master.max_ot1_hrs
+
+            for row in table_data:
+                start_date = datetime.strptime(row['Start Date'], '%Y-%m-%d')
+                end_date = datetime.strptime(row['End Date'], '%Y-%m-%d')
+                ot1 = float(row['OT1'])
+                ot2 = float(row['OT2'])
+
+                cur_date = start_date
+                while cur_date <= end_date:
+                    vOTHours = 0
+                    vHoliday = HolidayMaster.objects.filter(comp_code=COMP_CODE, holiday_date=cur_date).count()
+
+                    if vHoliday == 0 and ot2 > 0 and cur_date.strftime('%A') == 'Friday':
+                        vHoliday = 1
+                        ot2 -= 1
+
+                    if vHoliday == 0 and ot1 > 0:
+                        vOTHours = min(ot1, vOTHrs)
+                        ot1 -= vOTHours
+
+                    WorkerAttendanceRegister.objects.update_or_create(
+                        comp_code=COMP_CODE,
+                        employee_code=row['Emp Code'],
+                        date=cur_date,
+                        defaults={
+                            'pay_cycle': paycycle,
+                            'pay_process_month': vMonth,
+                            'project_code': row['Project'],
+                            'attendance_type': 26 if vHoliday == 0 else 28,
+                            'morning': row['Morning'],
+                            'afternoon': row['Afternoon'],
+                            'ot1': vOTHours if vHoliday == 0 else 0,
+                            'ot2': 0 if vHoliday == 0 else 8,
+                            'is_active': True,
+                            'created_by': request.user.id if request.user.is_authenticated else 1,
+                            'created_on': now(),
+                            'in_time': '08:00',
+                            'out_time': '17:00'
+                        }
+                    )
+                    cur_date += timedelta(days=1)
+
+            messages.success(request, "Attendance data uploaded successfully.")
+        except PaycycleMaster.DoesNotExist:
+            messages.error(request, "Invalid paycycle.")
+        except Exception as e:
+            messages.error(request, f"Error uploading attendance data: {str(e)}")
+
+        # Destroy the session variables if table_data has values
+        if table_data:
+            request.session.pop('paycycle', None)
+            request.session.pop('table_data', None)
+            request.session.pop('error_data', None)
+
+    return redirect('attendance_upload')

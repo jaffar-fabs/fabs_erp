@@ -15,6 +15,7 @@ def gender_data(request):
 def get_paycycle(request):
     comp_code = get_comp_code(request)
     paycycle_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE')
+    print(paycycle_data)
     return {   
         'paycycle_data': paycycle_data
         }

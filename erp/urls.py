@@ -94,6 +94,7 @@ urlpatterns = [
 
 
     path('payroll/attendance_upload/', payroll_views.attendance_upload, name='attendance_upload'),
+    path('payroll/upload_attendance_data/', payroll_views.upload_attendance_data, name='upload_attendance_data'),
 
     # Comapny Master
     path('payroll/company_list/', views.company_master, name='company_list'),
