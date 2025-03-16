@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 class RoleMasterList(View):
-
     template_name = 'pages/security/role/role_master.html'
 
     def get(self, request):
@@ -14,15 +13,11 @@ class RoleMasterList(View):
         return render(request, self.template_name, {'roles': roles})
 
 class RoleMasterCreate(View):
-
     def post(self, request):
         try:
             role_name = request.POST.get('role_name')
-            
-            # Check for duplicate role name
             if RoleMaster.objects.filter(role_name=role_name).exists():
                 return JsonResponse({'status': 'error', 'message': 'Role name already exists.', 'field': 'role_name'})
-            
             created_by = request.POST.get('created_by')
             modified_by = request.POST.get('modified_by')
             role = RoleMaster(
@@ -35,127 +30,128 @@ class RoleMasterCreate(View):
             )
             role.full_clean()  
             role.save()
-
             return JsonResponse({'status': 'success', 'redirect_url': reverse('role_list')})
-        
         except ValidationError as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
 class RoleMasterUpdate(View):
-
     def post(self, request, role_id):
-
         try:
             role = get_object_or_404(RoleMaster, id=role_id)
             role.comp_code = request.POST.get('comp_code')
             role.role_description = request.POST.get('role_description')
             role.modified_by = request.POST.get('modified_by')
-            
             role.is_active = request.POST.get('is_active') == 'on'
             role.full_clean() 
             role.save()
             return redirect('role_list')
-        
         except ValidationError as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
 class RoleMasterDelete(View):
-
     def post(self, request, role_id):
         try:
             role = get_object_or_404(RoleMaster, id=role_id)
-            
             role.is_active = False
             role.save()
-            
             return redirect('role_list')
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': f'An error occurred: {str(e)}'})
-        
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from .models import UserRoleMapping 
+from .models import UserRoleMapping
 from payroll.models import UserMaster
-from django.urls import reverse
+from security.models import RoleMaster
 
 class UserRoleMappingCreate(View):
     def get(self, request):
-        # Fetch active users for the dropdown
         users = UserMaster.objects.filter(is_active=True)
+        roles = RoleMaster.objects.filter(is_active=True)
         return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
             'users': users,
+            'roles': roles,
             'mappings': UserRoleMapping.objects.all()
         })
 
     def post(self, request):
         try:
-            # Hardcode comp_code and set created_by to the current user's ID
+            user_master_id = request.POST.get('user_master_id')
+            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
+            roleid = request.POST.get('roleid')
+            role = get_object_or_404(RoleMaster, id=roleid)
             mapping = UserRoleMapping(
-                comp_code=1000,  # Hardcoded value
-                userid=request.POST.get('userid'),
-                roleid=request.POST.get('roleid'),
+                comp_code=1000,
+                userid=user_master.user_master_id,
+                roleid=role.id,
                 role_start_date=request.POST.get('role_start_date'),
                 role_to_date=request.POST.get('role_to_date'),
                 is_active=request.POST.get('is_active') == 'on',
-                created_by=request.POST.get('created_by')  # Manually entered
+                created_by=request.POST.get('created_by')
             )
-            mapping.full_clean()  # Validate the model
+            mapping.full_clean()
             mapping.save()
-            return redirect('user_role_mapping_list')  # Redirect to the list view
+            return redirect('user_role_mapping_list')
         except Exception as e:
-            # Pass the error message to the template with field-specific errors
-            users = UserMaster.objects.filter(is_active=True)  # Fetch users again in case of error
+            users = UserMaster.objects.filter(is_active=True)
+            roles = RoleMaster.objects.filter(is_active=True)
             return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
                 'error': str(e),
-                'field_errors': {'userid': str(e)},  # Pass field-specific errors
+                'field_errors': {'userid': str(e)},
                 'mappings': UserRoleMapping.objects.all(),
-                'users': users  # Pass users to the template
+                'users': users,
+                'roles': roles
             })
 
 class UserRoleMappingUpdate(View):
     def post(self, request, mappingid):
         try:
             mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid)
-            mapping.userid = request.POST.get('userid')
-            mapping.roleid = request.POST.get('roleid')
+            user_master_id = request.POST.get('user_master_id')
+            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
+            roleid = request.POST.get('roleid')
+            role = get_object_or_404(RoleMaster, id=roleid)
+            mapping.userid = user_master.user_master_id
+            mapping.roleid = role.id
             mapping.role_start_date = request.POST.get('role_start_date')
             mapping.role_to_date = request.POST.get('role_to_date')
-            mapping.is_active = request.POST.get('is_active') == 'on'  # Update is_active status
-            mapping.modified_by = request.POST.get('modified_by')  # Manually entered
-            mapping.full_clean()  # Validate the model
+            mapping.is_active = request.POST.get('is_active') == 'on'
+            mapping.modified_by = request.POST.get('modified_by')
+            mapping.full_clean()
             mapping.save()
-            return redirect('user_role_mapping_list')  # Redirect to the list view
+            return redirect('user_role_mapping_list')
         except Exception as e:
-            # Pass the error message to the template with field-specific errors
-            users = UserMaster.objects.filter(is_active=True)  # Fetch users again in case of error
+            users = UserMaster.objects.filter(is_active=True)
+            roles = RoleMaster.objects.filter(is_active=True)
             return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
                 'error': str(e),
-                'field_errors': {'userid': str(e)},  # Pass field-specific errors
+                'field_errors': {'userid': str(e)},
                 'mappings': UserRoleMapping.objects.all(),
-                'users': users  # Pass users to the template
+                'users': users,
+                'roles': roles
             })
 
 class UserRoleMappingDelete(View):
     def post(self, request, mappingid):
         try:
             mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid)
-            mapping.is_active = False  # Mark as inactive instead of deleting
+            mapping.is_active = False
             mapping.save()
-            return redirect('user_role_mapping_list')  # Redirect to the list view
+            return redirect('user_role_mapping_list')
         except Exception as e:
-            # Pass the error message to the template
-            users = UserMaster.objects.filter(is_active=True)  # Fetch users again in case of error
+            users = UserMaster.objects.filter(is_active=True)
             return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
                 'error': str(e),
                 'mappings': UserRoleMapping.objects.all(),
-                'users': users  # Pass users to the template
+                'users': users
             })
 
 def user_role_mapping_list(request):
-    mappings = UserRoleMapping.objects.all()  # Fetch all mappings, both active and inactive
-    users = UserMaster.objects.filter(is_active=True)  # Fetch all active users
+    mappings = UserRoleMapping.objects.all()
+    users = UserMaster.objects.filter(is_active=True)
+    roles = RoleMaster.objects.filter(is_active=True)
     return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
         'mappings': mappings,
-        'users': users  # Pass users to the template
+        'users': users,
+        'roles': roles
     })
