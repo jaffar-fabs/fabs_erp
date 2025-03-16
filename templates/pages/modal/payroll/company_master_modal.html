@@ -199,7 +199,7 @@
 <!-- Edit Project -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
-        <h4>Edit Holiday</h4>
+        <h4>Edit Company Details</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -579,32 +579,36 @@
                 reader.readAsDataURL(file); // Preview the uploaded image
             }
         });
-    
+
         $(".edit-project-btn").click(function (event) {
             event.preventDefault();
             var company_id = $(this).data("id");
-    
+
+            // Close any open modals and remove existing backdrops before opening a new one
+            $(".modal").modal("hide");
+            $(".offcanvas-backdrop").remove();
+
             $.ajax({
                 url: "/payroll/edit_company/",
                 type: "GET",
                 data: { 'company_id': company_id },
                 success: function (response) {
                     console.log(response.image_url);
-    
+
                     $("#company_id").val(response.company_id);
                     $("#company_name").val(response.company_name);
                     $("#company_code").val(response.company_code);
                     $("#inception_date").val(response.inception_date);
-    
+
                     const imagePath = response.image_url ? window.location.origin + response.image_url : "";
                     $("#image_preview").attr("src", imagePath).show();
-    
+
                     $("#company_status").val(response.company_status).trigger("change");
                     $("#labour_ministry_id").val(response.labour_ministry_id);
-    
+
                     let isActive = response.is_active === true;
                     $("#is_Active").prop("checked", isActive);
-    
+
                     var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
                     offcanvasElement.show();
                 },
@@ -614,7 +618,6 @@
             });
         });
     });
-
 
     $("#image_url").change(function () {
         const file = this.files[0];
@@ -627,20 +630,19 @@
         }
     });
 
-
     $(document).ready(function () {
         let companyCodeValid = false;  // Flag to track validation status
-    
+
         $('input[name="company_code"]').on('blur', function () {
             let companyCode = $(this).val();
             let errorElement = $("#company_code_error");
-    
+
             if (companyCode.trim() === "") {
                 errorElement.text("");  // Clear error if empty
                 companyCodeValid = false;
                 return;
             }
-    
+
             $.ajax({
                 url: "/payroll/check_company_code/",
                 type: "GET",
@@ -661,7 +663,7 @@
                 }
             });
         });
-    
+
         // Prevent form submission if company code is invalid
         $("#companyForm").on("submit", function (event) {
             if (!companyCodeValid) {
@@ -670,8 +672,4 @@
             }
         });
     });
-    
-    
-    
-    </script>
-    
+</script>
