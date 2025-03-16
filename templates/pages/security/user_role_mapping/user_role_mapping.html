@@ -104,22 +104,28 @@
                               </div>
                             {% endif %}
                             <div class="row">
-                              <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                  <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-                                  <select name="userid" class="form-control" required>
-                                      <option value="">Select User</option>
-                                      {% for user in users %}
-                                          <option value="{{ user.user_id }}" {% if user.user_id == mapping.userid %}selected{% endif %}>
-                                              {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
-                                          </option>
-                                      {% endfor %}
-                                  </select>
+                              <div class="form-group mb-3">
+                                <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+                                <select name="user_master_id" class="form-control" required>
+                                  <option value="">Select User</option>
+                                  {% for user in users %}
+                                    <option value="{{ user.user_master_id }}" {% if user.user_master_id == mapping.userid %}selected{% endif %}>
+                                      {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
+                                    </option>
+                                  {% endfor %}
+                                </select>
                               </div>
-                                <div class="form-group mb-3">
-                                  <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
-                                  <input type="text" name="roleid" class="form-control" value="{{ mapping.roleid }}" required>
-                                </div>
+                              <div class="form-group mb-3">
+                                <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
+                                <select name="roleid" class="form-control" required>
+                                  <option value="">Select Role</option>
+                                  {% for role in roles %}
+                                    <option value="{{ role.id }}" {% if role.id == mapping.roleid %}selected{% endif %}>
+                                      {{ role.role_name }}
+                                    </option>
+                                  {% endfor %}
+                                </select>
+                              </div>
                                 <div class="form-group mb-3">
                                   <label class="col-form-label">Start Date</label>
                                   <input type="date" name="role_start_date" class="form-control" value="{{ mapping.role_start_date|date:'Y-m-d' }}">
@@ -136,7 +142,7 @@
                                 </div>
                                 <div class="form-group mb-3">
                                   <label class="col-form-label">Modified By</label>
-                                  <input type="text" name="modified_by" class="form-control" value="{{ mapping.modified_by }}">
+                                  <input type="text" name="modified_by" class="form-control" value="5" readonly>
                                 </div>
                                 <div class="form-group form-check mb-3">
                                   <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ mapping.mappingid }}" {% if mapping.is_active %}checked{% endif %}>
@@ -203,21 +209,28 @@
         <div class="col-md-6">
           <div class="form-group mb-3">
             <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-            <select name="userid" class="form-control {% if field_errors.userid %}is-invalid{% endif %}" required>
-                <option value="">Select User</option>
-                {% for user in users %}
-                    <option value="{{ user.user_id }}">{{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}</option>
-                {% endfor %}
+            <select name="user_master_id" class="form-control {% if field_errors.userid %}is-invalid{% endif %}" required>
+              <option value="">Select User</option>
+              {% for user in users %}
+                <option value="{{ user.user_master_id }}">
+                  {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
+                </option>
+              {% endfor %}
             </select>
             {% if field_errors.userid %}
-                <div class="invalid-feedback">
-                    {{ field_errors.userid }}
-                </div>
+              <div class="invalid-feedback">
+                {{ field_errors.userid }}
+              </div>
             {% endif %}
-        </div>
+          </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
-            <input type="text" name="roleid" class="form-control {% if field_errors.roleid %}is-invalid{% endif %}" required>
+            <select name="roleid" class="form-control {% if field_errors.roleid %}is-invalid{% endif %}" required>
+              <option value="">Select Role</option>
+              {% for role in roles %}
+                <option value="{{ role.id }}">{{ role.role_name }}</option>
+              {% endfor %}
+            </select>
             {% if field_errors.roleid %}
               <div class="invalid-feedback">
                 {{ field_errors.roleid }}
@@ -246,7 +259,7 @@
           </div>
           <div class="form-group mb-3">
             <label class="col-form-label">Created By <span class="text-danger">*</span></label>
-            <input type="text" name="created_by" class="form-control {% if field_errors.created_by %}is-invalid{% endif %}" required>
+            <input type="text" name="created_by" class="form-control {% if field_errors.created_by %}is-invalid{% endif %}" value="4" readonly required>
             {% if field_errors.created_by %}
               <div class="invalid-feedback">
                 {{ field_errors.created_by }}
