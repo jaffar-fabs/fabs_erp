@@ -15,9 +15,15 @@ def gender_data(request):
 def get_paycycle(request):
     comp_code = get_comp_code(request)
     paycycle_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE')
-    print(paycycle_data)
     return {   
         'paycycle_data': paycycle_data
+        }
+
+def get_pay_process_flag(request):
+    comp_code = get_comp_code(request)
+    pay_flag_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS COMPLETION FLAG')
+    return {   
+        'pay_flag_data': pay_flag_data
         }
 
 def get_status(request):

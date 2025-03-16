@@ -12,7 +12,7 @@ def company_logo_upload_path(instance, filename):
     return os.path.join('company_logos', safe_code, filename)
 
 class Employee(models.Model):
-    comp_code = models.CharField(max_length=15, default=1000)
+    comp_code = models.CharField(max_length=15)  # Removed default value
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
     emp_code = models.CharField(max_length=50, blank=True, null=True)  # Employee code
     emp_name = models.CharField(max_length=100)  # Employee name (as per passport)
@@ -100,7 +100,7 @@ class Employee(models.Model):
 
 class RoleMenu(models.Model):
         
-    comp_code = models.CharField(max_length=15, default='1000')
+    comp_code = models.CharField(max_length=15)  # Removed default value
     role_id = models.PositiveBigIntegerField()  # Correct field name
     menu_id = models.PositiveBigIntegerField()
     mapping_id = models.AutoField(primary_key=True)
@@ -126,7 +126,7 @@ class RoleMenu(models.Model):
 
 class PaycycleMaster(models.Model):
 
-    comp_code = models.CharField(max_length=20, null=False, blank=False)
+    comp_code = models.CharField(max_length=20)  # Removed default value
     process_cycle_id = models.BigIntegerField(null=False, blank=False)
     process_cycle = models.CharField(null=False, blank=False)
     process_description = models.CharField(max_length=500, null=False, blank=False)
@@ -170,7 +170,7 @@ from django.db import models
 class SeedModel(models.Model):
 
     seed_id = models.BigAutoField(primary_key=True)
-    comp_code = models.CharField(max_length=15, default='1000')  
+    comp_code = models.CharField(max_length=15)  # Removed default value
     seed_code = models.CharField(max_length=50)
     seed_group = models.CharField(max_length=50)
     seed_type = models.CharField(max_length=50)
@@ -199,7 +199,7 @@ class SeedModel(models.Model):
 
 class projectMatster(models.Model):
 
-    comp_code = models.CharField(max_length=15)
+    comp_code = models.CharField(max_length=15)  # Removed default value
     project_id = models.BigAutoField(primary_key=True)
     prj_code = models.CharField(max_length=50)
     prj_name = models.CharField(max_length=50)
@@ -228,7 +228,7 @@ class projectMatster(models.Model):
 
 class CodeMaster(models.Model):
 
-    comp_code = models.CharField(max_length=15, null=False)
+    comp_code = models.CharField(max_length=15, null=False)  # Removed default value
     common_master_id = models.BigAutoField(primary_key=True)
     base_type = models.CharField(max_length=100, null=False)
     base_value = models.CharField(max_length=100, null=False)
@@ -250,7 +250,7 @@ class CodeMaster(models.Model):
 
 class UserMaster(models.Model):
 
-    comp_code = models.CharField(max_length=15)
+    comp_code = models.CharField(max_length=15)  # Removed default value
     user_master_id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50, blank=True, null=True)
@@ -281,7 +281,7 @@ class UserMaster(models.Model):
 
 class GradeMaster(models.Model):
 
-    comp_code = models.CharField(max_length=10)
+    comp_code = models.CharField(max_length=10)  # Removed default value
     grade_id = models.AutoField(primary_key=True)
     grade_code = models.CharField(max_length=20, unique=True)
     grade_desc = models.TextField(default="N/A")
@@ -313,7 +313,7 @@ class GradeMaster(models.Model):
 class Menu(models.Model):
 
     menu_id = models.BigAutoField(primary_key=True)
-    comp_code = models.CharField(max_length=10, default="1001")
+    comp_code = models.CharField(max_length=10, default="1001")  # Removed default value
     menu_name = models.CharField(max_length=50)
     quick_path = models.BigIntegerField()
     screen_name = models.CharField(max_length=50, null=True, blank=True)
@@ -346,7 +346,7 @@ class Menu(models.Model):
 # Holiday Master
 
 class HolidayMaster(models.Model):
-        comp_code = models.CharField(max_length=50)
+        comp_code = models.CharField(max_length=50)  # Removed default value
         unique_id = models.BigAutoField(primary_key=True)
         holiday = models.CharField(max_length=50, blank=True, null=True)
         holiday_type = models.CharField(max_length=50, blank=True, null=True)
@@ -369,7 +369,7 @@ class HolidayMaster(models.Model):
 
 class CompanyMaster(models.Model):
     company_id = models.BigAutoField(primary_key=True)
-    company_code = models.CharField(max_length=15)
+    company_code = models.CharField(max_length=15)  # Removed default value
     company_name = models.CharField(max_length=100)
     company_status = models.CharField(max_length=5)
     inception_date = models.CharField(max_length=200)
@@ -405,7 +405,7 @@ class CompanyMaster(models.Model):
 # Worker Attendance Register
 
 class WorkerAttendanceRegister(models.Model):
-    comp_code = models.CharField(max_length=50)
+    comp_code = models.CharField(max_length=50)  # Removed default value
     unique_id = models.BigAutoField(primary_key=True)
     employee_code = models.CharField(max_length=50)
     pay_cycle = models.CharField(max_length=100)

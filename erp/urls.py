@@ -95,6 +95,7 @@ urlpatterns = [
 
     path('payroll/attendance_upload/', payroll_views.attendance_upload, name='attendance_upload'),
     path('payroll/upload_attendance_data/', payroll_views.upload_attendance_data, name='upload_attendance_data'),
+    path('payroll/cancel_attendance_upload/', payroll_views.cancel_attendance_upload, name='cancel_attendance_upload'),
 
     # Comapny Master
     path('payroll/company_list/', views.company_master, name='company_list'),
@@ -104,6 +105,10 @@ urlpatterns = [
     path('update_role_menu/', payroll_views.update_role_menu, name='update_role_menu'),
     path('get_menus_by_module/<str:module_id>/', payroll_views.get_menus_by_module, name='get_menus_by_module'),
 
+    # Payroll Processing
+    path('payroll/payroll_processing/', payroll_views.payroll_processing, name='payroll_processing'),
+    path('payroll/cancel_payroll_processing/', payroll_views.cancel_payroll_processing, name='cancel_payroll_processing'),
+    path('payroll/fetch_paymonth/', payroll_views.fetch_paymonth, name='fetch_paymonth'),
 ]
 
 

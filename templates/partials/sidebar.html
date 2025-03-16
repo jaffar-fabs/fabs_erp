@@ -7,14 +7,14 @@
         <div id="sidebar-menu" class="sidebar-menu">
             <ul>
                 <li class="clinicdropdown">
-                    <a href="profile">
+                    <a href="#">
                         <img src="{% static 'assets/img/profiles/avatar-14.jpg' %}" class="img-fluid" alt="Profile">
                         <div class="user-names">
                             {% if request.session.username %}
                                 <h5>{{ request.session.username }}</h5>
                                 <h6>{{ request.session.role }}</h6>
-                                <h6>{{ request.session.role_id }}</h6>
-                                <h6>{{ request.session.comp_code }}</h6>
+                                <!-- <h6>{{ request.session.role_id }}</h6> -->
+                                <!-- <h6>{{ request.session.comp_code }}</h6> -->
                                 {% else %}
                                 <!-- <meta http-equiv="refresh" content="0,url={% url 'login' %}"> -->
                                 <!-- <p>You will be redirected to the login page in 5 seconds.</p> -->
@@ -23,7 +23,7 @@
                     </a>
                 </li>
             </ul>
-            {% if request.session.role_id == 2 %}
+            {% if request.session.role_id == 0 %}
             <ul>
                 <li>
                     <h6 class="submenu-hdr">Main Menu</h6>

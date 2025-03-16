@@ -26,6 +26,10 @@
                         <button type="submit" class="btn btn-success">Upload Attendance Data</button>
                     </form>
                     {% endif %}
+                    <form action="{% url 'cancel_attendance_upload' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
                 </div>
             </div>
             <div class="card-body">

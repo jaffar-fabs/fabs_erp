@@ -15,6 +15,7 @@ from django.template import loader
 from django.http import HttpResponse
 import pandas as pd
 from zipfile import BadZipFile
+from security.models import UserRoleMapping, RoleMaster
 
 from django.core.files.storage import FileSystemStorage
 # Single import statement for models
@@ -202,9 +203,16 @@ def my_login_view(request):
 
             if password == user.password:
                 request.session["username"] = user.user_id
-                request.session["role"] = "Administrator" if user.user_id == "admin1" else "Programmer"
-                request.session["role_id"] = 1 if user.user_id == "admin1" else 2
                 request.session["comp_code"] = user.comp_code  # Set comp_code in session
+
+                # Fetch role ID from UserRoleMapping
+                user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
+                role_id = user_role_mapping.roleid
+
+                # Fetch role name from RoleMaster
+                role = RoleMaster.objects.get(id=role_id)
+                request.session["role"] = role.role_name
+                request.session["role_id"] = role_id
 
                 set_comp_code(request)
                 
@@ -214,6 +222,10 @@ def my_login_view(request):
                 messages.error(request, "Invalid username or password.")
         except UserMaster.DoesNotExist:
             messages.error(request, "Invalid username or password.")
+        except UserRoleMapping.DoesNotExist:
+            messages.error(request, "User role mapping not found.")
+        except RoleMaster.DoesNotExist:
+            messages.error(request, "Role not found.")
 
     return render(request, "auth/login.html")
 
@@ -970,8 +982,8 @@ def holidayEdit(request):
                 holiday.holiday_day = request.POST.get("holiday_day", holiday.holiday_day)
                 holiday.holiday_type = request.POST.get("holiday_type", holiday.holiday_type)
                 holiday.holiday_description = request.POST.get("holiday_description", holiday.holiday_description)
-                holiday.created_by = 1;
-                holiday.comp_code = COMP_CODE;
+                holiday.created_by = 1
+                holiday.comp_code = COMP_CODE
                 holiday.is_active = request.POST.get("is_active") == "Active"
                 holiday.save()
                 return redirect("holiday_master")
@@ -1197,7 +1209,7 @@ def company_edit(request):
     if request.method == "GET":
         company_id = request.GET.get("company_id")
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(company_id), comp_code=COMP_CODE)
+            company = get_object_or_404(CompanyMaster, company_id=int(company_id), company_code=COMP_CODE)
             return JsonResponse({
                 "company_id": company.company_id,
                 "company_code": company.company_code,
@@ -1230,7 +1242,7 @@ def company_edit(request):
     if request.method == "POST":
         comp_id = request.POST.get('company_id')
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(comp_id), comp_code=COMP_CODE)
+            company = get_object_or_404(CompanyMaster, company_id=int(comp_id), company_code=COMP_CODE)
             if 'image_url' in request.FILES:
                 image_file = request.FILES['image_url']
                 file_path = f'company_logos/{company.company_code}/{image_file.name}'
@@ -1304,7 +1316,7 @@ def attendance_upload(request):
         request.session['paycycle'] = paycycle
 
         # Process the uploaded file
-        if excel_file:
+        if (excel_file):
             try:
                 df = pd.read_excel(excel_file, engine='openpyxl')
                 required_columns = ["S.No", "Emp Code", "Start Date", "End Date", "Project", "Attendance_type", "Morning", "Afternoon", "OT1", "OT2"]
@@ -1414,3 +1426,47 @@ def upload_attendance_data(request):
             request.session.pop('error_data', None)
 
     return redirect('attendance_upload')
+
+def cancel_attendance_upload(request):
+    if request.method == 'POST':
+        request.session.pop('paycycle', None)
+        request.session.pop('table_data', None)
+        request.session.pop('error_data', None)
+        messages.success(request, "Attendance upload process has been canceled.")
+    return redirect('attendance_upload')
+
+def payroll_processing(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        paycycle = request.POST.get('paycycle')
+        paymonth = request.POST.get('paymonth')
+        status = request.POST.get('status')
+
+        if not paycycle or not paymonth:
+            messages.error(request, "Paycycle and Paymonth are mandatory.")
+            return redirect('payroll_processing')
+
+        # Process payroll logic here
+        # ...
+
+        messages.success(request, "Payroll processed successfully.")
+        return redirect('payroll_processing')
+
+    return render(request, 'pages/payroll/payroll_processing/payroll_processing.html')
+
+def cancel_payroll_processing(request):
+    if request.method == 'POST':
+        # Logic to cancel payroll processing
+        messages.success(request, "Payroll processing has been canceled.")
+    return redirect('payroll_processing')
+
+def fetch_paymonth(request):
+    set_comp_code(request)
+    paycycle = request.GET.get('paycycle')
+    if paycycle:
+        paycycle_master = PaycycleMaster.objects.filter(comp_code=COMP_CODE, process_cycle=paycycle).first()
+        if paycycle_master:
+            paymonths = [paycycle_master.pay_process_month]  # Example, modify as needed
+            options = ''.join([f'<option value="{month}">{month}</option>' for month in paymonths])
+            return JsonResponse({'options': options})
+    return JsonResponse({'options': '<option value="">Select Paymonth</option>'})

@@ -1,0 +1,101 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Payroll Processing" %}
+                {% endblock pagetitle %}
+                <!-- /Page Header -->
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title">Process Payroll</h4>
+                <div>
+                    <button type="submit" form="payroll-form" class="btn btn-primary">Process Payroll</button>
+                    <form action="{% url 'cancel_payroll_processing' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="payroll-form" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Select Paycycle <span class="text-danger">*</span></label>
+                                <select class="form-control" name="paycycle" id="paycycle" required>
+                                    <option value="">Select Paycycle</option>
+                                    {% for paycycle in paycycle_data %}
+                                    <option value="{{ paycycle.base_value }}">
+                                        {{ paycycle.base_description }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Select Paymonth <span class="text-danger">*</span></label>
+                                <select class="form-control" name="paymonth" id="paymonth" required>
+                                    <option value="">Select Paymonth</option>
+                                    <!-- Paymonth options will be populated based on selected paycycle -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-control" name="status">
+                                    <option value="">Select Status</option>
+                                    {% for status in pay_flag_data %}
+                                    <option value="{{ status.base_value }}">
+                                        {{ status.base_description }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#paycycle').on('change', function() {
+            var paycycle = $(this).val();
+            if (paycycle) {
+                $.ajax({
+                    url: '{% url "fetch_paymonth" %}',
+                    type: 'GET',
+                    data: { paycycle: paycycle },
+                    success: function(data) {
+                        $('#paymonth').html(data.options);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching paymonth:", error);
+                        $('#paymonth').html('<option value="">Select Paymonth</option>');
+                    }
+                });
+            } else {
+                $('#paymonth').html('<option value="">Select Paymonth</option>');
+            }
+        });
+    });
+</script>
+<!-- /Page Wrapper -->
+{% endblock content %}
+

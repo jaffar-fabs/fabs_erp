@@ -81,6 +81,7 @@ TEMPLATES = [
                 'payroll.context_processors.pro_city',
                 'payroll.context_processors.nationality',
                 'payroll.context_processors.hol_type',
+                'payroll.context_processors.get_pay_process_flag',
             ],
         },
     },
