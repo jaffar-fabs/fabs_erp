@@ -33,8 +33,8 @@
                 </div>
                 <div class="col-md-12">
                     <div class="mb-3">
-                        <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
-                        <select name="nationality" class="form-select" required aria-label="select example">
+                        <label class="col-form-label">Nationality</label>
+                        <select name="nationality" class="form-select" aria-label="select example">
                             <option value="">Choose</option>
                             <option value="American">American</option>
                             <option value="Canadian">Canadian</option>
@@ -46,43 +46,37 @@
                 <!-- Attendance and Leave Days -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Attendance Days <span
-                                class="text-danger">*</span></label>
-                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" required />
-                        <div class="invalid-feedback">Please provide a Attendance Days.</div>
+                        <label class="col-form-label" for="validationCustom01">Attendance Days</label>
+                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" />
+                        <div class="invalid-feedback">Please provide Attendance Days.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Leave Days <span
-                                class="text-danger">*</span></label>
-                        <input type="number" name="leave_days" class="form-control" autocomplete="off" required />
-                        <div class="invalid-feedback">Please provide a Leave Days.</div>
+                        <label class="col-form-label" for="validationCustom01">Leave Days</label>
+                        <input type="number" name="leave_days" class="form-control" autocomplete="off" />
+                        <div class="invalid-feedback">Please provide Leave Days.</div>
                     </div>
                 </div>
 
                 <!-- Passage Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Adult <span
-                                class="text-danger">*</span></label>
-                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
-                            required />
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Adult</label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off" />
                         <div class="invalid-feedback">Please provide a Passage Amount Adult.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Child <span
-                                class="text-danger">*</span></label>
-                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
-                            required />
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Child</label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
                         <div class="invalid-feedback">Please provide a Passage Amount Child.</div>
                     </div>
                 </div>
 
-                <!-- Allowances -->
-                <div class="col-md-6">
+                <!-- Hide Allowances -->
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 1<span class="text-danger"></span></label>
                         <select name="allowance1" class="form-select" aria-label="select example">
@@ -93,7 +87,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 2<span class="text-danger"></span></label>
                         <select name="allowance2" class="form-select" aria-label="select example">
@@ -103,7 +97,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 3 <span class="text-danger"></span></label>
                         <select name="allowance3" class="form-select" aria-label="select example">
@@ -114,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 4 <span class="text-danger"></span></label>
                         <select name="allowance4" class="form-select" aria-label="select example">
@@ -125,7 +119,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 5 <span class="text-danger"></span></label>
                         <select name="allowance5" class="form-select" aria-label="select example">
@@ -136,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 6<span class="text-danger"></span></label>
                         <select name="allowance6" class="form-select" aria-label="select example">
@@ -147,7 +141,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 7<span class="text-danger"></span></label>
                         <select name="allowance7" class="form-select" aria-label="select example">
@@ -158,7 +152,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 8<span class="text-danger"></span></label>
                         <select name="allowance8" class="form-select" aria-label="select example">
@@ -233,7 +227,7 @@
 <!-- /Edit Contact -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
-        <h5 class="fw-semibold">Edit Contact</h5>
+        <h5 class="fw-semibold">Edit Grade Details</h5>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -260,7 +254,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="mb-3">
-                        <label class="col-form-label">Nationality <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Nationality</label>
                         <select name="nationality" class="form-control select2">
                             <option value="">Choose</option>
                             <option value="American">American</option>
@@ -270,31 +264,30 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Attendance Days <span class="text-danger">*</span></label>
-                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" required />
+                        <label class="col-form-label">Attendance Days</label>
+                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Leave Days <span class="text-danger">*</span></label>
-                        <input type="number" name="leave_days" class="form-control" autocomplete="off" required />
+                        <label class="col-form-label">Leave Days</label>
+                        <input type="number" name="leave_days" class="form-control" autocomplete="off" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Adult <span class="text-danger">*</span></label>
-                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
-                            required />
+                        <label class="col-form-label">Passage Amount Adult</label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off" />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Child <span class="text-danger">*</span></label>
-                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
-                            required />
+                        <label class="col-form-label">Passage Amount Child</label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- Hide Allowances -->
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 1 <span class="text-danger">*</span></label>
                         <select name="allowance1" class="form-control select2">
@@ -304,7 +297,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
                         <select name="allowance2" class="form-control select2">
@@ -314,7 +307,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
                         <select name="allowance3" class="form-control select2">
@@ -324,7 +317,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
                         <select name="allowance4" class="form-control select2">
@@ -334,7 +327,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
                         <select name="allowance5" class="form-control select2">
@@ -344,7 +337,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
                         <select name="allowance6" class="form-control select2">
@@ -354,7 +347,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
                         <select name="allowance7" class="form-control select2">
@@ -364,7 +357,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 d-none">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
                         <select name="allowance8" class="form-control select2">

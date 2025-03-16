@@ -797,7 +797,7 @@ class UserMasterUpdate(View):
         try:
             user = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
     
-            user.comp_code = request.POST.get('comp_code')
+            user.comp_code = COMP_CODE
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.user_id = request.POST.get('user_id')
@@ -843,11 +843,11 @@ class GradeMasterList(View):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             grade_code = request.GET.get('grade_code', None)
             data = {
-                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code="1000").exists()
+                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
             }
             return JsonResponse(data)
 
-        datas = GradeMaster.objects.filter(comp_code="1000")
+        datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
         return render(request, self.template_name, {'datas': datas})
 
 
@@ -855,8 +855,7 @@ class GradeMasterList(View):
         # Check for delete request
         if "delete_grade_id" in request.POST:
             grade_id = request.POST.get("delete_grade_id")
-            comp_code = request.POST.get("delete_comp_code")
-            GradeMaster.objects.filter(grade_id=grade_id, comp_code=comp_code).update(is_active="N")
+            GradeMaster.objects.filter(grade_id=grade_id, comp_code=COMP_CODE).update(is_active="N")
             return redirect("grade_master")
 
         # Extract form data for edit operation
@@ -883,7 +882,7 @@ class GradeMasterList(View):
         is_active = "Y" if "is_active" in request.POST else "N"
 
         if grade_id:
-            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code="1000")
+            grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code=COMP_CODE)
             grade.grade_code = grade_code
             grade.grade_desc = grade_desc
             grade.nationality = nationality
@@ -899,7 +898,7 @@ class GradeMasterList(View):
             grade.save()
         else:
             grade = GradeMaster.objects.create(
-                comp_code='1000',
+                comp_code=COMP_CODE,
                 grade_code=grade_code,
                 grade_desc=grade_desc,
                 nationality=nationality,
