@@ -60,7 +60,7 @@ def save_employee(request, employee_id=None):
             employee.created_on = request.POST.get("created_on") or None
         
         # Assign values from request
-        employee.comp_code = COMP_CODE
+        employee.comp_code = COMP_CODE  # Ensure comp_code is set correctly
         employee.emp_code = request.POST.get("emp_code")
         employee.emp_name = request.POST.get("emp_name_passport")
         employee.surname = request.POST.get("surname")
@@ -150,49 +150,29 @@ def deactivate_employee(request, employee_id):
 
 def index(request):
     set_comp_code(request)
-    deals_dashboard = [
-        {
-            "id" : 1,
-            "deal_name" : "Collins",
-            "stage" : "Conversation",
-            "deal_value" : "$04,51,000",
-            "probability" : "85%",
-            "status" : "Lost"
-        },
-        {
-            "id" : 2,
-            "deal_name" : "Konopelski",
-            "stage" : "Pipeline",
-            "deal_value" : "$14,51,000",
-            "probability" : "56%",
-            "status" : "Won"
-        },
-        {
-            "id" : 3,
-            "deal_name" : "Adams",
-            "stage" : "Won",
-            "deal_value" : "$12,51,000",
-            "probability" : "15%",
-            "status" : "Won"
-        },
-        {
-            "id" : 4,
-            "deal_name" : "Schumm",
-            "stage" : "Lost",
-            "deal_value" : "$51,000",
-            "probability" : "45%",
-            "status" : "Lost"
-        },
-        {
-            "id" : 5,
-            "deal_name" : "Wisozk",
-            "stage" : "Follow Up",
-            "deal_value" : "$67,000",
-            "probability" : "5%",
-            "status" : "Won"
-        }
-    ]
-    return render(request, 'pages/dashboard/index.html', {'deals_dashboard': deals_dashboard})
+    
+    # Count records for each model
+    employee_count = Employee.objects.filter(comp_code=COMP_CODE).count()
+    project_count = projectMatster.objects.filter(comp_code=COMP_CODE).count()
+    holiday_count = HolidayMaster.objects.filter(comp_code=COMP_CODE).count()
+    seed_count = SeedModel.objects.filter(comp_code=COMP_CODE).count()
+    paycycle_count = PaycycleMaster.objects.filter(comp_code=COMP_CODE).count()
+    company_count = CompanyMaster.objects.filter(company_code=COMP_CODE).count()
+    grade_count = GradeMaster.objects.filter(comp_code=COMP_CODE).count()
+    user_count = UserMaster.objects.filter(comp_code=COMP_CODE).count()
+    
+    context = {
+        'employee_count': employee_count,
+        'project_count': project_count,
+        'holiday_count': holiday_count,
+        'seed_count': seed_count,
+        'paycycle_count': paycycle_count,
+        'company_count': company_count,
+        'grade_count': grade_count,
+        'user_count': user_count,
+    }
+    
+    return render(request, 'pages/dashboard/index.html', context)
 
 def my_login_view(request):
     if request.method == "POST":
