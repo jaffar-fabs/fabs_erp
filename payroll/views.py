@@ -16,8 +16,15 @@ from django.http import HttpResponse
 import pandas as pd
 from zipfile import BadZipFile
 from security.models import UserRoleMapping, RoleMaster
-
+from django.views import View
+from .models import CodeMaster
 from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q, Sum, Count
+import pdb
+
+PAGINATION_SIZE = 1
+
 # Single import statement for models
 from .models import (
     PaycycleMaster,
@@ -447,47 +454,117 @@ class Paycycle(View):
         auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
         return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
-    
-
-
-
 def project(request):
     set_comp_code(request)
     template_name = 'pages/payroll/project_master/projects.html'
-
-   
+    def col2num(self, col):
+        import string
+        num = 0
+        for c in col:
+            if c in string.ascii_letters:
+                num = num * 26 + (ord(c.upper()) - ord('A')) + 1
+        return num-1
+    project_id = request.GET.get("project_id")
+    print(project_id, 'project_id')
     if request.method == "GET":
-        project_id = request.GET.get("project_id")
+        if project_id:  # If `project_id` exists, return a JSON response with project data
+            try:
+                project = projectMatster.objects.get(project_id=project_id, comp_code=COMP_CODE)
+                return JsonResponse({
+                    "project_id": project.project_id,
+                    "prj_code": project.prj_code,
+                    "prj_name": project.prj_name,
+                    "project_description": project.project_description,
+                    "project_type": project.project_type,
+                    "project_value": project.project_value,
+                    "timeline_from": project.timeline_from,
+                    "timeline_to": project.timeline_to,
+                    "prj_city": project.prj_city,
+                    "consultant": project.consultant,
+                    "main_contractor": project.main_contractor,
+                    "sub_contractor": project.sub_contractor,
+                    "is_active": project.is_active,
+                    "comp_code": project.comp_code,
+                })
+            except projectMatster.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Project not found'}, status=404)
+        
+        else:  # If `project_id` doesn't exist, render the page with paginated results
+            # Handle keyword and pagination logic
+            keyword = request.GET.get('keyword', '').strip()
+            page_number = request.GET.get('page', 1)
+            get_url = request.get_full_path()
 
+            print(keyword, 'keyword')
+            print(page_number, 'page_number')
 
-      
+            # Adjust URL for pagination
+            if '?keyword' in get_url:
+                get_url = get_url.split('&page=')[0]
+                current_url = f"{get_url}&"
+            else:
+                get_url = get_url.split('?')[0]
+                current_url = f"{get_url}?"
+
+            # Initialize the query
+            query = projectMatster.objects.filter(comp_code=COMP_CODE)
+
+            # Apply search filter if a keyword is provided
+            if keyword:
+                try:
+                    query = query.filter(
+                        Q(prj_code__icontains=keyword) |
+                        Q(prj_name__icontains=keyword) |
+                        Q(project_description__icontains=keyword) |
+                        Q(prj_city__icontains=keyword)
+                    )
+                except Exception as e:
+                    print(f"Error in keyword search: {e}")
+                    return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+            # Apply pagination
+            paginator = Paginator(query.order_by('project_id'), PAGINATION_SIZE)
             
+            try:
+                projects_page = paginator.get_page(page_number)
+            except PageNotAnInteger:
+                projects_page = paginator.page(1)
+            except EmptyPage:
+                projects_page = paginator.page(paginator.num_pages)
 
-        try:
-            project = get_object_or_404(projectMatster, project_id=int(project_id), comp_code=COMP_CODE)
-            return JsonResponse({
-                "project_id": project.project_id,
-                "prj_code": project.prj_code,
-                "prj_name": project.prj_name,
-                "project_description": project.project_description,
-                "project_type": project.project_type,
-                "project_value": project.project_value,
-                "timeline_from": project.timeline_from,
-                "timeline_to": project.timeline_to,
-                "prj_city": project.prj_city,
-                "consultant": project.consultant,
-                "main_contractor": project.main_contractor,
-                "sub_contractor": project.sub_contractor,
-                "is_active": project.is_active,
-                "comp_code": project.comp_code,
-                # "prj_city":project.prj_city
-                "prj_city":project.prj_city
-            })
-        
-        except Exception as e:
-            print(f" Error project Edit: {str(e)}")  
-        
-    
+            # Prepare the paginated results
+            projects_data = []
+            for project in projects_page:
+                projects_data.append({
+                    "project_id": project.project_id,
+                    "prj_code": project.prj_code,
+                    "prj_name": project.prj_name,
+                    "project_description": project.project_description,
+                    "project_type": project.project_type,
+                    "project_value": project.project_value,
+                    "timeline_from": project.timeline_from,
+                    "timeline_to": project.timeline_to,
+                    "prj_city": project.prj_city,
+                    "consultant": project.consultant,
+                    "main_contractor": project.main_contractor,
+                    "sub_contractor": project.sub_contractor,
+                    "is_active": project.is_active,
+                    "comp_code": project.comp_code,
+                })
+
+            # Prepare the context for the template
+            context = {
+                'projects': projects_page,
+                'current_url': current_url,
+                'keyword': keyword,
+                'result_cnt': query.count()
+            }
+
+            print(context, 'context')
+
+            # Render the template
+            return render(request, template_name, context)
+       
     if request.method == "POST":
         
             project_id = request.POST.get("project_id")
@@ -540,11 +617,11 @@ def project(request):
             return redirect("project")
 
 
-    # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
-    projects = projectMatster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-    project_count=projectMatster.objects.filter(comp_code=COMP_CODE)
+    # # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
+    # projects = projectMatster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
+    # project_count=projectMatster.objects.filter(comp_code=COMP_CODE)
     # print("COUNT ",project_count)
-    return render(request, template_name, {'projects': projects,'project_count':project_count})
+    return render(request, template_name, context=context)
 
 
 def check_project_code(request):
@@ -575,17 +652,6 @@ def delete_project(request):
 
 # class HolidayMaster(View):
 
-
-
-
-
-
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from django.http import JsonResponse
-from django.views import View
-from .models import CodeMaster
 
 class CodeMasterList(View):
 
