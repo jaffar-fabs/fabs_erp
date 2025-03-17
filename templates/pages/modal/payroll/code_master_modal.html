@@ -112,7 +112,7 @@
 
 
 <!-- Edit Popup -->
-<div class="modal custom-modal fade" id="edit_stage" role="dialog">
+<div class="modal custom-modal fade" id="edit_stage" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -149,7 +149,7 @@
 
 
 <!-- Delete Popup -->
-<div class="modal fade" id="delete_stage" role="dialog">
+<div class="modal fade" id="delete_stage" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
@@ -333,5 +333,18 @@
                     })
             })
         }
+
+        // // Remove the backdrop element when the modal is shown
+        // let modals = document.querySelectorAll('.modal');
+        // modals.forEach(modal => {
+        //     modal.addEventListener('shown.bs.modal', function () {
+        //         let backdrop = document.querySelector('.modal-backdrop');
+        //         if (backdrop) {
+        //             backdrop.remove();
+        //         }
+        //     });
+        // });
     })
 </script>
+
+</html>
