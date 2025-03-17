@@ -120,11 +120,6 @@
 															<input type="text" name="comp_code" class="form-control"
 																value="{{ role.comp_code }}" readonly>
 														</div>
-														<div class="form-group mb-3">
-															<label class="col-form-label">Modified By</label>
-															<input type="number" name="modified_by" class="form-control"
-																value="{{ role.modified_by }}">
-														</div>
 														<div class="form-group form-check">
 															<input type="checkbox" name="is_active"
 																class="form-check-input" id="is_active_{{ role.id }}"
@@ -210,10 +205,6 @@
 						<label class="col-form-label">Company Code <span class="text-danger">*</span></label>
 						<input type="text" name="comp_code" class="form-control" value="1000">
 					</div>
-					<div class="form-group mb-3">
-						<label class="col-form-label">Created By</label>
-						<input type="number" name="created_by" class="form-control" value="4">
-					</div>
 					<div class="form-group form-check mb-3">
 						<input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
 						<label class="form-check-label" for="is_active">Active</label>
@@ -222,7 +213,7 @@
 			</div>
 			<div class="d-flex align-items-center justify-content-end">
 				<button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-				<button type="submit" class="btn btn-primary">Save</button>
+				<button type="submit" class="btn btn-primary">Create</button>
 			</div>
 		</form>
 	</div>

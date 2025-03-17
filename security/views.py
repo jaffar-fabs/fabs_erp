@@ -25,12 +25,12 @@ class RoleMasterCreate(View):
                 role_name=role_name,
                 role_description=request.POST.get('role_description'),
                 is_active=request.POST.get('is_active') == 'on',
-                created_by=created_by,
-                modified_by=modified_by,
+                created_by=1,
+                modified_by=1,
             )
             role.full_clean()  
             role.save()
-            return JsonResponse({'status': 'success', 'redirect_url': reverse('role_list')})
+            return redirect('role_list')
         except ValidationError as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 

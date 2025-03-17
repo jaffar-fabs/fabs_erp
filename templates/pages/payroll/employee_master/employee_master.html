@@ -52,21 +52,21 @@
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>Employee ID</th>
+                                        <th>Employee Code</th>
                                         <th>First Name</th>
                                         <th>Sur Name</th>
                                         <th>Email</th>
                                         <th>Gender</th>
                                         <th>Status</th>
                                         <th>Date of Birth</th>
-                                        <th>Created On</th>
+                                        <!-- <th>Created On</th> -->
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for employee in employees %}
                                     <tr>
-                                        <td>{{ employee.employee_id }}</td>
+                                        <td>{{ employee.emp_code }}</td>
                                         <td>{{ employee.emp_name }}</td>
                                         <td>{{ employee.surname }}</td>
                                         <td>{{ employee.email }}</td>
@@ -92,7 +92,7 @@
                                             {% endfor %}
                                         </td>                                        
                                         <td>{{ employee.dob }}</td>
-                                        <td>{{ employee.created_on }}</td>
+                                        <!-- <td>{{ employee.created_on }}</td> -->
                                         <td>
                                             <div class="dropdown table-action">
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown"

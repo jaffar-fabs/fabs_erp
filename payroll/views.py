@@ -60,6 +60,7 @@ def save_employee(request, employee_id=None):
             employee.created_on = request.POST.get("created_on") or None
         
         # Assign values from request
+        employee.comp_code = COMP_CODE
         employee.emp_code = request.POST.get("emp_code")
         employee.emp_name = request.POST.get("emp_name_passport")
         employee.surname = request.POST.get("surname")
@@ -612,7 +613,13 @@ class CodeMasterList(View):
 
     def get(self, request): 
         base_type_suggestions = CodeMaster.objects.filter(comp_code="999").values("base_description", "base_value").distinct()
-        base_type_comp_code = CodeMaster.objects.filter(comp_code="999").values("base_value", "base_description").distinct()
+        # ...existing code...
+        used_base_codes = [
+            'SEX', 'PROCESS CYCLE', 'PROCESS COMPLETION FLAG', 'STATUS', 'MARITAL STATUS', 
+            'DESIGNATION', 'DEPT', 'ATTENDANCE UOM', 'PROJECT TYPE', 'PROJECT CITY', 
+            'NATIONALITY', 'HOLIDAY'
+        ]
+        base_type_comp_code = CodeMaster.objects.filter(comp_code="999", base_value__in=used_base_codes).values("base_value", "base_description").distinct()
         return render(request, self.template_name, { "base_type_suggestions": base_type_suggestions, "base_type_comp_code": base_type_comp_code })
 
     @method_decorator(csrf_exempt)
