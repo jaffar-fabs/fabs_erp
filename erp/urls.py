@@ -85,6 +85,8 @@ urlpatterns = [
     path('permission/', payroll_views.permission_view, name='permission'),
     path('check-emp-code/', check_emp_code, name='check_emp_code'),
     path('check_grade_code/', views.check_grade_code, name='check_grade_code'),
+    path('get-menu-details/<int:menu_id>/', MenuMaster.as_view(), name='get_menu_details'),
+    path('delete_menu/', MenuMaster.delete_menu, name='delete_menu'), 
 
     # User Role Mapping URLs
     path('user-role-mappings/', role_views.user_role_mapping_list, name='user_role_mapping_list'),
