@@ -84,6 +84,10 @@ class Employee(models.Model):
     emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
     work_permit_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Work permit document upload
     profile_picture = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Profile pictur
+    spouse_visa_copy = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+    dependent_emirates_id = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+    dependent_passport = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+    child_birth_certificate = models.FileField(upload_to=employee_document_path, blank=True, null=True)
 
     # Document Uploads
     manpower_request_id = models.CharField(max_length=50, blank=True, null=True)
