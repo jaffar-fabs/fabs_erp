@@ -17,7 +17,8 @@
                 <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Menu Name<span class="text-danger"> *</span></label>
-                        <input class="form-control" type="text" name="menu_name" autocomplete="off">
+                        <input class="form-control" type="text" name="menu_name" id="menu_name" autocomplete="off">
+                        <div id="menuNameError" class="text-danger"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -29,7 +30,8 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Screen Name<span class="text-danger"> *</span></label>
-                        <input class="form-control" type="text" name="screen_name" autocomplete="off">
+                        <input class="form-control" type="text" name="screen_name" id="screen_name" autocomplete="off">
+                        <div id="screenNameError" class="text-danger"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -42,22 +44,23 @@
                     <div class="col-md-12">
                         <div class="mb-3">
                             <label class="col-form-label">Module ID<span class="text-danger">*</span></label>
-                            <select class="form-select" aria-label="select example" name="module_id ">
+                            <select class="form-select" aria-label="select example" name="module_id">
                                 <option value="">Select</option>
-                                <option value="Payroll">Payroll</option>
+                                <option value="payroll">payroll</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            <label class="col-form-label">Parent Menu<span class="text-danger">*</span></label>
-                            <select class="form-select" aria-label="select example" name="parent_menu_id">
-                                <option value="">Select</option>
-                                <option value="No Parent">No Parent</option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label class="col-form-label">Parent Menu<span class="text-danger">*</span></label>
+                        <select class="form-select" aria-label="select example" name="parent_menu_id">
+                            <option value="">Select</option>
+                            <option value="No Parent" {% if parent_menu_id == "No Parent" %}selected{% endif %}>No Parent</option>
+                            {% for menu in fetch_details %}
+                            <option value="{{ menu.menu_id }}" {% if menu.menu_id == parent_menu_id %}selected{% endif %}>{{ menu.menu_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -69,7 +72,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Application ID<span class="text-danger"> *</span></label>
-                        <input class="form-control" type="text" name="app_id " autocomplete="off">
+                        <input class="form-control" type="text" name="app_id" autocomplete="off">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -81,44 +84,43 @@
             </div>
             <div class="row">
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
+                    <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="is_active" id="checkbox-active" checked />
                         <label class="form-check-label" for="checkbox-active">is Active</label>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
-                        <input class="form-check-input" type="checkbox" name="is_add" id="checkbox-add"/>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_add" id="checkbox-add" />
                         <label class="form-check-label" for="checkbox-add">is Add</label>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
+                    <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="is_view" id="checkbox-view" />
                         <label class="form-check-label" for="checkbox-view">is View</label>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
-                        <input class="form-check-input" type="checkbox" name="is_edit" id="checkbox-edit"  />
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_edit" id="checkbox-edit" />
                         <label class="form-check-label" for="checkbox-edit">is Edit</label>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
-                        <input class="form-check-input" type="checkbox" name="is_delete" id="checkbox-delete"  />
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_delete" id="checkbox-delete" />
                         <label class="form-check-label" for="checkbox-delete">is Delete</label>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-4 col-6">
-                    <div class="form-check form-check-md d-flex align-items-center">
-                        <input class="form-check-input" type="checkbox" name="is_execute" id="checkbox-execute"
-                            />
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_execute" id="checkbox-execute" />
                         <label class="form-check-label" for="checkbox-execute">is Execute</label>
                     </div>
                 </div>
             </div>
-            <div class="d-flex align-items-center justify-content-end">
+            <div class="d-flex align-items-center justify-content-end mt-5">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
                 <button type="submit" class="btn btn-primary" id="create-btn">Create</button>
             </div>
@@ -166,16 +168,32 @@
             }
         });
     });
+
+    function validateNoSpaces(inputId, errorId) {
+        const inputField = document.getElementById(inputId);
+        const errorField = document.getElementById(errorId);
+
+        inputField.addEventListener('input', function () {
+            if (this.value.includes(" ")) {
+                errorField.textContent = "Spaces are not allowed.";
+                this.value = this.value.replace(/\s+/g, '');
+            } else {
+                errorField.textContent = "";
+            }
+        });
+    }
+
+    validateNoSpaces("menu_name", "menuNameError");
+    validateNoSpaces("screen_name", "screenNameError");
 </script>
 
 
 
 
-
-<!-- Edit CodeMaster -->
+<!-- Edit Menu Master -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
-        <h4>Edit Code Master</h4>
+        <h4>Edit Menu Master</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -183,33 +201,252 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="editForm">
-            <div class="col-md-12">
-                <div class="mb-3">
-                    <label class="col-form-label">Menu Name<span class="text-danger"> *</span></label>
-                    <input class="form-control" type="text" name="menu_name" id="edit_menu_name" autocomplete="off">
-                </div>
-            </div>
-            <div class="mb-3">
-                <div class="pipe-title d-flex align-items-center justify-content-between">
-                    <h5 class="form-title">Parent Menu</h5>
-                </div>
-                <div class="pipeline-listing">
-                    <div class="pipeline-item">
-                        <p><i class="ti ti-grip-vertical"></i> Inpipeline</p>
-                        <div class="action-pipeline">
-                            <a href="#" class="edit-base-value" data-bs-toggle="modal" data-bs-target="#edit_stage">
-                                <i class="ti ti-edit text-blue"></i>Edit
-                            </a>
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#delete_stage">
-                                <i class="ti ti-trash text-danger"></i>Delete
-                            </a>
-                        </div>
+        <form method="POST" action="{% url 'menu_list' %}">
+            {% csrf_token %}
+            <input type="hidden" name="menu_id" id="edit_menu_id">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Menu Name<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="menu_name" id="edit_menu_name" autocomplete="off">
+                        <div id="editmenuNameError" class="text-danger"></div>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Quick Path<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="quick_path" id="edit_quick_path"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Screen Name<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="screen_name" id="edit_screen_name"
+                            autocomplete="off">
+                        <div id="editscreenNameError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">URL<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="url" id="edit_url" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Module ID<span class="text-danger">*</span></label>
+                        <select class="form-select" name="module_id" id="edit_module_id">
+                            <option value="">Select</option>
+                            <option value="payroll">payroll</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Parent Menu<span class="text-danger">*</span></label>
+                        <select class="form-select" aria-label="select example" name="parent_menu_id" id="edit_parent_menu_id">
+                            <option value="">Select</option>
+                            <option value="No Parent" {% if parent_menu_id == "No Parent" %}selected{% endif %}>No Parent</option>
+                            {% for menu in fetch_details %}
+                            <option value="{{ menu.menu_id }}" {% if menu.menu_id == parent_menu_id %}selected{% endif %}>{{ menu.menu_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Display Order<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="display_order" id="edit_display_order"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Application ID<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="app_id" id="edit_app_id" autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Icon<span class="text-danger"> *</span></label>
+                        <input class="form-control" type="text" name="icon" id="edit_icon" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_active" id="edit_is_active">
+                        <label class="form-check-label" for="edit_is_active">is Active</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_add" id="edit_is_add">
+                        <label class="form-check-label" for="edit_is_add">is Add</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_view" id="edit_is_view">
+                        <label class="form-check-label" for="edit_is_view">is View</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_edit" id="edit_is_edit">
+                        <label class="form-check-label" for="edit_is_edit">is Edit</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_delete" id="edit_is_delete">
+                        <label class="form-check-label" for="edit_is_delete">is Delete</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_execute" id="edit_is_execute">
+                        <label class="form-check-label" for="edit_is_execute">is Execute</label>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end mt-5">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update</button>
             </div>
         </form>
     </div>
 </div>
-<!-- /Edit CodeMaster -->
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-menu');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const menuId = this.getAttribute('data-menu-id');
+                fetch(`/get-menu-details/${menuId}/`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Populate the form fields
+                        document.getElementById('edit_menu_id').value = data.menu_id;
+                        document.getElementById('edit_menu_name').value = data.menu_name;
+                        document.getElementById('edit_quick_path').value = data.quick_path;
+                        document.getElementById('edit_screen_name').value = data.screen_name;
+                        document.getElementById('edit_url').value = data.url;
+                        document.getElementById('edit_module_id').value = data.module_id;
+                        document.getElementById('edit_parent_menu_id').value = data.parent_menu_id;
+                        document.getElementById('edit_display_order').value = data.display_order;
+                        document.getElementById('edit_app_id').value = data.app_id;
+                        document.getElementById('edit_icon').value = data.icon;
+                        document.getElementById('edit_is_active').checked = data.is_active;
+                        document.getElementById('edit_is_add').checked = data.is_add;
+                        document.getElementById('edit_is_view').checked = data.is_view;
+                        document.getElementById('edit_is_edit').checked = data.is_edit;
+                        document.getElementById('edit_is_delete').checked = data.is_delete;
+                        document.getElementById('edit_is_execute').checked = data.is_execute;
+                    })
+                    .catch(error => console.error('Error fetching menu details:', error));
+            });
+        });
+    });
+
+    function validateNoSpaces(inputId, errorId) {
+        const inputField = document.getElementById(inputId);
+        const errorField = document.getElementById(errorId);
+
+        inputField.addEventListener('input', function () {
+            if (this.value.includes(" ")) {
+                errorField.textContent = "Spaces are not allowed.";
+                this.value = this.value.replace(/\s+/g, '');
+            } else {
+                errorField.textContent = "";
+            }
+        });
+    }
+
+    validateNoSpaces("edit_menu_name", "editmenuNameError");
+    validateNoSpaces("edit_screen_name", "editscreenNameError");
+
+</script>
+
+
+<!-- /Edit Menu Master -->
+
+<!-- Delete Menu Modal -->
+<div class="modal fade" id="delete_menu_modal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Menu?</h4>
+                    <p class="mb-0">Are you sure you want to delete the selected menu?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_menu' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="menu_id" id="delete-menu-id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll(".delete-menu");
+    const deleteInput = document.getElementById("delete-menu-id");
+    const deleteForm = document.getElementById("delete-form");
+
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const menuId = this.getAttribute("data-menu-id");
+            deleteInput.value = menuId;
+        });
+    });
+
+
+    deleteForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData(deleteForm);
+        fetch(deleteForm.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest" 
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message); 
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while deleting the menu.");
+            });
+    });
+});
+
+</script>
+
+
+<!-- Delete Menu Modal -->
 

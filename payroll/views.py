@@ -1103,23 +1103,57 @@ def check_holiday(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
+
+
 class MenuMaster(View):
     template_name = "pages/security/menu_master/menu_list.html"
 
-    def get(self, request):
-        set_comp_code(request)
+    def get(self, request, menu_id=None):
+        if menu_id and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            menu = get_object_or_404(Menu, pk=menu_id)
+            menu_data = {
+                "menu_id": menu.menu_id,
+                "menu_name": menu.menu_name,
+                "quick_path": menu.quick_path,
+                "screen_name": menu.screen_name,
+                "url": menu.url,
+                "module_id": menu.module_id,
+                "parent_menu_id": menu.parent_menu_id,
+                "display_order": menu.display_order,
+                "app_id": menu.app_id,
+                "icon": menu.icon,
+                "is_active": menu.is_active,
+                "is_add": menu.is_add,
+                "is_view": menu.is_view,
+                "is_edit": menu.is_edit,
+                "is_delete": menu.is_delete,
+                "is_execute": menu.is_execute,
+            }
+            return JsonResponse(menu_data)
+
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             menu_name = request.GET.get('menu_name', None)
-            exists = Menu.objects.filter(menu_name=menu_name, comp_code=COMP_CODE).exists()
+            exists = Menu.objects.filter(menu_name=menu_name).exists()
             return JsonResponse({'exists': exists})
 
-        menu_list = Menu.objects.filter(comp_code=COMP_CODE)
-        parent_menus = Menu.objects.filter(comp_code=COMP_CODE).values_list('menu_name', flat=True).distinct()
-        return render(request, self.template_name, {"menu_list": menu_list, "parent_menus": parent_menus})
+        menu_to_edit = None
+        if menu_id:
+            menu_to_edit = Menu.objects.filter(menu_id=menu_id).first()
+
+        menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name', 'menu_id')
+        parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
+        fetch_details = Menu.objects.all().order_by('display_order')
+
+        return render(request, self.template_name, {
+            "menu_list": menu_list,
+            "parent_menus": parent_menus,
+            "fetch_details": fetch_details,
+            "parent_menu_id": menu_to_edit.parent_menu_id if menu_to_edit else None,
+        })
+
     
     def post(self, request):
-        set_comp_code(request)
-        menu_id = request.POST.get('menu_id')
+        menu_id = request.POST.get('menu_id') 
         menu_name = request.POST.get('menu_name')
         quick_path = request.POST.get('quick_path')
         screen_name = request.POST.get('screen_name')
@@ -1127,21 +1161,29 @@ class MenuMaster(View):
         module_id = request.POST.get('module_id')
         parent_menu_id = request.POST.get('parent_menu_id')
         display_order = request.POST.get('display_order')
-        instance_id = request.POST.get('instance_id')
+        instance_id = request.POST.get('instance_id', '1')
         buffer1 = request.POST.get('buffer1')
         buffer2 = request.POST.get('buffer2')
         buffer3 = request.POST.get('buffer3')
-        is_active = True if "is_active" in request.POST else False
-        is_add = True if "is_add" in request.POST else False
-        is_view = True if "is_view" in request.POST else False
-        is_edit = True if "is_edit" in request.POST else False
-        is_delete = True if "is_delete" in request.POST else False
-        is_execute = True if "is_execute" in request.POST else False
+        is_active = "is_active" in request.POST
+        is_add = "is_add" in request.POST
+        is_view = "is_view" in request.POST
+        is_edit = "is_edit" in request.POST
+        is_delete = "is_delete" in request.POST
+        is_execute = "is_execute" in request.POST
         app_id = request.POST.get('app_id')
         icon = request.POST.get('icon')
+    
+        if parent_menu_id and parent_menu_id != "No Parent":
+            parent_menu = Menu.objects.filter(menu_id=parent_menu_id).first()
+            if parent_menu:
+                parent_menu_id = parent_menu.menu_id
+            else:
+                messages.error(request, "Invalid Parent Menu selected.")
+                return redirect("menu_list")
 
-        if menu_id:
-            menu = get_object_or_404(Menu, menu_id=menu_id, comp_code=COMP_CODE)
+        if menu_id: 
+            menu = get_object_or_404(Menu, pk=menu_id)
             menu.menu_name = menu_name
             menu.quick_path = quick_path
             menu.screen_name = screen_name
@@ -1162,11 +1204,12 @@ class MenuMaster(View):
             menu.app_id = app_id
             menu.icon = icon
             menu.modified_by = 1
-            menu.modified_on = now()
+            menu.modified_on = now() 
             menu.save()
-        else:
+            messages.success(request, "Menu updated successfully!")
+        else: 
             Menu.objects.create(
-                comp_code=COMP_CODE,
+                comp_code="1000",
                 menu_name=menu_name,
                 quick_path=quick_path,
                 screen_name=screen_name,
@@ -1189,8 +1232,26 @@ class MenuMaster(View):
                 created_by=1,
                 created_on=now(),
             )
+            messages.success(request, "Menu created successfully!")
+            
+    
 
         return redirect("menu_list")
+    
+    def delete_menu(request):
+        if request.method == "POST":
+            menu_id = request.POST.get("menu_id")
+            if menu_id:
+                try:
+                    menu = get_object_or_404(Menu, menu_id=menu_id)
+                    menu.is_active = False
+                    menu.save()
+                    return JsonResponse({"success": True, "message": "Menu has been deactivated successfully."})
+                except Exception as e:
+                    return JsonResponse({"success": False, "message": f"Error: {str(e)}"})
+
+        return JsonResponse({"success": False, "message": "Invalid request method."})
+
 
 
 from django.shortcuts import render

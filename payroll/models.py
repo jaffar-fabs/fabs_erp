@@ -362,7 +362,7 @@ class GradeMaster(models.Model):
 class Menu(models.Model):
 
     menu_id = models.BigAutoField(primary_key=True)
-    comp_code = models.CharField(max_length=10, default="1001")  # Removed default value
+    comp_code = models.CharField(max_length=10) 
     menu_name = models.CharField(max_length=50)
     quick_path = models.BigIntegerField()
     screen_name = models.CharField(max_length=50, null=True, blank=True)
