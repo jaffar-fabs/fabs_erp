@@ -25,13 +25,13 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Grade Desc <span
+                        <label class="col-form-label" for="validationCustom01">Category<span
                                 class="text-danger">*</span></label>
                         <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
-                        <div class="invalid-feedback">Please provide a Grade Desc.</div>
+                        <div class="invalid-feedback">Please provide a Category.</div>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <!-- <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Nationality</label>
                         <select name="nationality" class="form-select" aria-label="select example">
@@ -43,7 +43,7 @@
                     </div>
                 </div>
 
-                <!-- Attendance and Leave Days -->
+                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label" for="validationCustom01">Attendance Days</label>
@@ -57,7 +57,7 @@
                         <input type="number" name="leave_days" class="form-control" autocomplete="off" />
                         <div class="invalid-feedback">Please provide Leave Days.</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Passage Amount -->
                 <div class="col-md-6">
@@ -72,6 +72,21 @@
                         <label class="col-form-label" for="validationCustom01">Passage Amount Child</label>
                         <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
                         <div class="invalid-feedback">Please provide a Passage Amount Child.</div>
+                    </div>
+                </div>
+
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <select name="designation" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in desig_data %}
+                                <option value="{{ statuses.base_value }}">
+                                    {{ statuses.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
@@ -248,11 +263,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Grade Desc <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Category<span class="text-danger">*</span></label>
                         <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
                     </div>
                 </div>
-                <div class="col-md-12">
+                <!-- <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Nationality</label>
                         <select name="nationality" class="form-control select2">
@@ -273,7 +288,7 @@
                         <label class="col-form-label">Leave Days</label>
                         <input type="number" name="leave_days" class="form-control" autocomplete="off" />
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passage Amount Adult</label>
@@ -284,6 +299,20 @@
                     <div class="mb-3">
                         <label class="col-form-label">Passage Amount Child</label>
                         <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
+                    </div>
+                </div>
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <select name="designation" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in desig_data %}
+                                <option value="{{ statuses.base_value }}" {% if grade.designation == statuses.base_value %}selected{% endif %}>
+                                    {{ statuses.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <!-- Hide Allowances -->
@@ -446,6 +475,7 @@
                 document.querySelector('#offcanvas_edit input[name="leave_days"]').value = row.getAttribute('data-leave');
                 document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult');
                 document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child');
+                document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation');
 
                 // Populate dropdowns for allowances
                 document.querySelector('#offcanvas_edit select[name="allowance1"]').value = row.getAttribute('data-allowance1');

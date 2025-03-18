@@ -898,6 +898,7 @@ class GradeMasterList(View):
             data = {
                 'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
             }
+            print(data)
             return JsonResponse(data)
 
         datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
@@ -933,6 +934,7 @@ class GradeMasterList(View):
             "allowance8": request.POST.get("allowance8") or None,
         }
         is_active = "Y" if "is_active" in request.POST else "N"
+        designation = request.POST.get("designation")
 
         if grade_id:
             grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code=COMP_CODE)
@@ -946,10 +948,12 @@ class GradeMasterList(View):
             for key, value in allowances.items():
                 setattr(grade, key, value)
             grade.is_active = is_active
+            grade.designation = designation
             grade.modified_by = 1
             grade.modified_on = now()
             grade.save()
         else:
+            set_comp_code(request)
             grade = GradeMaster.objects.create(
                 comp_code=COMP_CODE,
                 grade_code=grade_code,
@@ -963,13 +967,13 @@ class GradeMasterList(View):
                 created_by=1,
                 created_on=now(),
                 instance_id='INSTANCE001',
+                designation=designation,
             )
             for key, value in allowances.items():
                 setattr(grade, key, value)
             grade.save()
 
         return redirect("grade_master")
-
 
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
