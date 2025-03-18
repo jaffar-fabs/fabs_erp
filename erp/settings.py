@@ -163,6 +163,9 @@ MEDIA_URL = 'media/'
 
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Add this setting to allow your site to be displayed in an iframe
+X_FRAME_OPTIONS = 'ALLOWALL'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
