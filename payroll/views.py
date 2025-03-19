@@ -60,14 +60,14 @@ def save_employee(request, employee_id=None):
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
             employee.modified_by = 1  # Replace with actual user ID if available
-            employee.modified_on = request.POST.get("modified_on") or None
+            employee.modified_on = now()
         else:
             employee = Employee()
             employee.created_by = 1  # Replace with actual user ID if available
-            employee.created_on = request.POST.get("created_on") or None
-        
+            employee.created_on = now()
+
         # Assign values from request
-        employee.comp_code = COMP_CODE  # Ensure comp_code is set correctly
+        employee.comp_code = COMP_CODE
         employee.emp_code = request.POST.get("emp_code")
         employee.emp_name = request.POST.get("emp_name_passport")
         employee.surname = request.POST.get("surname")
@@ -116,8 +116,8 @@ def save_employee(request, employee_id=None):
         employee.emirate_document = request.FILES.get("emirate_document") or employee.emirate_document
         employee.work_permit_document = request.FILES.get("work_permit_document") or employee.work_permit_document
         employee.profile_picture = request.FILES.get("profile_picture") or employee.profile_picture
-        employee.full_final_settlement_copy_id = request.POST.get("full_final_settlement_copy_id")
-        employee.full_final_settlement_copy_file = request.FILES.get("full_final_settlement_copy_file") or employee.full_final_settlement_copy_file
+        employee.full_final_settlement_copy_id = request.POST.get("full_and_final_settlement_copy_id")
+        employee.full_final_settlement_copy_file = request.FILES.get("full_and_final_settlement_copy_file") or employee.full_final_settlement_copy_file
 
         # Additional document fields
         employee.manpower_request_file = request.FILES.get("manpower_request_file") or employee.manpower_request_file
@@ -176,10 +176,116 @@ def save_employee(request, employee_id=None):
         employee.employee_confidential_form_id = request.POST.get("employee_confidential_form_id")
         employee.leave_application_id = request.POST.get("leave_application_id")
 
+        employee.labor_contract_issued_date = request.POST.get("labor_contract_issued_date") or None
+        employee.labor_contract_expiry_date = request.POST.get("labor_contract_expiry_date") or None
+        employee.emirates_id_issued_date = request.POST.get("emirates_id_issued_date") or None
+        employee.emirates_id_expiry_date = request.POST.get("emirates_id_expiry_date") or None
+        employee.visa_issued_date = request.POST.get("visa_copy_issued_date") or None
+        employee.visa_expiry_date = request.POST.get("visa_copy_expiry_date") or None
+        employee.passport_issued_date = request.POST.get("passport_copy_issued_date") or None
+        employee.passport_expiry_date = request.POST.get("passport_copy_expiry_date") or None
+
+        # Dependent Details
+        employee.father_visa_copy_id = request.POST.get("father_visa_copy_id")
+        employee.father_visa_copy_issued_date = request.POST.get("father_visa_copy_issued_date") or None
+        employee.father_visa_copy_expiry_date = request.POST.get("father_visa_copy_expiry_date") or None
+        employee.father_visa_copy_file = request.FILES.get("father_visa_copy_file") or employee.father_visa_copy_file
+
+        employee.father_emirates_id_id = request.POST.get("father_emirates_id_id")
+        employee.father_emirates_id_issued_date = request.POST.get("father_emirates_id_issued_date") or None
+        employee.father_emirates_id_expiry_date = request.POST.get("father_emirates_id_expiry_date") or None
+        employee.father_emirates_id_file = request.FILES.get("father_emirates_id_file") or employee.father_emirates_id_file
+
+        employee.father_passport_id = request.POST.get("father_passport_id")
+        employee.father_passport_issued_date = request.POST.get("father_passport_issued_date") or None
+        employee.father_passport_expiry_date = request.POST.get("father_passport_expiry_date") or None
+        employee.father_passport_file = request.FILES.get("father_passport_file") or employee.father_passport_file
+
+        employee.mother_visa_copy_id = request.POST.get("mother_visa_copy_id")
+        employee.mother_visa_copy_issued_date = request.POST.get("mother_visa_copy_issued_date") or None
+        employee.mother_visa_copy_expiry_date = request.POST.get("mother_visa_copy_expiry_date") or None
+        employee.mother_visa_copy_file = request.FILES.get("mother_visa_copy_file") or employee.mother_visa_copy_file
+
+        employee.mother_emirates_id_id = request.POST.get("mother_emirates_id_id")
+        employee.mother_emirates_id_issued_date = request.POST.get("mother_emirates_id_issued_date") or None
+        employee.mother_emirates_id_expiry_date = request.POST.get("mother_emirates_id_expiry_date") or None
+        employee.mother_emirates_id_file = request.FILES.get("mother_emirates_id_file") or employee.mother_emirates_id_file
+
+        employee.mother_passport_id = request.POST.get("mother_passport_id")
+        employee.mother_passport_issued_date = request.POST.get("mother_passport_issued_date") or None
+        employee.mother_passport_expiry_date = request.POST.get("mother_passport_expiry_date") or None
+        employee.mother_passport_file = request.FILES.get("mother_passport_file") or employee.mother_passport_file
+
+        employee.spouse_visa_copy_id = request.POST.get("spouse_visa_copy_id")
+        employee.spouse_visa_copy_issued_date = request.POST.get("spouse_visa_copy_issued_date") or None
+        employee.spouse_visa_copy_expiry_date = request.POST.get("spouse_visa_copy_expiry_date") or None
+        employee.spouse_visa_copy_file = request.FILES.get("spouse_visa_copy_file") or employee.spouse_visa_copy_file
+
+        employee.spouse_emirates_id_id = request.POST.get("spouse_emirates_id_id")
+        employee.spouse_emirates_id_issued_date = request.POST.get("spouse_emirates_id_issued_date") or None
+        employee.spouse_emirates_id_expiry_date = request.POST.get("spouse_emirates_id_expiry_date") or None
+        employee.spouse_emirates_id_file = request.FILES.get("spouse_emirates_id_file") or employee.spouse_emirates_id_file
+
+        employee.spouse_passport_id = request.POST.get("spouse_passport_id")
+        employee.spouse_passport_issued_date = request.POST.get("spouse_passport_issued_date") or None
+        employee.spouse_passport_expiry_date = request.POST.get("spouse_passport_expiry_date") or None
+        employee.spouse_passport_file = request.FILES.get("spouse_passport_file") or employee.spouse_passport_file
+
+        employee.child1_visa_copy_id = request.POST.get("child1_visa_copy_id")
+        employee.child1_visa_copy_issued_date = request.POST.get("child1_visa_copy_issued_date") or None
+        employee.child1_visa_copy_expiry_date = request.POST.get("child1_visa_copy_expiry_date") or None
+        employee.child1_visa_copy_file = request.FILES.get("child1_visa_copy_file") or employee.child1_visa_copy_file
+
+        employee.child1_emirates_id_id = request.POST.get("child1_emirates_id_id")
+        employee.child1_emirates_id_issued_date = request.POST.get("child1_emirates_id_issued_date") or None
+        employee.child1_emirates_id_expiry_date = request.POST.get("child1_emirates_id_expiry_date") or None
+        employee.child1_emirates_id_file = request.FILES.get("child1_emirates_id_file") or employee.child1_emirates_id_file
+
+        employee.child1_passport_id = request.POST.get("child1_passport_id")
+        employee.child1_passport_issued_date = request.POST.get("child1_passport_issued_date") or None
+        employee.child1_passport_expiry_date = request.POST.get("child1_passport_expiry_date") or None
+        employee.child1_passport_file = request.FILES.get("child1_passport_file") or employee.child1_passport_file
+
+        employee.child1_birth_certificate_file = request.FILES.get("child1_birth_certificate_file") or employee.child1_birth_certificate_file
+
+        employee.child2_visa_copy_id = request.POST.get("child2_visa_copy_id")
+        employee.child2_visa_copy_issued_date = request.POST.get("child2_visa_copy_issued_date") or None
+        employee.child2_visa_copy_expiry_date = request.POST.get("child2_visa_copy_expiry_date") or None
+        employee.child2_visa_copy_file = request.FILES.get("child2_visa_copy_file") or employee.child2_visa_copy_file
+
+        employee.child2_emirates_id_id = request.POST.get("child2_emirates_id_id")
+        employee.child2_emirates_id_issued_date = request.POST.get("child2_emirates_id_issued_date") or None
+        employee.child2_emirates_id_expiry_date = request.POST.get("child2_emirates_id_expiry_date") or None
+        employee.child2_emirates_id_file = request.FILES.get("child2_emirates_id_file") or employee.child2_emirates_id_file
+
+        employee.child2_passport_id = request.POST.get("child2_passport_id")
+        employee.child2_passport_issued_date = request.POST.get("child2_passport_issued_date") or None
+        employee.child2_passport_expiry_date = request.POST.get("child2_passport_expiry_date") or None
+        employee.child2_passport_file = request.FILES.get("child2_passport_file") or employee.child2_passport_file
+
+        employee.child2_birth_certificate_file = request.FILES.get("child2_birth_certificate_file") or employee.child2_birth_certificate_file
+
+        employee.child3_visa_copy_id = request.POST.get("child3_visa_copy_id")
+        employee.child3_visa_copy_issued_date = request.POST.get("child3_visa_copy_issued_date") or None
+        employee.child3_visa_copy_expiry_date = request.POST.get("child3_visa_copy_expiry_date") or None
+        employee.child3_visa_copy_file = request.FILES.get("child3_visa_copy_file") or employee.child3_visa_copy_file
+
+        employee.child3_emirates_id_id = request.POST.get("child3_emirates_id_id")
+        employee.child3_emirates_id_issued_date = request.POST.get("child3_emirates_id_issued_date") or None
+        employee.child3_emirates_id_expiry_date = request.POST.get("child3_emirates_id_expiry_date") or None
+        employee.child3_emirates_id_file = request.FILES.get("child3_emirates_id_file") or employee.child3_emirates_id_file
+
+        employee.child3_passport_id = request.POST.get("child3_passport_id")
+        employee.child3_passport_issued_date = request.POST.get("child3_passport_issued_date") or None
+        employee.child3_passport_expiry_date = request.POST.get("child3_passport_expiry_date") or None
+        employee.child3_passport_file = request.FILES.get("child3_passport_file") or employee.child3_passport_file
+
+        employee.child3_birth_certificate_file = request.FILES.get("child3_birth_certificate_file") or employee.child3_birth_certificate_file
+
         # Save employee
         employee.save()
 
-        # Create folder if new employee
+        # Create folder for new employee
         if not employee_id:
             employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', employee.emp_code)
             os.makedirs(employee_folder_path, exist_ok=True)
@@ -187,7 +293,7 @@ def save_employee(request, employee_id=None):
         return redirect('/employee')
 
     employee_data = Employee.objects.filter(comp_code=COMP_CODE)
-    return render(request, 'pages/payroll/employee_master/employeemaster.html', {'employees': employee_data})
+    return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
 
 def deactivate_employee(request, employee_id):
     set_comp_code(request)
@@ -1137,7 +1243,7 @@ class MenuMaster(View):
             return JsonResponse({'exists': exists})
 
         menu_to_edit = None
-        if menu_id:
+        if (menu_id):
             menu_to_edit = Menu.objects.filter(menu_id=menu_id).first()
 
         menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name', 'menu_id')

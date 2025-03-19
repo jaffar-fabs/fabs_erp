@@ -133,6 +133,113 @@ class Employee(models.Model):
     full_final_settlement_copy_id = models.CharField(max_length=50, blank=True, null=True)
     full_final_settlement_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
 
+    # Fields with additional date inputs
+    passport_issued_date = models.DateField(blank=True, null=True)
+    passport_expiry_date = models.DateField(blank=True, null=True)
+    visa_issued_date = models.DateField(blank=True, null=True)
+    visa_expiry_date = models.DateField(blank=True, null=True)
+    emirates_id_issued_date = models.DateField(blank=True, null=True)
+    emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    labor_contract_issued_date = models.DateField(blank=True, null=True)
+    labor_contract_expiry_date = models.DateField(blank=True, null=True)
+
+    # Dependent Details
+    father_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    father_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    father_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    father_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    father_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    father_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    father_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    father_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    father_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    father_passport_issued_date = models.DateField(blank=True, null=True)
+    father_passport_expiry_date = models.DateField(blank=True, null=True)
+    father_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    mother_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    mother_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    mother_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    mother_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    mother_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    mother_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    mother_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    mother_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    mother_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    mother_passport_issued_date = models.DateField(blank=True, null=True)
+    mother_passport_expiry_date = models.DateField(blank=True, null=True)
+    mother_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    spouse_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    spouse_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    spouse_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    spouse_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    spouse_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    spouse_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    spouse_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    spouse_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    spouse_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    spouse_passport_issued_date = models.DateField(blank=True, null=True)
+    spouse_passport_expiry_date = models.DateField(blank=True, null=True)
+    spouse_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child1_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    child1_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    child1_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    child1_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child1_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    child1_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    child1_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    child1_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child1_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    child1_passport_issued_date = models.DateField(blank=True, null=True)
+    child1_passport_expiry_date = models.DateField(blank=True, null=True)
+    child1_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child1_birth_certificate_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child2_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    child2_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    child2_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    child2_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child2_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    child2_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    child2_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    child2_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child2_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    child2_passport_issued_date = models.DateField(blank=True, null=True)
+    child2_passport_expiry_date = models.DateField(blank=True, null=True)
+    child2_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child2_birth_certificate_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child3_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
+    child3_visa_copy_issued_date = models.DateField(blank=True, null=True)
+    child3_visa_copy_expiry_date = models.DateField(blank=True, null=True)
+    child3_visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child3_emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
+    child3_emirates_id_issued_date = models.DateField(blank=True, null=True)
+    child3_emirates_id_expiry_date = models.DateField(blank=True, null=True)
+    child3_emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child3_passport_id = models.CharField(max_length=50, blank=True, null=True)
+    child3_passport_issued_date = models.DateField(blank=True, null=True)
+    child3_passport_expiry_date = models.DateField(blank=True, null=True)
+    child3_passport_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
+    child3_birth_certificate_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
+
     # Audit Fields
     created_by = models.BigIntegerField(default=1)  # Created by
     modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
