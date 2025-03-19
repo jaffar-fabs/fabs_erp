@@ -308,7 +308,7 @@
                         <select name="designation" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in desig_data %}
-                                <option value="{{ statuses.base_value }}" {% if grade.designation == statuses.base_value %}selected{% endif %}>
+                                <option value="{{ statuses.base_value }}" {% if statuses.base_value == grade.designation %}selected{% endif %}>
                                     {{ statuses.base_description }}
                                 </option>
                             {% endfor %}
