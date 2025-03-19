@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from django.utils import timezone
 import uuid
 import os
 
@@ -583,3 +584,34 @@ class WorkerAttendanceRegister(models.Model):
 
     def __str__(self):
         return f"{self.employee_code} - {self.date}"
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+class AdvanceMaster(models.Model):
+    comp_code = models.CharField(max_length=15, default='1000')
+    advance_id = models.AutoField(primary_key=True)
+    emp_code = models.CharField(max_length=15)
+    advance_code = models.CharField(max_length=50, blank=True, null=True)
+    advance_reference = models.CharField(max_length=100, blank=True, null=True)
+    reference_date = models.DateField()
+    total_amt = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    instalment_amt = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    paid_amt = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    total_no_instalment = models.BigIntegerField(blank=True, null=True)
+    balance_no_instalment = models.BigIntegerField(blank=True, null=True)
+    repayment_from = models.DateField()
+    next_repayment_date = models.DateField()
+    default_count = models.BigIntegerField(blank=True, null=True)
+    waiver_amt = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    waiver_date = models.DateField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateField(default=timezone.now)
+    modified_by = models.BigIntegerField(blank=True, null=True)
+    modified_on = models.DateField(auto_now=True, blank=True, null=True)
+
+    def __str__(self):
+        return self.comp_code
+
+

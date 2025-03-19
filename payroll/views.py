@@ -1738,3 +1738,175 @@ def fetch_paymonth(request):
             options = ''.join([f'<option value="{month}">{month}</option>' for month in paymonths])
             return JsonResponse({'options': options})
     return JsonResponse({'options': '<option value="">Select Paymonth</option>'})
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import JsonResponse
+from django.views import View
+from .models import AdvanceMaster
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+class AdvanceMasterList(View):
+    template_name = "pages/payroll/advance_master/advance_master_list.html"
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'contracts': AdvanceMaster.objects.filter(comp_code='1000'),
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        advance_id = data.get('advance_id')  # Fetch the advance_id from the form
+        try:
+            # Process date fields
+            reference_date = datetime.strptime(data.get('reference_date'), '%d-%m-%Y').date()
+            repayment_from = datetime.strptime(data.get('repayment_from'), '%d-%m-%Y').date()
+            next_repayment_date = datetime.strptime(data.get('next_repayment_date'), '%d-%m-%Y').date()
+            waiver_date = datetime.strptime(data.get('waiver_date'), '%d-%m-%Y').date() if data.get('waiver_date') else None
+        except ValueError:
+            return self.render_with_error(request, "Invalid date format. Please use DD-MM-YYYY.")
+
+        # Prepare the data
+        advance_data = {
+            'comp_code': '1000',
+            'emp_code': data.get('emp_code'),
+            'advance_code': data.get('advance_code'),
+            'advance_reference': data.get('advance_reference'),
+            'reference_date': reference_date,
+            'total_amt': data.get('total_amt'),
+            'instalment_amt': data.get('instalment_amt'),
+            'paid_amt': data.get('paid_amt'),
+            'total_no_instalment': data.get('total_no_instalment'),
+            'balance_no_instalment': data.get('balance_no_instalment'),
+            'repayment_from': repayment_from,
+            'next_repayment_date': next_repayment_date,
+            'default_count': data.get('default_count'),
+            'waiver_amt': data.get('waiver_amt'),
+            'waiver_date': waiver_date,
+            'is_active': data.get('is_active') == 'true',
+            'modified_by': '1',
+            'created_by': '1',
+        }
+
+        try:
+            if advance_id:  # If advance_id is provided, update the record
+                advance_master = AdvanceMaster.objects.get(advance_id=advance_id)
+                for key, value in advance_data.items():
+                    setattr(advance_master, key, value)
+                advance_master.save()
+                message = "Record updated successfully!"
+            else:  # If no advance_id, create a new record
+                AdvanceMaster.objects.create(**advance_data)
+                message = "Record created successfully!"
+            
+            return redirect('advance_master')  # Redirect to the Advance Master list
+        except AdvanceMaster.DoesNotExist:
+            return self.render_with_error(request, "Record not found for the provided Advance ID.")
+        except Exception as e:
+            logger.error("Error saving advance master: %s", e)
+            return self.render_with_error(request, "An error occurred while saving the data.")
+
+    def render_with_error(self, request, error_message):
+        context = {
+            'error_message': error_message,
+            'contracts': AdvanceMaster.objects.filter(comp_code='1000', is_active=True),
+        }
+        return render(request, self.template_name, context)
+
+@csrf_exempt
+def toggle_active_status(request, advance_id):
+    if request.method == "POST":
+        try:
+            # Fetch the record by ID
+            record = AdvanceMaster.objects.get(advance_id=advance_id)
+
+            # Mark as inactive
+            record.is_active = False
+            record.save()
+
+            return JsonResponse({"success": True, "message": "Status updated to Inactive."})
+        except AdvanceMaster.DoesNotExist:
+            return JsonResponse({"success": False, "message": "Record not found."}, status=404)
+    return JsonResponse({"success": False, "message": "Invalid request method."}, status=400)
+
+
+logger = logging.getLogger(__name__)
+
+@csrf_exempt
+def get_advance_details(request, advance_id):
+    try:
+        advance = AdvanceMaster.objects.get(advance_id=advance_id)
+        data = {
+            'advance_id': advance.advance_id,
+            'emp_code': advance.emp_code,
+            'advance_code': advance.advance_code,
+            'advance_reference': advance.advance_reference,
+            'reference_date': advance.reference_date.strftime('%d-%m-%Y'),
+            'total_amt': advance.total_amt,
+            'instalment_amt': advance.instalment_amt,
+            'paid_amt': advance.paid_amt,
+            'total_no_instalment': advance.total_no_instalment,
+            'balance_no_instalment': advance.balance_no_instalment,
+            'repayment_from': advance.repayment_from.strftime('%d-%m-%Y'),
+            'next_repayment_date': advance.next_repayment_date.strftime('%d-%m-%Y'),
+            'default_count': advance.default_count,
+            'waiver_amt': advance.waiver_amt,
+            'waiver_date': advance.waiver_date.strftime('%d-%m-%Y') if advance.waiver_date else '',
+            'is_active': advance.is_active,
+        }
+        return JsonResponse(data)
+    except AdvanceMaster.DoesNotExist:
+        return JsonResponse({'error': 'Record not found!'}, status=404)
+
+@csrf_exempt
+def update_advance_details(request, advance_id):
+    if request.method == 'POST':
+        try:
+            advance = get_object_or_404(AdvanceMaster, advance_id=advance_id)
+            data = request.POST
+
+            # Update fields with validation
+            advance.comp_code = '1000'
+            advance.emp_code = data.get('emp_code')
+            advance.advance_code = data.get('advance_code')
+            advance.advance_reference = data.get('advance_reference')
+
+            # Handle date fields
+            reference_date = data.get('reference_date')
+            repayment_from = data.get('repayment_from')
+            next_repayment_date = data.get('next_repayment_date')
+            waiver_date = data.get('waiver_date')
+
+            advance.reference_date = datetime.strptime(reference_date, '%d-%m-%Y').date() if reference_date else None
+            advance.repayment_from = datetime.strptime(repayment_from, '%d-%m-%Y').date() if repayment_from else None
+            advance.next_repayment_date = datetime.strptime(next_repayment_date, '%d-%m-%Y').date() if next_repayment_date else None
+            advance.waiver_date = datetime.strptime(waiver_date, '%d-%m-%Y').date() if waiver_date else None
+
+            # Handle other fields
+            advance.total_amt = data.get('total_amt')
+            advance.instalment_amt = data.get('instalment_amt')
+            advance.paid_amt = data.get('paid_amt')
+            advance.total_no_instalment = data.get('total_no_instalment')
+            advance.balance_no_instalment = data.get('balance_no_instalment')
+            advance.default_count = data.get('default_count')
+            advance.waiver_amt = data.get('waiver_amt')
+            advance.is_active = data.get('is_active') == 'true'
+
+            advance.save()
+            return JsonResponse({'success': True, 'message': 'Record updated successfully!'})
+        except Exception as e:
+            logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
+            return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method!'})
+
+
+
+

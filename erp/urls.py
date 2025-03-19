@@ -111,6 +111,14 @@ urlpatterns = [
     path('payroll/payroll_processing/', payroll_views.payroll_processing, name='payroll_processing'),
     path('payroll/cancel_payroll_processing/', payroll_views.cancel_payroll_processing, name='cancel_payroll_processing'),
     path('payroll/fetch_paymonth/', payroll_views.fetch_paymonth, name='fetch_paymonth'),
+    
+    # Advance Master
+    path('payroll/advance_master/', views.AdvanceMasterList.as_view(), name='advance_master'),
+    path('get-advance-details/<int:advance_id>/', views.get_advance_details, name='get_advance_details'),
+    path('update-advance-details/<int:advance_id>/', views.update_advance_details, name='update_advance_details'),
+    path('toggle-active-status/<int:advance_id>/', views.toggle_active_status, name='toggle_active_status'),
+
+
 ]
 
 
