@@ -103,6 +103,11 @@
                                                         data-bs-target="#offcanvas_edit_{{ employee.employee_id }}">
                                                             <i class="ti ti-edit text-blue"></i> Edit
                                                         </a>
+                                                        <a class="dropdown-item" href="javascript:void(0);"
+                                                        data-bs-toggle="offcanvas"
+                                                        data-bs-target="#offcanvas_preview_{{ employee.employee_id }}">
+                                                            <i class="ti ti-eye text-blue"></i> Preview
+                                                        </a>
                                                         <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_employee_{{ employee.employee_id }}"><i
                                                             class="ti ti-trash text-danger"></i> Delete</a>
                                                      
@@ -1852,8 +1857,338 @@
 </div>
 <!-- /Delete Employee Modal -->
 
+<!-- Preview Employee Offcanvas -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_preview_{{ employee.employee_id }}">
+    <div class="offcanvas-header border-bottom">
+        <h4>Preview Employee</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row">
+            <!-- Left Side: Employee Details -->
+            <div class="col-md-8">
+                <h5>Employee Details</h5>
+                <p><strong>Employee Code:</strong> {{ employee.emp_code }}</p>
+                <p><strong>Employee Name:</strong> {{ employee.emp_name }}</p>
+                <p><strong>Surname:</strong> {{ employee.surname }}</p>
+                <p><strong>Date of Birth:</strong> {{ employee.dob|date:'Y-m-d' }}</p>
+                <p><strong>Gender:</strong> {{ employee.emp_sex }}</p>
+                <p><strong>Status:</strong> {{ employee.emp_status }}</p>
+                <p><strong>Father's Name:</strong> {{ employee.father_name }}</p>
+                <p><strong>Mother's Name:</strong> {{ employee.mother_name }}</p>
+                <p><strong>Nationality:</strong> {{ employee.nationality }}</p>
+                <p><strong>Religion:</strong> {{ employee.religion }}</p>
+                <p><strong>Qualification:</strong> {{ employee.qualification }}</p>
+                <p><strong>Marital Status:</strong> {{ employee.emp_marital_status }}</p>
+                <p><strong>Spouse's Name:</strong> {{ employee.spouse_name }}</p>
+                <p><strong>Designation:</strong> {{ employee.designation }}</p>
+                <p><strong>Department:</strong> {{ employee.department }}</p>
+                <p><strong>Date of Join:</strong> {{ employee.date_of_join|date:'Y-m-d' }}</p>
+                <p><strong>Date of Rejoin:</strong> {{ employee.date_of_rejoin|date:'Y-m-d' }}</p>
+                <p><strong>Dependent Count:</strong> {{ employee.depend_count }}</p>
+                <p><strong>Child Count:</strong> {{ employee.child_count }}</p>
+            </div>
 
-                                    {% endfor %}
+            <!-- Right Side: Profile Picture -->
+            <div class="col-md-4 text-center">
+                <h5>Profile Picture</h5>
+                {% if employee.profile_picture %}
+                    <img src="{{ employee.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded" style="max-width: 200px;">
+                {% else %}
+                    <p class="text-muted">No profile picture uploaded.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Documents Section -->
+        <div class="accordion" id="documentsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingDocuments">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocuments" aria-expanded="true" aria-controls="collapseDocuments">
+                        Documents
+                    </button>
+                </h2>
+                <div id="collapseDocuments" class="accordion-collapse collapse show" aria-labelledby="headingDocuments" data-bs-parent="#documentsAccordion">
+                    <div class="accordion-body">
+                        <div class="row">
+                            {% if employee.passport_document %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Passport Document</p>
+                                        <a href="{{ employee.passport_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.passport_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.visa_document %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Visa Document</p>
+                                        <a href="{{ employee.visa_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.visa_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.emirate_document %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Emirate Document</p>
+                                        <a href="{{ employee.emirate_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.emirate_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.passport_copy_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Passport Copy</p>
+                                        <a href="{{ employee.passport_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.passport_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.photo_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Photo</p>
+                                        <a href="{{ employee.photo_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.photo_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.offer_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Offer Letter</p>
+                                        <a href="{{ employee.offer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.offer_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.nominee_form_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Nominee Form</p>
+                                        <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.nominee_form_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.change_status_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Change Status</p>
+                                        <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.change_status_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.visa_copy_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Visa Copy</p>
+                                        <a href="{{ employee.visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.emirates_id_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Emirates ID</p>
+                                        <a href="{{ employee.emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.labor_contract_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Labor Contract</p>
+                                        <a href="{{ employee.labor_contract_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.labor_contract_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.job_offer_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Job Offer</p>
+                                        <a href="{{ employee.job_offer_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.job_offer_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.salary_certificate_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Salary Certificate</p>
+                                        <a href="{{ employee.salary_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.salary_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.salary_transfer_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Salary Transfer Letter</p>
+                                        <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.salary_transfer_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.increment_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Increment Letter</p>
+                                        <a href="{{ employee.increment_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.increment_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.warning_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Warning Letter</p>
+                                        <a href="{{ employee.warning_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.warning_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.experience_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Experience Letter</p>
+                                        <a href="{{ employee.experience_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.experience_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.resignation_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Resignation Letter</p>
+                                        <a href="{{ employee.resignation_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.resignation_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.termination_letter_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Termination Letter</p>
+                                        <a href="{{ employee.termination_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.termination_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.employee_confidential_form_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Employee Confidential Form</p>
+                                        <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.employee_confidential_form_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.leave_application_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Leave Application</p>
+                                        <a href="{{ employee.leave_application_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.leave_application_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if employee.full_final_settlement_copy_file %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="ti ti-file" style="font-size: 2rem;"></i>
+                                        <p class="mt-2">Full and Final Settlement Copy</p>
+                                        <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.full_final_settlement_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Preview Employee Offcanvas -->                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
