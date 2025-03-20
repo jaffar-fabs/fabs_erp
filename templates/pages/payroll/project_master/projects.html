@@ -18,7 +18,7 @@
                                 <form method="get">
                                 <div class="icon-form mb-3 mb-sm-0">
                                     <span class="form-icon"><i class="ti ti-search"></i></span>
-                                    <input type="text" name="keyword" class="form-control" placeholder="Search Projects">
+                                    <input type="text" name="keyword" class="form-control" placeholder="Search Projects" value="{{ keyword }}">
                                 </div>
                                 </form>
                             </div>
@@ -173,7 +173,7 @@
                                 <ul class="pagination">
                                     {% if projects.has_previous %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ current_url }}page={{ projects.previous_page_number }}">Previous</a>
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ projects.previous_page_number }}">Previous</a>
                                     </li>
                                     {% else %}
                                     <li class="page-item disabled">
@@ -184,18 +184,18 @@
                                     {% for page in projects.paginator.page_range %}
                                     {% if projects.number == page %}
                                     <li class="page-item active">
-                                        <a class="page-link" href="{{ current_url }}page={{ page }}">{{ page }}</a>
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
                                     </li>
-                                    {% elif page > projects.number|add:'-10' and page < projects.number|add:'10' %}
+                                    {% else %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ current_url }}page={{ page }}">{{ page }}</a>
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
                                     </li>
                                     {% endif %}
                                     {% endfor %}
 
                                     {% if projects.has_next %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ current_url }}page={{ projects.next_page_number }}">Next</a>
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ projects.next_page_number }}">Next</a>
                                     </li>
                                     {% else %}
                                     <li class="page-item disabled">

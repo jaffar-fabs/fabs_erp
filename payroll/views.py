@@ -23,7 +23,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Sum, Count
 import pdb
 
-PAGINATION_SIZE = 1
+PAGINATION_SIZE = 6
 
 # Single import statement for models
 from .models import (
