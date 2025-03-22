@@ -75,6 +75,7 @@ class Employee(models.Model):
     visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
+    emirates_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     emirate_issued = models.DateField(blank=True, null=True)  # Emirate issued
     emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
     uid_number = models.CharField(max_length=50, blank=True, null=True)  # UID number

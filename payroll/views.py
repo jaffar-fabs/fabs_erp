@@ -146,6 +146,7 @@ def save_employee(request, employee_id=None):
         employee.issued_date = request.POST.get("issued_date") or None
         employee.expiry_date = request.POST.get("expiry_date") or None
         employee.visa_no = request.POST.get("visa_no")
+        employee.emirates_no = request.POST.get("emirates_no")
         employee.visa_issued = request.POST.get("visa_issued") or None
         employee.visa_expiry = request.POST.get("visa_expiry") or None
         employee.emirate_issued = request.POST.get("emirate_issued") or None
