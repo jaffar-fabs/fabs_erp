@@ -443,6 +443,7 @@ def edit_seed(request, seed_id):
     seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
 
     if request.method == 'POST':
+        # Update the seed with the submitted data
         seed.seed_code = request.POST.get('seed_code')
         seed.seed_group = request.POST.get('seed_group')
         seed.seed_type = request.POST.get('seed_type')
@@ -454,20 +455,28 @@ def edit_seed(request, seed_id):
         seed.seed_timeline_from = request.POST.get('seed_timeline_from')
         seed.seed_timeline_to = request.POST.get('seed_timeline_to')
         
-        # Ensure the status is correctly updated based on the form submission
-        if 'status' in request.POST:
-            seed.is_active = request.POST.get('status') == 'active'
-        
-        seed.modified_by = 1
+        # Update the status based on the form input
+        seed.is_active = request.POST.get('status') == 'active'
 
+        # Set the modified_by field
+        seed.modified_by = 1  # Example: Use the logged-in user ID if available
+
+        # Save changes to the database
         seed.save()
+
+        # Redirect after successful update
         return redirect('create_seed')
     else:
+        # Render the edit modal with existing seed data
         return render(request, 'pages/modal/payroll/seed-modal.html', {'seed': seed})
 
+
 def get_seed(request, seed_id):
-    set_comp_code(request)
-    seed = SeedModel.objects.get(seed_id=seed_id, comp_code=COMP_CODE)
+    set_comp_code(request)  # Ensures the company code is set in the session or context
+    # Safely fetch the seed object; raises 404 if not found
+    seed = get_object_or_404(SeedModel, seed_id=seed_id, comp_code=COMP_CODE)
+
+    # Prepare the response data
     data = {
         'seed_code': seed.seed_code,
         'seed_group': seed.seed_group,
@@ -481,6 +490,8 @@ def get_seed(request, seed_id):
         'seed_timeline_to': seed.seed_timeline_to.strftime('%Y-%m-%d'),
         'is_active': seed.is_active,
     }
+
+    # Return the response as JSON
     return JsonResponse(data)
 
 
