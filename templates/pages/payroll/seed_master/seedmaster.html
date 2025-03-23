@@ -15,10 +15,12 @@
             <div class="card-header">
                 <div class="row align-items-center">
                     <div class="col-sm-4">
-                        <div class="icon-form mb-3 mb-sm-0">
-                            <span class="form-icon"><i class="ti ti-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search Contacts">
-                        </div>
+                        <form method="get">
+                            <div class="icon-form mb-3 mb-sm-0">
+                                <span class="form-icon"><i class="ti ti-search"></i></span>
+                                <input type="text" name="keyword" class="form-control" placeholder="Search Seed" value="{{ keyword }}">
+                            </div>
+                            </form>
                     </div>
                     <div class="col-sm-8">
                         <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
@@ -113,14 +115,47 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="datatable-length"></div>
+                <!-- Pagination -->
+                {% if seed_data.has_other_pages %}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="showing-entries">
+                        <span>Showing {{ seed_data.start_index }} to {{ seed_data.end_index }} of {{ result_cnt }} entries</span>
                     </div>
-                    <div class="col-md-6">
-                        <div class="datatable-paginate"></div>
-                    </div>
+                    <ul class="pagination">
+                        {% if seed_data.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ seed_data.previous_page_number }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for page in seed_data.paginator.page_range %}
+                        {% if seed_data.number == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if seed_data.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ seed_data.next_page_number }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

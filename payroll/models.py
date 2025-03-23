@@ -45,6 +45,8 @@ class Employee(models.Model):
     local_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Local phone number
     local_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 1
     local_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 2
+    local_city = models.CharField(max_length=50, blank=True, null=True)  # Residential city
+    local_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
 
     # Payment Details
     labour_id = models.CharField(max_length=50, blank=True, null=True)  # Labour ID
@@ -417,7 +419,7 @@ class UserMaster(models.Model):
     email = models.EmailField(max_length=50, unique=True)
     gender = models.CharField(max_length=150, null=True)
     is_active = models.BooleanField()
-    instance_id = models.CharField(max_length=50)
+    instance_id = models.CharField(max_length=50, null=True)
     profile_picture = models.CharField(max_length=100, blank=True, null=True)
     created_by = models.BigIntegerField()
     created_on = models.DateTimeField(auto_now_add=True)

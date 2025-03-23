@@ -23,6 +23,7 @@ from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
 from payroll.views import GradeMasterList
+from payroll.views import get_employee_data
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
 from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee,check_emp_code
@@ -47,6 +48,7 @@ urlpatterns = [
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),
     path('users/update/<int:user_master_id>/', auth_views.UserMasterUpdate.as_view(), name='user_update'),
     path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
+    path('get-employee-data/<str:emp_code>/', get_employee_data, name='get_employee_data'),
 
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),
