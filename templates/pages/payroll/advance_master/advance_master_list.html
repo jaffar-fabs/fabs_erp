@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
 
-
-
 <!-- Page Wrapper -->
 <div class="page-wrapper">
     <div class="content">
@@ -11,7 +9,7 @@
             <div class="col-md-12">
                 <!-- Page Header -->
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Advance Master" %}
+                {% include "partials/title.html" with title="Advance Master" count=result_cnt %}
                 {% endblock pagetitle %}
                 <!-- /Page Header -->
                 <div class="card">
@@ -19,35 +17,18 @@
                         <!-- Search -->
                         <div class="row align-items-center">
                             <div class="col-sm-4">
-                                <div class="icon-form mb-3 mb-sm-0">
-                                    <span class="form-icon"><i class="ti ti-search"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search Contracts">
-                                </div>
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Advances" value="{{ keyword }}">
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
-                                    <div class="dropdown me-2">
-                                        <a href="javascript:void(0);" class="dropdown-toggle"
-                                            data-bs-toggle="dropdown"><i
-                                                class="ti ti-package-export me-2"></i>Export</a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <ul>
-                                                <li>
-                                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                                            class="ti ti-file-type-pdf text-danger me-1"></i>Export as
-                                                        PDF</a>
-                                                </li>
-                                                <li>
-                                                    <a href="javascript:void(0);" class="dropdown-item"><i
-                                                            class="ti ti-file-type-xls text-green me-1"></i>Export as
-                                                        Excel</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
                                     <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
                                         data-bs-target="#offcanvas_add"><i
-                                            class="ti ti-square-rounded-plus me-2"></i>Add Advanced Master</a>
+                                            class="ti ti-square-rounded-plus me-2"></i>Add Advance Master</a>
                                 </div>
                             </div>
                         </div>
@@ -58,10 +39,6 @@
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="no-sort">
-                                            <label class="checkboxs"><input type="checkbox" id="select-all"><span
-                                                    class="checkmarks"></span></label>
-                                        </th>
                                         <th>Advance ID</th>
                                         <th>Employee Code</th>
                                         <th>Advance Code</th>
@@ -72,13 +49,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for record in contracts %}
+                                    {% for record in advances %}
                                     <tr>
-                                        <td>
-                                            <label class="checkboxs">
-                                                <input type="checkbox"><span class="checkmarks"></span>
-                                            </label>
-                                        </td>
                                         <td>{{ record.advance_id }}</td>
                                         <td>{{ record.emp_code }}</td>
                                         <td>{{ record.advance_code }}</td>
@@ -112,24 +84,53 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <div class="datatable-length"></div>
+                        <!-- Pagination -->
+                        {% if advances.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ advances.start_index }} to {{ advances.end_index }} of {{ result_cnt }} entries</span>
                             </div>
-                            <div class="col-md-6">
-                                <div class="datatable-paginate"></div>
-                            </div>
+                            <ul class="pagination">
+                                {% if advances.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ advances.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                {% for page in advances.paginator.page_range %}
+                                {% if advances.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if advances.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ advances.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </div>
-                        <!-- /Projects List -->
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- /Page Wrapper -->
-
-
 
 {% block contracts_modal %}
 {% include "pages/modal/payroll/advance_master.html" %}

@@ -42,11 +42,16 @@
                                 <select class="form-control" name="paycycle" required>
                                     <option value="">Select Paycycle</option>
                                     {% for paycycle in paycycle_data %}
-                                    <option value="{{ paycycle.base_value }}">
-                                        {{ paycycle.base_description }}
-                                    </option>
+                                        <option value="{{ paycycle.base_value }}">
+                                            {{ paycycle.base_value }} - {{ paycycle.base_description }} 
+                                            {% for month in paymonth %}
+                                                {% if month.process_cycle == paycycle.base_value %}
+                                                    - {{ month.pay_process_month }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </option>
                                     {% endfor %}
-                                </select>
+                                </select>                                
                             </div>
                         </div>
                         <div class="col-md-6">

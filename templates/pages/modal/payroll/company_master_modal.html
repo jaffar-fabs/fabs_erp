@@ -397,7 +397,7 @@
 
 
 <!-- Delete Project -->
-<div class="modal fade" id="delete_project" role="dialog">
+<div class="modal fade" id="delete_company" role="dialog">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-body">
@@ -405,11 +405,11 @@
                     <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
                         <i class="ti ti-trash-x fs-36 text-danger"></i>
                     </div>
-                    <h4 class="mb-2">Remove Project?</h4>
-                    <p class="mb-0">Are you sure you want to remove this project?</p>
-                    <form id="delete-form" method="POST" action="{% url 'delete_project' %}">
+                    <h4 class="mb-2">Remove Company?</h4>
+                    <p class="mb-0">Are you sure you want to remove this Company?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_company' %}">
                         {% csrf_token %}
-                        <input type="hidden" name="project_id" id="delete_project_id">
+                        <input type="text" name="company_id" id="delete_company_id">
                         <div class="d-flex align-items-center justify-content-center mt-4">
                             <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
                             <button type="submit" class="btn btn-danger">Yes, Delete it</button>

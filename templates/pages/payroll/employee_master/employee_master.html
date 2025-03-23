@@ -30,10 +30,12 @@
                         <!-- Search -->
                         <div class="row align-items-center">
                             <div class="col-sm-4">
-                                <div class="icon-form mb-3 mb-sm-0">
-                                    <span class="form-icon"><i class="ti ti-search"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search Employee" />
-                                </div>
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Employee" value="{{ keyword }}">
+                                    </div>
+                                    </form>
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
@@ -154,7 +156,7 @@
                             
                             <div class="mt-2">
                                 <strong>Preview:</strong>
-                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100px; height: 100px; border: 1px solid #ccc; margin-top: 10px;"                              >
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No profile picture uploaded.</div>
@@ -355,14 +357,6 @@
                                     <div class="col-md-6">
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control" value="{{ employee.res_country_code }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control" value="{{ employee.res_phone_no }}">
-                                        </div>
-                                        <div class="mb-3">
                                             <label class="col-form-label">Address Line 1</label>
                                             <input type="text" name="res_addr_line1" class="form-control" value="{{ employee.res_addr_line1 }}">
                                         </div>
@@ -378,19 +372,19 @@
                                             <label class="col-form-label">State</label>
                                             <input type="text" name="res_state" class="form-control" value="{{ employee.res_state }}">
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Country Code</label>
+                                            <input type="text" name="res_country_code" class="form-control" value="{{ employee.res_country_code }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Phone Number</label>
+                                            <input type="text" name="res_phone_no" class="form-control" value="{{ employee.res_phone_no }}">
+                                        </div>
                                     </div>
 
                                     <!-- Right Side: Local Residence -->
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
-                                        </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1</label>
                                             <input type="text" name="local_addr_line1" class="form-control" value="{{ employee.local_addr_line1 }}">
@@ -398,6 +392,22 @@
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
                                             <input type="text" name="local_addr_line2" class="form-control" value="{{ employee.local_addr_line2 }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">City</label>
+                                            <input type="text" name="local_city" class="form-control" value="{{ employee.local_city }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">State</label>
+                                            <input type="text" name="local_state" class="form-control" value="{{ employee.local_state }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Country Code</label>
+                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Phone Number</label>
+                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
                                         </div>
                                     </div>
                                 </div>
@@ -518,6 +528,18 @@
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Issued Date</label>
+                                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Expiry Date</label>
+                                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Document Upload</label>
                         <input type="file" name="passport_document" class="form-control" accept="application/pdf,image/*">
@@ -549,18 +571,6 @@
                     <div class="mb-3">
                         <label class="col-form-label">Passport Details</label>
                         <input type="text" name="passport_details" class="form-control" value="{{ employee.passport_details }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Issued Date</label>
-                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
                     </div>
                 </div>
                             </div>
@@ -2396,6 +2406,50 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% if employees.has_other_pages %}
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="showing-entries">
+                                    <span>Showing {{ employees.start_index }} to {{ employees.end_index }} of {{ employees.paginator.count }} entries</span>
+                                </div>
+                                <ul class="pagination">
+                                    <!-- Previous button -->
+                                    {% if employees.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.previous_page_number }}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">Previous</a>
+                                        </li>
+                                    {% endif %}
+
+                                    <!-- Page numbers -->
+                                    {% for page in employees.paginator.page_range %}
+                                        {% if employees.number == page %}
+                                            <li class="page-item active">
+                                                <a class="page-link" href="#">{{ page }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    <!-- Next button -->
+                                    {% if employees.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.next_page_number }}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">Next</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -2640,14 +2694,6 @@
                     <div class="col-md-6">
                         <h5 class="mt-3">Permanent Address</h5>
                         <div class="mb-3">
-                            <label class="col-form-label">Country Code</label>
-                            <input type="text" name="res_country_code" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="col-form-label">Phone Number</label>
-                            <input type="text" name="res_phone_no" class="form-control">
-                        </div>
-                        <div class="mb-3">
                             <label class="col-form-label">Address Line 1</label>
                             <input type="text" name="res_addr_line1" class="form-control">
                         </div>
@@ -2663,19 +2709,19 @@
                             <label class="col-form-label">State</label>
                             <input type="text" name="res_state" class="form-control">
                         </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Country Code</label>
+                            <input type="text" name="res_country_code" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Phone Number</label>
+                            <input type="text" name="res_phone_no" class="form-control">
+                        </div>
                     </div>
 
                     <!-- Right Side: Local Residence -->
                     <div class="col-md-6">
                         <h5 class="mt-3">UAE Address</h5>
-                        <div class="mb-3">
-                            <label class="col-form-label">Country Code</label>
-                            <input type="text" name="local_country_code" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="col-form-label">Phone Number</label>
-                            <input type="text" name="local_phone_no" class="form-control">
-                        </div>
                         <div class="mb-3">
                             <label class="col-form-label">Address Line 1</label>
                             <input type="text" name="local_addr_line1" class="form-control">
@@ -2683,6 +2729,22 @@
                         <div class="mb-3">
                             <label class="col-form-label">Address Line 2</label>
                             <input type="text" name="local_addr_line2" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">City</label>
+                            <input type="text" name="uae_city" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">State</label>
+                            <input type="text" name="uae_state" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Country Code</label>
+                            <input type="text" name="local_country_code" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Phone Number</label>
+                            <input type="text" name="local_phone_no" class="form-control">
                         </div>
                     </div>
 
@@ -2815,18 +2877,6 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passport Document Upload</label>
-                        <input type="file" name="passport_document" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Details</label>
-                        <input type="text" name="passport_details" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
                         <label class="col-form-label">Issued Date</label>
                         <input type="date" name="issued_date" class="form-control">
                     </div>
@@ -2835,6 +2885,18 @@
                     <div class="mb-3">
                         <label class="col-form-label">Expiry Date</label>
                         <input type="date" name="expiry_date" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Document Upload</label>
+                        <input type="file" name="passport_document" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Details</label>
+                        <input type="text" name="passport_details" class="form-control">
                     </div>
                 </div>
             </div>

@@ -23,6 +23,7 @@ from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
 from payroll.views import GradeMasterList
+from payroll.views import get_employee_data
 from payroll.views import my_login_view, logout
 from payroll import views as Holiday
 from payroll.views import my_login_view, logout, employee_master,save_employee,dashboard_view,deactivate_employee,check_emp_code
@@ -47,6 +48,7 @@ urlpatterns = [
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),
     path('users/update/<int:user_master_id>/', auth_views.UserMasterUpdate.as_view(), name='user_update'),
     path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
+    path('get-employee-data/<str:emp_code>/', get_employee_data, name='get_employee_data'),
 
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),
@@ -79,6 +81,8 @@ urlpatterns = [
     path('payroll/holiday_create/', views.holidayCreate, name='holiday_create'),
     path('payroll/holiday_edit/', views.holidayEdit, name='holiday_edit'),
     path('check_holiday/', views.check_holiday, name='check_holiday'),    
+    path('payroll/delete_holiday', views.delete_holiday, name='delete_holiday'),    
+    
     
     #Menu Master
     path("menu_master/", MenuMaster.as_view(), name="menu_list"),
@@ -103,6 +107,7 @@ urlpatterns = [
     path('payroll/company_list/', views.company_master, name='company_list'),
     path('payroll/add_company/', views.add_company, name='company_add'),
     path('payroll/edit_company/', views.company_edit, name='company_edit'),
+    path('payroll/delete_company/', views.company_delete, name='delete_company'),
     path('payroll/check_company_code/', views.check_company_code, name='check_company_code'),
     path('update_role_menu/', payroll_views.update_role_menu, name='update_role_menu'),
     path('get_menus_by_module/<str:module_id>/', payroll_views.get_menus_by_module, name='get_menus_by_module'),

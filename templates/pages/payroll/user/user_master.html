@@ -219,101 +219,181 @@
   </div>
 
   <!-- Add User Offcanvas -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
-  <div class="offcanvas-header border-bottom">
-    <h5 class="offcanvas-title">Add User</h5>
-    <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="ti ti-x"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body">
-    <form id="addUserForm" class="needs-validation" method="post" action="{% url 'user_create' %}" enctype="multipart/form-data" novalidate>
-      {% csrf_token %}
-      <div id="general_error" class="alert alert-danger d-none"></div>
-      <div class="row">
-        <!-- Left Column -->
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">First Name <span class="text-danger">*</span></label>
-            <input type="text" name="first_name" class="form-control" required tabindex="1">
-            <div class="invalid-feedback">Please enter a first name.</div>
+  <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title">Add User</h5>
+      <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+    <div class="offcanvas-body">
+      <form id="addUserForm" class="needs-validation" method="post" action="{% url 'user_create' %}" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        <div id="general_error" class="alert alert-danger d-none"></div>
+        <div class="row">
+          <!-- Left Column -->
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="col-form-label">First Name <span class="text-danger">*</span></label>
+              <input type="text" name="first_name" class="form-control" required tabindex="1">
+              <div class="invalid-feedback">Please enter a first name.</div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-control" tabindex="2">
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+              <input type="text" name="user_id" id="user_id" class="form-control" required tabindex="3">
+              <div id="user_id_invalid_feedback" class="invalid-feedback"></div>
+              <div id="user_id_valid_feedback" class="valid-feedback"></div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Password <span class="text-danger">*</span></label>
+              <input type="password" name="password" class="form-control" required tabindex="4">
+              <div id="password_invalid_feedback" class="invalid-feedback"></div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+              <select name="gender" class="form-control" required tabindex="5">
+                <option value="">Select</option>
+                {% for gender in gender_data %}
+                  <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                {% endfor %}
+              </select>
+              <div class="invalid-feedback">Please select a gender.</div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Date of Birth</label>
+              <input type="date" name="dob" class="form-control" tabindex="6">
+            </div>
           </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Last Name</label>
-            <input type="text" name="last_name" class="form-control" tabindex="2">
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-            <input type="text" name="user_id" id="user_id" class="form-control" required tabindex="3">
-            <div id="user_id_invalid_feedback" class="invalid-feedback"></div>
-            <div id="user_id_valid_feedback" class="valid-feedback"></div>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Password <span class="text-danger">*</span></label>
-            <input type="password" name="password" class="form-control" required tabindex="4">
-            <div id="password_invalid_feedback" class="invalid-feedback"></div>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-            <select name="gender" class="form-control" required tabindex="5">
-              <option value="">Select</option>
-              {% for gender in gender_data %}
-                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
-              {% endfor %}
-            </select>
-            <div class="invalid-feedback">Please select a gender.</div>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Date of Birth</label>
-            <input type="date" name="dob" class="form-control" tabindex="6">
+          <!-- Right Column -->
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="col-form-label">Profile Picture</label>
+              <input type="file" name="profile_picture" class="form-control" tabindex="7">
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">User Paycycles</label>
+              <select name="user_paycycles" class="form-control select2" multiple="multiple" tabindex="8">
+                {% for paycycle in paycycle_data %}
+                  <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Email <span class="text-danger">*</span></label>
+              <input type="email" name="email" class="form-control" required tabindex="9">
+              <div class="invalid-feedback">Please enter a valid email address.</div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Employee Code</label>
+              <select name="emp_code" id="emp_code" class="form-control" required onchange="fetchEmployeeData(this.value)">
+                <option value="">Select</option>
+                {% for employee in employee_data %}
+                  <option value="{{ employee.emp_code }}"
+                          data-firstname="{{ employee.emp_name }}"
+                          data-surname="{{ employee.surname }}"
+                          data-dob="{{ employee.dob|date:'Y-m-d' }}"
+                          data-gender="{{ employee.emp_sex }}">
+                    {{ employee.emp_code }} - {{ employee.emp_name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <input type="hidden" name="created_by" value="4">
+            </div>
+            <!-- Add hidden comp_code field -->
+            <input type="hidden" name="comp_code" value="1000">
+            <div class="form-group form-check mb-3">
+              <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked tabindex="11">
+              <label class="form-check-label" for="is_active">Active</label>
+            </div>
           </div>
         </div>
-        <!-- Right Column -->
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">Profile Picture</label>
-            <input type="file" name="profile_picture" class="form-control" tabindex="7">
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">User Paycycles</label>
-            <select name="user_paycycles" class="form-control" tabindex="8">
-              <option value="">Select</option>
-              {% for paycycle in paycycle_data %}
-                <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Email <span class="text-danger">*</span></label>
-            <input type="email" name="email" class="form-control" required tabindex="9">
-            <div class="invalid-feedback">Please enter a valid email address.</div>
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Employee Code</label>
-            <select name="emp_code" class="form-control" required tabindex="10">
-              <option value="">Select</option>
-              {% for employee in employee_data %}
-                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
-              {% endfor %}
-            </select>
-            <input type="hidden" name="created_by" value="4">
-          </div>
-          <!-- Add hidden comp_code field -->
-          <input type="hidden" name="comp_code" value="1000">
-          <div class="form-group form-check mb-3">
-            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked tabindex="11">
-            <label class="form-check-label" for="is_active">Active</label>
-          </div>
+        <div class="d-flex align-items-center justify-content-end">
+          <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2" tabindex="12">Cancel</button>
+          <button type="submit" class="btn btn-primary" tabindex="13">Save</button>
         </div>
-      </div>
-      <div class="d-flex align-items-center justify-content-end">
-        <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2" tabindex="12">Cancel</button>
-        <button type="submit" class="btn btn-primary" tabindex="13">Save</button>
-      </div>
-    </form>
-  </div>
-</div>
       </form>
+    </div>
+  </div>
+
+  <script>
+    function fetchEmployeeData(empCode) {
+  console.log("Selected Employee Code:", empCode);
+
+  let selectedOption = document.querySelector(`#emp_code option[value="${empCode}"]`);
+
+  if (selectedOption) {
+    // Extract data
+    let firstName = selectedOption.dataset.firstname || "";
+    let surname = selectedOption.dataset.surname || "";
+    let dob = selectedOption.dataset.dob || "";
+    let gender = selectedOption.dataset.gender || "";
+
+    console.log("Fetched Data:", { firstName, surname, dob, gender });
+
+    // Update fields directly
+    let firstNameField = document.querySelector('#offcanvas_add input[name="first_name"]');
+    let surnameField = document.querySelector('#offcanvas_add input[name="last_name"]');
+    let dobField = document.querySelector('#offcanvas_add input[name="dob"]');
+    let genderField = document.querySelector('#offcanvas_add select[name="gender"]');
+
+    if (firstNameField) {
+      firstNameField.value = firstName;
+      firstNameField.dispatchEvent(new Event("input", { bubbles: true }));
+    } else {
+      console.error("First Name field not found!");
+    }
+
+    if (surnameField) {
+      surnameField.value = surname;
+      surnameField.dispatchEvent(new Event("input", { bubbles: true }));
+    } else {
+      console.error("Last Name field not found!");
+    }
+
+    if (dobField) {
+      dobField.value = dob;
+      dobField.dispatchEvent(new Event("input", { bubbles: true }));
+    } else {
+      console.error("Date of Birth field not found!");
+    }
+
+    if (genderField) {
+      genderField.value = gender;
+      genderField.dispatchEvent(new Event("change", { bubbles: true }));
+    } else {
+      console.error("Gender field not found!");
+    }
+
+    console.log("Updated Form Fields Successfully!");
+  } else {
+    console.error("Error: Selected option not found in dropdown!");
+  }
+}
+
+// Ensure script runs after page loads
+document.addEventListener("DOMContentLoaded", function () {
+  let offcanvasElement = document.getElementById("offcanvas_add");
+
+  offcanvasElement.addEventListener("shown.bs.offcanvas", function () {
+    console.log("Offcanvas is fully shown.");
+
+    let empCodeDropdown = document.getElementById("emp_code");
+    if (empCodeDropdown) {
+      empCodeDropdown.addEventListener("change", function () {
+        console.log("Dropdown changed. Fetching employee data...");
+        fetchEmployeeData(this.value);
+      });
+    } else {
+      console.error("Error: Employee Code dropdown not found!");
+    }
+  });
+});
+  </script>
+
       <script>
         // Password Validation Function
         function validatePassword(password) {
@@ -457,7 +537,8 @@
           });
       });
   });
-      </script>   
+
+</script>
       </div>
     </div>
     {% endblock content %}

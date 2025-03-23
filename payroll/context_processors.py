@@ -1,6 +1,6 @@
 # your_app/context_processors.py
 
-from .models import CodeMaster, GradeMaster, Employee, projectMatster
+from .models import CodeMaster, GradeMaster, Employee, projectMatster,PaycycleMaster
 
 def get_comp_code(request):
     return request.session.get('comp_code')
@@ -15,9 +15,13 @@ def gender_data(request):
 def get_paycycle(request):
     comp_code = get_comp_code(request)
     paycycle_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE')
-    return {   
-        'paycycle_data': paycycle_data
-        }
+    paymonth = PaycycleMaster.objects.filter(comp_code=comp_code)
+    return {
+        'paycycle_data': paycycle_data,
+        'paymonth': paymonth  
+    }
+
+
 
 def get_pay_process_flag(request):
     comp_code = get_comp_code(request)

@@ -9,7 +9,7 @@
 				<div class="page-header">
 					<div class="row align-items-center">
 						<div class="col-8">
-							<h4 class="page-title">Role Master<span class="count-title">{{ roles.count }}</span></h4>
+							<h4 class="page-title">Role Master<span class="count-title">{{ result_cnt }}</span></h4>
 						</div>
 						<div class="col-4 text-end">
 							<div class="head-icons">
@@ -26,10 +26,12 @@
 					<div class="card-header">
 						<div class="row align-items-center">
 							<div class="col-sm-4">
-								<div class="icon-form mb-3 mb-sm-0">
-									<span class="form-icon"><i class="ti ti-search"></i></span>
-									<input type="text" class="form-control" placeholder="Search Role" />
-								</div>
+								<form method="get">
+									<div class="icon-form mb-3 mb-sm-0">
+										<span class="form-icon"><i class="ti ti-search"></i></span>
+										<input type="text" name="keyword" class="form-control" placeholder="Search Role" value="{{ keyword }}">
+									</div>
+								</form>
 							</div>
 							<div class="col-sm-8">
 								<div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
@@ -76,10 +78,9 @@
 													<a class="dropdown-item" href="#" data-bs-toggle="modal"
 														data-bs-target="#delete_role_{{ role.id }}"><i
 															class="ti ti-trash text-danger"></i> Delete</a>
-															<a class="dropdown-item" href="{% url 'permission' %}?role_name={{ role.role_name }}" data-role_name="{{ role.role_name }}">
-																<i class="ti ti-shield text-success"></i> Permission
-															</a>
-															
+													<a class="dropdown-item" href="{% url 'permission' %}?role_name={{ role.role_name }}" data-role_name="{{ role.role_name }}">
+														<i class="ti ti-shield text-success"></i> Permission
+													</a>
 												</div>
 											</div>
 										</td>
@@ -170,7 +171,48 @@
 								</tbody>
 							</table>
 						</div>
-						<!-- /Manage Roles List -->
+						<!-- Pagination -->
+						{% if roles.has_other_pages %}
+						<div class="d-flex justify-content-between align-items-center mt-3">
+							<div class="showing-entries">
+								<span>Showing {{ roles.start_index }} to {{ roles.end_index }} of {{ result_cnt }} entries</span>
+							</div>
+							<ul class="pagination">
+								{% if roles.has_previous %}
+								<li class="page-item">
+									<a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ roles.previous_page_number }}">Previous</a>
+								</li>
+								{% else %}
+								<li class="page-item disabled">
+									<a class="page-link" href="#">Previous</a>
+								</li>
+								{% endif %}
+
+								{% for page in roles.paginator.page_range %}
+								{% if roles.number == page %}
+								<li class="page-item active">
+									<a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+								</li>
+								{% else %}
+								<li class="page-item">
+									<a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+								</li>
+								{% endif %}
+								{% endfor %}
+
+								{% if roles.has_next %}
+								<li class="page-item">
+									<a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ roles.next_page_number }}">Next</a>
+								</li>
+								{% else %}
+								<li class="page-item disabled">
+									<a class="page-link" href="#">Next</a>
+								</li>
+								{% endif %}
+							</ul>
+						</div>
+						{% endif %}
+						<!-- /Pagination -->
 					</div>
 				</div>
 			</div>
