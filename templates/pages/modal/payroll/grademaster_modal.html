@@ -15,6 +15,22 @@
         <form method="post" action="{% url 'grade_master' %}" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="row">
+
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <select name="designation" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in desig_data %}
+                            <option value="{{ statuses.base_value }}">
+                                {{ statuses.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label" for="validationCustom01">Grade Code <span
@@ -31,150 +47,23 @@
                         <div class="invalid-feedback">Please provide a Category.</div>
                     </div>
                 </div>
-                <!-- <div class="col-md-12">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nationality</label>
-                        <select name="nationality" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="American">American</option>
-                            <option value="Canadian">Canadian</option>
-                        </select>
-                        <div class="invalid-feedback">Please provide a Nationality.</div>
-                    </div>
-                </div>
-
-                
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Attendance Days</label>
-                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" />
-                        <div class="invalid-feedback">Please provide Attendance Days.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Leave Days</label>
-                        <input type="number" name="leave_days" class="form-control" autocomplete="off" />
-                        <div class="invalid-feedback">Please provide Leave Days.</div>
-                    </div>
-                </div> -->
-
                 <!-- Passage Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Adult</label>
-                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off" />
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Emp<span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
+                            required />
                         <div class="invalid-feedback">Please provide a Passage Amount Adult.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Child</label>
-                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Dependent <span
+                                class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
+                            required />
                         <div class="invalid-feedback">Please provide a Passage Amount Child.</div>
-                    </div>
-                </div>
-
-                <!-- Designation -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
-                            <option value="">Select</option>
-                            {% for statuses in desig_data %}
-                                <option value="{{ statuses.base_value }}">
-                                    {{ statuses.base_description }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Hide Allowances -->
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 1<span class="text-danger"></span></label>
-                        <select name="allowance1" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 2<span class="text-danger"></span></label>
-                        <select name="allowance2" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 3 <span class="text-danger"></span></label>
-                        <select name="allowance3" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 4 <span class="text-danger"></span></label>
-                        <select name="allowance4" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 5 <span class="text-danger"></span></label>
-                        <select name="allowance5" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 6<span class="text-danger"></span></label>
-                        <select name="allowance6" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 7<span class="text-danger"></span></label>
-                        <select name="allowance7" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 8<span class="text-danger"></span></label>
-                        <select name="allowance8" class="form-select" aria-label="select example">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
                     </div>
                 </div>
                 <div class="d-flex flex-wrap">
@@ -203,10 +92,10 @@
         const createButton = document.querySelector('#create-button');
         validationMessage.classList.add('invalid-feedback');
         gradeCodeInput.parentNode.appendChild(validationMessage);
-    
+
         gradeCodeInput.addEventListener('input', function () {
             const gradeCode = gradeCodeInput.value;
-            
+
             if (gradeCode) {
                 fetch(`?grade_code=${gradeCode}`, {
                     headers: {
@@ -235,9 +124,9 @@
             }
         });
     });
-    </script>
-    
-    
+</script>
+
+
 
 <!-- /Edit Contact -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
@@ -255,10 +144,26 @@
             <input type="hidden" name="grade_id" id="grade_id" />
             <div class="row">
                 <!-- Your input fields here -->
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <select name="designation" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in desig_data %}
+                            <option value="{{ statuses.base_value }}" {% if statuses.base_value==grade.designation
+                                %}selected{% endif %}>
+                                {{ statuses.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade Code <span class="text-danger">*</span></label>
-                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required readonly />
+                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required
+                            readonly />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -267,133 +172,19 @@
                         <input type="text" name="grade_desc" autocomplete="off" class="form-control" required />
                     </div>
                 </div>
-                <!-- <div class="col-md-12">
+                <!-- Passage Amount -->
+                <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Nationality</label>
-                        <select name="nationality" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="American">American</option>
-                            <option value="Canadian">Canadian</option>
-                        </select>
+                        <label class="col-form-label">Passage Amount Emp <span class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
+                            required />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Attendance Days</label>
-                        <input type="number" name="attendance_days" class="form-control" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Leave Days</label>
-                        <input type="number" name="leave_days" class="form-control" autocomplete="off" />
-                    </div>
-                </div> -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Adult</label>
-                        <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Child</label>
-                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off" />
-                    </div>
-                </div>
-                <!-- Designation -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
-                            <option value="">Select</option>
-                            {% for statuses in desig_data %}
-                                <option value="{{ statuses.base_value }}" {% if statuses.base_value == grade.designation %}selected{% endif %}>
-                                    {{ statuses.base_description }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <!-- Hide Allowances -->
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 1 <span class="text-danger">*</span></label>
-                        <select name="allowance1" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 2<span class="text-danger">*</span></label>
-                        <select name="allowance2" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 3 <span class="text-danger">*</span></label>
-                        <select name="allowance3" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 4 <span class="text-danger">*</span></label>
-                        <select name="allowance4" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 5 <span class="text-danger">*</span></label>
-                        <select name="allowance5" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 6<span class="text-danger">*</span></label>
-                        <select name="allowance6" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 7<span class="text-danger">*</span></label>
-                        <select name="allowance7" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 d-none">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance 8<span class="text-danger">*</span></label>
-                        <select name="allowance8" class="form-control select2">
-                            <option value="">Choose</option>
-                            <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                        </select>
+                        <label class="col-form-label">Passage Amount Dependent <span class="text-danger">*</span></label>
+                        <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
+                            required />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -412,6 +203,45 @@
     </div>
 </div>
 <!-- /Edit Contact -->
+<script>
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        editButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const row = button.closest('tr');
+
+                // Fetch data attributes from row
+                document.querySelector('#grade_id').value = row.getAttribute('data-id');
+                document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
+                document.querySelector('#offcanvas_edit input[name="grade_desc"]').value = row.getAttribute('data-desc');
+                document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation') || '';
+                document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult') || 0;
+                document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child') || 0;
+
+                // Check if is_active is true
+                const isActive = row.getAttribute('data-is-active') === 'Y';
+                document.querySelector('#offcanvas_edit input[name="is_active"]').checked = isActive;
+
+                // Reinitialize Select2 (if applicable)
+                $('#offcanvas_edit .select2').select2().trigger('change');
+            });
+        });
+
+        // Initialize Select2 globally
+        $(document).ready(function () {
+            $('.select2').select2();
+        });
+
+        // Reinitialize Select2 on modal show
+        $('#offcanvas_edit').on('shown.bs.offcanvas', function () {
+            $('.select2').select2();
+        });
+    });
+
+</script>
 
 
 <!-- Delete Project -->
@@ -440,8 +270,6 @@
     </div>
 </div>
 <!-- Delete Project -->
-
-
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var deleteButtons = document.querySelectorAll(".delete-button");
@@ -454,55 +282,6 @@
 
         document.getElementById("confirmDelete").addEventListener("click", function () {
             document.getElementById("deleteForm").submit();
-        });
-    });
-</script>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.edit-button');
-
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const row = button.closest('tr');
-
-                document.querySelector('#grade_id').value = row.getAttribute('data-id');
-                document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
-                document.querySelector('#offcanvas_edit input[name="grade_desc"]').value = row.getAttribute('data-desc');
-                document.querySelector('#offcanvas_edit select[name="nationality"]').value = row.getAttribute('data-nationality');
-                document.querySelector('#offcanvas_edit input[name="attendance_days"]').value = row.getAttribute('data-attendance');
-                document.querySelector('#offcanvas_edit input[name="leave_days"]').value = row.getAttribute('data-leave');
-                document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult');
-                document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child');
-                document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation');
-
-                // Populate dropdowns for allowances
-                document.querySelector('#offcanvas_edit select[name="allowance1"]').value = row.getAttribute('data-allowance1');
-                document.querySelector('#offcanvas_edit select[name="allowance2"]').value = row.getAttribute('data-allowance2');
-                document.querySelector('#offcanvas_edit select[name="allowance3"]').value = row.getAttribute('data-allowance3');
-                document.querySelector('#offcanvas_edit select[name="allowance4"]').value = row.getAttribute('data-allowance4');
-                document.querySelector('#offcanvas_edit select[name="allowance5"]').value = row.getAttribute('data-allowance5');
-                document.querySelector('#offcanvas_edit select[name="allowance6"]').value = row.getAttribute('data-allowance6');
-                document.querySelector('#offcanvas_edit select[name="allowance7"]').value = row.getAttribute('data-allowance7');
-                document.querySelector('#offcanvas_edit select[name="allowance8"]').value = row.getAttribute('data-allowance8');
-
-                // Check if is_active is true and set checkbox accordingly
-                const isActive = row.getAttribute('data-is-active') === 'Y';
-                document.querySelector('#offcanvas_edit input[name="is_active"]').checked = isActive;
-
-                // Trigger change event to refresh select2
-                $('#offcanvas_edit .select2').trigger('change');
-            });
-        });
-
-        // Initialize select2 on document ready and reinitialize on modal show
-        $(document).ready(function () {
-            $('.select2').select2();
-        });
-
-        $('#offcanvas_edit').on('shown.bs.offcanvas', function () {
-            $('.select2').select2();
         });
     });
 </script>

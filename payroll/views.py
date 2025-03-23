@@ -1296,54 +1296,35 @@ from django.utils.timezone import now
 class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
+    # def get(self, request):
+    #     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    #         grade_code = request.GET.get('grade_code', None)
+    #         data = {
+    #             'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
+    #         }
+    #         print(data)
+    #         return JsonResponse(data)
+
+    #     datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
+    #     return render(request, self.template_name, {'datas': datas})
+    
+    
+    
     def get(self, request):
-        set_comp_code(request)
-        keyword = request.GET.get('keyword', '').strip()
-        page_number = request.GET.get('page', 1)
-        get_url = request.get_full_path()
-
-        # Adjust URL for pagination
-        if '?keyword' in get_url:
-            get_url = get_url.split('&page=')[0]
-            current_url = f"{get_url}&"
-        else:
-            get_url = get_url.split('?')[0]
-            current_url = f"{get_url}?"
-
-        # Initialize the query
-        query = GradeMaster.objects.filter(comp_code=COMP_CODE)
-
-        # Apply search filter if a keyword is provided
-        if keyword:
-            try:
-                query = query.filter(
-                    Q(grade_code__icontains=keyword) |
-                    Q(grade_desc__icontains=keyword) |
-                    Q(nationality__icontains=keyword)
-                )
-            except Exception as e:
-                print(f"Error in keyword search: {e}")
-                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
-
-        # Apply pagination
-        paginator = Paginator(query.order_by('grade_code'), PAGINATION_SIZE)
-
-        try:
-            grades_page = paginator.get_page(page_number)
-        except PageNotAnInteger:
-            grades_page = paginator.page(1)
-        except EmptyPage:
-            grades_page = paginator.page(paginator.num_pages)
-
-        # Prepare the context for the template
-        context = {
-            'datas': grades_page,
-            'current_url': current_url,
-            'keyword': keyword,
-            'result_cnt': query.count()
-        }
-
-        return render(request, self.template_name, context)
+        # Fetch all relevant data from the database
+        datas = GradeMaster.objects.filter(comp_code=COMP_CODE).values(
+            'grade_id',
+            'grade_code',
+            'grade_desc',
+            'designation',
+            'passage_amount_adult',
+            'passage_amount_child',
+            'allowance1',
+            'allowance2',
+            'allowance3',
+            'is_active'
+        )
+        return render(request, "pages/payroll/grade_master/grade_master_list.html", {'datas': datas})
 
 
     def post(self, request):
@@ -1415,6 +1396,7 @@ class GradeMasterList(View):
             grade.save()
 
         return redirect("grade_master")
+
 
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
@@ -2197,6 +2179,7 @@ def fetch_paymonth(request):
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import JsonResponse
 from django.views import View
@@ -2404,6 +2387,8 @@ def update_advance_details(request, advance_id):
             logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
             return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
+
+
 
 
 

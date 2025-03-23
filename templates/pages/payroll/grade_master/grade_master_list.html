@@ -61,31 +61,34 @@
                         <thead class="thead-light">
                             <tr>
                                 <th>Grade Code</th>
-                                <th>Grade Desc</th>
-                                <th>Nationality</th>
-                                <th>Attendance Days</th>
-                                <th>Leave Days</th>
+                                <th>Catogery</th>
+                                <th>Designation</th>
+                                <th>passage_amount_adult</th>
+                                <th>passage_amount_child</th>
                                 <th>Status</th>
                                 <th class="no-sort">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for record in datas %}
-                            <tr data-id="{{record.grade_id}}" data-code="{{record.grade_code}}"
-                                data-desc="{{record.grade_desc}}" data-nationality="{{record.nationality}}"
-                                data-attendance="{{record.attendance_days}}" data-leave="{{record.leave_days}}"
-                                data-passage-adult="{{record.passage_amount_adult}}"
-                                data-passage-child="{{record.passage_amount_child}}"
-                                data-allowance1="{{record.allowance1}}" data-allowance2="{{record.allowance2}}"
-                                data-allowance3="{{record.allowance3}}" data-allowance4="{{record.allowance4}}"
-                                data-allowance5="{{record.allowance5}}" data-allowance6="{{record.allowance6}}"
-                                data-allowance7="{{record.allowance7}}" data-allowance8="{{record.allowance8}}"
-                                data-is-active="{{record.is_active}}">
+                            <tr data-id="{{ record.grade_id }}" 
+                            data-code="{{ record.grade_code }}" 
+                            data-desc="{{ record.grade_desc }}" 
+                            data-designation="{{ record.designation|default:'' }}" 
+                            data-passage-adult="{{ record.passage_amount_adult|default:0 }}" 
+                            data-passage-child="{{ record.passage_amount_child|default:0 }}" 
+                            data-allowance1="{{ record.allowance1|default:'' }}" 
+                            data-allowance2="{{ record.allowance2|default:'' }}" 
+                            data-allowance3="{{ record.allowance3|default:'' }}" 
+                            data-is-active="{{ record.is_active }}">
+                        
+                        
                                 <td>{{record.grade_code}}</td>
                                 <td>{{record.grade_desc}}</td>
-                                <td>{{record.nationality}}</td>
-                                <td>{{record.attendance_days}}</td>
-                                <td>{{record.leave_days}}</td>
+                                <td>{{record.designation}}</td>
+                                <td>{{record.passage_amount_adult}}</td>
+                                <td>{{record.passage_amount_child}}</td>
+
                                 <td>
                                     <span class="badge badge-pill badge-status 
                                         {% if record.is_active == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
