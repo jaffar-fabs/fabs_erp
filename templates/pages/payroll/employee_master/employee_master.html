@@ -55,7 +55,7 @@
                                         <th>Employee Code</th>
                                         <th>First Name</th>
                                         <th>Sur Name</th>
-                                        <th>Email</th>
+                                        <!-- <th>Email</th> -->
                                         <th>Gender</th>
                                         <th>Status</th>
                                         <th>Date of Birth</th>
@@ -69,7 +69,7 @@
                                         <td>{{ employee.emp_code }}</td>
                                         <td>{{ employee.emp_name }}</td>
                                         <td>{{ employee.surname }}</td>
-                                        <td>{{ employee.email }}</td>
+                                        <!-- <td>{{ employee.email }}</td> -->
                                         <td>
                                             {% for gender in gender_data %}
                                                 {% if employee.emp_sex == gender.base_value %}
@@ -154,7 +154,7 @@
                             
                             <div class="mt-2">
                                 <strong>Preview:</strong>
-                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100px; height: 100px; border: 1px solid #ccc; margin-top: 10px;"                              >
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No profile picture uploaded.</div>
@@ -355,14 +355,6 @@
                                     <div class="col-md-6">
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control" value="{{ employee.res_country_code }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control" value="{{ employee.res_phone_no }}">
-                                        </div>
-                                        <div class="mb-3">
                                             <label class="col-form-label">Address Line 1</label>
                                             <input type="text" name="res_addr_line1" class="form-control" value="{{ employee.res_addr_line1 }}">
                                         </div>
@@ -378,19 +370,19 @@
                                             <label class="col-form-label">State</label>
                                             <input type="text" name="res_state" class="form-control" value="{{ employee.res_state }}">
                                         </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Country Code</label>
+                                            <input type="text" name="res_country_code" class="form-control" value="{{ employee.res_country_code }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Phone Number</label>
+                                            <input type="text" name="res_phone_no" class="form-control" value="{{ employee.res_phone_no }}">
+                                        </div>
                                     </div>
 
                                     <!-- Right Side: Local Residence -->
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
-                                        </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1</label>
                                             <input type="text" name="local_addr_line1" class="form-control" value="{{ employee.local_addr_line1 }}">
@@ -398,6 +390,22 @@
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
                                             <input type="text" name="local_addr_line2" class="form-control" value="{{ employee.local_addr_line2 }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">City</label>
+                                            <input type="text" name="local_city" class="form-control" value="{{ employee.local_city }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">State</label>
+                                            <input type="text" name="local_state" class="form-control" value="{{ employee.local_state }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Country Code</label>
+                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">Phone Number</label>
+                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
                                         </div>
                                     </div>
                                 </div>
@@ -416,12 +424,12 @@
                     <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Labour ID</label>
                                         <input type="text" name="labour_id" class="form-control" value="{{ employee.labour_id }}">
                                     </div>
-                                </div>
+                                </div> -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Process Cycle</label>
@@ -518,6 +526,18 @@
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Issued Date</label>
+                                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Expiry Date</label>
+                                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Document Upload</label>
                         <input type="file" name="passport_document" class="form-control" accept="application/pdf,image/*">
@@ -551,18 +571,6 @@
                         <input type="text" name="passport_details" class="form-control" value="{{ employee.passport_details }}">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Issued Date</label>
-                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
-                    </div>
-                </div>
                             </div>
                         </div>
                     </div>
@@ -582,30 +590,6 @@
                     <div class="mb-3">
                         <label class="col-form-label">Visa No</label>
                         <input type="text" name="visa_no" class="form-control" value="{{ employee.visa_no }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Issued</label>
-                        <input type="date" name="visa_issued" class="form-control" value="{{ employee.visa_issued|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Expiry</label>
-                        <input type="date" name="visa_expiry" class="form-control" value="{{ employee.visa_expiry|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirate Issued</label>
-                        <input type="date" name="emirate_issued" class="form-control" value="{{ employee.emirate_issued|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirate Expiry</label>
-                        <input type="date" name="emirate_expiry" class="form-control" value="{{ employee.emirate_expiry|date:'Y-m-d' }}">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -638,6 +622,24 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Visa Issued</label>
+                        <input type="date" name="visa_issued" class="form-control" value="{{ employee.visa_issued|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Expiry</label>
+                        <input type="date" name="visa_expiry" class="form-control" value="{{ employee.visa_expiry|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirates ID</label>
+                        <input type="text" name="emirates_no" class="form-control" value="{{ employee.emirates_no }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Emirate Document Upload</label>
                         <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
                         
@@ -662,6 +664,18 @@
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Issued</label>
+                        <input type="date" name="emirate_issued" class="form-control" value="{{ employee.emirate_issued|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Expiry</label>
+                        <input type="date" name="emirate_expiry" class="form-control" value="{{ employee.emirate_expiry|date:'Y-m-d' }}">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -734,8 +748,8 @@
                 <!-- Document Upload Fields -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Manpower Request</label>
-                        <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request" value="{{ employee.manpower_request_id }}">
+                        <label class="col-form-label">Manpower Request Form</label>
+                        <!-- <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request" value="{{ employee.manpower_request_id }}"> -->
                         <input type="file" name="manpower_request_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.manpower_request_file %}
                             <div class="mt-2">
@@ -759,8 +773,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Interview Assessment</label>
-                        <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment" value="{{ employee.interview_assessment_id }}">
+                        <label class="col-form-label">Interview Assessment Form</label>
+                        <!-- <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment" value="{{ employee.interview_assessment_id }}"> -->
                         <input type="file" name="interview_assessment_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.interview_assessment_file %}
                             <div class="mt-2">
@@ -782,7 +796,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Copy</label>
                         <input type="text" name="passport_copy_id" class="form-control" placeholder="Enter Passport Copy" value="{{ employee.passport_copy_id }}">
@@ -808,8 +822,8 @@
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
                     </div>
-                </div>
-                <div class="col-md-6">
+                </div> -->
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Photo</label>
                         <input type="text" name="photo_id" class="form-control" placeholder="Enter Photo" value="{{ employee.photo_id }}">
@@ -829,11 +843,11 @@
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Offer Letter</label>
-                        <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter" value="{{ employee.offer_letter_id }}">
+                        <!-- <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter" value="{{ employee.offer_letter_id }}"> -->
                         <input type="file" name="offer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.offer_letter_file %}
                             <div class="mt-2">
@@ -858,7 +872,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Nominee Form</label>
-                        <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form" value="{{ employee.nominee_form_id }}">
+                        <!-- <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form" value="{{ employee.nominee_form_id }}"> -->
                         <input type="file" name="nominee_form_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.nominee_form_file %}
                             <div class="mt-2">
@@ -883,7 +897,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Change Status</label>
-                        <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status" value="{{ employee.change_status_id }}">
+                        <!-- <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status" value="{{ employee.change_status_id }}"> -->
                         <input type="file" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.change_status_file %}
                             <div class="mt-2">
@@ -905,7 +919,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Copy</label>
                         <input type="text" name="visa_copy_id" class="form-control" placeholder="Enter Visa Copy" value="{{ employee.visa_copy_id }}">
@@ -931,8 +945,8 @@
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
                     </div>
-                </div>
-                <div class="col-md-6">
+                </div> -->
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates ID</label>
                         <input type="text" name="emirates_id_id" class="form-control" placeholder="Enter Emirates ID" value="{{ employee.emirates_id_id }}">
@@ -958,38 +972,11 @@
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Labor Contract</label>
-                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract" value="{{ employee.labor_contract_id }}">
-                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.labor_contract_issued_date|date:'Y-m-d' }}">
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.labor_contract_expiry_date|date:'Y-m-d' }}">
-                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.labor_contract_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" download="{{ employee.labor_contract_file.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            {% if employee.labor_contract_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.labor_contract_file.url }}" alt="Labor Contract Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Job Offer</label>
-                        <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer" value="{{ employee.job_offer_id }}">
+                        <!-- <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer" value="{{ employee.job_offer_id }}"> -->
                         <input type="file" name="job_offer_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.job_offer_file %}
                             <div class="mt-2">
@@ -1014,7 +1001,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Salary Certificate</label>
-                        <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate" value="{{ employee.salary_certificate_id }}">
+                        <!-- <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate" value="{{ employee.salary_certificate_id }}"> -->
                         <input type="file" name="salary_certificate_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.salary_certificate_file %}
                             <div class="mt-2">
@@ -1039,7 +1026,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Salary Transfer Letter</label>
-                        <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter" value="{{ employee.salary_transfer_letter_id }}">
+                        <!-- <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter" value="{{ employee.salary_transfer_letter_id }}"> -->
                         <input type="file" name="salary_transfer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.salary_transfer_letter_file %}
                             <div class="mt-2">
@@ -1064,7 +1051,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Increment Letter</label>
-                        <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter" value="{{ employee.increment_letter_id }}">
+                        <!-- <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter" value="{{ employee.increment_letter_id }}"> -->
                         <input type="file" name="increment_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.increment_letter_file %}
                             <div class="mt-2">
@@ -1089,7 +1076,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Warning Letter</label>
-                        <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter" value="{{ employee.warning_letter_id }}">
+                        <!-- <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter" value="{{ employee.warning_letter_id }}"> -->
                         <input type="file" name="warning_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.warning_letter_file %}
                             <div class="mt-2">
@@ -1114,7 +1101,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Experience Letter</label>
-                        <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter" value="{{ employee.experience_letter_id }}">
+                        <!-- <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter" value="{{ employee.experience_letter_id }}"> -->
                         <input type="file" name="experience_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.experience_letter_file %}
                             <div class="mt-2">
@@ -1139,7 +1126,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Resignation Letter</label>
-                        <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter" value="{{ employee.resignation_letter_id }}">
+                        <!-- <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter" value="{{ employee.resignation_letter_id }}"> -->
                         <input type="file" name="resignation_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.resignation_letter_file %}
                             <div class="mt-2">
@@ -1164,7 +1151,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Termination Letter</label>
-                        <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter" value="{{ employee.termination_letter_id }}">
+                        <!-- <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter" value="{{ employee.termination_letter_id }}"> -->
                         <input type="file" name="termination_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.termination_letter_file %}
                             <div class="mt-2">
@@ -1189,7 +1176,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Confidential Form</label>
-                        <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form" value="{{ employee.employee_confidential_form_id }}">
+                        <!-- <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form" value="{{ employee.employee_confidential_form_id }}"> -->
                         <input type="file" name="employee_confidential_form_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.employee_confidential_form_file %}
                             <div class="mt-2">
@@ -1214,7 +1201,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Application</label>
-                        <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application" value="{{ employee.leave_application_id }}">
+                        <!-- <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application" value="{{ employee.leave_application_id }}"> -->
                         <input type="file" name="leave_application_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.leave_application_file %}
                             <div class="mt-2">
@@ -1239,7 +1226,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Full and Final Settlement Copy</label>
-                        <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy" value="{{ employee.full_final_settlement_copy_id }}">
+                        <!-- <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy" value="{{ employee.full_final_settlement_copy_id }}"> -->
                         <input type="file" name="full_and_final_settlement_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.full_final_settlement_copy_file %}
                             <div class="mt-2">
@@ -1252,6 +1239,35 @@
                                 <div class="mt-2">
                                     <strong>Preview:</strong>
                                     <img src="{{ employee.full_final_settlement_copy_file.url }}" alt="Full and Final Settlement Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                </div>
+                            {% else %}
+                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
+                            {% endif %}
+                        {% else %}
+                            <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labor Contract</label>
+                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract" value="{{ employee.labor_contract_id }}">
+                        <label class="col-form-label mt-2">Issued Date</label>
+                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.labor_contract_issued_date|date:'Y-m-d' }}">
+                        <label class="col-form-label mt-2">Expiry Date</label>
+                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.labor_contract_expiry_date|date:'Y-m-d' }}">
+                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
+                        {% if employee.labor_contract_file %}
+                            <div class="mt-2">
+                                <strong>Current Document:</strong>
+                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" download="{{ employee.labor_contract_file.name }}">
+                                    Download
+                                </a>
+                            </div>
+                            {% if employee.labor_contract_file.url %}
+                                <div class="mt-2">
+                                    <strong>Preview:</strong>
+                                    <img src="{{ employee.labor_contract_file.url }}" alt="Labor Contract Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
                                 </div>
                             {% else %}
                                 <div class="mt-2 text-muted">Preview not available for this file type.</div>
@@ -2186,9 +2202,205 @@
                 </div>
             </div>
         </div>
+        <!-- Dependent Documents Section -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingDependentDocuments">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDependentDocuments" aria-expanded="false" aria-controls="collapseDependentDocuments">
+            Dependent Documents
+        </button>
+    </h2>
+    <div id="collapseDependentDocuments" class="accordion-collapse collapse" aria-labelledby="headingDependentDocuments" data-bs-parent="#documentsAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <!-- Father's Documents -->
+                <div class="col-md-4">
+                    <h6>Father's Documents</h6>
+                    {% if employee.father_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.father_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.father_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.father_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Mother's Documents -->
+                <div class="col-md-4">
+                    <h6>Mother's Documents</h6>
+                    {% if employee.mother_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.mother_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.mother_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.mother_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Spouse's Documents -->
+                <div class="col-md-4">
+                    <h6>Spouse's Documents</h6>
+                    {% if employee.spouse_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.spouse_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.spouse_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.spouse_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <!-- Child 1 Documents -->
+                <div class="col-md-4">
+                    <h6>Child 1's Documents</h6>
+                    {% if employee.child1_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child1_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child1_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.child1_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child1_birth_certificate_file %}
+                    <div>
+                        <p>Birth Certificate</p>
+                        <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Child 2 Documents -->
+                <div class="col-md-4">
+                    <h6>Child 2's Documents</h6>
+                    {% if employee.child2_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child2_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child2_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.child2_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child2_birth_certificate_file %}
+                    <div>
+                        <p>Birth Certificate</p>
+                        <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Child 3 Documents -->
+                <div class="col-md-4">
+                    <h6>Child 3's Documents</h6>
+                    {% if employee.child3_visa_copy_file %}
+                    <div>
+                        <p>Visa Copy</p>
+                        <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child3_emirates_id_file %}
+                    <div>
+                        <p>Emirates ID</p>
+                        <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child3_passport_file %}
+                    <div>
+                        <p>Passport</p>
+                        <a href="{{ employee.child3_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                    {% if employee.child3_birth_certificate_file %}
+                    <div>
+                        <p>Birth Certificate</p>
+                        <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<!-- /Preview Employee Offcanvas -->                                    {% endfor %}
+    </div>
+</div>
+<!-- /Preview Employee Offcanvas -->        
+   
+                           {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -2436,14 +2648,6 @@
                     <div class="col-md-6">
                         <h5 class="mt-3">Permanent Address</h5>
                         <div class="mb-3">
-                            <label class="col-form-label">Country Code</label>
-                            <input type="text" name="res_country_code" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="col-form-label">Phone Number</label>
-                            <input type="text" name="res_phone_no" class="form-control">
-                        </div>
-                        <div class="mb-3">
                             <label class="col-form-label">Address Line 1</label>
                             <input type="text" name="res_addr_line1" class="form-control">
                         </div>
@@ -2459,19 +2663,19 @@
                             <label class="col-form-label">State</label>
                             <input type="text" name="res_state" class="form-control">
                         </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Country Code</label>
+                            <input type="text" name="res_country_code" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Phone Number</label>
+                            <input type="text" name="res_phone_no" class="form-control">
+                        </div>
                     </div>
 
                     <!-- Right Side: Local Residence -->
                     <div class="col-md-6">
                         <h5 class="mt-3">UAE Address</h5>
-                        <div class="mb-3">
-                            <label class="col-form-label">Country Code</label>
-                            <input type="text" name="local_country_code" class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label class="col-form-label">Phone Number</label>
-                            <input type="text" name="local_phone_no" class="form-control">
-                        </div>
                         <div class="mb-3">
                             <label class="col-form-label">Address Line 1</label>
                             <input type="text" name="local_addr_line1" class="form-control">
@@ -2479,6 +2683,22 @@
                         <div class="mb-3">
                             <label class="col-form-label">Address Line 2</label>
                             <input type="text" name="local_addr_line2" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">City</label>
+                            <input type="text" name="uae_city" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">State</label>
+                            <input type="text" name="uae_state" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Country Code</label>
+                            <input type="text" name="local_country_code" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Phone Number</label>
+                            <input type="text" name="local_phone_no" class="form-control">
                         </div>
                     </div>
 
@@ -2502,12 +2722,12 @@
         <div class="accordion-body">
             <div class="row">
                 <!-- Labour ID -->
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Labour ID</label>
                         <input type="text" name="labour_id" class="form-control">
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- Process Cycle (Dropdown) -->
                 <div class="col-md-6">
@@ -2611,18 +2831,6 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passport Document Upload</label>
-                        <input type="file" name="passport_document" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Details</label>
-                        <input type="text" name="passport_details" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
                         <label class="col-form-label">Issued Date</label>
                         <input type="date" name="issued_date" class="form-control">
                     </div>
@@ -2631,6 +2839,18 @@
                     <div class="mb-3">
                         <label class="col-form-label">Expiry Date</label>
                         <input type="date" name="expiry_date" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Document Upload</label>
+                        <input type="file" name="passport_document" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Details</label>
+                        <input type="text" name="passport_details" class="form-control">
                     </div>
                 </div>
             </div>
@@ -2656,6 +2876,12 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Visa Document Upload</label>
+                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Visa Issued</label>
                         <input type="date" name="visa_issued" class="form-control">
                     </div>
@@ -2664,6 +2890,18 @@
                     <div class="mb-3">
                         <label class="col-form-label">Visa Expiry</label>
                         <input type="date" name="visa_expiry" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirates Id</label>
+                        <input type="text" name="emirates_no" class="form-control" placeholder="Enter Emirates Id">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Emirate Document Upload</label>
+                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2678,18 +2916,8 @@
                         <input type="date" name="emirate_expiry" class="form-control">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Document Upload</label>
-                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirate Document Upload</label>
-                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
-                    </div>
-                </div>
+                
+                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">UID Number</label>
@@ -2738,19 +2966,19 @@
                 <!-- Document Upload Fields -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Manpower Request</label>
-                        <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request">
+                        <label class="col-form-label">Manpower Request Form</label>
+                        <!-- <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request"> -->
                         <input type="file" name="manpower_request_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Interview Assessment</label>
-                        <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment">
+                        <label class="col-form-label">Interview Assessment Form</label>
+                        <!-- <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment"> -->
                         <input type="file" name="interview_assessment_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Copy</label>
                         <input type="text" name="passport_copy_id" class="form-control" placeholder="Enter Passport Copy">
@@ -2758,36 +2986,36 @@
                         <input type="date" name="passport_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
                         <input type="file" name="passport_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
-                </div>
-                <div class="col-md-6">
+                </div> -->
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Photo</label>
                         <input type="text" name="photo_id" class="form-control" placeholder="Enter Photo">
                         <input type="file" name="photo_file" class="form-control mt-2" accept="image/*">
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Offer Letter</label>
-                        <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter">
+                        <!-- <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter"> -->
                         <input type="file" name="offer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Nominee Form</label>
-                        <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form">
+                        <!-- <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form"> -->
                         <input type="file" name="nominee_form_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Change Status</label>
-                        <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status">
+                        <!-- <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status"> -->
                         <input type="file" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Copy</label>
                         <input type="text" name="visa_copy_id" class="form-control" placeholder="Enter Visa Copy">
@@ -2795,8 +3023,8 @@
                         <input type="date" name="visa_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
                         <input type="file" name="visa_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
-                </div>
-                <div class="col-md-6">
+                </div> -->
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates ID</label>
                         <input type="text" name="emirates_id_id" class="form-control" placeholder="Enter Emirates ID">
@@ -2804,91 +3032,93 @@
                         <input type="date" name="emirates_id_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
                         <input type="file" name="emirates_id_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Labor Contract</label>
-                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract">
-                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date">
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
-                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Job Offer</label>
-                        <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer">
+                        <!-- <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer"> -->
                         <input type="file" name="job_offer_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Salary Certificate</label>
-                        <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate">
+                        <!-- <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate"> -->
                         <input type="file" name="salary_certificate_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Salary Transfer Letter</label>
-                        <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter">
+                        <!-- <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter"> -->
                         <input type="file" name="salary_transfer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Increment Letter</label>
-                        <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter">
+                        <!-- <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter"> -->
                         <input type="file" name="increment_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Warning Letter</label>
-                        <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter">
+                        <!-- <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter"> -->
                         <input type="file" name="warning_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Experience Letter</label>
-                        <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter">
+                        <!-- <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter"> -->
                         <input type="file" name="experience_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Resignation Letter</label>
-                        <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter">
+                        <!-- <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter"> -->
                         <input type="file" name="resignation_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Termination Letter</label>
-                        <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter">
+                        <!-- <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter"> -->
                         <input type="file" name="termination_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Confidential Form</label>
-                        <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form">
+                        <!-- <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form"> -->
                         <input type="file" name="employee_confidential_form_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Application</label>
-                        <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application">
+                        <!-- <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application"> -->
                         <input type="file" name="leave_application_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Full and Final Settlement Copy</label>
-                        <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy">
+                        <!-- <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy"> -->
                         <input type="file" name="full_and_final_settlement_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Labor Contract</label>
+                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract">
+                        <label class="col-form-label mt-2">Issued Date</label>
+                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date">
+                        <label class="col-form-label mt-2">Expiry Date</label>
+                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
+                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
             </div>

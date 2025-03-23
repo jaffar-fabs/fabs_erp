@@ -45,6 +45,8 @@ class Employee(models.Model):
     local_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Local phone number
     local_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 1
     local_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 2
+    local_city = models.CharField(max_length=50, blank=True, null=True)  # Residential city
+    local_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
 
     # Payment Details
     labour_id = models.CharField(max_length=50, blank=True, null=True)  # Labour ID
@@ -75,6 +77,7 @@ class Employee(models.Model):
     visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
+    emirates_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     emirate_issued = models.DateField(blank=True, null=True)  # Emirate issued
     emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
     uid_number = models.CharField(max_length=50, blank=True, null=True)  # UID number

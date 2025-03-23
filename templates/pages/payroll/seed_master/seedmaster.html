@@ -35,7 +35,7 @@
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);" class="dropdown-item">
-                                                <i class="ti ti-file-type-xls text-green me-1"></i>Export as Excel 
+                                                <i class="ti ti-file-type-xls text-green me-1"></i>Export as Excel
                                             </a>
                                         </li>
                                     </ul>
@@ -76,7 +76,8 @@
                                 <td>{{ seed.seed_timeline_from }}</td>
                                 <td>{{ seed.seed_timeline_to }}</td>
                                 <td>
-                                    <span class="badge badge-pill {% if seed.is_active %} bg-success {% else %} bg-danger {% endif %}">
+                                    <span
+                                        class="badge badge-pill {% if seed.is_active %} bg-success {% else %} bg-danger {% endif %}">
                                         {% if seed.is_active %}
                                         Active
                                         {% else %}
@@ -90,17 +91,17 @@
                                             <i class="fa fa-ellipsis-v"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item edit-seed-btn" 
-                                               href="javascript:void(0);" 
-                                               data-seed-id="{{ seed.seed_id }}" 
-                                               data-bs-toggle="offcanvas" 
-                                               data-bs-target="#offcanvas_edit">
-                                               <i class="ti ti-edit text-blue"></i> Edit
+                                            <a class="dropdown-item edit-seed-btn" href="javascript:void(0);"
+                                                data-seed-id="{{ seed.seed_id }}" data-bs-toggle="offcanvas"
+                                                data-bs-target="#offcanvas_edit">
+                                                <i class="ti ti-edit text-blue"></i> Edit
                                             </a>
-                                            <a class="dropdown-item delete-seed-btn" href="javascript:void(0);" data-seed-id="{{ seed.seed_id }}" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">
+                                            <a class="dropdown-item delete-seed-btn" href="javascript:void(0);"
+                                                data-seed-id="{{ seed.seed_id }}" data-bs-toggle="modal"
+                                                data-bs-target="#deleteConfirmationModal">
                                                 <i class="ti ti-trash text-danger"></i> Delete
                                             </a>
-                                            
+
                                             <!-- <a class="dropdown-item" href="#"><i class="ti ti-eye text-blue-light"></i>
                                                 Preview
                                             </a> -->
@@ -136,56 +137,93 @@
 
         // Handle Edit button click
         const editButtons = document.querySelectorAll('.edit-seed-btn');
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const seedId = this.getAttribute('data-seed-id');
 
-                // Fetch the seed details using the seed ID
-                fetch(`/get_seed/${seedId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Populate the form fields with fetched data
-                        document.getElementById('seed_code').value = data.seed_code;
-                        document.getElementById('hidden_seed_code').value = data.seed_code;
-                        document.getElementById('seed_group').value = data.seed_group;
-                        document.getElementById('hidden_seed_group').value = data.seed_group;
-                        document.getElementById('seed_type').value = data.seed_type;
-                        document.getElementById('hidden_seed_type').value = data.seed_type;
-                        document.getElementById('seed_prefix').value = data.seed_prefix;
-                        document.getElementById('hidden_seed_prefix').value = data.seed_prefix;
-                        document.getElementById('seed_length').value = data.seed_length;
-                        document.getElementById('hidden_seed_length').value = data.seed_length;
-                        document.getElementById('seed_start_num').value = data.seed_start_num;
-                        document.getElementById('hidden_seed_start_num').value = data.seed_start_num;
-                        document.getElementById('seed_next_num').value = data.seed_next_num;
-                        document.getElementById('seed_inc_by').value = data.seed_inc_by;
-                        document.getElementById('hidden_seed_inc_by').value = data.seed_inc_by;
-                        document.getElementById('edit_seed_timeline_from').value = data.seed_timeline_from;
-                        document.getElementById('edit_seed_timeline_to').value = data.seed_timeline_to;
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const seedId = this.getAttribute('data-seed-id');
 
-                        // Set the Seed Module dropdown based on current seed_group
-                        const seedGroupSelect = document.getElementById('seed_group');
-                        const options = seedGroupSelect.options;
+            // Reset the modal fields before fetching new data
+            resetEditModal();
 
-                        for (let i = 0; i < options.length; i++) {
-                            if (options[i].value === data.seed_group) {
-                                options[i].selected = true;
-                                break;
-                            }
-                        }
+            // Fetch the seed details using the seed ID
+            fetch(`/get_seed/${seedId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched data:", data);
 
-                        // Set the status radio buttons based on current status
-                        if (data.is_active) {
-                            document.getElementById('active').checked = true;
-                        } else {
-                            document.getElementById('inactive').checked = true;
-                        }
+                    // Populate the form fields with fetched data
+                    document.getElementById('seed_code').value = data.seed_code;
+                    document.getElementById('hidden_seed_code').value = data.seed_code;
+                    document.getElementById('seed_group').value = data.seed_group;
+                    document.getElementById('hidden_seed_group').value = data.seed_group;
+                    document.getElementById('seed_type').value = data.seed_type;
+                    document.getElementById('hidden_seed_type').value = data.seed_type;
+                    document.getElementById('seed_prefix').value = data.seed_prefix;
+                    document.getElementById('hidden_seed_prefix').value = data.seed_prefix;
+                    document.getElementById('seed_length').value = data.seed_length;
+                    document.getElementById('hidden_seed_length').value = data.seed_length;
+                    document.getElementById('seed_start_num').value = data.seed_start_num;
+                    document.getElementById('hidden_seed_start_num').value = data.seed_start_num;
+                    document.getElementById('seed_next_num').value = data.seed_next_num;
+                    document.getElementById('seed_inc_by').value = data.seed_inc_by;
+                    document.getElementById('hidden_seed_inc_by').value = data.seed_inc_by;
+                    document.getElementById('edit_seed_timeline_from').value = data.seed_timeline_from;
+                    document.getElementById('edit_seed_timeline_to').value = data.seed_timeline_to;
 
-                        // Set the form action dynamically
-                        document.querySelector('#offcanvas_edit form').action = `/edit_seed/${seedId}/`;
-                    });
-            });
+                    // Dynamically update the status checkbox
+                    const statusCheckbox = document.getElementById('editStatusCheckbox'); // Use unique ID for Edit Modal
+                    if (data.is_active) {
+                        statusCheckbox.checked = true; // Check the box for active status
+                        statusCheckbox.value = 'active';
+                    } else {
+                        statusCheckbox.checked = false; // Uncheck the box for inactive status
+                        statusCheckbox.value = 'inactive';
+                    }
+
+                    // Update the form action dynamically
+                    const editForm = document.querySelector('#offcanvas_edit form');
+                    editForm.action = `/edit_seed/${seedId}/`;
+                })
+                .catch(error => {
+                    console.error('Error fetching seed details:', error);
+                    alert('Failed to load seed details. Please try again.');
+                });
         });
+    });
+
+    // Reset logic to clear old data in the modal
+    function resetEditModal() {
+        document.getElementById('seed_code').value = '';
+        document.getElementById('hidden_seed_code').value = '';
+        document.getElementById('seed_group').value = '';
+        document.getElementById('hidden_seed_group').value = '';
+        document.getElementById('seed_type').value = '';
+        document.getElementById('hidden_seed_type').value = '';
+        document.getElementById('seed_prefix').value = '';
+        document.getElementById('hidden_seed_prefix').value = '';
+        document.getElementById('seed_length').value = '';
+        document.getElementById('hidden_seed_length').value = '';
+        document.getElementById('seed_start_num').value = '';
+        document.getElementById('hidden_seed_start_num').value = '';
+        document.getElementById('seed_next_num').value = '';
+        document.getElementById('seed_inc_by').value = '';
+        document.getElementById('hidden_seed_inc_by').value = '';
+        document.getElementById('edit_seed_timeline_from').value = '';
+        document.getElementById('edit_seed_timeline_to').value = '';
+
+        const statusCheckbox = document.getElementById('editStatusCheckbox'); // Use unique ID for Edit Modal
+        statusCheckbox.checked = false; // Reset the checkbox to unchecked state
+        statusCheckbox.value = ''; // Reset its value
+    }
+
+    // Update the checkbox value dynamically when toggled
+    const statusCheckbox = document.getElementById('editStatusCheckbox'); // Ensure this ID matches your Edit Modal
+    statusCheckbox.addEventListener('change', function () {
+        this.value = this.checked ? 'active' : 'inactive';
+    });
+
+
+
 
         // Handle Timeline From date change for Add New Seed
         const addTimelineFromInput = document.getElementById('add_seed_timeline_from');
@@ -232,13 +270,13 @@
                         'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is included
                     },
                 })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();  // Reload the page to reflect the changes
-                    } else {
-                        alert('Error deleting seed.');
-                    }
-                });
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();  // Reload the page to reflect the changes
+                        } else {
+                            alert('Error deleting seed.');
+                        }
+                    });
             }
         });
 
@@ -259,23 +297,31 @@
 
         seedLengthInput.addEventListener('input', function () {
             const seedLength = parseInt(this.value) || 0;
-            const maxPrefixLength = seedLength - 2;
+            const maxPrefixLength = seedLength - 5;
 
-            seedPrefixInput.setAttribute('maxlength', maxPrefixLength);
+            if (maxPrefixLength > 0) {
+                // Set the maxlength attribute dynamically
+                seedPrefixInput.setAttribute('maxlength', maxPrefixLength);
 
-            if (seedPrefixInput.value.length > maxPrefixLength) {
-                seedPrefixInput.value = seedPrefixInput.value.slice(0, maxPrefixLength);
+                // Trim prefix value if it exceeds the new max length
+                if (seedPrefixInput.value.length > maxPrefixLength) {
+                    seedPrefixInput.value = seedPrefixInput.value.slice(0, maxPrefixLength);
+                }
+            } else {
+                // Reset maxlength if the seed length is invalid
+                seedPrefixInput.removeAttribute('maxlength');
+                seedPrefixInput.value = ''; // Clear prefix to prevent invalid values
             }
         });
 
         seedPrefixInput.addEventListener('input', function () {
             const seedLength = parseInt(seedLengthInput.value) || 0;
-            const maxPrefixLength = seedLength - 2;
+            const maxPrefixLength = seedLength - 5;
 
-            if (this.value.length > maxPrefixLength) {
+            if (this.value.length > maxPrefixLength && maxPrefixLength > 0) {
                 this.setCustomValidity('Seed Prefix length cannot exceed ' + maxPrefixLength + ' characters.');
             } else {
-                this.setCustomValidity('');
+                this.setCustomValidity(''); // Clear the custom validity if input is valid
             }
         });
     });
