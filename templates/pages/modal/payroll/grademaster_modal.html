@@ -15,7 +15,7 @@
         <form method="post" action="{% url 'grade_master' %}" class="needs-validation" novalidate>
             {% csrf_token %}
             <div class="row">
-
+                
                 <!-- Designation -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -23,9 +23,9 @@
                         <select name="designation" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in desig_data %}
-                            <option value="{{ statuses.base_value }}">
-                                {{ statuses.base_description }}
-                            </option>
+                                <option value="{{ statuses.base_value }}">
+                                    {{ statuses.base_description }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -47,10 +47,10 @@
                         <div class="invalid-feedback">Please provide a Category.</div>
                     </div>
                 </div>
-                <!-- Passage Amount -->
-                <div class="col-md-6">
+                 <!-- Passage Amount -->
+                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Emp<span
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Adult <span
                                 class="text-danger">*</span></label>
                         <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
                             required />
@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Passage Amount Dependent <span
+                        <label class="col-form-label" for="validationCustom01">Passage Amount Child <span
                                 class="text-danger">*</span></label>
                         <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
                             required />
@@ -92,10 +92,10 @@
         const createButton = document.querySelector('#create-button');
         validationMessage.classList.add('invalid-feedback');
         gradeCodeInput.parentNode.appendChild(validationMessage);
-
+    
         gradeCodeInput.addEventListener('input', function () {
             const gradeCode = gradeCodeInput.value;
-
+            
             if (gradeCode) {
                 fetch(`?grade_code=${gradeCode}`, {
                     headers: {
@@ -124,9 +124,9 @@
             }
         });
     });
-</script>
-
-
+    </script>
+    
+    
 
 <!-- /Edit Contact -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
@@ -144,17 +144,16 @@
             <input type="hidden" name="grade_id" id="grade_id" />
             <div class="row">
                 <!-- Your input fields here -->
-                <!-- Designation -->
+                                <!-- Designation -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
                         <select name="designation" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in desig_data %}
-                            <option value="{{ statuses.base_value }}" {% if statuses.base_value==grade.designation
-                                %}selected{% endif %}>
-                                {{ statuses.base_description }}
-                            </option>
+                                <option value="{{ statuses.base_value }}" {% if statuses.base_value == grade.designation %}selected{% endif %}>
+                                    {{ statuses.base_description }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -162,8 +161,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade Code <span class="text-danger">*</span></label>
-                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required
-                            readonly />
+                        <input type="text" name="grade_code" class="form-control" autocomplete="off" required readonly />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -175,14 +173,14 @@
                 <!-- Passage Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Emp <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Passage Amount Adult <span class="text-danger">*</span></label>
                         <input type="number" name="passage_amount_adult" class="form-control" autocomplete="off"
                             required />
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passage Amount Dependent <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Passage Amount Child <span class="text-danger">*</span></label>
                         <input type="number" name="passage_amount_child" class="form-control" autocomplete="off"
                             required />
                     </div>
@@ -208,11 +206,11 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         const editButtons = document.querySelectorAll('.edit-button');
-
+    
         editButtons.forEach(button => {
             button.addEventListener('click', function () {
                 const row = button.closest('tr');
-
+    
                 // Fetch data attributes from row
                 document.querySelector('#grade_id').value = row.getAttribute('data-id');
                 document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
@@ -220,27 +218,27 @@
                 document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation') || '';
                 document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult') || 0;
                 document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child') || 0;
-
+    
                 // Check if is_active is true
                 const isActive = row.getAttribute('data-is-active') === 'Y';
                 document.querySelector('#offcanvas_edit input[name="is_active"]').checked = isActive;
-
+    
                 // Reinitialize Select2 (if applicable)
                 $('#offcanvas_edit .select2').select2().trigger('change');
             });
         });
-
+    
         // Initialize Select2 globally
         $(document).ready(function () {
             $('.select2').select2();
         });
-
+    
         // Reinitialize Select2 on modal show
         $('#offcanvas_edit').on('shown.bs.offcanvas', function () {
             $('.select2').select2();
         });
     });
-
+    
 </script>
 
 
@@ -285,3 +283,5 @@
         });
     });
 </script>
+
+
