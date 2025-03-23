@@ -19,13 +19,13 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label class="col-form-label">Process Cycle<span class="text-danger">*</span></label>
-                                <select class="form-select" required aria-label="select example" name="process_cycle">
+                                <select class="form-select" required aria-label="select example" name="process_cycle" id="processCycleDropdown">
                                     <option value="">Select</option>
                                     {% for paycycle in paycycle_data %}
                                         <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="invalid-feedback">Please provide a process cycle.</div>
+                                <div class="invalid-feedback" id="processCycleError">This process cycle already exists.</div>
                             </div>
                         </div>
                     </div>
@@ -245,7 +245,7 @@
             </div>
             <div class="d-flex align-items-center justify-content-end">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary" id="createButton">Create</button>
             </div>
         </form>
     </div>
@@ -253,6 +253,58 @@
 <!-- Add Pay Cycle -->
 
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const processCycleDropdown = document.getElementById('processCycleDropdown');
+    const createButton = document.getElementById('createButton');
+    const errorFeedback = document.getElementById('processCycleError');
+
+    processCycleDropdown.addEventListener('change', function() {
+        const selectedValue = processCycleDropdown.value;
+
+        if (selectedValue) {
+            fetch('/check-process-cycle/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken') // Include CSRF token
+            },
+            body: `process_cycle=${selectedValue}`
+            })
+
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    errorFeedback.style.display = 'block'; // Show error message
+                    createButton.disabled = true; // Disable button
+                } else {
+                    errorFeedback.style.display = 'none'; // Hide error message
+                    createButton.disabled = false; // Enable button
+                }
+            });
+        } else {
+            errorFeedback.style.display = 'none'; // Hide error message
+            createButton.disabled = false; // Enable button
+        }
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+
+
     function changeOTFields(type) {
         var otEligibleDropdown, maxOtHrsInput, otAmtInput;
         if (type === 'ot1') {
@@ -275,67 +327,114 @@
             otAmtInput.value = "";
         }
     }
+
+    // --------This is for validate code ----------------//
+
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var processDateInput = document.querySelector('input[name="process_date"]');
+    //     var fromDateInput = document.querySelector('input[name="date_from"]');
+    //     var toDateInput = document.querySelector('input[name="date_to"]');
+    //     var dateErrorContainerFrom = document.getElementById('date-error-from');
+    //     var dateErrorContainerTo = document.getElementById('date-error-to');
+    //     var dateErrorContainerProcess = document.getElementById('date-error-process');
+
+    //     function validateDate(input, errorContainer) {
+    //         var selectedDate = new Date(input.value);
+    //         var currentDate = new Date();
+    //         var oneYearAgo = new Date();
+    //         oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+    //         oneYearAgo.setMonth(currentDate.getMonth(), 1);
+    //         oneYearAgo.setHours(0, 0, 0, 0);
+
+    //         if (selectedDate < oneYearAgo) {
+    //             errorContainer.textContent = 'You have selected a date that is too far in the past. Only dates within the last year are allowed.';
+    //             input.value = '';
+    //         } else {
+    //             errorContainer.textContent = '';
+    //         }
+    //     }
+
+    //     processDateInput.addEventListener('change', function () {
+    //         validateDate(processDateInput, dateErrorContainerProcess);
+    //     });
+
+    //     fromDateInput.addEventListener('change', function () {
+    //         validateDate(fromDateInput, dateErrorContainerFrom);
+    //     });
+
+    //     toDateInput.addEventListener('change', function () {
+    //         validateDate(toDateInput, dateErrorContainerTo);
+    //     });
+    // });
+
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var dateFromInput = document.getElementById('date_from');
+    //     var dateToInput = document.getElementById('date_to');
+    //     var daysPerMonthInput = document.getElementById('days_per_month');
+
+    //     function calculateDaysBetweenDates() {
+    //         var dateFrom = new Date(dateFromInput.value);
+    //         var dateTo = new Date(dateToInput.value);
+
+    //         if (isNaN(dateFrom.getTime()) || isNaN(dateTo.getTime())) {
+    //             return;
+    //         }
+
+    //         var timeDifference = dateTo.getTime() - dateFrom.getTime() + (1000 * 3600 * 24);
+
+    //         var dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    //         daysPerMonthInput.value = dayDifference;
+    //     }
+
+    //     dateFromInput.addEventListener('change', calculateDaysBetweenDates);
+    //     dateToInput.addEventListener('change', calculateDaysBetweenDates);
+    // });
+
+
+    //--------------------------------------------------------------------------//
+
+
     document.addEventListener('DOMContentLoaded', function () {
-        var processDateInput = document.querySelector('input[name="process_date"]');
-        var fromDateInput = document.querySelector('input[name="date_from"]');
-        var toDateInput = document.querySelector('input[name="date_to"]');
-        var dateErrorContainerFrom = document.getElementById('date-error-from');
-        var dateErrorContainerTo = document.getElementById('date-error-to');
-        var dateErrorContainerProcess = document.getElementById('date-error-process');
+    var fromDateInput = document.querySelector('input[name="date_from"]');
+    var toDateInput = document.querySelector('input[name="date_to"]');
+    var dateErrorContainerFrom = document.getElementById('date-error-from');
+    var dateErrorContainerTo = document.getElementById('date-error-to');
 
-        function validateDate(input, errorContainer) {
-            var selectedDate = new Date(input.value);
-            var currentDate = new Date();
-            var oneYearAgo = new Date();
-            oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
-            oneYearAgo.setMonth(currentDate.getMonth(), 1);
-            oneYearAgo.setHours(0, 0, 0, 0);
+    function validateFromDate() {
+        var fromDate = new Date(fromDateInput.value);
+        var currentDate = new Date();
+        var twoMonthsLater = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, currentDate.getDate());
 
-            if (selectedDate < oneYearAgo) {
-                errorContainer.textContent = 'You have selected a date that is too far in the past. Only dates within the last year are allowed.';
-                input.value = '';
-            } else {
-                errorContainer.textContent = '';
-            }
+        if (fromDate > twoMonthsLater) {
+            dateErrorContainerFrom.textContent = 'You have selected a date that is too far into the future. Only dates within the next 2 months are allowed.';
+            fromDateInput.value = ''; 
+        } else {
+            dateErrorContainerFrom.textContent = ''; 
         }
+    }
 
-        processDateInput.addEventListener('change', function () {
-            validateDate(processDateInput, dateErrorContainerProcess);
-        });
+    function validateToDate() {
+        var fromDate = new Date(fromDateInput.value);
+        var toDate = new Date(toDateInput.value);
 
-        fromDateInput.addEventListener('change', function () {
-            validateDate(fromDateInput, dateErrorContainerFrom);
-        });
-
-        toDateInput.addEventListener('change', function () {
-            validateDate(toDateInput, dateErrorContainerTo);
-        });
-    });
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var dateFromInput = document.getElementById('date_from');
-        var dateToInput = document.getElementById('date_to');
-        var daysPerMonthInput = document.getElementById('days_per_month');
-
-        function calculateDaysBetweenDates() {
-            var dateFrom = new Date(dateFromInput.value);
-            var dateTo = new Date(dateToInput.value);
-
-            if (isNaN(dateFrom.getTime()) || isNaN(dateTo.getTime())) {
-                return;
-            }
-
-            var timeDifference = dateTo.getTime() - dateFrom.getTime() + (1000 * 3600 * 24);
-
-            var dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
-            daysPerMonthInput.value = dayDifference;
+        if (toDate < fromDate) {
+            dateErrorContainerTo.textContent = 'The To Date cannot be earlier than the From Date.';
+            toDateInput.value = '';
+        } else {
+            dateErrorContainerTo.textContent = '';
         }
+    }
 
-        dateFromInput.addEventListener('change', calculateDaysBetweenDates);
-        dateToInput.addEventListener('change', calculateDaysBetweenDates);
-    });
+    fromDateInput.addEventListener('change', validateFromDate);
+    toDateInput.addEventListener('change', validateToDate);
+
+    // Commented out preventInvalidTyping to allow typing in both inputs
+    // preventInvalidTyping(fromDateInput);
+    // preventInvalidTyping(toDateInput);
+});
 
 </script>
 
@@ -368,7 +467,6 @@
                                     </option>
                                 {% endfor %}
                             </select>
-
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -586,6 +684,7 @@
         </form>
     </div>
 </div>
+
 <!-- EditPay Cycle -->
 
 
@@ -624,42 +723,42 @@
             }
         }
     }
-    document.addEventListener('DOMContentLoaded', function () {
-        var processDateInput = document.querySelector('input[id="edit_process_date"]');
-        var fromDateInput = document.querySelector('input[id="edit_date_from"]');
-        var toDateInput = document.querySelector('input[id="edit_date_to"]');
-        var dateErrorContainerFrom = document.getElementById('date-errors-from');
-        var dateErrorContainerTo = document.getElementById('date-errors-to');
-        var dateErrorContainerProcess = document.getElementById('date-errors-process');
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var processDateInput = document.querySelector('input[id="edit_process_date"]');
+    //     var fromDateInput = document.querySelector('input[id="edit_date_from"]');
+    //     var toDateInput = document.querySelector('input[id="edit_date_to"]');
+    //     var dateErrorContainerFrom = document.getElementById('date-errors-from');
+    //     var dateErrorContainerTo = document.getElementById('date-errors-to');
+    //     var dateErrorContainerProcess = document.getElementById('date-errors-process');
 
-        function validateDate(input, errorContainer) {
-            var selectedDate = new Date(input.value);
-            var currentDate = new Date();
-            var oneYearAgo = new Date();
-            oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
-            oneYearAgo.setMonth(currentDate.getMonth(), 1);
-            oneYearAgo.setHours(0, 0, 0, 0);
+    //     function validateDate(input, errorContainer) {
+    //         var selectedDate = new Date(input.value);
+    //         var currentDate = new Date();
+    //         var oneYearAgo = new Date();
+    //         oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+    //         oneYearAgo.setMonth(currentDate.getMonth(), 1);
+    //         oneYearAgo.setHours(0, 0, 0, 0);
 
-            if (selectedDate < oneYearAgo) {
-                errorContainer.textContent = 'You have selected a date that is too far in the past. Only dates within the last year are allowed.';
-                input.value = '';
-            } else {
-                errorContainer.textContent = '';
-            }
-        }
+    //         if (selectedDate < oneYearAgo) {
+    //             errorContainer.textContent = 'You have selected a date that is too far in the past. Only dates within the last year are allowed.';
+    //             input.value = '';
+    //         } else {
+    //             errorContainer.textContent = '';
+    //         }
+    //     }
 
-        processDateInput.addEventListener('change', function () {
-            validateDate(processDateInput, dateErrorContainerProcess);
-        });
+    //     processDateInput.addEventListener('change', function () {
+    //         validateDate(processDateInput, dateErrorContainerProcess);
+    //     });
 
-        fromDateInput.addEventListener('change', function () {
-            validateDate(fromDateInput, dateErrorContainerFrom);
-        });
+    //     fromDateInput.addEventListener('change', function () {
+    //         validateDate(fromDateInput, dateErrorContainerFrom);
+    //     });
 
-        toDateInput.addEventListener('change', function () {
-            validateDate(toDateInput, dateErrorContainerTo);
-        });
-    });
+    //     toDateInput.addEventListener('change', function () {
+    //         validateDate(toDateInput, dateErrorContainerTo);
+    //     });
+    // });
 
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -747,28 +846,77 @@
 
     });
 
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var dateFromInput = document.getElementById('edit_date_from');
+    //     var dateToInput = document.getElementById('edit_date_to');
+    //     var daysPerMonthInput = document.getElementById('edit_days_per_month');
+
+    //     function calculateDaysBetweenDates() {
+    //         var dateFrom = new Date(dateFromInput.value);
+    //         var dateTo = new Date(dateToInput.value);
+
+    //         if (isNaN(dateFrom.getTime()) || isNaN(dateTo.getTime())) {
+    //             return;
+    //         }
+
+    //         var timeDifference = dateTo.getTime() - dateFrom.getTime() + (1000 * 3600 * 24);
+
+    //         var dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+    //         daysPerMonthInput.value = dayDifference;
+    //     }
+
+    //     dateFromInput.addEventListener('change', calculateDaysBetweenDates);
+    //     dateToInput.addEventListener('change', calculateDaysBetweenDates);
+    // });
+
+
+
+
     document.addEventListener('DOMContentLoaded', function () {
-        var dateFromInput = document.getElementById('edit_date_from');
-        var dateToInput = document.getElementById('edit_date_to');
-        var daysPerMonthInput = document.getElementById('edit_days_per_month');
+        var fromDateInput = document.querySelector('input[id="edit_date_from"]');
+        var toDateInput = document.querySelector('input[id="edit_date_to"]');
+        var dateErrorContainerFrom = document.getElementById('date-errors-from');
+        var dateErrorContainerTo = document.getElementById('date-errors-to');
 
-        function calculateDaysBetweenDates() {
-            var dateFrom = new Date(dateFromInput.value);
-            var dateTo = new Date(dateToInput.value);
+        // Function to validate `edit_date_from`
+        function validateFromDate() {
+            var fromDate = new Date(fromDateInput.value);
+            var currentDate = new Date();
+            var twoMonthsLater = new Date(currentDate.getFullYear(), currentDate.getMonth() + 2, currentDate.getDate());
 
-            if (isNaN(dateFrom.getTime()) || isNaN(dateTo.getTime())) {
-                return;
+            if (fromDate > twoMonthsLater) {
+                dateErrorContainerFrom.textContent = 'You have selected a date that is too far into the future. Only dates within the next 2 months are allowed.';
+                fromDateInput.classList.add('is-invalid');
+                fromDateInput.value = ''; // Clear the input field
+            } else {
+                dateErrorContainerFrom.textContent = ''; // Clear error
+                fromDateInput.classList.remove('is-invalid');
             }
-
-            var timeDifference = dateTo.getTime() - dateFrom.getTime() + (1000 * 3600 * 24);
-
-            var dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
-            daysPerMonthInput.value = dayDifference;
         }
 
-        dateFromInput.addEventListener('change', calculateDaysBetweenDates);
-        dateToInput.addEventListener('change', calculateDaysBetweenDates);
+        // Function to validate `edit_date_to`
+        function validateToDate() {
+            var fromDate = new Date(fromDateInput.value);
+            var toDate = new Date(toDateInput.value);
+
+            if (toDate < fromDate) {
+                dateErrorContainerTo.textContent = 'The To Date cannot be earlier than the From Date.';
+                toDateInput.classList.add('is-invalid');
+                toDateInput.value = ''; // Clear the input field
+            } else {
+                dateErrorContainerTo.textContent = ''; // Clear error
+                toDateInput.classList.remove('is-invalid');
+            }
+        }
+
+        // Event Listeners for Validation
+        fromDateInput.addEventListener('change', validateFromDate);
+        toDateInput.addEventListener('change', validateToDate);
+
+        // Add additional listeners for typed input
+        fromDateInput.addEventListener('blur', validateFromDate);
+        toDateInput.addEventListener('blur', validateToDate);
     });
 
     function formatDate(dateStr) {
@@ -780,7 +928,6 @@
         return `${year}-${month}-${day}`;
     }
 </script>
-
 
 
 <!-- Delete Project Modal -->
@@ -796,8 +943,8 @@
                     <p class="mb-0">Are you sure you want to delete the selected pay cycle?</p>
                     <input type="hidden" id="processCycleId" value="">
                     <div class="d-flex align-items-center justify-content-center mt-4">
-                        <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
-                        <a href="#" class="btn btn-danger" id="confirmDelete">Yes, Delete it</a>
+                        <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Yes, Delete it</button>
                     </div>
                 </div>
             </div>
@@ -805,3 +952,55 @@
     </div>
 </div>
 <!-- /Delete Project -->
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('[data-bs-target="#delete_project"]');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const processCycleId = this.getAttribute('data-process-cycle-id');
+            const confirmDeleteButton = document.getElementById('confirmDelete');
+
+            confirmDeleteButton.addEventListener('click', function () {
+                fetch(`/paycycle/delete/${processCycleId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is included
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log(data.message); // Placeholder for a better notification
+                            location.reload(); // Reload the page to reflect changes
+                        } else {
+                            console.log('Failed to delete the pay cycle.'); // Placeholder
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error); // Log errors to the console
+                    });
+            });
+        });
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>

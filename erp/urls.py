@@ -30,6 +30,7 @@ from payroll.views import my_login_view, logout, employee_master,save_employee,d
 from payroll.views import MenuMaster
 from django.conf import settings
 from django.conf.urls.static import static
+from payroll.context_processors import check_process_cycle
 
 
 
@@ -65,6 +66,8 @@ urlpatterns = [
     #path ('', auth_views.Login.as_view(), name='login'),
     path('payroll/paycyle_master',payroll_views.Paycycle.as_view(),name = 'payroll_paycycle_master'),
     path('paycycle/delete/<int:process_cycle_id>/', payroll_views.Paycycle.as_view(), name='delete_paycycle'), 
+    path('check-process-cycle/', check_process_cycle, name='check_process_cycle'),
+
     #project Master
 
 
