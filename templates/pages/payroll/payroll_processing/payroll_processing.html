@@ -36,7 +36,7 @@
                                     <option value="">Select Paycycle</option>
                                     {% for paycycle in paycycle_data %}
                                     <option value="{{ paycycle.base_value }}">
-                                        {{ paycycle.base_description }}
+                                        {{paycycle.base_value}} - {{ paycycle.base_description }}
                                     </option>
                                     {% endfor %}
                                 </select>
