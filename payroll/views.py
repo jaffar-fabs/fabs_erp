@@ -1426,26 +1426,31 @@ def update_role_menu(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
-
 def get_menus_by_module(request, module_id):
-    role_id = request.GET.get('role_id')
-    menus = Menu.objects.filter(module_id=module_id, is_active=True)
-    menu_list = []
+    
+    try:
+        role_id = request.GET.get('role_id')
+        menus = Menu.objects.filter(module_id=module_id, is_active=True)
+        menu_list = []
 
-    for menu in menus:
-        role_menu = RoleMenu.objects.filter(role_id=role_id, menu_id=menu.menu_id).first()
-        menu_list.append({
-            'menu_id': menu.menu_id,
-            'menu_name': menu.menu_name,
-            'is_add': role_menu.add if role_menu else False,
-            'is_edit': role_menu.modify if role_menu else False,
-            'is_view': role_menu.view if role_menu else False,
-            'is_delete': role_menu.delete if role_menu else False,
-        })
+        for menu in menus:
+            role_menu = RoleMenu.objects.filter(role_id=role_id, menu_id=menu.menu_id).first()
+            menu_list.append({
+                'menu_id': menu.menu_id,
+                'menu_name': menu.menu_name,
+                'is_add_enabled': menu.is_add,
+                'is_edit_enabled': menu.is_edit,
+                'is_view_enabled': menu.is_view,
+                'is_delete_enabled': menu.is_delete,
+                'is_add_checked': role_menu.add if role_menu else False,
+                'is_edit_checked': role_menu.modify if role_menu else False,
+                'is_view_checked': role_menu.view if role_menu else False,
+                'is_delete_checked': role_menu.delete if role_menu else False,
+            })
 
-    return JsonResponse({'menus': menu_list})
-
+        return JsonResponse({'menus': menu_list})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # ----- Company Master
 

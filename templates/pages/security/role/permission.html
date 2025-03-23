@@ -116,31 +116,52 @@
                             <td>${menu.menu_name}</td>
                             <td>
                                 <label class="checkboxs">
-                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="add" ${menu.is_add ? 'checked' : ''}>
+                                    <input type="checkbox" 
+                                        data-role-id="{{ role_id }}" 
+                                        data-menu-id="${menu.menu_id}" 
+                                        data-permission="add" 
+                                        ${menu.is_add_checked ? 'checked' : ''}
+                                        ${menu.is_add_enabled ? '' : 'disabled'}>
                                     <span class="checkmarks"></span>
                                 </label>
                             </td>
                             <td>
                                 <label class="checkboxs">
-                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="edit" ${menu.is_edit ? 'checked' : ''}>
+                                    <input type="checkbox" 
+                                        data-role-id="{{ role_id }}" 
+                                        data-menu-id="${menu.menu_id}" 
+                                        data-permission="edit" 
+                                        ${menu.is_edit_checked ? 'checked' : ''}
+                                        ${menu.is_edit_enabled ? '' : 'disabled'}>
                                     <span class="checkmarks"></span>
                                 </label>
                             </td>
                             <td>
                                 <label class="checkboxs">
-                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="view" ${menu.is_view ? 'checked' : ''}>
+                                    <input type="checkbox" 
+                                        data-role-id="{{ role_id }}" 
+                                        data-menu-id="${menu.menu_id}" 
+                                        data-permission="view" 
+                                        ${menu.is_view_checked ? 'checked' : ''}
+                                        ${menu.is_view_enabled ? '' : 'disabled'}>
                                     <span class="checkmarks"></span>
                                 </label>
                             </td>
                             <td>
                                 <label class="checkboxs">
-                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="delete" ${menu.is_delete ? 'checked' : ''}>
+                                    <input type="checkbox" 
+                                        data-role-id="{{ role_id }}" 
+                                        data-menu-id="${menu.menu_id}" 
+                                        data-permission="delete" 
+                                        ${menu.is_delete_checked ? 'checked' : ''}
+                                        ${menu.is_delete_enabled ? '' : 'disabled'}>
                                     <span class="checkmarks"></span>
                                 </label>
                             </td>
                         </tr>`;
                     menuList.insertAdjacentHTML('beforeend', row);
                 });
+
             });
         });
 
