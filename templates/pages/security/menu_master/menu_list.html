@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <!-- Page Header -->
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Menu Master" count=result_cnt %}
+                {% include "partials/title.html" with title="Menu Master" %}
                 {% endblock pagetitle %}
                 <!-- /Page Header -->
             </div>
@@ -20,33 +20,34 @@
                 <!-- Search -->
                 <div class="row align-items-center">
                     <div class="col-sm-4">
-                        <form method="get">
-                            <div class="icon-form mb-3 mb-sm-0">
-                                <span class="form-icon"><i class="ti ti-search"></i></span>
-                                <input type="text" name="keyword" class="form-control" placeholder="Search Menu" value="{{ keyword }}">
-                            </div>
-                        </form>
+                        <div class="icon-form mb-3 mb-sm-0">
+                            <span class="form-icon"><i class="ti ti-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search Menu">
+                        </div>
                     </div>
                     <div class="col-sm-8">
                         <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
                             <div class="dropdown me-2">
                                 <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"><i
                                         class="ti ti-package-export me-2"></i>Export</a>
-                                <div class="dropdown-menu dropdown-menu-end">
+                                <div class="dropdown-menu  dropdown-menu-end">
                                     <ul>
                                         <li>
                                             <a href="javascript:void(0);" class="dropdown-item"><i
-                                                    class="ti ti-file-type-pdf text-danger me-1"></i>Export as PDF</a>
+                                                    class="ti ti-file-type-pdf text-danger me-1"></i>Export as
+                                                PDF</a>
                                         </li>
                                         <li>
                                             <a href="javascript:void(0);" class="dropdown-item"><i
-                                                    class="ti ti-file-type-xls text-green me-1"></i>Export as Excel</a>
+                                                    class="ti ti-file-type-xls text-green me-1"></i>Export as
+                                                Excel </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvas_add"><i class="ti ti-square-rounded-plus me-2"></i>Add Menu Master</a>
+                                data-bs-target="#offcanvas_add"><i class="ti ti-square-rounded-plus me-2"></i>Add
+                                Menu Master</a>
                         </div>
                     </div>
                 </div>
@@ -54,101 +55,77 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive custom-table">
-                    <table class="table datatable">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Menu Name</th>
-                                <th>Quick Path</th>
-                                <th>URL</th>
-                                <th>Status</th>
-                                <th class="no-sort">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for menu in menus %}
-                            <tr>
-                                <td>{{ menu.menu_name }}</td>
-                                <td>{{ menu.quick_path }}</td>
-                                <td>{{ menu.url }}</td>
-                                <td>
-                                    <span class="badge badge-pill badge-status 
-                                        {% if menu.is_active %} bg-success {% else %} bg-danger {% endif %}">
-                                        {% if menu.is_active %} Active {% else %} Inactive {% endif %}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="dropdown table-action">
-                                        <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-v"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item edit-menu" href="javascript:void(0);"
-                                                data-menu-id="{{ details.menu_id }}" data-bs-toggle="offcanvas"
-                                                data-bs-target="#offcanvas_edit">
-                                                <i class="ti ti-edit text-blue"></i> Edit
+                    {% for menu in menu_list %}
+                    <h5 class="form-title mt-2">{{ menu.menu_name }}</h5>
+                    <div class="table-responsive custom-table">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <!-- <th>Parent Menu Id</th> -->
+                                    <th>Menu Name</th>
+                                    <th>Quick Path</th>
+                                    <th>URL</th>
+                                    <th>Status</th>
+                                    <th class="no-sort">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for details in fetch_details %}
+                                {% if details.parent_menu_id|lower == menu.menu_id|lower %}
+                                <tr>
+                                    <!-- <td>{{ details.parent_menu_id }}</td> -->
+                                    <td>{{ details.menu_name }}</td>
+                                    <td>{{ details.quick_path }}</td>
+                                    <td>{{ details.url }}</td>
+                                    <td>
+                                        <span
+                                            class="badge badge-pill badge-status 
+                                                    {% if details.is_active %} bg-success {% else %} bg-danger {% endif %}">
+                                            {% if details.is_active %} Active {% else %} Inactive {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown table-action">
+                                            <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="fa fa-ellipsis-v"></i>
                                             </a>
-                                            <a class="dropdown-item delete-menu" href="#" data-menu-id="{{ menu.menu_id }}"
-                                                data-bs-toggle="modal" data-bs-target="#delete_menu_modal">
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                <a class="dropdown-item edit-menu" href="javascript:void(0);"
+                                                    data-menu-id="{{ details.menu_id }}" data-bs-toggle="offcanvas"
+                                                    data-bs-target="#offcanvas_edit">
+                                                    <i class="ti ti-edit text-blue"></i> Edit
+                                                </a>
+                                                <a class="dropdown-item delete-menu" href="#"
+                                                data-menu-id="{{ details.menu_id }}" data-bs-toggle="modal"
+                                                data-bs-target="#delete_menu_modal">
                                                 <i class="ti ti-trash text-danger"></i> Delete
-                                            </a>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" class="text-center">No records found.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Pagination -->
-                {% if menus.has_other_pages %}
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div class="showing-entries">
-                        <span>Showing {{ menus.start_index }} to {{ menus.end_index }} of {{ result_cnt }} entries</span>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <ul class="pagination">
-                        {% if menus.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ menus.previous_page_number }}">Previous</a>
-                        </li>
-                        {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">Previous</a>
-                        </li>
-                        {% endif %}
-
-                        {% for page in menus.paginator.page_range %}
-                        {% if menus.number == page %}
-                        <li class="page-item active">
-                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
-                        </li>
-                        {% else %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-
-                        {% if menus.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ menus.next_page_number }}">Next</a>
-                        </li>
-                        {% else %}
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                        {% endif %}
-                    </ul>
+                    {% endfor %}
                 </div>
-                {% endif %}
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="datatable-length"></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="datatable-paginate"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- Page Wrapper -->
+
 
 {% block contacts_modal %}
 {% include "pages/modal/security/menu_master_model.html" %}
