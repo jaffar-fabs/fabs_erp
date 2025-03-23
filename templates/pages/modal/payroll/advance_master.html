@@ -56,7 +56,7 @@
                             placeholder="DD-MM-YYYY" required>
                     </div>
                 </div>
-
+{% comment %} 
                 <!-- Total Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -96,6 +96,45 @@
                         <label class="col-form-label">Balance No. of Installments <span
                                 class="text-danger">*</span></label>
                         <input type="number" class="form-control" name="balance_no_instalment" required>
+                    </div>
+                </div> {% endcomment %}
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="totalAmount" name="total_amt" required>
+                    </div>
+                </div>
+
+                <!-- Installment Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Installment Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="installmentAmount" name="instalment_amt" required>
+                    </div>
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Paid Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="paidAmount" name="paid_amt" value="0" readonly>
+                    </div>
+                </div>
+
+                <!-- Total No. of Installments -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total No. of Installments <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="totalInstallments" name="total_no_instalment" readonly>
+                    </div>
+                </div>
+
+                <!-- Balance No. of Installments -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Balance No. of Installments <span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="balanceInstallments" name="balance_no_instalment" readonly>
                     </div>
                 </div>
 
@@ -194,7 +233,7 @@
                         <label class="form-label">Advance Code <span class="text-danger">*</span></label>
                         <select class="select2" name="advance_code" required>
                             <option value="">Choose</option>
-                            <option value="">Choose</option>
+                            {% comment %} <option value="">Choose</option> {% endcomment %}
                             <option value="A001">A001</option>
                             <option value="A002">A002</option>
                         </select>
@@ -215,12 +254,12 @@
                         <label class="form-label">Reference Date <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-check"></i></span>
-                            <input type="text" class="form-control datetimepicker" name="reference_date"
+                            <input type="type" class="form-control datetimepicker" name="reference_date"
                                 placeholder="DD/MM/YYYY" required>
                         </div>
                     </div>
                 </div>
-
+{% comment %} 
                 <!-- Total Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -260,6 +299,46 @@
                         <label class="form-label">Balance No of Instalments <span class="text-danger">*</span></label>
                         <input type="number" class="form-control" name="balance_no_instalment" required
                             autocomplete="off">
+                    </div>
+                </div> {% endcomment %}
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="totalAmount" name="total_amt" required>
+                    </div>
+                </div>
+
+                <!-- Installment Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Installment Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="installmentAmount" name="instalment_amt" required>
+                    </div>
+                </div>
+
+                <!-- Paid Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Paid Amount <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="paidAmount" name="paid_amt" value="0" readonly>
+                    </div>
+                </div>
+
+                <!-- Total No. of Installments -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total No. of Installments <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="totalInstallments" name="total_no_instalment" readonly>
+                    </div>
+                </div>
+
+                <!-- Balance No. of Installments -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Balance No. of Installments <span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="balanceInstallments" name="balance_no_instalment" readonly>
                     </div>
                 </div>
 
@@ -354,6 +433,7 @@
     </div>
 </div>
 
+<!--Delete script-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.delete-button').forEach(button => {
@@ -395,92 +475,7 @@
     
 </script>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const editButtons = document.querySelectorAll('.edit-button');
-        const editModal = document.querySelector('#offcanvas_edit');
-        const updateForm = editModal.querySelector('form');
-
-        // Attach click event listeners to edit buttons
-        editButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const advanceId = this.getAttribute('data-id'); // Fetch Advance ID
-
-                // Fetch advance details from the server
-                fetch(`/get-advance-details/${advanceId}/`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (!data.error) {
-                            // Populate modal fields
-                            for (const [key, value] of Object.entries(data)) {
-                                const field = editModal.querySelector(`[name="${key}"]`);
-                                if (field) {
-                                    if (field.type === 'checkbox') {
-                                        field.checked = value;
-                                    } else {
-                                        field.value = value;
-                                    }
-                                }
-                            }
-
-                            // Trigger select2 change events to display proper values in dropdowns
-                            $('#offcanvas_edit .select2').trigger('change');
-                        }
-                    })
-                    .catch(error => console.error('Error fetching advance details:', error));
-            });
-        });
-
-        // Handle form submission for updating the record
-        updateForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission behavior
-
-            const formData = new FormData(updateForm); // Collect form data
-            const advanceId = formData.get('advance_id');
-
-            fetch(`/update-advance-details/${advanceId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
-                },
-                body: formData,
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        location.reload(); // Reload the page to reflect updated data
-                    }
-                })
-                .catch(error => console.error('Error updating advance details:', error));
-        });
-
-        // Initialize Select2 and DatePicker components
-        $(document).on('shown.bs.offcanvas', '#offcanvas_edit', function () {
-            $('.select2', this).select2({ dropdownParent: $(this), width: '100%' });
-            $('.datetimepicker', this).datepicker({ format: 'dd/mm/yyyy', autoclose: true });
-        });
-
-        // Clear modal data on close
-        $(editModal).on('hidden.bs.offcanvas', function () {
-            updateForm.reset(); // Clear form fields
-            $('#offcanvas_edit .select2').val(null).trigger('change'); // Reset dropdowns
-            $(this).find('.is-invalid').removeClass('is-invalid'); // Clear validation feedback
-        });
-    });
-</script>
-
-
+<!--date-->
 <script>
     $(document).ready(function () {
         $('.datetimepicker').datepicker({
@@ -503,4 +498,289 @@
             }
         });
     });
+</script> 
+
+
+
+<!--Add Script-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const totalAmountInput = document.getElementById('totalAmount');
+    const installmentAmountInput = document.getElementById('installmentAmount');
+    const paidAmountInput = document.getElementById('paidAmount');
+    const totalInstallmentsInput = document.getElementById('totalInstallments');
+    const balanceInstallmentsInput = document.getElementById('balanceInstallments');
+
+    // Function to update the calculated fields
+    function updateFields() {
+        const totalAmount = parseFloat(totalAmountInput.value) || 0;
+        const installmentAmount = parseFloat(installmentAmountInput.value) || 0;
+        const paidAmount = parseFloat(paidAmountInput.value) || 0;
+
+        if (installmentAmount > 0) {
+            const totalInstallments = Math.ceil(totalAmount / installmentAmount);
+            const balanceInstallments = totalInstallments - Math.floor(paidAmount / installmentAmount);
+
+            totalInstallmentsInput.value = totalInstallments || 0;
+            balanceInstallmentsInput.value = Math.max(balanceInstallments, 0); // Ensure non-negative values
+        } else {
+            totalInstallmentsInput.value = 0;
+            balanceInstallmentsInput.value = 0;
+        }
+    }
+
+    // Attach event listeners to Total Amount and Installment Amount fields
+    totalAmountInput.addEventListener('input', updateFields);
+    installmentAmountInput.addEventListener('input', updateFields);
+
+    // Simulate monthly payments (e.g., dynamic updates to Paid Amount)
+    function payInstallment(paymentAmount) {
+        const currentPaidAmount = parseFloat(paidAmountInput.value) || 0;
+        paidAmountInput.value = currentPaidAmount + paymentAmount;
+        updateFields(); // Recalculate fields after payment
+    }
+
+    // Example: Call payInstallment(100) when a payment is made
+    // payInstallment(100);
+     });
+</script>         
+
+{% comment %} <!--Edit Script-->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editModal = document.querySelector('#offcanvas_edit');
+        const totalAmountInput = editModal.querySelector('#totalAmount');
+        const installmentAmountInput = editModal.querySelector('#installmentAmount');
+        const paidAmountInput = editModal.querySelector('#paidAmount');
+        const totalInstallmentsInput = editModal.querySelector('#totalInstallments');
+        const balanceInstallmentsInput = editModal.querySelector('#balanceInstallments');
+        const editForm = editModal.querySelector('form');
+    
+        // Function to populate fields with server data
+        function populateEditModal(advanceId) {
+            fetch(`/get-advance-details/${advanceId}/`) // Replace with your endpoint
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error fetching advance details:', data.error);
+                    } else {
+                        for (const [key, value] of Object.entries(data)) {
+                            const field = editModal.querySelector(`[name="${key}"]`);
+                            if (field) {
+                                if (field.type === 'checkbox') {
+                                    field.checked = value;
+                                } else {
+                                    field.value = value;
+                                }
+                            }
+                        }
+                        updateFields(); // Recalculate fields when data loads
+                    }
+                })
+                .catch(error => console.error('Error fetching advance details:', error));
+        }
+    
+        // Function to calculate and update fields dynamically
+        function updateFields() {
+            const totalAmount = parseFloat(totalAmountInput.value) || 0;
+            const installmentAmount = parseFloat(installmentAmountInput.value) || 0;
+            const paidAmount = parseFloat(paidAmountInput.value) || 0;
+    
+            if (installmentAmount > 0) {
+                const totalInstallments = Math.ceil(totalAmount / installmentAmount);
+                const balanceInstallments = totalInstallments - Math.floor(paidAmount / installmentAmount);
+    
+                totalInstallmentsInput.value = totalInstallments || 0;
+                balanceInstallmentsInput.value = Math.max(balanceInstallments, 0); // Avoid negative balance
+            } else {
+                totalInstallmentsInput.value = 0;
+                balanceInstallmentsInput.value = 0;
+            }
+        }
+    
+        // Event listeners for dynamic calculations
+        totalAmountInput.addEventListener('input', updateFields);
+        installmentAmountInput.addEventListener('input', updateFields);
+    
+        // Trigger modal population on edit button click
+        document.querySelectorAll('.edit-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const advanceId = this.getAttribute('data-id'); // Replace with the appropriate attribute
+                editModal.querySelector('#edit-advance-id').value = advanceId;
+                populateEditModal(advanceId);
+            });
+        });
+    
+        // Clear modal fields on close
+        $(editModal).on('hidden.bs.offcanvas', function () {
+            editForm.reset(); // Reset form fields
+            $(editModal).find('.select2').val(null).trigger('change'); // Clear select2 dropdowns
+            $(editModal).find('.is-invalid').removeClass('is-invalid'); // Clear validation states
+        });
+    
+        // Initialize datepickers and select2
+        $(document).on('shown.bs.offcanvas', '#offcanvas_edit', function () {
+            $('.select2', this).select2({ dropdownParent: $(this), width: '100%' });
+            $('.datetimepicker', this).datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+        });
+    
+        // Form submission handler
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission
+            const formData = new FormData(editForm);
+            const advanceId = formData.get('advance_id');
+    
+            fetch(`/update-advance-details/${advanceId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Reload the page after successful update
+                    } else {
+                        console.error('Error updating record:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error updating record:', error));
+        });
+    });
+</script>     {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editModal = document.querySelector('#offcanvas_edit');
+        const totalAmountInput = editModal.querySelector('#totalAmount');
+        const installmentAmountInput = editModal.querySelector('#installmentAmount');
+        const paidAmountInput = editModal.querySelector('#paidAmount');
+        const totalInstallmentsInput = editModal.querySelector('#totalInstallments');
+        const balanceInstallmentsInput = editModal.querySelector('#balanceInstallments');
+        const editForm = editModal.querySelector('form');
+    
+        // Function to populate fields with server data
+        function populateEditModal(advanceId) {
+            fetch(`/get-advance-details/${advanceId}/`) // Replace with your endpoint
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error fetching advance details:', data.error);
+                    } else {
+                        for (const [key, value] of Object.entries(data)) {
+                            const field = editModal.querySelector(`[name="${key}"]`);
+                            if (field) {
+                                if (field.tagName === 'SELECT') {
+                                    // Match the value to one of the options
+                                    const option = Array.from(field.options).find(opt => opt.value === value);
+                                    if (option) {
+                                        field.value = value; // Set the selected value
+                                        $(field).trigger('change'); // Required for select2 fields
+                                    }
+                                } else if (field.type === 'checkbox') {
+                                    field.checked = value;
+                                } else {
+                                    field.value = value;
+                                }
+                            }
+                        }
+                        updateFields(); // Recalculate fields when data loads
+                    }
+                })
+                .catch(error => console.error('Error fetching advance details:', error));
+        }
+    
+        // Function to calculate and update fields dynamically
+        function updateFields() {
+            const totalAmount = parseFloat(totalAmountInput.value) || 0;
+            const installmentAmount = parseFloat(installmentAmountInput.value) || 0;
+            const paidAmount = parseFloat(paidAmountInput.value) || 0;
+    
+            if (installmentAmount > 0) {
+                const totalInstallments = Math.ceil(totalAmount / installmentAmount);
+                const balanceInstallments = totalInstallments - Math.floor(paidAmount / installmentAmount);
+    
+                totalInstallmentsInput.value = totalInstallments || 0;
+                balanceInstallmentsInput.value = Math.max(balanceInstallments, 0); // Avoid negative balance
+            } else {
+                totalInstallmentsInput.value = 0;
+                balanceInstallmentsInput.value = 0;
+            }
+        }
+    
+        // Event listeners for dynamic calculations
+        totalAmountInput.addEventListener('input', updateFields);
+        installmentAmountInput.addEventListener('input', updateFields);
+    
+        // Trigger modal population on edit button click
+        document.querySelectorAll('.edit-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const advanceId = this.getAttribute('data-id'); // Replace with the appropriate attribute
+                editModal.querySelector('#edit-advance-id').value = advanceId;
+                populateEditModal(advanceId);
+            });
+        });
+    
+        // Clear modal fields on close
+        $(editModal).on('hidden.bs.offcanvas', function () {
+            editForm.reset(); // Reset form fields
+            $(editModal).find('.select2').val(null).trigger('change'); // Clear select2 dropdowns
+            $(editModal).find('.is-invalid').removeClass('is-invalid'); // Clear validation states
+        });
+    
+        // Initialize datepickers and select2
+        $(document).on('shown.bs.offcanvas', '#offcanvas_edit', function () {
+            $('.select2', this).select2({ dropdownParent: $(this), width: '100%' });
+            $('.datetimepicker', this).datepicker({ format: 'dd/mm/yyyy', autoclose: true });
+        });
+    
+        // Form submission handler
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission
+            const formData = new FormData(editForm);
+            const advanceId = formData.get('advance_id');
+    
+            fetch(`/update-advance-details/${advanceId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload(); // Reload the page after successful update
+                    } else {
+                        console.error('Error updating record:', data.message);
+                    }
+                })
+                .catch(error => console.error('Error updating record:', error));
+        });
+    
+        // Add Input Validation
+        function validateInput() {
+            const totalAmount = parseFloat(totalAmountInput.value) || 0;
+            const installmentAmount = parseFloat(installmentAmountInput.value) || 0;
+            if (installmentAmount > totalAmount) {
+                alert('Installment Amount cannot exceed Total Amount!');
+                installmentAmountInput.value = '';
+            }
+        }
+        installmentAmountInput.addEventListener('input', validateInput);
+    });
 </script>
+

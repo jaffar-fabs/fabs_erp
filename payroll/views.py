@@ -1055,17 +1055,35 @@ from django.utils.timezone import now
 class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
-    def get(self, request):
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            grade_code = request.GET.get('grade_code', None)
-            data = {
-                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
-            }
-            print(data)
-            return JsonResponse(data)
+    # def get(self, request):
+    #     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    #         grade_code = request.GET.get('grade_code', None)
+    #         data = {
+    #             'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
+    #         }
+    #         print(data)
+    #         return JsonResponse(data)
 
-        datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
-        return render(request, self.template_name, {'datas': datas})
+    #     datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
+    #     return render(request, self.template_name, {'datas': datas})
+    
+    
+    
+    def get(self, request):
+        # Fetch all relevant data from the database
+        datas = GradeMaster.objects.filter(comp_code=COMP_CODE).values(
+            'grade_id',
+            'grade_code',
+            'grade_desc',
+            'designation',
+            'passage_amount_adult',
+            'passage_amount_child',
+            'allowance1',
+            'allowance2',
+            'allowance3',
+            'is_active'
+        )
+        return render(request, "pages/payroll/grade_master/grade_master_list.html", {'datas': datas})
 
 
     def post(self, request):
@@ -1137,6 +1155,7 @@ class GradeMasterList(View):
             grade.save()
 
         return redirect("grade_master")
+
 
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
@@ -1762,6 +1781,7 @@ def fetch_paymonth(request):
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import JsonResponse
 from django.views import View
@@ -1926,6 +1946,8 @@ def update_advance_details(request, advance_id):
             logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
             return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
+
+
 
 
 
