@@ -2048,27 +2048,12 @@ def attendance_upload(request):
                     df['Error'] = ''  # Add a temporary column for error messages
                     error_data = []
 
-                    # Extract pay_process_month details
-                    paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
-                    pay_process_month = paycycle_master.pay_process_month
-                    pay_month = int(pay_process_month[:2])  # Extract month (e.g., 03)
-                    pay_year = int(pay_process_month[2:])  # Extract year (e.g., 2025)
-
                     for index, row in df.iterrows():
                         emp_code = row['Emp Code']
                         if not Employee.objects.filter(emp_code=emp_code, process_cycle=paycycle).exists():
                             df.at[index, 'Error'] += 'Invalid Emp Code for the selected paycycle. '
                         if row.isnull().any():
                             df.at[index, 'Error'] += 'Some columns are null. '
-
-                        # Validate Start Date and End Date against pay_process_month
-                        try:
-                            start_date = datetime.strptime(str(row['Start Date']), '%Y/%m/%d')
-                            end_date = datetime.strptime(str(row['End Date']), '%Y/%m/%d')
-                            if start_date.month != pay_month or start_date.year != pay_year or end_date.month != pay_month or end_date.year != pay_year:
-                                df.at[index, 'Error'] += 'Start Date or End Date does not match Pay Process Month. '
-                        except ValueError:
-                            df.at[index, 'Error'] += 'Invalid date format in Start Date or End Date. '
 
                         if df.at[index, 'Error']:
                             error_row = row.to_dict()
