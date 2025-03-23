@@ -50,9 +50,53 @@ def set_comp_code(request):
 
 def employee_master(request):
     set_comp_code(request)
-    # Fetch all employee data for display
-    employee_data = Employee.objects.filter(comp_code=COMP_CODE)
-    return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = Employee.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(emp_code__icontains=keyword) |
+                Q(emp_name__icontains=keyword) |
+                Q(surname__icontains=keyword) |
+                Q(department__icontains=keyword)
+            )
+        except Exception as e:
+            print(f"Error in keyword search: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
+
+    try:
+        employees_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        employees_page = paginator.page(1)
+    except EmptyPage:
+        employees_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'employees': employees_page,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count()
+    }
+
+    return render(request, 'pages/payroll/employee_master/employee_master.html', context)
 
 def save_employee(request, employee_id=None):
     set_comp_code(request)
@@ -395,6 +439,43 @@ def logout(request):
 
 def create_seed(request):
     set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = SeedModel.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(seed_code__icontains=keyword) |
+                Q(seed_group__icontains=keyword) |
+                Q(seed_type__icontains=keyword)
+            )
+        except Exception as e:
+            print(f"Error in keyword search: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('seed_code'), PAGINATION_SIZE)
+
+    try:
+        seeds_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        seeds_page = paginator.page(1)
+    except EmptyPage:
+        seeds_page = paginator.page(paginator.num_pages)
+
     if request.method == "POST":
         seed_code = request.POST.get("seed_code")
         seed_group = request.POST.get("seed_group")
@@ -429,8 +510,15 @@ def create_seed(request):
         )
         return redirect('create_seed')
 
-    seed_data = SeedModel.objects.filter(comp_code=COMP_CODE)
-    return render(request, 'pages/payroll/seed_master/seedmaster.html', {'seed_data': seed_data})
+    # Prepare the context for the template
+    context = {
+        'seed_data': seeds_page,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count()
+    }
+
+    return render(request, 'pages/payroll/seed_master/seedmaster.html', context)
 
 def update_seed_status(request, seed_id):
     set_comp_code(request)
@@ -506,8 +594,52 @@ class Paycycle(View):
 
     def get(self, request):
         set_comp_code(request)
-        paycycle_list = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-        return render(request, self.template_name, {"paycycle_list": paycycle_list})
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = PaycycleMaster.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(process_cycle__icontains=keyword) |
+                    Q(process_description__icontains=keyword) |
+                    Q(pay_process_month__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+        try:
+            paycycle_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            paycycle_page = paginator.page(1)
+        except EmptyPage:
+            paycycle_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            "paycycle_list": paycycle_page,
+            "current_url": current_url,
+            "keyword": keyword,
+            "result_cnt": query.count()
+        }
+
+        return render(request, self.template_name, context)
 
     def post(self, request):
         set_comp_code(request)
@@ -819,19 +951,55 @@ def delete_project(request):
 
 
 class CodeMasterList(View):
-
     template_name = "pages/payroll/code_master/code_master_list.html"
 
-    def get(self, request): 
-        base_type_suggestions = CodeMaster.objects.filter(comp_code="999").values("base_description", "base_value").distinct()
-        # ...existing code...
-        used_base_codes = [
-            'SEX', 'PROCESS CYCLE', 'PROCESS COMPLETION FLAG', 'STATUS', 'MARITAL STATUS', 
-            'DESIGNATION', 'DEPT', 'ATTENDANCE UOM', 'PROJECT TYPE', 'PROJECT CITY', 
-            'NATIONALITY', 'HOLIDAY'
-        ]
-        base_type_comp_code = CodeMaster.objects.filter(comp_code="999", base_value__in=used_base_codes).values("base_value", "base_description").distinct()
-        return render(request, self.template_name, { "base_type_suggestions": base_type_suggestions, "base_type_comp_code": base_type_comp_code })
+    def get(self, request):
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = CodeMaster.objects.filter(comp_code="999")
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(base_value__icontains=keyword) |
+                    Q(base_description__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('base_value'), PAGINATION_SIZE)
+
+        try:
+            base_type_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            base_type_page = paginator.page(1)
+        except EmptyPage:
+            base_type_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            "base_type_comp_code": base_type_page,
+            "current_url": current_url,
+            "keyword": keyword,
+            "result_cnt": query.count()
+        }
+
+        return render(request, self.template_name, context)
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
@@ -958,9 +1126,54 @@ class UserMasterList(View):
     template_name = 'pages/payroll/user/user_master.html'
 
     def get(self, request):
-        users = UserMaster.objects.filter(comp_code=COMP_CODE)
-        print(users)
-        return render(request, self.template_name, {'users': users})
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = UserMaster.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(user_id__icontains=keyword) |
+                    Q(first_name__icontains=keyword) |
+                    Q(last_name__icontains=keyword) |
+                    Q(email__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('user_id'), PAGINATION_SIZE)
+
+        try:
+            users_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            users_page = paginator.page(1)
+        except EmptyPage:
+            users_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            'users': users_page,
+            'current_url': current_url,
+            'keyword': keyword,
+            'result_cnt': query.count()
+        }
+
+        return render(request, self.template_name, context)
 
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
@@ -1058,16 +1271,53 @@ class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
     def get(self, request):
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            grade_code = request.GET.get('grade_code', None)
-            data = {
-                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
-            }
-            print(data)
-            return JsonResponse(data)
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
 
-        datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
-        return render(request, self.template_name, {'datas': datas})
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = GradeMaster.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(grade_code__icontains=keyword) |
+                    Q(grade_desc__icontains=keyword) |
+                    Q(nationality__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('grade_code'), PAGINATION_SIZE)
+
+        try:
+            grades_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            grades_page = paginator.page(1)
+        except EmptyPage:
+            grades_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            'datas': grades_page,
+            'current_url': current_url,
+            'keyword': keyword,
+            'result_cnt': query.count()
+        }
+
+        return render(request, self.template_name, context)
 
 
     def post(self, request):
@@ -1142,12 +1392,56 @@ class GradeMasterList(View):
 
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
-def holidayList( request):
+def holidayList(request):
     set_comp_code(request)
-    template_name="pages/payroll/holiday_master/holiday_list.html"
-    holidays_list=HolidayMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-    holiday_type=CodeMaster.objects.filter(comp_code=COMP_CODE,base_type ='HOLIDAY')
-    return render(request,template_name, {'holidays':holidays_list,'holidayTypes':holiday_type})
+    template_name = "pages/payroll/holiday_master/holiday_list.html"
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = HolidayMaster.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(holiday__icontains=keyword) |
+                Q(holiday_type__icontains=keyword) |
+                Q(holiday_description__icontains=keyword)
+            )
+        except Exception as e:
+            print(f"Error in keyword search: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+    try:
+        holidays_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        holidays_page = paginator.page(1)
+    except EmptyPage:
+        holidays_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'holidays': holidays_page,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count(),
+        'holidayTypes': CodeMaster.objects.filter(comp_code=COMP_CODE, base_type='HOLIDAY')
+    }
+
+    return render(request, template_name, context)
         
 
 def holidayCreate(request):
@@ -1229,6 +1523,45 @@ class MenuMaster(View):
     template_name = "pages/security/menu_master/menu_list.html"
 
     def get(self, request, menu_id=None):
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = Menu.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(menu_name__icontains=keyword) |
+                    Q(quick_path__icontains=keyword) |
+                    Q(url__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('display_order'), PAGINATION_SIZE)
+
+        try:
+            menus_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            menus_page = paginator.page(1)
+        except EmptyPage:
+            menus_page = paginator.page(paginator.num_pages)
+
+        # Handle AJAX request for menu details
         if menu_id and request.headers.get('x-requested-with') == 'XMLHttpRequest':
             menu = get_object_or_404(Menu, pk=menu_id)
             menu_data = {
@@ -1251,25 +1584,33 @@ class MenuMaster(View):
             }
             return JsonResponse(menu_data)
 
+        # Handle AJAX request to check if a menu name exists
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             menu_name = request.GET.get('menu_name', None)
             exists = Menu.objects.filter(menu_name=menu_name).exists()
             return JsonResponse({'exists': exists})
 
+        # Prepare data for rendering the template
         menu_to_edit = None
-        if (menu_id):
+        if menu_id:
             menu_to_edit = Menu.objects.filter(menu_id=menu_id).first()
 
         menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name', 'menu_id')
         parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
         fetch_details = Menu.objects.all().order_by('display_order')
 
-        return render(request, self.template_name, {
+        context = {
+            "menus": menus_page,
             "menu_list": menu_list,
             "parent_menus": parent_menus,
             "fetch_details": fetch_details,
             "parent_menu_id": menu_to_edit.parent_menu_id if menu_to_edit else None,
-        })
+            "current_url": current_url,
+            "keyword": keyword,
+            "result_cnt": query.count(),
+        }
+
+        return render(request, self.template_name, context)
 
     
     def post(self, request):
@@ -1459,9 +1800,51 @@ def get_menus_by_module(request, module_id):
 def company_master(request):
     set_comp_code(request)
     template_name = "pages/payroll/company_master/company_list.html"
-    companies = CompanyMaster.objects.filter(company_code=COMP_CODE).order_by('-created_on')
-    count = CompanyMaster.objects.filter(company_code=COMP_CODE).count()
-    return render(request, template_name, {'companies': companies, 'count': count})
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = CompanyMaster.objects.filter(company_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(company_code__icontains=keyword) |
+                Q(company_name__icontains=keyword)
+            )
+        except Exception as e:
+            print(f"Error in keyword search: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+    try:
+        companies_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        companies_page = paginator.page(1)
+    except EmptyPage:
+        companies_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'companies': companies_page,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count()
+    }
+
+    return render(request, template_name, context)
 
 def add_company(request):
     set_comp_code(request)
@@ -1779,9 +2162,52 @@ class AdvanceMasterList(View):
     template_name = "pages/payroll/advance_master/advance_master_list.html"
 
     def get(self, request, *args, **kwargs):
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = AdvanceMaster.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(emp_code__icontains=keyword) |
+                    Q(advance_code__icontains=keyword) |
+                    Q(advance_reference__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('-reference_date'), PAGINATION_SIZE)
+
+        try:
+            advances_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            advances_page = paginator.page(1)
+        except EmptyPage:
+            advances_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
         context = {
-            'contracts': AdvanceMaster.objects.filter(comp_code='1000'),
+            'advances': advances_page,
+            'current_url': current_url,
+            'keyword': keyword,
+            'result_cnt': query.count()
         }
+
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):

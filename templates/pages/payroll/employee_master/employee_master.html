@@ -30,10 +30,12 @@
                         <!-- Search -->
                         <div class="row align-items-center">
                             <div class="col-sm-4">
-                                <div class="icon-form mb-3 mb-sm-0">
-                                    <span class="form-icon"><i class="ti ti-search"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search Employee" />
-                                </div>
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Employee" value="{{ keyword }}">
+                                    </div>
+                                    </form>
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
@@ -2404,6 +2406,50 @@
                                 </tbody>
                             </table>
                         </div>
+                        {% if employees.has_other_pages %}
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="showing-entries">
+                                    <span>Showing {{ employees.start_index }} to {{ employees.end_index }} of {{ employees.paginator.count }} entries</span>
+                                </div>
+                                <ul class="pagination">
+                                    <!-- Previous button -->
+                                    {% if employees.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.previous_page_number }}">Previous</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">Previous</a>
+                                        </li>
+                                    {% endif %}
+
+                                    <!-- Page numbers -->
+                                    {% for page in employees.paginator.page_range %}
+                                        {% if employees.number == page %}
+                                            <li class="page-item active">
+                                                <a class="page-link" href="#">{{ page }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    <!-- Next button -->
+                                    {% if employees.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.next_page_number }}">Next</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#">Next</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>

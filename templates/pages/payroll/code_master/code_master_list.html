@@ -2,67 +2,58 @@
 {% load static %}
 {% block content %}
 
-
-<!-- Page Wrapper -->
 <div class="page-wrapper">
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <!-- Page Header -->
                 {% block pagetitle %}
                 {% include "partials/title.html" with title="Code Master" %}
                 {% endblock pagetitle %}
-                <!-- /Page Header -->
             </div>
         </div>
         <div class="card">
             <div class="card-header">
-                <!-- Search -->
                 <div class="row align-items-center">
                     <div class="col-sm-4">
-                        <div class="icon-form mb-3 mb-sm-0">
-                            <span class="form-icon"><i class="ti ti-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search Base Type">
-                        </div>
+                        <form method="get">
+                            <div class="icon-form mb-3 mb-sm-0">
+                                <span class="form-icon"><i class="ti ti-search"></i></span>
+                                <input type="text" name="keyword" class="form-control" placeholder="Search Base Type" value="{{ keyword }}">
+                            </div>
+                        </form>
                     </div>
                     <div class="col-sm-8">
                         <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
                             <div class="dropdown me-2">
-                                <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"><i
-                                        class="ti ti-package-export me-2"></i>Export</a>
-                                <div class="dropdown-menu  dropdown-menu-end">
+                                <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="ti ti-package-export me-2"></i>Export
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
                                     <ul>
                                         <li>
-                                            <a href="javascript:void(0);" class="dropdown-item"><i
-                                                    class="ti ti-file-type-pdf text-danger me-1"></i>Export as
-                                                PDF</a>
+                                            <a href="javascript:void(0);" class="dropdown-item">
+                                                <i class="ti ti-file-type-pdf text-danger me-1"></i>Export as PDF
+                                            </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);" class="dropdown-item"><i
-                                                    class="ti ti-file-type-xls text-green me-1"></i>Export as
-                                                Excel </a>
+                                            <a href="javascript:void(0);" class="dropdown-item">
+                                                <i class="ti ti-file-type-xls text-green me-1"></i>Export as Excel
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
-                                data-bs-target="#offcanvas_add"><i class="ti ti-square-rounded-plus me-2"></i>Add
-                                Code Master</a>
+                                data-bs-target="#offcanvas_add"><i class="ti ti-square-rounded-plus me-2"></i>Add Code Master</a>
                         </div>
                     </div>
                 </div>
-                <!-- /Search -->
             </div>
             <div class="card-body">
-                <!-- Contact List -->
                 <div class="table-responsive custom-table">
                     <table class="table datatable">
                         <thead class="thead-light">
                             <tr>
-                                <!-- Remove the checkbox column header -->
-                                <!-- <th>
-                                    <label class="checkboxs"><input type="checkbox" id="select-all" /><span class="checkmarks"></span></label>
-                                </th> -->
                                 <th>Base Code</th>
                                 <th>Base Description</th>
                                 <th class="no-sort">Action</th>
@@ -71,19 +62,11 @@
                         <tbody>
                             {% for base in base_type_comp_code %}
                             <tr>
-                                <!-- Remove the checkbox column data -->
-                                <!-- <td class="sorting_1">
-                                    <label class="checkboxs">
-                                        <input type="checkbox" />
-                                        <span class="checkmarks"></span>
-                                    </label>
-                                </td> -->
                                 <td>{{ base.base_value }}</td>
                                 <td>{{ base.base_description|upper }}</td>
                                 <td>
                                     <div class="dropdown table-action">
-                                        <a href="#" class="action-icon" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
+                                        <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa fa-ellipsis-v"></i>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
@@ -96,21 +79,52 @@
                                         </div>
                                     </div>
                                 </td>
-
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <div class="row align-items-center">
-                    <div class="col-md-6">
-                        <div class="datatable-length"></div>
+                <!-- Pagination -->
+                {% if base_type_comp_code.has_other_pages %}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="showing-entries">
+                        <span>Showing {{ base_type_comp_code.start_index }} to {{ base_type_comp_code.end_index }} of {{ result_cnt }} entries</span>
                     </div>
-                    <div class="col-md-6">
-                        <div class="datatable-paginate"></div>
-                    </div>
+                    <ul class="pagination">
+                        {% if base_type_comp_code.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ base_type_comp_code.previous_page_number }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for page in base_type_comp_code.paginator.page_range %}
+                        {% if base_type_comp_code.number == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if base_type_comp_code.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ base_type_comp_code.next_page_number }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </div>
-                <!-- /Contact List -->
+                {% endif %}
             </div>
         </div>
     </div>

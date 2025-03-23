@@ -4,13 +4,60 @@ from .models import RoleMaster
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
+PAGINATION_SIZE = 6
 
 class RoleMasterList(View):
     template_name = 'pages/security/role/role_master.html'
 
     def get(self, request):
-        roles = RoleMaster.objects.all()
-        return render(request, self.template_name, {'roles': roles})
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = RoleMaster.objects.all()
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(role_name__icontains=keyword) |
+                    Q(role_description__icontains=keyword)
+                )
+            except Exception as e:
+                print(f"Error in keyword search: {e}")
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+        try:
+            roles_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            roles_page = paginator.page(1)
+        except EmptyPage:
+            roles_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            'roles': roles_page,
+            'current_url': current_url,
+            'keyword': keyword,
+            'result_cnt': query.count()
+        }
+
+        return render(request, self.template_name, context)
 
 class RoleMasterCreate(View):
     def post(self, request):
@@ -63,6 +110,8 @@ from django.views import View
 from .models import UserRoleMapping
 from payroll.models import UserMaster
 from security.models import RoleMaster
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 class UserRoleMappingCreate(View):
     def get(self, request):
@@ -147,11 +196,52 @@ class UserRoleMappingDelete(View):
             })
 
 def user_role_mapping_list(request):
-    mappings = UserRoleMapping.objects.all()
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = UserRoleMapping.objects.all()
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(userid__icontains=keyword) |
+                Q(roleid__icontains=keyword)
+            )
+        except Exception as e:
+            print(f"Error in keyword search: {e}")
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+    try:
+        mappings_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        mappings_page = paginator.page(1)
+    except EmptyPage:
+        mappings_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
     users = UserMaster.objects.filter(is_active=True)
     roles = RoleMaster.objects.filter(is_active=True)
-    return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
-        'mappings': mappings,
+    context = {
+        'mappings': mappings_page,
         'users': users,
-        'roles': roles
-    })
+        'roles': roles,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count()
+    }
+
+    return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', context)
