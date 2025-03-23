@@ -136,11 +136,12 @@
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item edit-project-btn" data-bs-toggle="offcanvas"
-                                                        data-bs-target="#offcanvas_edit" href="#"
-                                                        data-id="{{ record.project_id }}">
-                                                        <i class="ti ti-edit text-blue"></i> Edit
-                                                    </a>
+                                                    <a class="dropdown-item edit-project-btn" 
+   href="#" 
+   data-id="{{ record.project_id }}">
+   <i class="ti ti-edit text-blue"></i> Edit
+</a>
+
                                                     <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
                                                         data-bs-target="#delete_project"
                                                         data-project-id="{{ record.project_id }}">
@@ -217,40 +218,45 @@
 <script>
     $(".edit-project-btn").click(function (event) {
         event.preventDefault();
+    
         var project_id = $(this).data("id");
+    
+        // Open Offcanvas immediately
+        var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+        offcanvasElement.show();
+    
+        // Clear form fields to indicate loading state
+        $("#prj_code, #prj_name, #project_description, #project_value, #from_date, #due_date, #prj_city, #comp_code, #project_id, #project_type, #main_contractor, #sub_contractor, #consultant").val("");
+        $("#is_Active").prop("checked", false);
+    
         $.ajax({
             url: "/payroll/projects/",
             type: "GET",
-            data: {'project_id': project_id},
+            data: { 'project_id': project_id },
             success: function (response) {
-                alert(response);
                 $("#prj_code").val(response.prj_code);
                 $("#prj_name").val(response.prj_name);
                 $("#project_description").val(response.project_description);
                 $("#project_value").val(response.project_value);
                 $("#from_date").val(response.timeline_from);
                 $("#due_date").val(response.timeline_to);
-                $("#prj_city").val(response.prj_city).trigger("change"); 
+                $("#prj_city").val(response.prj_city).trigger("change");
                 $("#comp_code").val(response.comp_code);
                 $("#project_id").val(response.project_id);
                 $("#project_type").val(response.project_type).trigger("change");
                 $("#main_contractor").val(response.main_contractor).trigger("change");
                 $("#sub_contractor").val(response.sub_contractor).trigger("change");
                 $("#consultant").val(response.consultant).trigger("change");
-                $("#prj_city").val(response.prj_city).trigger("change");
-                <!-- $("#error_message").val(response.error); -->
-
+    
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);
-                var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
-                offcanvasElement.show();
             },
             error: function (xhr, status, error) {
-                console.error("error :", xhr.responseText);
+                console.error("Error:", xhr.responseText);
             }
         });
     });
-
+    
     $(document).ready(function () {
         $(".delete-btn").on("click", function () {
             let projectId = $(this).data("project-id"); 

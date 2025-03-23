@@ -504,9 +504,9 @@ class Menu(models.Model):
 # Holiday Master
 
 class HolidayMaster(models.Model):
-        comp_code = models.CharField(max_length=50)  # Removed default value
+        comp_code = models.CharField(max_length=50)  # Removed defau7lt value
         unique_id = models.BigAutoField(primary_key=True)
-        holiday = models.CharField(max_length=50, blank=True, null=True)
+        holiday = models.CharField(max_length=50, blank=True, null=True) 
         holiday_type = models.CharField(max_length=50, blank=True, null=True)
         holiday_date = models.DateField()
         holiday_day = models.CharField(max_length=50)

@@ -641,14 +641,14 @@
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item edit-project-btn" data-bs-toggle="offcanvas"
-                                                        data-bs-target="#offcanvas_edit" href="#"
+                                                    <a class="dropdown-item edit-company-btn" href="#"
                                                         data-id="{{ record.company_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
+
                                                     <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_project"
-                                                        data-project-id="{{ record.company_id }}">
+                                                        data-bs-target="#delete_company"
+                                                        data-company-id="{{ record.company_id }}">
                                                         <i class="ti ti-trash text-danger"></i> Delete
                                                     </a>
                                                     <!-- {% comment %} <a class="dropdown-item" href="javascript:void(0);">
@@ -687,15 +687,25 @@
 
 
 <script>
-    $(".edit-project-btn").click(function (event) {
+    $(".edit-company-btn").click(function (event) {
         event.preventDefault();
+
         var company_id = $(this).data("id");
+
+        // Open Offcanvas immediately to improve perceived speed
+        var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+        offcanvasElement.show();
+
+        // Clear form fields to indicate loading state
+        $("#company_id, #company_name, #company_code, #inception_date, #labour_ministry_id, #labour_bank_acc_no, #currency_code, #address_line1, #address_line2, #address_line_city, #address_line_state, #country_code, #telephone1, #telephone2, #fax_number, #mail_id, #social_media_id, #instance_id, #salary_roundoff, #po_box").val("");
+        $("#image_preview").attr("src", "").hide();
+        $("#is_Active").prop("checked", false);
+
         $.ajax({
             url: "/payroll/edit_company/",
             type: "GET",
-            data: {'company_id':company_id },
+            data: {'company_id': company_id},
             success: function (response) {
-                console.log(response.image_url)
                 $("#company_id").val(response.company_id);
                 $("#company_name").val(response.company_name);
                 $("#company_code").val(response.company_code);
@@ -719,25 +729,19 @@
                 $("#salary_roundoff").val(response.salary_roundoff || "");
                 $("#po_box").val(response.po_box || "");
 
-
-
-
-
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);
-                var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
-                offcanvasElement.show();
             },
             error: function (xhr, status, error) {
-                console.error("error :", xhr.responseText);
+                console.error("Error:", xhr.responseText);
             }
         });
     });
 
     $(document).ready(function () {
         $(".delete-btn").on("click", function () {
-            let projectId = $(this).data("project-id");
-            $("#delete_project_id").val(projectId);
+            let companyId = $(this).data("company-id");
+            $("#delete_company_id").val(companyId);
         });
     })
 </script>

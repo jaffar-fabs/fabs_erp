@@ -600,14 +600,14 @@
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item edit-project-btn" data-bs-toggle="offcanvas"
-                                                        data-bs-target="#offcanvas_edit" href="#"
+                                                    <a class="dropdown-item edit-project-btn" href="#"
                                                         data-id="{{ record.unique_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
+
                                                     <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_project"
-                                                        data-project-id="{{ record.project_id }}">
+                                                        data-bs-target="#delete_holiday"
+                                                        data-holiday-id="{{ record.unique_id }}">
                                                         <i class="ti ti-trash text-danger"></i> Delete
                                                     </a>
                                                     <!-- {% comment %} <a class="dropdown-item" href="javascript:void(0);">
@@ -648,7 +648,18 @@
 <script>
     $(".edit-project-btn").click(function (event) {
         event.preventDefault();
+
         var holiday_id = $(this).data("id");
+
+        // Show Offcanvas immediately (even before data loads)
+        var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+        offcanvasElement.show();
+
+        // Clear form fields to indicate loading state
+        $("#holiday_id, #holiday, #holiday_dates, #holiday_days, #holiday_descriptions, #comp_code").val("");
+        $("#e_holiday_type").val("").trigger("change");
+        $("#is_Active").prop("checked", false);
+
         $.ajax({
             url: "/payroll/holiday_edit/",
             type: "GET",
@@ -661,23 +672,20 @@
                 $("#holiday_descriptions").val(response.holiday_description);
                 $("#e_holiday_type").val(response.holiday_type).trigger("change");
                 $("#comp_code").val(response.comp_code);
-                <!-- $("#error_message").val(response.error); -->
 
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);
-                var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
-                offcanvasElement.show();
             },
             error: function (xhr, status, error) {
-                console.error("error :", xhr.responseText);
+                console.error("Error:", xhr.responseText);
             }
         });
     });
 
     $(document).ready(function () {
         $(".delete-btn").on("click", function () {
-            let projectId = $(this).data("project-id");
-            $("#delete_project_id").val(projectId);
+            let holiday_id = $(this).data("holiday-id");
+            $("#delete_holiday_id").val(holiday_id);
         });
     })
 </script>

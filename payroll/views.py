@@ -1221,6 +1221,15 @@ def check_holiday(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 
+def delete_holiday(request):
+    if request.method == "POST":
+        id = request.POST.get("holiday_id")
+        if id:
+            holiday = get_object_or_404(HolidayMaster, unique_id=id, comp_code=COMP_CODE)
+            holiday.is_active = False  
+            holiday.save()
+        return redirect("holiday_master")
+    return redirect("holiday_master")
 
 
 class MenuMaster(View):
@@ -1565,6 +1574,21 @@ def check_company_code(request):
     company_code = request.GET.get('company_code')
     exists = CompanyMaster.objects.filter(company_code=company_code).exists()
     return JsonResponse({"exists": exists})
+
+
+
+def company_delete(request):
+    if request.method == "POST":
+        comp_id=request.POST.get("company_id")
+
+        if comp_id:
+            company = get_object_or_404(CompanyMaster, company_id=comp_id)
+            company.is_active = False  
+            company.save()
+            return redirect('company_list')
+    return redirect('company_list')
+        
+
 def check_emp_code(request):
     emp_code = request.GET.get('emp_code', None)
     if emp_code:
