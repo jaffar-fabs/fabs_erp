@@ -56,15 +56,9 @@
                                 <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
                                 {% endfor %}
                             </select>
-                    
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="no-sort">
-                                            <label class="checkboxs"><input type="checkbox" id="select-all" />
-                                                <span class="checkmarks"></span>
-                                            </label>
-                                        </th>
                                         <th>Menu Name</th>
                                         <th>Create</th>
                                         <th>Edit</th>
@@ -89,7 +83,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center justify-content-end">
-                    <button type="button" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-primary" id="save-changes">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -98,116 +92,93 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const moduleSelect = document.getElementById('module-select');
         const menuList = document.getElementById('menu-list');
+        const moduleSelect = document.getElementById('module-select');
+        const saveButton = document.getElementById('save-changes');
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const changes = [];
 
+        // Fetch menus based on selected module
         moduleSelect.addEventListener('change', function () {
-            const selectedModuleId = this.value;
-            fetch(`/get_menus_by_module/${selectedModuleId}/`, {
+            const moduleId = this.value;
+            const roleId = "{{ role_id }}";
+
+            fetch(`/get_menus_by_module/${moduleId}/?role_id=${roleId}`, {
                 method: 'GET',
-                headers: {
-                    'X-CSRFToken': csrftoken
-                }
+                headers: { 'X-CSRFToken': csrftoken }
             })
             .then(response => response.json())
             .then(data => {
                 menuList.innerHTML = '';
                 data.menus.forEach(menu => {
                     const row = `
-                    <tr>
-                        <td class="sorting_1">
-                            <label class="checkboxs"><input type="checkbox" />
-                                <span class="checkmarks"></span>
-                            </label>
-                        </td>
-                        <td>${menu.menu_name}</td>
-                        <td>
-    <label class="checkboxs">
-        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="add" ${menu.is_add ? 'checked' : ''} />
-        <span class="checkmarks"></span>
-    </label>
-</td>
-<td>
-    <label class="checkboxs">
-        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="modify" ${menu.is_edit ? 'checked' : ''} />
-        <span class="checkmarks"></span>
-    </label>
-</td>
-<td>
-    <label class="checkboxs">
-        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="view" ${menu.is_view ? 'checked' : ''} />
-        <span class="checkmarks"></span>
-    </label>
-</td>
-<td>
-    <label class="checkboxs">
-        <input type="checkbox" data-menu-id="${menu.menu_id}" data-permission="delete" ${menu.is_delete ? 'checked' : ''} />
-        <span class="checkmarks"></span>
-    </label>
-</td>
-
-                        <td>
-                            <label class="checkboxs"><input type="checkbox" />
-                                <span class="checkmarks"></span>
-                            </label>
-                        </td>
-                    </tr>`;
+                        <tr>
+                            <td>${menu.menu_name}</td>
+                            <td>
+                                <label class="checkboxs">
+                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="add" ${menu.is_add ? 'checked' : ''}>
+                                    <span class="checkmarks"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="checkboxs">
+                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="edit" ${menu.is_edit ? 'checked' : ''}>
+                                    <span class="checkmarks"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="checkboxs">
+                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="view" ${menu.is_view ? 'checked' : ''}>
+                                    <span class="checkmarks"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <label class="checkboxs">
+                                    <input type="checkbox" data-role-id="{{ role_id }}" data-menu-id="${menu.menu_id}" data-permission="delete" ${menu.is_delete ? 'checked' : ''}>
+                                    <span class="checkmarks"></span>
+                                </label>
+                            </td>
+                        </tr>`;
                     menuList.insertAdjacentHTML('beforeend', row);
                 });
-            })
-            .catch(error => console.error('Error:', error));
+            });
         });
 
-        const changes = [];
-
+        // Track checkbox changes
         menuList.addEventListener('change', function (event) {
-    if (event.target.type === 'checkbox' && event.target.dataset.menuId) {
-        const menuId = event.target.dataset.menuId;
-        const permission = event.target.dataset.permission;
-        const isChecked = event.target.checked;
+            const checkbox = event.target;
+            if (checkbox.type === 'checkbox') {
+                const roleId = checkbox.dataset.roleId;
+                const menuId = checkbox.dataset.menuId;
+                const permission = checkbox.dataset.permission;
+                const isChecked = checkbox.checked;
 
-        console.log(`Menu ID: ${menuId}, Permission: ${permission}, Checked: ${isChecked}`); // Debugging line
-
-        changes.push({
-            menu_id: menuId,
-            permission: permission,
-            is_checked: isChecked
-        });
-    }
-});
-
-
-        const saveButton = document.querySelector('.btn.btn-primary');
-        saveButton.addEventListener('click', function () {
-            if (changes.length > 0) {
-                fetch("{% url 'update_role_menu' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({
-                        role_id: '{{ role_id }}',
-                        changes: changes
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('RoleMenu updated successfully');
-                        // Provide user feedback, e.g., show a success message
-                    } else {
-                        console.error('Failed to update RoleMenu:', data.error);
-                        // Provide user feedback, e.g., show an error message
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                changes.push({
+                    role_id: roleId,
+                    menu_id: menuId,
+                    permission: permission,
+                    is_checked: isChecked
+                });
             }
         });
-    });
+
+        // Save changes
+        saveButton.addEventListener('click', function () {
+            fetch("{% url 'update_role_menu' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ changes: changes })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) { location.reload() } 
+                else { alert('Error saving changes: ' + data.error) }
+            })
+        })
+    })
 </script>
-
-
 
 {% endblock content %}

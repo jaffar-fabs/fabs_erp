@@ -1,6 +1,9 @@
 {% load static %}
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <!-- Add CodeMaster -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
     <div class="offcanvas-header border-bottom">
@@ -21,17 +24,20 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Base Type <span
-                                                class="text-danger">*</span></label>
-                                        <select name="base_description" class="form-control" id="base_description"
-                                            required>
-                                            <option value="">Select Base Description</option>
-                                            {% for base in base_type_suggestions %}
-                                            <option value="{{ base.base_description }}"
-                                                data-base-value="{{ base.base_value }}">{{ base.base_description }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
+                                        <label class="col-form-label">Base Type <span class="text-danger">*</span></label>
+                                        <div class="dropdown">
+                                            <input type="text" id="base_search" class="form-control dropdown-toggle" placeholder="Search and Select Base Type" autocomplete="off" data-bs-toggle="dropdown">
+                                            <ul id="base_dropdown" class="dropdown-menu w-100">
+                                                {% for base in base_type_suggestions %}
+                                                <li>
+                                                    <a class="dropdown-item" href="#" data-value="{{ base.base_description }}" data-base-value="{{ base.base_value }}">
+                                                        {{ base.base_description }}
+                                                    </a>
+                                                </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        <input type="hidden" name="base_description" id="base_description">
                                         <input type="hidden" name="base_type" id="base_type">
                                     </div>
                                 </div>
@@ -347,4 +353,53 @@
     })
 </script>
 
-</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("base_search");
+        const dropdown = document.getElementById("base_dropdown");
+        const hiddenBaseDesc = document.getElementById("base_description");
+        const hiddenBaseType = document.getElementById("base_type");
+
+        // Search functionality
+        searchInput.addEventListener("input", function () {
+            let searchText = searchInput.value.toLowerCase();
+            let items = dropdown.getElementsByTagName("a");
+
+            for (let item of items) {
+                let text = item.textContent.toLowerCase();
+                if (text.includes(searchText)) { item.style.display = "block" } 
+                else { item.style.display = "none" }
+            }
+        });
+
+        // Handle selection from dropdown
+        dropdown.addEventListener("click", function (event) {
+            if (event.target.tagName === "A") {
+                searchInput.value = event.target.textContent; 
+                hiddenBaseDesc.value = event.target.getAttribute("data-value");
+                hiddenBaseType.value = event.target.getAttribute("data-base-value");
+                searchInput.classList.remove("show"); 
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!searchInput.contains(event.target) && !dropdown.contains(event.target)) { searchInput.classList.remove("show") }
+        })
+    })
+</script>
+
+
+<style>
+    .dropdown-menu {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .dropdown-item {
+        cursor: pointer;
+    }
+    .dropdown-item:hover {
+        background-color: #f1f1f1;
+    }
+</style>
