@@ -107,6 +107,7 @@ class RoleMasterDelete(View):
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.http import JsonResponse
 from .models import UserRoleMapping
 from payroll.models import UserMaster
 from security.models import RoleMaster
@@ -129,6 +130,11 @@ class UserRoleMappingCreate(View):
             user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
             roleid = request.POST.get('roleid')
             role = get_object_or_404(RoleMaster, id=roleid)
+
+            # Check if the user already has a role assigned
+            if UserRoleMapping.objects.filter(userid=user_master.user_master_id).exists():
+                return JsonResponse({'error': 'User has already been assigned a role.'}, status=400)
+
             mapping = UserRoleMapping(
                 comp_code=1000,
                 userid=user_master.user_master_id,
@@ -136,21 +142,13 @@ class UserRoleMappingCreate(View):
                 role_start_date=request.POST.get('role_start_date'),
                 role_to_date=request.POST.get('role_to_date'),
                 is_active=request.POST.get('is_active') == 'on',
-                created_by=request.POST.get('created_by')
+                created_by=4  # Hard-coded value
             )
             mapping.full_clean()
             mapping.save()
-            return redirect('user_role_mapping_list')
+            return JsonResponse({'success': 'User role mapping created successfully.'}, status=200)
         except Exception as e:
-            users = UserMaster.objects.filter(is_active=True)
-            roles = RoleMaster.objects.filter(is_active=True)
-            return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
-                'error': str(e),
-                'field_errors': {'userid': str(e)},
-                'mappings': UserRoleMapping.objects.all(),
-                'users': users,
-                'roles': roles
-            })
+            return JsonResponse({'error': str(e)}, status=400)
 
 class UserRoleMappingUpdate(View):
     def post(self, request, mappingid):
@@ -160,25 +158,22 @@ class UserRoleMappingUpdate(View):
             user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
             roleid = request.POST.get('roleid')
             role = get_object_or_404(RoleMaster, id=roleid)
+
+            # Check if the user already has a role assigned (excluding the current mapping)
+            if UserRoleMapping.objects.filter(userid=user_master.user_master_id).exclude(mappingid=mappingid).exists():
+                return JsonResponse({'error': 'User has already been assigned a role.'}, status=400)
+
             mapping.userid = user_master.user_master_id
             mapping.roleid = role.id
             mapping.role_start_date = request.POST.get('role_start_date')
             mapping.role_to_date = request.POST.get('role_to_date')
             mapping.is_active = request.POST.get('is_active') == 'on'
-            mapping.modified_by = request.POST.get('modified_by')
+            mapping.modified_by = 5  # Hard-coded value
             mapping.full_clean()
             mapping.save()
-            return redirect('user_role_mapping_list')
+            return JsonResponse({'success': 'User role mapping updated successfully.'}, status=200)
         except Exception as e:
-            users = UserMaster.objects.filter(is_active=True)
-            roles = RoleMaster.objects.filter(is_active=True)
-            return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
-                'error': str(e),
-                'field_errors': {'userid': str(e)},
-                'mappings': UserRoleMapping.objects.all(),
-                'users': users,
-                'roles': roles
-            })
+            return JsonResponse({'error': str(e)}, status=400)
 
 class UserRoleMappingDelete(View):
     def post(self, request, mappingid):
@@ -194,6 +189,8 @@ class UserRoleMappingDelete(View):
                 'mappings': UserRoleMapping.objects.all(),
                 'users': users
             })
+        
+
 
 def user_role_mapping_list(request):
     keyword = request.GET.get('keyword', '').strip()

@@ -100,34 +100,20 @@
                           <form id="editMappingForm_{{ mapping.mappingid }}" method="post" action="{% url 'user_role_mapping_update' mapping.mappingid %}">
                             {% csrf_token %}
                             <!-- Error Message Display -->
-                            {% if error %}
-                              <div class="alert alert-danger">
-                                {{ error }}
-                              </div>
-                            {% endif %}
+                            <div class="alert alert-danger" id="editError_{{ mapping.mappingid }}" style="display: none;"></div>
                             <div class="row">
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-                                <select name="user_master_id" class="form-control" required>
-                                  <option value="">Select User</option>
-                                  {% for user in users %}
-                                    <option value="{{ user.user_master_id }}" {% if user.user_master_id == mapping.userid %}selected{% endif %}>
-                                      {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
-                                    </option>
-                                  {% endfor %}
-                                </select>
-                              </div>
-                              <div class="form-group mb-3">
-                                <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
-                                <select name="roleid" class="form-control" required>
-                                  <option value="">Select Role</option>
-                                  {% for role in roles %}
-                                    <option value="{{ role.id }}" {% if role.id == mapping.roleid %}selected{% endif %}>
-                                      {{ role.role_name }}
-                                    </option>
-                                  {% endfor %}
-                                </select>
-                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                  <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+                                  <select name="user_master_id" class="form-control" required>
+                                    <option value="">Select User</option>
+                                    {% for user in users %}
+                                      <option value="{{ user.user_master_id }}" {% if user.user_master_id == mapping.userid %}selected{% endif %}>
+                                        {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
+                                      </option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
                                 <div class="form-group mb-3">
                                   <label class="col-form-label">Start Date</label>
                                   <input type="date" name="role_start_date" class="form-control" value="{{ mapping.role_start_date|date:'Y-m-d' }}">
@@ -135,21 +121,24 @@
                               </div>
                               <div class="col-md-6">
                                 <div class="form-group mb-3">
+                                  <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
+                                  <select name="roleid" class="form-control" required>
+                                    <option value="">Select Role</option>
+                                    {% for role in roles %}
+                                      <option value="{{ role.id }}" {% if role.id == mapping.roleid %}selected{% endif %}>
+                                        {{ role.role_name }}
+                                      </option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+                                <div class="form-group mb-3">
                                   <label class="col-form-label">End Date</label>
                                   <input type="date" name="role_to_date" class="form-control" value="{{ mapping.role_to_date|date:'Y-m-d' }}">
                                 </div>
-                                <div class="form-group mb-3">
-                                  <label class="col-form-label">Created By <span class="text-danger">*</span></label>
-                                  <input type="text" name="created_by" class="form-control" value="{{ mapping.created_by }}" readonly>
-                                </div>
-                                <div class="form-group mb-3">
-                                  <label class="col-form-label">Modified By</label>
-                                  <input type="text" name="modified_by" class="form-control" value="5" readonly>
-                                </div>
-                                <div class="form-group form-check mb-3">
-                                  <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ mapping.mappingid }}" {% if mapping.is_active %}checked{% endif %}>
-                                  <label class="form-check-label" for="is_active_{{ mapping.mappingid }}">Active</label>
-                                </div>
+                              </div>
+                              <div class="form-group form-check mb-3">
+                                <input type="checkbox" name="is_active" class="form-check-input" id="is_active_{{ mapping.mappingid }}" {% if mapping.is_active %}checked{% endif %}>
+                                <label class="form-check-label" for="is_active_{{ mapping.mappingid }}">Active</label>
                               </div>
                             </div>
                             <div class="d-flex align-items-center justify-content-end">
@@ -238,88 +227,130 @@
   </div>
 
   <!-- Add Mapping Offcanvas -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
-  <div class="offcanvas-header border-bottom">
-    <h5 class="offcanvas-title">Add Mapping</h5>
-    <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
-      <i class="ti ti-x"></i>
-    </button>
-  </div>
-  <div class="offcanvas-body">
-    <form id="addMappingForm" method="post" action="{% url 'user_role_mapping_create' %}">
-      {% csrf_token %}
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">User ID <span class="text-danger">*</span></label>
-            <select name="user_master_id" class="form-control {% if field_errors.userid %}is-invalid{% endif %}" required>
-              <option value="">Select User</option>
-              {% for user in users %}
-                <option value="{{ user.user_master_id }}">
-                  {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
-                </option>
-              {% endfor %}
-            </select>
-            {% if field_errors.userid %}
-              <div class="invalid-feedback">
-                {{ field_errors.userid }}
-              </div>
-            {% endif %}
+  <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+      <h5 class="offcanvas-title">Add Mapping</h5>
+      <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+    <div class="offcanvas-body">
+      <form id="addMappingForm" method="post" action="{% url 'user_role_mapping_create' %}">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="col-form-label">User ID <span class="text-danger">*</span></label>
+              <select name="user_master_id" class="form-control {% if field_errors.userid %}is-invalid{% endif %}" required tabindex="1">
+                <option value="">Select User</option>
+                {% for user in users %}
+                  <option value="{{ user.user_master_id }}">
+                    {{ user.user_id }} - {{ user.first_name }} {{ user.last_name }}
+                  </option>
+                {% endfor %}
+              </select>
+              {% if field_errors.userid %}
+                <div class="invalid-feedback">
+                  {{ field_errors.userid }}
+                </div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">Start Date</label>
+              <input type="date" name="role_start_date" class="form-control {% if field_errors.role_start_date %}is-invalid{% endif %}" tabindex="3">
+              {% if field_errors.role_start_date %}
+                <div class="invalid-feedback">
+                  {{ field_errors.role_start_date }}
+                </div>
+              {% endif %}
+            </div>
           </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
-            <select name="roleid" class="form-control {% if field_errors.roleid %}is-invalid{% endif %}" required>
-              <option value="">Select Role</option>
-              {% for role in roles %}
-                <option value="{{ role.id }}">{{ role.role_name }}</option>
-              {% endfor %}
-            </select>
-            {% if field_errors.roleid %}
-              <div class="invalid-feedback">
-                {{ field_errors.roleid }}
-              </div>
-            {% endif %}
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Start Date</label>
-            <input type="date" name="role_start_date" class="form-control {% if field_errors.role_start_date %}is-invalid{% endif %}">
-            {% if field_errors.role_start_date %}
-              <div class="invalid-feedback">
-                {{ field_errors.role_start_date }}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group mb-3">
-            <label class="col-form-label">End Date</label>
-            <input type="date" name="role_to_date" class="form-control {% if field_errors.role_to_date %}is-invalid{% endif %}">
-            {% if field_errors.role_to_date %}
-              <div class="invalid-feedback">
-                {{ field_errors.role_to_date }}
-              </div>
-            {% endif %}
-          </div>
-          <div class="form-group mb-3">
-            <label class="col-form-label">Created By <span class="text-danger">*</span></label>
-            <input type="text" name="created_by" class="form-control {% if field_errors.created_by %}is-invalid{% endif %}" value="4" readonly required>
-            {% if field_errors.created_by %}
-              <div class="invalid-feedback">
-                {{ field_errors.created_by }}
-              </div>
-            {% endif %}
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label class="col-form-label">Role ID <span class="text-danger">*</span></label>
+              <select name="roleid" class="form-control {% if field_errors.roleid %}is-invalid{% endif %}" required tabindex="2">
+                <option value="">Select Role</option>
+                {% for role in roles %}
+                  <option value="{{ role.id }}">{{ role.role_name }}</option>
+                {% endfor %}
+              </select>
+              {% if field_errors.roleid %}
+                <div class="invalid-feedback">
+                  {{ field_errors.roleid }}
+                </div>
+              {% endif %}
+            </div>
+            <div class="form-group mb-3">
+              <label class="col-form-label">End Date</label>
+              <input type="date" name="role_to_date" class="form-control {% if field_errors.role_to_date %}is-invalid{% endif %}" tabindex="4">
+              {% if field_errors.role_to_date %}
+                <div class="invalid-feedback">
+                  {{ field_errors.role_to_date }}
+                </div>
+              {% endif %}
+            </div>
           </div>
           <div class="form-group form-check mb-3">
-            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked>
+            <input type="checkbox" name="is_active" class="form-check-input" id="is_active" checked tabindex="5">
             <label class="form-check-label" for="is_active">Active</label>
           </div>
         </div>
-      </div>
-      <div class="d-flex align-items-center justify-content-end">
-        <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
-      </div>
-    </form>
+        <div class="d-flex align-items-center justify-content-end">
+          <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2" tabindex="7">Cancel</button>
+          <button type="submit" class="btn btn-primary" tabindex="6">Save</button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add Mapping Form Submission
+      document.getElementById('addMappingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{% url 'user_role_mapping_create' %}", {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            window.location.reload();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+
+      // Edit Mapping Form Submission
+      
+      document.getElementById('editMappingForm_{{ mapping.mappingid }}').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("{% url 'user_role_mapping_update' mapping.mappingid %}", {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('editError_{{ mapping.mappingid }}').style.display = 'block';
+            document.getElementById('editError_{{ mapping.mappingid }}').innerText = data.error;
+          } else {
+            window.location.reload();
+          }
+        })
+        .catch(error => console.error('Error:', error));
+      });
+      
+    });
+  </script>
 {% endblock content %}
