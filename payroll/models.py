@@ -416,7 +416,7 @@ class UserMaster(models.Model):
     email = models.EmailField(max_length=50, unique=True)
     gender = models.CharField(max_length=150, null=True)
     is_active = models.BooleanField()
-    instance_id = models.CharField(max_length=50)
+    instance_id = models.CharField(max_length=50, null=True)
     profile_picture = models.CharField(max_length=100, blank=True, null=True)
     created_by = models.BigIntegerField()
     created_on = models.DateTimeField(auto_now_add=True)

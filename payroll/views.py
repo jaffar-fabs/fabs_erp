@@ -971,6 +971,9 @@ class UserMasterCreate(View):
             return JsonResponse({'status': 'error', 'field': 'user_id', 'message': 'User ID already exists.'})
 
         try:
+            user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
+            user_paycycles_str = ':'.join(user_paycycles)  # Convert list to colon-separated string
+
             user = UserMaster(
                 comp_code=COMP_CODE,
                 first_name=request.POST.get('first_name'),
@@ -986,7 +989,7 @@ class UserMasterCreate(View):
                 created_by=request.POST.get('created_by'),
                 modified_by=request.POST.get('modified_by'),
                 emp_code=request.POST.get('emp_code'),
-                user_paycycles=request.POST.get('user_paycycles')
+                user_paycycles=user_paycycles_str  # Save as colon-separated string
             )
 
             user.full_clean()
@@ -1009,16 +1012,19 @@ class UserMasterUpdate(View):
             user.dob = request.POST.get('dob') or None  # Make DOB optional
             user.email = request.POST.get('email')
             user.gender = request.POST.get('gender')
-            user.instance_id = request.POST.get('instance_id')
+            user.instance_id = 100000000
             user.profile_picture = request.FILES.get('profile_picture')
             user.modified_by = request.POST.get('modified_by')
             user.emp_code = request.POST.get('emp_code')
-            user.user_paycycles = request.POST.get('user_paycycles')
+            
+            user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
+            user.user_paycycles = ':'.join(user_paycycles)  # Convert list to colon-separated string
+            
             user.is_active = request.POST.get('is_active') == 'on'
             
             user.full_clean()
             user.save()
-            
+
             return redirect('user_list')
 
         except Exception as e:
@@ -1033,6 +1039,26 @@ class UserMasterDelete(View):
         user.save()  
         
         return redirect('user_list')
+    
+from django.http import JsonResponse
+from .models import Employee
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Employee
+
+def get_employee_data(request, emp_code):
+    try:
+        employee = Employee.objects.get(emp_code=emp_code)
+        data = {
+            'first_name': employee.emp_name,
+            'surname': employee.surname,
+            'dob': employee.dob.strftime('%Y-%m-%d') if employee.dob else None,
+            'gender': employee.emp_sex,
+        }
+        return JsonResponse(data)
+    except Employee.DoesNotExist:
+        return JsonResponse({'error': 'Employee not found'}, status=404)
     
         
 from django.shortcuts import render, redirect, get_object_or_404
