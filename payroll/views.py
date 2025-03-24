@@ -2012,28 +2012,41 @@ def attendance_upload(request):
     if request.method == 'POST':
         paycycle = request.POST.get('paycycle')
         excel_file = request.FILES.get('excel_file')
-        
+
         if not paycycle:
             messages.error(request, "Paycycle is mandatory.")
             return redirect('attendance_upload')
-        
+
         # Set paycycle in session
         request.session['paycycle'] = paycycle
 
-        # Process the uploaded file
-        if (excel_file):
-            try:
+        try:
+            paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
+            vstart_date = paycycle_master.date_from  # Already a date object
+            vend_date = paycycle_master.date_to  # Already a date object
+
+            if excel_file:
                 df = pd.read_excel(excel_file, engine='openpyxl')
                 required_columns = ["S.No", "Emp Code", "Start Date", "End Date", "Project", "Attendance_type", "Morning", "Afternoon", "OT1", "OT2"]
-                
+
                 if all(column in df.columns for column in required_columns):
                     df['Error'] = ''  # Add a temporary column for error messages
                     error_data = []
 
                     for index, row in df.iterrows():
                         emp_code = row['Emp Code']
+                        start_date = pd.to_datetime(row['Start Date']).date()  # Convert to date
+                        end_date = pd.to_datetime(row['End Date']).date()  # Convert to date
+
+                        # Validate Start Date and End Date
+                        if not (vstart_date <= start_date <= vend_date and vstart_date <= end_date <= vend_date):
+                            df.at[index, 'Error'] += f"Start Date and End Date must be within the paycycle range ({vstart_date} to {vend_date}). "
+
+                        # Validate Employee Code
                         if not Employee.objects.filter(emp_code=emp_code, process_cycle=paycycle).exists():
                             df.at[index, 'Error'] += 'Invalid Emp Code for the selected paycycle. '
+
+                        # Validate for null values
                         if row.isnull().any():
                             df.at[index, 'Error'] += 'Some columns are null. '
 
@@ -2050,9 +2063,13 @@ def attendance_upload(request):
                     return redirect('attendance_upload')
                 else:
                     messages.error(request, "Excel format is invalid. Please ensure all required columns are present.")
-            except BadZipFile:
-                messages.error(request, "The uploaded file is not a valid Excel file.")
-    
+        except PaycycleMaster.DoesNotExist:
+            messages.error(request, "Invalid paycycle.")
+        except BadZipFile:
+            messages.error(request, "The uploaded file is not a valid Excel file.")
+        except Exception as e:
+            messages.error(request, f"Error processing the file: {str(e)}")
+
     table_data = request.session.get('table_data', None)
     error_data = request.session.get('error_data', None)
     return render(request, 'pages/payroll/attendance_upload/attendance_upload.html', {
@@ -2076,6 +2093,7 @@ def upload_attendance_data(request):
             vMonth = paycycle_master.pay_process_month
             vMaxHours = paycycle_master.hours_per_day
             vOTHrs = paycycle_master.max_ot1_hrs
+            
 
             for row in table_data:
                 start_date = datetime.strptime(row['Start Date'], '%Y-%m-%d')
