@@ -616,5 +616,24 @@ class AdvanceMaster(models.Model):
 
     def __str__(self):
         return self.comp_code
+    
+
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+class PayrollEarnDeduct(models.Model):
+    unique_id = models.BigAutoField(primary_key=True)  # Identity column
+    comp_code = models.CharField(max_length=20, null=False)
+    emp_code =models.CharField(max_length=20, null=False)
+    pay_process_month = models.DateField(null=True, blank=True, default=None)
+    pay_process_cycle = models.CharField(max_length=50, null=True, blank=True)
+    earn_deduct_code = models.CharField(max_length=50, null=True, blank=True)
+    earn_deduct_type = models.CharField(max_length=50, null=True, blank=True)
+    pay_amount = models.DecimalField(max_digits=18, decimal_places=2, null=False)
+    project_code = models.CharField(max_length=50, null=True, blank=True)
+    is_active = models.BooleanField(default=True)  # Number(1,0) converted to BooleanField
+    created_by = models.BigIntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)  # Defaults to current timestamp
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True)
 
 

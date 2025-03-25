@@ -2169,10 +2169,83 @@ def payroll_processing(request):
             messages.error(request, "Paycycle and Paymonth are mandatory.")
             return redirect('payroll_processing')
 
-        # Process payroll logic here
-        # ...
+        try:
+            # Fetch paycycle data
+            paycycle_data = PaycycleMaster.objects.filter(
+                comp_code=COMP_CODE, process_cycle=paycycle, pay_process_month=paymonth, process_comp_flag=status
+            ).first()
 
-        messages.success(request, "Payroll processed successfully.")
+            if not paycycle_data:
+                messages.error(request, "Invalid paycycle or paymonth.")
+                return redirect('payroll_processing')
+
+            # Fetch employee data using paycycle
+            employee_data = Employee.objects.filter(process_cycle=paycycle, comp_code=COMP_CODE)
+
+            # Prepare payroll data
+            payroll_data = []
+            for employee in employee_data:
+                # Fetch attendance data for the employee
+                attendance_data = WorkerAttendanceRegister.objects.filter(
+                    comp_code=COMP_CODE,
+                    employee_code=employee.emp_code,
+                    pay_cycle=paycycle,
+                    pay_process_month=paymonth
+                ).aggregate(
+                    total_morning=Sum('morning'),
+                    total_afternoon=Sum('afternoon'),
+                    total_ot1=Sum('ot1'),
+                    total_ot2=Sum('ot2')
+                )
+
+                # Fetch advance details for the employee
+                advance_data = AdvanceMaster.objects.filter(
+                    comp_code=COMP_CODE, emp_code=employee.emp_code, is_active=True
+                )
+                print("Advance Data:", advance_data)
+
+                # Calculate total working hours
+                total_working_days = (attendance_data.get('total_morning', 0) + attendance_data.get('total_afternoon', 0)) / 8
+
+                # Calculate basic and allowance per day
+                basic_per_day = employee.basic_pay / paycycle_data.days_per_month if employee.basic_pay else 0
+                allowance_per_day = employee.allowance / paycycle_data.days_per_month if employee.allowance else 0
+
+                # Calculate OT1 and OT2 amounts
+                ot1_hrs = attendance_data.get('total_ot1', 0)
+                ot2_hrs = attendance_data.get('total_ot2', 0)
+                basic_per_hour = basic_per_day / 8                
+                ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
+                # ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
+
+                payroll_data.append({
+                    'employee_code': employee.emp_code,
+                    'employee_name': employee.emp_name,
+                    'Basic': employee.basic_pay,
+                    'Allowance': employee.allowance,
+                    'basic_per_day': basic_per_day,
+                    'basic_per_hour': basic_per_hour,
+                    'allowance_per_day': allowance_per_day,
+                    'ot1_amt': ot1_amt,
+                    # 'ot2_amt': ot2_amt,
+                    'paycycle': paycycle,
+                    'paymonth': paymonth,
+                    'total_days': paycycle_data.days_per_month,
+                    'working_days': total_working_days,
+                    'total_ot1': ot1_hrs,
+                    'total_ot2': ot2_hrs,
+                    # 'advance_total': advance_data.get('total_advance', 0),
+                    # 'advance_paid': advance_data.get('total_paid', 0),
+                    # 'advance_balance': advance_data.get('total_balance', 0)
+                })
+
+            # Debugging: Print payroll data
+            print("Payroll Data:", payroll_data)
+
+            messages.success(request, "Payroll processed successfully.")
+        except Exception as e:
+            messages.error(request, f"Error processing payroll: {str(e)}")
+
         return redirect('payroll_processing')
 
     return render(request, 'pages/payroll/payroll_processing/payroll_processing.html')

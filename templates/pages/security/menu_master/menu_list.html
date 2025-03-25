@@ -20,10 +20,12 @@
                 <!-- Search -->
                 <div class="row align-items-center">
                     <div class="col-sm-4">
-                        <div class="icon-form mb-3 mb-sm-0">
-                            <span class="form-icon"><i class="ti ti-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search Menu">
-                        </div>
+                        <form method="get">
+                            <div class="icon-form mb-3 mb-sm-0">
+                                <span class="form-icon"><i class="ti ti-search"></i></span>
+                                <input type="text" name="keyword" class="form-control" placeholder="Search Paycycle" value="{{ keyword }}">
+                            </div>
+                        </form>
                     </div>
                     <div class="col-sm-8">
                         <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
