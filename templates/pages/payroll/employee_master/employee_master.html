@@ -420,7 +420,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingPaymentDetails">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
-                            Payment Details
+                            Salary Details
                         </button>
                     </h2>
                     <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails" data-bs-parent="#employeeAccordion">
@@ -461,7 +461,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Grade Code</label>
+                                        <label class="col-form-label">Grade</label>
                                         <select name="grade_code" class="form-control">
                                             <option value="">Select</option>
                                             {% for grade in grade_code_data %}
@@ -547,20 +547,8 @@
                         {% if employee.passport_document %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.passport_document.url }}" target="_blank" download="{{ employee.passport_document.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                {% if employee.passport_document.url %}
-                                    <img src="{{ employee.passport_document.url }}" alt="Passport Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                {% elif employee.passport_document.url %}
-                                    <img src="{{ employee.passport_document.url }}" ></img>
-                                {% else %}
-                                    <p>Preview not available for this file type.</p>
-                                {% endif %}
+                                <a href="{{ employee.passport_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.passport_document.url }}" target="_blank" download="{{ employee.passport_document.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -602,20 +590,8 @@
                         {% if employee.visa_document %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.visa_document.url }}" target="_blank" download="{{ employee.visa_document.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                {% if employee.visa_document.url %}
-                                    <img src="{{ employee.visa_document.url }}" alt="Visa Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                {% elif employee.visa_document.url %}
-                                    <img src="{{ employee.visa_document.url }}" ></img>
-                                {% else %}
-                                    <p>Preview not available for this file type.</p>
-                                {% endif %}
+                                <a href="{{ employee.visa_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.visa_document.url }}" target="_blank" download="{{ employee.visa_document.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -648,20 +624,8 @@
                         {% if employee.emirate_document %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.emirate_document.url }}" target="_blank" download="{{ employee.emirate_document.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                {% if employee.emirate_document.url %}
-                                    <img src="{{ employee.emirate_document.url }}" alt="Emirate Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                {% elif employee.emirate_document.url %}
-                                    <img src="{{ employee.emirate_document.url }}" ></img>
-                                {% else %}
-                                    <p>Preview not available for this file type.</p>
-                                {% endif %}
+                                <a href="{{ employee.emirate_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.emirate_document.url }}" target="_blank" download="{{ employee.emirate_document.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -712,20 +676,8 @@
                         {% if employee.work_permit_document %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.work_permit_document.url }}" target="_blank" download="{{ employee.work_permit_document.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                {% if employee.work_permit_document.url %}
-                                    <img src="{{ employee.work_permit_document.url }}" alt="Work Permit Document Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                {% elif employee.work_permit_document.url %}
-                                    <img src="{{ employee.work_permit_document.url }}" ></img>
-                                {% else %}
-                                    <p>Preview not available for this file type.</p>
-                                {% endif %}
+                                <a href="{{ employee.work_permit_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.work_permit_document.url }}" target="_blank" download="{{ employee.work_permit_document.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -756,18 +708,9 @@
                         {% if employee.manpower_request_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.manpower_request_file.url }}" target="_blank" download="{{ employee.manpower_request_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.manpower_request_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.manpower_request_file.url }}" target="_blank" download="{{ employee.manpower_request_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.manpower_request_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.manpower_request_file.url }}" alt="Manpower Request Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -781,18 +724,9 @@
                         {% if employee.interview_assessment_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.interview_assessment_file.url }}" target="_blank" download="{{ employee.interview_assessment_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.interview_assessment_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.interview_assessment_file.url }}" target="_blank" download="{{ employee.interview_assessment_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.interview_assessment_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.interview_assessment_file.url }}" alt="Interview Assessment Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -808,18 +742,9 @@
                         {% if employee.passport_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.passport_copy_file.url }}" target="_blank" download="{{ employee.passport_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.passport_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.passport_copy_file.url }}" target="_blank" download="{{ employee.passport_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.passport_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.passport_copy_file.url }}" alt="Passport Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -833,13 +758,8 @@
                         {% if employee.photo_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.photo_file.url }}" target="_blank" download="{{ employee.photo_file.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                <img src="{{ employee.photo_file.url }}" alt="Photo Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                                <a href="{{ employee.photo_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.photo_file.url }}" target="_blank" download="{{ employee.photo_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -854,18 +774,9 @@
                         {% if employee.offer_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.offer_letter_file.url }}" target="_blank" download="{{ employee.offer_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.offer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.offer_letter_file.url }}" target="_blank" download="{{ employee.offer_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.offer_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.offer_letter_file.url }}" alt="Offer Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -879,18 +790,9 @@
                         {% if employee.nominee_form_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.nominee_form_file.url }}" target="_blank" download="{{ employee.nominee_form_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.nominee_form_file.url }}" target="_blank" download="{{ employee.nominee_form_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.nominee_form_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.nominee_form_file.url }}" alt="Nominee Form Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -904,18 +806,9 @@
                         {% if employee.change_status_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.change_status_file.url }}" target="_blank" download="{{ employee.change_status_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.change_status_file.url }}" target="_blank" download="{{ employee.change_status_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.change_status_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.change_status_file.url }}" alt="Change Status Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -931,18 +824,9 @@
                         {% if employee.visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.visa_copy_file.url }}" target="_blank" download="{{ employee.visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.visa_copy_file.url }}" target="_blank" download="{{ employee.visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.visa_copy_file.url }}" alt="Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -958,18 +842,9 @@
                         {% if employee.emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.emirates_id_file.url }}" target="_blank" download="{{ employee.emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.emirates_id_file.url }}" target="_blank" download="{{ employee.emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.emirates_id_file.url }}" alt="Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -983,18 +858,9 @@
                         {% if employee.job_offer_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.job_offer_file.url }}" target="_blank" download="{{ employee.job_offer_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.job_offer_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.job_offer_file.url }}" target="_blank" download="{{ employee.job_offer_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.job_offer_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.job_offer_file.url }}" alt="Job Offer Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1008,18 +874,9 @@
                         {% if employee.salary_certificate_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.salary_certificate_file.url }}" target="_blank" download="{{ employee.salary_certificate_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.salary_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.salary_certificate_file.url }}" target="_blank" download="{{ employee.salary_certificate_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.salary_certificate_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.salary_certificate_file.url }}" alt="Salary Certificate Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1033,18 +890,9 @@
                         {% if employee.salary_transfer_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" download="{{ employee.salary_transfer_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" download="{{ employee.salary_transfer_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.salary_transfer_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.salary_transfer_letter_file.url }}" alt="Salary Transfer Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1058,18 +906,9 @@
                         {% if employee.increment_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.increment_letter_file.url }}" target="_blank" download="{{ employee.increment_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.increment_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.increment_letter_file.url }}" target="_blank" download="{{ employee.increment_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.increment_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.increment_letter_file.url }}" alt="Increment Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1083,18 +922,9 @@
                         {% if employee.warning_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.warning_letter_file.url }}" target="_blank" download="{{ employee.warning_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.warning_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.warning_letter_file.url }}" target="_blank" download="{{ employee.warning_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.warning_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.warning_letter_file.url }}" alt="Warning Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1108,18 +938,9 @@
                         {% if employee.experience_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.experience_letter_file.url }}" target="_blank" download="{{ employee.experience_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.experience_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.experience_letter_file.url }}" target="_blank" download="{{ employee.experience_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.experience_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.experience_letter_file.url }}" alt="Experience Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1133,18 +954,9 @@
                         {% if employee.resignation_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.resignation_letter_file.url }}" target="_blank" download="{{ employee.resignation_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.resignation_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.resignation_letter_file.url }}" target="_blank" download="{{ employee.resignation_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.resignation_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.resignation_letter_file.url }}" alt="Resignation Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1158,18 +970,9 @@
                         {% if employee.termination_letter_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.termination_letter_file.url }}" target="_blank" download="{{ employee.termination_letter_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.termination_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.termination_letter_file.url }}" target="_blank" download="{{ employee.termination_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.termination_letter_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.termination_letter_file.url }}" alt="Termination Letter Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1183,18 +986,9 @@
                         {% if employee.employee_confidential_form_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" download="{{ employee.employee_confidential_form_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" download="{{ employee.employee_confidential_form_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.employee_confidential_form_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.employee_confidential_form_file.url }}" alt="Employee Confidential Form Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1208,18 +1002,9 @@
                         {% if employee.leave_application_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.leave_application_file.url }}" target="_blank" download="{{ employee.leave_application_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.leave_application_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.leave_application_file.url }}" target="_blank" download="{{ employee.leave_application_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.leave_application_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.leave_application_file.url }}" alt="Leave Application Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1233,18 +1018,9 @@
                         {% if employee.full_final_settlement_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" download="{{ employee.full_final_settlement_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" download="{{ employee.full_final_settlement_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.full_final_settlement_copy_file.url%}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.full_final_settlement_copy_file.url }}" alt="Full and Final Settlement Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1253,27 +1029,18 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Labor Contract</label>
-                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract" value="{{ employee.labor_contract_id }}">
+                        <!-- <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract" value="{{ employee.labor_contract_id }}">
                         <label class="col-form-label mt-2">Issued Date</label>
                         <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.labor_contract_issued_date|date:'Y-m-d' }}">
                         <label class="col-form-label mt-2">Expiry Date</label>
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.labor_contract_expiry_date|date:'Y-m-d' }}">
+                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.labor_contract_expiry_date|date:'Y-m-d' }}"> -->
                         <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
                         {% if employee.labor_contract_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" download="{{ employee.labor_contract_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" download="{{ employee.labor_contract_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.labor_contract_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.labor_contract_file.url }}" alt="Labor Contract Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1307,18 +1074,9 @@
                         {% if employee.father_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" download="{{ employee.father_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" download="{{ employee.father_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.father_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.father_visa_copy_file.url }}" alt="Father's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1332,18 +1090,9 @@
                         {% if employee.father_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" download="{{ employee.father_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" download="{{ employee.father_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.father_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.father_emirates_id_file.url }}" alt="Father's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1357,18 +1106,9 @@
                         {% if employee.father_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.father_passport_file.url }}" target="_blank" download="{{ employee.father_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.father_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.father_passport_file.url }}" target="_blank" download="{{ employee.father_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.father_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.father_passport_file.url }}" alt="Father's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1386,18 +1126,9 @@
                         {% if employee.mother_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" download="{{ employee.mother_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" download="{{ employee.mother_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.mother_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.mother_visa_copy_file.url }}" alt="Mother's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1411,18 +1142,9 @@
                         {% if employee.mother_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" download="{{ employee.mother_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" download="{{ employee.mother_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.mother_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.mother_emirates_id_file.url }}" alt="Mother's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1436,18 +1158,9 @@
                         {% if employee.mother_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.mother_passport_file.url }}" target="_blank" download="{{ employee.mother_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.mother_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.mother_passport_file.url }}" target="_blank" download="{{ employee.mother_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.mother_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.mother_passport_file.url }}" alt="Mother's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1465,18 +1178,9 @@
                         {% if employee.spouse_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" download="{{ employee.spouse_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" download="{{ employee.spouse_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.spouse_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.spouse_visa_copy_file.url }}" alt="Spouse's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1490,18 +1194,9 @@
                         {% if employee.spouse_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" download="{{ employee.spouse_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" download="{{ employee.spouse_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.spouse_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.spouse_emirates_id_file.url }}" alt="Spouse's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1515,18 +1210,9 @@
                         {% if employee.spouse_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.spouse_passport_file.url }}" target="_blank" download="{{ employee.spouse_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.spouse_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.spouse_passport_file.url }}" target="_blank" download="{{ employee.spouse_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.spouse_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.spouse_passport_file.url }}" alt="Spouse's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1544,18 +1230,9 @@
                         {% if employee.child1_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" download="{{ employee.child1_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" download="{{ employee.child1_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child1_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child1_visa_copy_file.url }}" alt="Child 1's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1569,18 +1246,9 @@
                         {% if employee.child1_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" download="{{ employee.child1_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" download="{{ employee.child1_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child1_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child1_emirates_id_file.url }}" alt="Child 1's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1594,18 +1262,9 @@
                         {% if employee.child1_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child1_passport_file.url }}" target="_blank" download="{{ employee.child1_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child1_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child1_passport_file.url }}" target="_blank" download="{{ employee.child1_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child1_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child1_passport_file.url }}" alt="Child 1's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1616,18 +1275,9 @@
                         {% if employee.child1_birth_certificate_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" download="{{ employee.child1_birth_certificate_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" download="{{ employee.child1_birth_certificate_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child1_birth_certificate_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child1_birth_certificate_file.url }}" alt="Child 1's Birth Certificate Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1645,18 +1295,9 @@
                         {% if employee.child2_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" download="{{ employee.child2_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" download="{{ employee.child2_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child2_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child2_visa_copy_file.url }}" alt="Child 2's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1670,18 +1311,9 @@
                         {% if employee.child2_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" download ="{{ employee.child2_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" download="{{ employee.child2_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child2_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child2_emirates_id_file.url }}" alt="Child 2's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1695,18 +1327,9 @@
                         {% if employee.child2_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child2_passport_file.url }}" target="_blank" download="{{ employee.child2_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child2_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child2_passport_file.url }}" target="_blank" download="{{ employee.child2_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child2_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child2_passport_file.url }}" alt="Child 2's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1717,18 +1340,9 @@
                         {% if employee.child2_birth_certificate_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" download="{{ employee.child2_birth_certificate_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" download="{{ employee.child2_birth_certificate_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child2_birth_certificate_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child2_birth_certificate_file.url }}" alt="Child 2's Birth Certificate Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1746,18 +1360,9 @@
                         {% if employee.child3_visa_copy_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" download="{{ employee.child3_visa_copy_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" download="{{ employee.child3_visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child3_visa_copy_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child3_visa_copy_file.url }}" alt="Child 3's Visa Copy Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1771,18 +1376,9 @@
                         {% if employee.child3_emirates_id_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" download="{{ employee.child3_emirates_id_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" download="{{ employee.child3_emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child3_emirates_id_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child3_emirates_id_file.url }}" alt="Child 3's Emirates ID Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1796,18 +1392,9 @@
                         {% if employee.child3_passport_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child3_passport_file.url }}" target="_blank" download="{{ employee.child3_passport_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child3_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child3_passport_file.url }}" target="_blank" download="{{ employee.child3_passport_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child3_passport_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child3_passport_file.url }}" alt="Child 3's Passport Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1818,18 +1405,9 @@
                         {% if employee.child3_birth_certificate_file %}
                             <div class="mt-2">
                                 <strong>Current Document:</strong>
-                                <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" download="{{ employee.child3_birth_certificate_file.name }}">
-                                    Download
-                                </a>
+                                <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" download="{{ employee.child3_birth_certificate_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
-                            {% if employee.child3_birth_certificate_file.url %}
-                                <div class="mt-2">
-                                    <strong>Preview:</strong>
-                                    <img src="{{ employee.child3_birth_certificate_file.url }}" alt="Child 3's Birth Certificate Preview" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
-                                </div>
-                            {% else %}
-                                <div class="mt-2 text-muted">Preview not available for this file type.</div>
-                            {% endif %}
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
                         {% endif %}
@@ -1941,7 +1519,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Passport Document</p>
-                                        <a href="{{ employee.passport_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.passport_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.passport_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -1953,7 +1531,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Visa Document</p>
-                                        <a href="{{ employee.visa_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.visa_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.visa_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -1965,7 +1543,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Emirate Document</p>
-                                        <a href="{{ employee.emirate_document.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.emirate_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.emirate_document.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -1977,7 +1555,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Passport Copy</p>
-                                        <a href="{{ employee.passport_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.passport_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.passport_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -1989,7 +1567,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Photo</p>
-                                        <a href="{{ employee.photo_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.photo_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.photo_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2001,7 +1579,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Offer Letter</p>
-                                        <a href="{{ employee.offer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.offer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.offer_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2013,7 +1591,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Nominee Form</p>
-                                        <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.nominee_form_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2025,7 +1603,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Change Status</p>
-                                        <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.change_status_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2037,7 +1615,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Visa Copy</p>
-                                        <a href="{{ employee.visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2049,7 +1627,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Emirates ID</p>
-                                        <a href="{{ employee.emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2061,7 +1639,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Labor Contract</p>
-                                        <a href="{{ employee.labor_contract_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.labor_contract_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.labor_contract_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2073,7 +1651,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Job Offer</p>
-                                        <a href="{{ employee.job_offer_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.job_offer_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.job_offer_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2085,7 +1663,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Salary Certificate</p>
-                                        <a href="{{ employee.salary_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.salary_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.salary_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2097,7 +1675,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Salary Transfer Letter</p>
-                                        <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.salary_transfer_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2109,7 +1687,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Increment Letter</p>
-                                        <a href="{{ employee.increment_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.increment_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.increment_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2121,7 +1699,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Warning Letter</p>
-                                        <a href="{{ employee.warning_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.warning_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.warning_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2133,7 +1711,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Experience Letter</p>
-                                        <a href="{{ employee.experience_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.experience_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.experience_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2145,7 +1723,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Resignation Letter</p>
-                                        <a href="{{ employee.resignation_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.resignation_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.resignation_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2157,7 +1735,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Termination Letter</p>
-                                        <a href="{{ employee.termination_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.termination_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.termination_letter_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2169,7 +1747,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Employee Confidential Form</p>
-                                        <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.employee_confidential_form_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2181,7 +1759,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Leave Application</p>
-                                        <a href="{{ employee.leave_application_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.leave_application_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.leave_application_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2193,7 +1771,7 @@
                                     <div class="card-body text-center">
                                         <i class="ti ti-file" style="font-size: 2rem;"></i>
                                         <p class="mt-2">Full and Final Settlement Copy</p>
-                                        <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                                        <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                         <a href="{{ employee.full_final_settlement_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                                     </div>
                                 </div>
@@ -2220,21 +1798,21 @@
                     {% if employee.father_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.father_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.father_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.father_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.father_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.father_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.father_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.father_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2246,21 +1824,21 @@
                     {% if employee.mother_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.mother_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.mother_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.mother_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.mother_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.mother_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.mother_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.mother_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2272,21 +1850,21 @@
                     {% if employee.spouse_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.spouse_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.spouse_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.spouse_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.spouse_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.spouse_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.spouse_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.spouse_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2302,28 +1880,28 @@
                     {% if employee.child1_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child1_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child1_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child1_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child1_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.child1_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child1_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child1_birth_certificate_file %}
                     <div>
                         <p>Birth Certificate</p>
-                        <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child1_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child1_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2335,28 +1913,28 @@
                     {% if employee.child2_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child2_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child2_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child2_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child2_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.child2_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child2_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child2_birth_certificate_file %}
                     <div>
                         <p>Birth Certificate</p>
-                        <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child2_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child2_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2368,28 +1946,28 @@
                     {% if employee.child3_visa_copy_file %}
                     <div>
                         <p>Visa Copy</p>
-                        <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child3_visa_copy_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child3_emirates_id_file %}
                     <div>
                         <p>Emirates ID</p>
-                        <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child3_emirates_id_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child3_passport_file %}
                     <div>
                         <p>Passport</p>
-                        <a href="{{ employee.child3_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_passport_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child3_passport_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
                     {% if employee.child3_birth_certificate_file %}
                     <div>
                         <p>Birth Certificate</p>
-                        <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                        <a href="{{ employee.child3_birth_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                         <a href="{{ employee.child3_birth_certificate_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
                     </div>
                     {% endif %}
@@ -2760,7 +2338,7 @@
     <h2 class="accordion-header" id="headingPaymentDetails">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
             data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
-            Payment Details
+            Salary Details
         </button>
     </h2>
     <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails"
@@ -2809,7 +2387,7 @@
                 <!-- Grade Code (Dropdown) -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Grade Code</label>
+                        <label class="col-form-label">Grade</label>
                         <select name="grade_code" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in grade_code_data %}
@@ -3159,11 +2737,11 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Labor Contract</label>
-                        <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract">
+                        <!-- <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract">
                         <label class="col-form-label mt-2">Issued Date</label>
                         <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date">
                         <label class="col-form-label mt-2">Expiry Date</label>
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
+                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date"> -->
                         <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>

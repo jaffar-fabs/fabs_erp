@@ -252,6 +252,23 @@ class Employee(models.Model):
 
     def __str__(self):
         return f"{self.emp_name} ({self.emp_code})"
+    
+# ------------------------------------------------------------------------------------------------------------
+class EarnDeductMaster(models.Model):
+    comp_code = models.CharField(max_length=15)
+    earndeduct_id = models.BigAutoField(primary_key=True)
+    employee_code = models.CharField(max_length=15)
+    earn_deduct_code = models.CharField(max_length=15)
+    earn_deduct_amt = models.DecimalField(max_digits=18, decimal_places=2)
+    prorated_flag = models.BooleanField()
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(null=True, blank=True)
+    instance_id = models.CharField(max_length=50)
+    earn_type = models.CharField(max_length=15, null=True, blank=True)
+
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -635,5 +652,10 @@ class PayrollEarnDeduct(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)  # Defaults to current timestamp
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.comp_code
+    
+# -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
