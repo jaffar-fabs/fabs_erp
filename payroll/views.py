@@ -1001,6 +1001,7 @@ class CodeMasterList(View):
 
         # Prepare the context for the template
         context = {
+            "base_type_suggestions" : CodeMaster.objects.filter(comp_code="999").values("base_description", "base_value").distinct(),
             "base_type_comp_code": base_type_page,
             "current_url": current_url,
             "keyword": keyword,
