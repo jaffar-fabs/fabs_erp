@@ -22,7 +22,34 @@ def get_paycycle(request):
         'paymonth': paymonth  
     }
 
-    
+def get_country(request):
+    comp_code = get_comp_code(request)
+    country_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='COUNTRY')
+    return {
+        'country_data': country_data
+    }
+
+def get_place(request):
+    comp_code = get_comp_code(request)
+    place_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PLACE')
+    return {
+        'place_data': place_data
+    }
+
+def get_bank(request):
+    comp_code = get_comp_code(request)
+    bank_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BANK')
+    return {
+        'bank_data': bank_data
+    }
+
+def get_branch(request):
+    comp_code = get_comp_code(request)
+    branch_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BRANCH')
+    return {
+        'branch_data': branch_data
+    }
+
 def check_process_cycle(request):
     if request.method == 'POST':
         process_cycle = request.POST.get('process_cycle')

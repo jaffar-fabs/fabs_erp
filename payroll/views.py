@@ -189,8 +189,14 @@ def save_employee(request, employee_id=None):
 
         # Additional details
         employee.passport_details = request.POST.get("passport_details")
+        employee.passport_issued_country = request.POST.get("passport_issued_country")
+        employee.passport_place_of_issue = request.POST.get("passport_place_of_issue")
         employee.issued_date = request.POST.get("issued_date") or None
         employee.expiry_date = request.POST.get("expiry_date") or None
+        employee.iloe_no = request.POST.get("iloe_no")
+        employee.iloe_expiry = request.POST.get("iloe_expiry") or None
+        employee.iloe_document = request.FILES.get("iloe_document") or employee.iloe_document
+        employee.visa_location = request.POST.get("visa_location")
         employee.visa_no = request.POST.get("visa_no")
         employee.emirates_no = request.POST.get("emirates_no")
         employee.visa_issued = request.POST.get("visa_issued") or None
@@ -199,6 +205,8 @@ def save_employee(request, employee_id=None):
         employee.emirate_expiry = request.POST.get("emirate_expiry") or None
         employee.uid_number = request.POST.get("uid_number")
         employee.mohra_number = request.POST.get("mohra_number")
+        employee.mohra_name = request.POST.get("mohra_name")
+        employee.mohra_designation = request.POST.get("mohra_designation")
         employee.work_permit_number = request.POST.get("work_permit_number")
         employee.work_permit_expiry = request.POST.get("work_permit_expiry") or None
 

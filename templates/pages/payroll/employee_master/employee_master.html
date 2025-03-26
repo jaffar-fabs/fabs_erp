@@ -491,13 +491,27 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Bank Name</label>
-                                        <input type="text" name="employee_bank" class="form-control" value="{{ employee.employee_bank }}">
+                                        <select name="employee_bank" class="form-control">
+                                            <option value="">Select Bank</option>
+                                            {% for bank in bank_data %}
+                                            <option value="{{ bank.base_type }}" {% if employee.employee_bank == bank.base_type %}selected{% endif %}>
+                                                {{ bank.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Branch Name</label>
-                                        <input type="text" name="bank_branch" class="form-control" value="{{ employee.bank_branch }}">
+                                        <select name="bank_branch" class="form-control">
+                                            <option value="">Select Branch</option>
+                                            {% for branch in branch_data %}
+                                            <option value="{{ branch.base_type }}" {% if employee.bank_branch == branch.base_type %}selected{% endif %}>
+                                                {{ branch.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -557,26 +571,53 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passport Details</label>
+                        <label class="col-form-label">Passport No.</label>
                         <input type="text" name="passport_details" class="form-control" value="{{ employee.passport_details }}">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Issued Country</label>
+                        <select name="passport_issued_country" class="form-control">
+                            <option value="">Select Country</option>
+                            {% for country in country_data %}
+                            <option value="{{ country.base_value }}" {% if employee.passport_issued_country == country.base_value %}selected{% endif %}>
+                                {{ country.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Place Of Issue</label>
+                        <select name="passport_place_of_issue" class="form-control">
+                            <option value="">Select Place</option>
+                            {% for place in place_data %}
+                            <option value="{{ place.base_value }}" {% if employee.passport_place_of_issue == place.base_value %}selected{% endif %}>
+                                {{ place.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Visa Details -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingVisaDetails">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
-                            Visa Details
-                        </button>
-                    </h2>
-                    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingVisaDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
+            Visa Details
+        </button>
+    </h2>
+    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa No</label>
                         <input type="text" name="visa_no" class="form-control" value="{{ employee.visa_no }}">
@@ -652,10 +693,23 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Number</label>
+                        <label class="col-form-label">Persona Mohra Code</label>
                         <input type="text" name="mohra_number" class="form-control" value="{{ employee.mohra_number }}">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Name</label>
+                        <input type="text" name="mohra_name" class="form-control" value="{{ employee.mohra_name }}">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Designation</label>
+                        <input type="text" name="mohra_designation" class="form-control" value="{{ employee.mohra_designation }}">
+                    </div>
+                </div>                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Number</label>
@@ -665,7 +719,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Expiry</label>
-                        <input stype="date" name="work_permit_expiry" class="form-control" value="{{ employee.work_permit_expiry|date:'Y-m-d' }}">
+                        <input type="date" name="work_permit_expiry" class="form-control" value="{{ employee.work_permit_expiry|date:'Y-m-d' }}">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -684,10 +738,95 @@
                         {% endif %}
                     </div>
                 </div>
+                
+                <!-- Inside/Outside Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Location</label>
+                        <select id="locationSelect_edit" class="form-control" name="visa_location">
+                            <option value="">Select</option>
+                            <option value="inside" {% if employee.visa_location == 'inside' %}selected{% endif %}>Inside</option>
+                            <option value="outside" {% if employee.visa_location == 'outside' %}selected{% endif %}>Outside</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Change Status (Enable/Disable based on Selection) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Change Status</label>
+                        <input type="file" id="changeStatusFile_edit" name="change_status_file" class="form-control mt-2"
+                            accept="application/pdf,image/*" {% if employee.visa_location != 'inside' %}disabled{% endif %}>
+                    
+                        {% if employee.change_status_file %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="{{ employee.change_status_file.url }}" target="_blank"
+                                download="{{ employee.change_status_file.name }}" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
+                        {% else %}
+                        <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE No</label>
+                        <input type="text" name="iloe_no" class="form-control" value="{{ employee.iloe_no }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE Document</label>
+                        <input type="file" name="iloe_document" class="form-control" accept="application/pdf,image/*">
+                        
+                        {% if employee.iloe_document %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="{{ employee.iloe_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="{{ employee.iloe_document.url }}" target="_blank" download="{{ employee.iloe_document.name }}" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
+                        {% else %}
+                        <div class="mt-2 text-muted">No document uploaded.</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE Expiry Date</label>
+                        <input type="date" name="iloe_expiry" class="form-control" value="{{ employee.iloe_expiry|date:'Y-m-d' }}">
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
-</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var locationSelect = document.getElementById('locationSelect_edit');
+    var changeStatusFile = document.getElementById('changeStatusFile_edit');
+
+    // Set initial state
+    if (locationSelect.value === 'inside') {
+        changeStatusFile.removeAttribute('disabled');
+    } else {
+        changeStatusFile.setAttribute('disabled', 'disabled');
+    }
+
+    // Add event listener
+    locationSelect.addEventListener('change', function () {
+        if (this.value === 'inside') {
+            changeStatusFile.removeAttribute('disabled');
+            console.log('Inside selected');
+        } else {
+            changeStatusFile.setAttribute('disabled', 'disabled');
+            console.log('Outside selected or no selection');
+        }
+    });
+});
+</script>
+
 
 <!-- Edit Document Uploads Section -->
 <div class="accordion-item">
@@ -792,22 +931,6 @@
                                 <strong>Current Document:</strong>
                                 <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
                                 <a href="{{ employee.nominee_form_file.url }}" target="_blank" download="{{ employee.nominee_form_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Change Status</label>
-                        <!-- <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status" value="{{ employee.change_status_id }}"> -->
-                        <input type="file" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.change_status_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.change_status_file.url }}" target="_blank" download="{{ employee.change_status_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             </div>
                         {% else %}
                             <div class="mt-2 text-muted">No document uploaded.</div>
@@ -2417,13 +2540,23 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Name</label>
-                        <input type="text" name="employee_bank" class="form-control">
+                        <select name="employee_bank" class="form-control">
+                            <option value="">Select Bank</option>
+                            {% for bank in bank_data %}
+                            <option value="{{ bank.base_type }}">{{ bank.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Branch Name</label>
-                        <input type="text" name="bank_branch" class="form-control">
+                        <select name="bank_branch" class="form-control">
+                            <option value="">Select Branch</option>
+                            {% for branch in branch_data %}
+                            <option value="{{ branch.base_type }}">{{ branch.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2473,8 +2606,30 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Passport Details</label>
+                        <label class="col-form-label">Passport No.</label>
                         <input type="text" name="passport_details" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Issued Country</label>
+                        <select name="passport_issued_country" class="form-control">
+                            <option value="">Select Country</option>
+                            {% for country in country_data %}
+                            <option value="{{ country.base_value }}">{{ country.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Passport Place Of Issue</label>
+                        <select name="passport_place_of_issue" class="form-control">
+                            <option value="">Select Place</option>
+                            {% for place in place_data %}
+                            <option value="{{ place.base_value }}">{{ place.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
             </div>
@@ -2531,7 +2686,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirate Issued</label>
-                        <input type="date" name="emirate_issued" class="form-control" placeholder="Enter Emirate Issued">
+                        <input type="date" name="emirate_issued" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2540,8 +2695,7 @@
                         <input type="date" name="emirate_expiry" class="form-control">
                     </div>
                 </div>
-                
-                
+
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">UID Number</label>
@@ -2550,10 +2704,23 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Number</label>
+                        <label class="col-form-label">Personal Mohra Code</label>
                         <input type="text" name="mohra_number" class="form-control" placeholder="Enter Mohra Number">
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Name</label>
+                        <input type="text" name="mohra_name" class="form-control" placeholder="Enter Mohra Name">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mohra Designation</label>
+                        <input type="text" name="mohra_designation" class="form-control" placeholder="Enter Mohra Designation">
+                    </div>
+                </div>                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Number</label>
@@ -2572,10 +2739,64 @@
                         <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
                     </div>
                 </div>
+
+                <!-- Inside/Outside Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Location</label>
+                        <select id="locationSelect" class="form-control" name="visa_location">
+                            <option value="">Select</option>
+                            <option value="inside">Inside</option>
+                            <option value="outside">Outside</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Change Status (Enable/Disable based on Selection) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Change Status</label>
+                        <input type="file" id="changeStatusFile" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE No</label>
+                        <input type="text" name="iloe_no" class="form-control" >
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE Document</label>
+                        <input type="file" name="iloe_document" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ILOE Expiry Date</label>
+                        <input type="date" name="iloe_expiry" class="form-control">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('locationSelect').addEventListener('change', function () {
+        
+        var changeStatusFile = document.getElementById('changeStatusFile');
+
+        if (this.value === 'inside') {
+            
+            changeStatusFile.removeAttribute('disabled');
+        } else {
+            
+            changeStatusFile.setAttribute('disabled', 'disabled');
+        }
+    });
+</script>
 
 <!-- Add Document Uploads Section -->
 <div class="accordion-item">
@@ -2630,13 +2851,6 @@
                         <label class="col-form-label">Nominee Form</label>
                         <!-- <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form"> -->
                         <input type="file" name="nominee_form_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Change Status</label>
-                        <!-- <input type="text" name="change_status_id" class="form-control" placeholder="Enter Change Status"> -->
-                        <input type="file" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*">
                     </div>
                 </div>
                 <!-- <div class="col-md-6">

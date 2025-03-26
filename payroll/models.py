@@ -70,18 +70,26 @@ class Employee(models.Model):
     # Travel Document Details
     passport_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Passport document upload
     passport_details = models.CharField(max_length=100, blank=True, null=True)  # Passport details
+    passport_place_of_issue = models.CharField(max_length=50, blank=True, null=True)  # Passport place of issue
+    passport_issued_country = models.CharField(max_length=50, blank=True, null=True)  # Passport issued country
     issued_date = models.DateField(blank=True, null=True)  # Issued date
     expiry_date = models.DateField(blank=True, null=True)  # Expiry date
 
     # New fields for Visa Details
+    visa_location = models.CharField(max_length=50, blank=True, null=True)  # Visa location
     visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
+    iloe_no = models.CharField(max_length=50, blank=True, null=True)  # ILOE number
+    iloe_expiry = models.DateField(blank=True, null=True)  # ILOE expiry date
+    iloe_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # ILOE document upload
     emirates_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     emirate_issued = models.DateField(blank=True, null=True)  # Emirate issued
     emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
     uid_number = models.CharField(max_length=50, blank=True, null=True)  # UID number
     mohra_number = models.CharField(max_length=50, blank=True, null=True)  # Mohra number
+    mohra_name = models.CharField(max_length=50, blank=True, null=True)  # Mohra name
+    mohra_designation = models.CharField(max_length=50, blank=True, null=True)  # Mohra designation
     work_permit_number = models.CharField(max_length=50, blank=True, null=True)  # Work permit number
     work_permit_expiry = models.DateField(blank=True, null=True)  # Work permit expiry date
     visa_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Visa document upload
