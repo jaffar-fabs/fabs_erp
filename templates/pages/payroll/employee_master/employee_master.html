@@ -531,6 +531,155 @@
                     </div>
                 </div>
 
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingCampDetailsEdit_{{ employee.employee_id }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapseCampDetailsEdit_{{ employee.employee_id }}" 
+                                aria-expanded="false" 
+                                aria-controls="collapseCampDetailsEdit_{{ employee.employee_id }}">
+                            Camp Details
+                        </button>
+                    </h2>
+                    <div id="collapseCampDetailsEdit_{{ employee.employee_id }}" 
+                         class="accordion-collapse collapse" 
+                         aria-labelledby="headingCampDetailsEdit_{{ employee.employee_id }}" 
+                         data-bs-parent="#employeeAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Left side fields -->
+                                    <div class="mb-3">
+                                        <label for="campTypeEdit_{{ employee.employee_id }}" class="col-form-label">Select Type</label>
+                                        <select id="campTypeEdit_{{ employee.employee_id }}" 
+                                                class="form-control" 
+                                                name="camp_type" onchange="handleCampTypeChangeEdit({{ employee.employee_id }})">
+                                                <option value="">Select</option>
+                                            <option value="self" {% if employee.camp_type == 'self' %}selected{% endif %}>Self</option>
+                                            <option value="camp" {% if employee.camp_type == 'camp' %}selected{% endif %}>Camp</option>
+                                        </select>
+                                    </div>
+                                    <div id="campDetailsEdit_{{ employee.employee_id }}" 
+                                         style="display: {% if employee.camp_type == 'camp' %}block{% else %}none{% endif %};">
+                                        <div class="mb-3">
+                                            <label for="campInsideOutsideEdit_{{ employee.employee_id }}" class="col-form-label">Camp Inside/Outside/In Camp</label>
+                                            <select id="campInsideOutsideEdit_{{ employee.employee_id }}" 
+                                                    class="form-control" 
+                                                    name="camp_inside_outside"
+                                                    onchange="handleInsideOutsideChangeEdit({{ employee.employee_id }})">
+                                                    <option value="">Select</option>
+                                                <option value="inside" {% if employee.camp_inside_outside == 'inside' %}selected{% endif %}>Inside</option>
+                                                <option value="outside" {% if employee.camp_inside_outside == 'outside' %}selected{% endif %}>Outside</option>
+                                                <option value="inCamp" {% if employee.camp_inside_outside == 'inCamp' %}selected{% endif %}>In Camp</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Right side fields -->
+                                    <div id="inCampDetailsEdit_{{ employee.employee_id }}" 
+                                         style="display: {% if employee.camp_inside_outside == 'inCamp' %}block{% else %}none{% endif %};">
+                                        <div class="mb-3">
+                                            <label for="selectCampEdit_{{ employee.employee_id }}" class="col-form-label">Select Camp</label>
+                                            <select id="selectCampEdit_{{ employee.employee_id }}" 
+                                                    name="select_camp" 
+                                                    class="form-control">
+                                                <option value="">Select Camp</option>
+                                                {% for camp in camp_data %}
+                                                <option value="{{ camp.base_value }}" {% if employee.select_camp == camp.base_value %}selected{% endif %}>
+                                                    {{ camp.base_description }}
+                                                </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="roomNoEdit_{{ employee.employee_id }}" class="col-form-label">Room No</label>
+                                            <input type="text" id="roomNoEdit_{{ employee.employee_id }}" 
+                                                   name="room_no" 
+                                                   class="form-control" 
+                                                   value="{{ employee.room_no }}">
+                                        </div>
+                                    </div>
+                                    <div id="outsideDetailsEdit_{{ employee.employee_id }}" 
+                                         style="display: {% if employee.camp_inside_outside == 'outside' %}block{% else %}none{% endif %};">
+                                        <div class="mb-3">
+                                            <label for="outsideLocationEdit_{{ employee.employee_id }}" class="col-form-label">Location</label>
+                                            <input type="text" id="outsideLocationEdit_{{ employee.employee_id }}" 
+                                                   name="outside_location" 
+                                                   class="form-control" 
+                                                   value="{{ employee.outside_location }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="roomRentEdit_{{ employee.employee_id }}" class="col-form-label">Room Rent</label>
+                                            <input type="text" id="roomRentEdit_{{ employee.employee_id }}" 
+                                                   name="room_rent" 
+                                                   class="form-control" 
+                                                   value="{{ employee.room_rent }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <script>
+                    function handleCampTypeChangeEdit(employeeId) {
+                        const campType = document.getElementById(`campTypeEdit_${employeeId}`).value;
+                        const campDetails = document.getElementById(`campDetailsEdit_${employeeId}`);
+                        const inCampDetails = document.getElementById(`inCampDetailsEdit_${employeeId}`);
+                        const outsideDetails = document.getElementById(`outsideDetailsEdit_${employeeId}`);
+                
+                        if (campType === 'camp') {
+                            campDetails.style.display = 'block';
+                        } else {
+                            campDetails.style.display = 'none';
+                            inCampDetails.style.display = 'none';
+                            outsideDetails.style.display = 'none';
+                        }
+                    }
+                
+                    function handleInsideOutsideChangeEdit(employeeId) {
+                        const insideOutside = document.getElementById(`campInsideOutsideEdit_${employeeId}`).value;
+                        const inCampDetails = document.getElementById(`inCampDetailsEdit_${employeeId}`);
+                        const outsideDetails = document.getElementById(`outsideDetailsEdit_${employeeId}`);
+                
+                        if (insideOutside === 'inCamp') {
+                            inCampDetails.style.display = 'block';
+                            outsideDetails.style.display = 'none';
+                        } else if (insideOutside === 'outside') {
+                            inCampDetails.style.display = 'none';
+                            outsideDetails.style.display = 'block';
+                        } else {
+                            inCampDetails.style.display = 'none';
+                            outsideDetails.style.display = 'none';
+                        }
+                    }
+                </script>
+                <script>
+                    function handleCampTypeChangeEdit(employeeId) {
+                        const campType = document.getElementById(`campTypeEdit_${employeeId}`).value;
+                        const campDetails = document.getElementById(`campDetailsEdit_${employeeId}`);
+                        const inCampDetails = document.getElementById(`inCampDetailsEdit_${employeeId}`);
+                        const outsideDetails = document.getElementById(`outsideDetailsEdit_${employeeId}`);
+                
+                        if (campType === 'camp') {
+                            campDetails.style.display = 'block';
+                        } else {
+                            campDetails.style.display = 'none';
+                            inCampDetails.style.display = 'none';
+                            outsideDetails.style.display = 'none';
+                        }
+                    }
+                
+                    // Ensure the correct visibility on page load
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.querySelectorAll('[id^="campTypeEdit_"]').forEach(function (selectElement) {
+                            const employeeId = selectElement.id.split('_')[1];
+                            handleCampTypeChangeEdit(employeeId);
+                        });
+                    });
+                </script>
+
                 <!-- Travel Document Detail -->
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingTravelDocumentDetail">
@@ -2575,6 +2724,108 @@
         </div>
     </div>
 </div>
+
+<!-- Camp Details -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingCampDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCampDetails" aria-expanded="false" aria-controls="collapseCampDetails">
+            Camp Details
+        </button>
+    </h2>
+    <div id="collapseCampDetails" class="accordion-collapse collapse" aria-labelledby="headingCampDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Left side fields -->
+                    <div class="mb-3">
+                        <label class="col-form-label">Select Type</label>
+                        <select id="campType" class="form-control" onchange="handleCampTypeChange()">
+                            <option value="">Select</option>
+                            <option value="self">Self</option>
+                            <option value="camp">Camp</option>
+                        </select>
+                    </div>
+                    <div id="campDetails" style="display: none;">
+                        <div class="mb-3">
+                            <label class="col-form-label">Camp Inside/Outside/In Camp</label>
+                            <select id="campInsideOutside" class="form-control" onchange="handleInsideOutsideChange()">
+                                <option value="">Select</option>
+                                <option value="inside">Inside</option>
+                                <option value="outside">Outside</option>
+                                <option value="inCamp">In Camp</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Right side fields -->
+                    <div id="inCampDetails" style="display: none;">
+                        <div class="mb-3">
+                            <label class="col-form-label">Select Camp</label>
+                            <select name="select_camp" class="form-control">
+                                <option value="">Select Camp</option>
+                                {% for camp in camp_data %}
+                                <option value="{{ camp.base_value }}">{{ camp.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Room No</label>
+                            <input type="text" name="room_no" class="form-control">
+                        </div>
+                    </div>
+                    <div id="outsideDetails" style="display: none;">
+                        <div class="mb-3">
+                            <label class="col-form-label">Location</label>
+                            <input type="text" name="outside_location" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="col-form-label">Room Rent</label>
+                            <input type="text" name="room_rent" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function handleCampTypeChange() {
+        const campType = document.getElementById('campType').value;
+        const campDetails = document.getElementById('campDetails');
+        const inCampDetails = document.getElementById('inCampDetails');
+        const outsideDetails = document.getElementById('outsideDetails');
+
+        if (campType === 'camp') {
+            campDetails.style.display = 'block';
+        } else {
+            campDetails.style.display = 'none';
+            inCampDetails.style.display = 'none';
+            outsideDetails.style.display = 'none';
+        }
+    }
+
+    function handleInsideOutsideChange() {
+        const insideOutside = document.getElementById('campInsideOutside').value;
+        const inCampDetails = document.getElementById('inCampDetails');
+        const outsideDetails = document.getElementById('outsideDetails');
+
+        if (insideOutside === 'inCamp') {
+            inCampDetails.style.display = 'block';
+            outsideDetails.style.display = 'none';
+        } else if (insideOutside === 'outside') {
+            inCampDetails.style.display = 'none';
+            outsideDetails.style.display = 'block';
+        } else {
+            inCampDetails.style.display = 'none';
+            outsideDetails.style.display = 'none';
+        }
+    }
+</script>
+<!-- ...existing code... -->
+
+
+
 
 <!-- Travel Document Detail -->
 <div class="accordion-item">

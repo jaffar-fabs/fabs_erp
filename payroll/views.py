@@ -337,6 +337,14 @@ def save_employee(request, employee_id=None):
 
         employee.child3_birth_certificate_file = request.FILES.get("child3_birth_certificate_file") or employee.child3_birth_certificate_file
 
+        # Camp Details
+        employee.camp_type = request.POST.get("camp_type")
+        employee.camp_inside_outside = request.POST.get("camp_inside_outside")
+        employee.select_camp = request.POST.get("select_camp")
+        employee.room_no = request.POST.get("room_no")
+        employee.outside_location = request.POST.get("outside_location")
+        employee.room_rent = request.POST.get("room_rent") or None
+
         # Save employee
         employee.save()
 
