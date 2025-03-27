@@ -979,351 +979,127 @@
 
 <!-- Edit Document Uploads Section -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingDocumentUploads">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocumentUploads" aria-expanded="false" aria-controls="collapseDocumentUploads">
+    <h2 class="accordion-header" id="headingDocumentUploadsEdit">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocumentUploadsEdit" aria-expanded="false" aria-controls="collapseDocumentUploadsEdit">
             Document Uploads
         </button>
     </h2>
-    <div id="collapseDocumentUploads" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploads" data-bs-parent="#employeeAccordion">
+    <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
-            <div class="row">
-                <!-- Document Upload Fields -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Manpower Request Form</label>
-                        <!-- <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request" value="{{ employee.manpower_request_id }}"> -->
-                        <input type="file" name="manpower_request_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.manpower_request_file %}
+            <div id="documentUploadContainerEdit_{{ employee.employee_id }}">
+                {% for document in employee.documents %}
+                <div class="card p-3 mb-2 shadow-sm document-upload-row" data-document-id="{{ document.id }}">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">Document Type</label>
+                            <select class="form-select" name="document_type[]">
+                                {% for doc in doc_data %}
+                                <option value="{{ doc.base_value }}" {% if document.document_type == doc.base_value %}selected{% endif %}>
+                                    {{ doc.base_description }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">File Upload</label>
+                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                            {% if document.document_file %}
                             <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.manpower_request_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.manpower_request_file.url }}" target="_blank" download="{{ employee.manpower_request_file.name }}" class="btn btn-sm btn-secondary">Download</a>
+                                <strong>Current File:</strong>
+                                <input type="hidden" value="{{ document.document_id }}" class="document-id"> <!-- Ensure this is the correct ID -->
+                                <a href="{{ document.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> <!-- Eye icon for preview -->
+                                </a>
+                                <a href="{{ document.document_file.url }}" download class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-download"></i> <!-- Download icon -->
+                                </a>
                             </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn btn-danger" onclick="removeDocument(this)">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Interview Assessment Form</label>
-                        <!-- <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment" value="{{ employee.interview_assessment_id }}"> -->
-                        <input type="file" name="interview_assessment_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.interview_assessment_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.interview_assessment_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.interview_assessment_file.url }}" target="_blank" download="{{ employee.interview_assessment_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Copy</label>
-                        <input type="text" name="passport_copy_id" class="form-control" placeholder="Enter Passport Copy" value="{{ employee.passport_copy_id }}">
-                        <input type="date" name="passport_copy_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.passport_issued_date|date:'Y-m-d' }}">
-                        <input type="date" name="passport_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.passport_expiry_date|date:'Y-m-d' }}">
-                        <input type="file" name="passport_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.passport_copy_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.passport_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.passport_copy_file.url }}" target="_blank" download="{{ employee.passport_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div> -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Photo</label>
-                        <input type="text" name="photo_id" class="form-control" placeholder="Enter Photo" value="{{ employee.photo_id }}">
-                        <input type="file" name="photo_file" class="form-control mt-2" accept="image/*">
-                        {% if employee.photo_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.photo_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.photo_file.url }}" target="_blank" download="{{ employee.photo_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div> -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Offer Letter</label>
-                        <!-- <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter" value="{{ employee.offer_letter_id }}"> -->
-                        <input type="file" name="offer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.offer_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.offer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.offer_letter_file.url }}" target="_blank" download="{{ employee.offer_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nominee Form</label>
-                        <!-- <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form" value="{{ employee.nominee_form_id }}"> -->
-                        <input type="file" name="nominee_form_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.nominee_form_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.nominee_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.nominee_form_file.url }}" target="_blank" download="{{ employee.nominee_form_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Copy</label>
-                        <input type="text" name="visa_copy_id" class="form-control" placeholder="Enter Visa Copy" value="{{ employee.visa_copy_id }}">
-                        <input type="date" name="visa_copy_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.visa_issued_date|date:'Y-m-d' }}">
-                        <input type="date" name="visa_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.visa_expiry_date|date:'Y-m-d' }}">
-                        <input type="file" name="visa_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.visa_copy_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.visa_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.visa_copy_file.url }}" target="_blank" download="{{ employee.visa_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div> -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates ID</label>
-                        <input type="text" name="emirates_id_id" class="form-control" placeholder="Enter Emirates ID" value="{{ employee.emirates_id_id }}">
-                        <input type="date" name="emirates_id_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.emirates_id_issued_date|date:'Y-m-d' }}">
-                        <input type="date" name="emirates_id_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.emirates_id_expiry_date|date:'Y-m-d' }}">
-                        <input type="file" name="emirates_id_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.emirates_id_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.emirates_id_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.emirates_id_file.url }}" target="_blank" download="{{ employee.emirates_id_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div> -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Job Offer</label>
-                        <!-- <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer" value="{{ employee.job_offer_id }}"> -->
-                        <input type="file" name="job_offer_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.job_offer_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.job_offer_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.job_offer_file.url }}" target="_blank" download="{{ employee.job_offer_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Salary Certificate</label>
-                        <!-- <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate" value="{{ employee.salary_certificate_id }}"> -->
-                        <input type="file" name="salary_certificate_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.salary_certificate_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.salary_certificate_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.salary_certificate_file.url }}" target="_blank" download="{{ employee.salary_certificate_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Salary Transfer Letter</label>
-                        <!-- <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter" value="{{ employee.salary_transfer_letter_id }}"> -->
-                        <input type="file" name="salary_transfer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.salary_transfer_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.salary_transfer_letter_file.url }}" target="_blank" download="{{ employee.salary_transfer_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Increment Letter</label>
-                        <!-- <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter" value="{{ employee.increment_letter_id }}"> -->
-                        <input type="file" name="increment_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.increment_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.increment_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.increment_letter_file.url }}" target="_blank" download="{{ employee.increment_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Warning Letter</label>
-                        <!-- <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter" value="{{ employee.warning_letter_id }}"> -->
-                        <input type="file" name="warning_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.warning_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.warning_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.warning_letter_file.url }}" target="_blank" download="{{ employee.warning_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Experience Letter</label>
-                        <!-- <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter" value="{{ employee.experience_letter_id }}"> -->
-                        <input type="file" name="experience_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.experience_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.experience_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.experience_letter_file.url }}" target="_blank" download="{{ employee.experience_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Resignation Letter</label>
-                        <!-- <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter" value="{{ employee.resignation_letter_id }}"> -->
-                        <input type="file" name="resignation_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.resignation_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.resignation_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.resignation_letter_file.url }}" target="_blank" download="{{ employee.resignation_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Termination Letter</label>
-                        <!-- <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter" value="{{ employee.termination_letter_id }}"> -->
-                        <input type="file" name="termination_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.termination_letter_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.termination_letter_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.termination_letter_file.url }}" target="_blank" download="{{ employee.termination_letter_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Confidential Form</label>
-                        <!-- <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form" value="{{ employee.employee_confidential_form_id }}"> -->
-                        <input type="file" name="employee_confidential_form_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.employee_confidential_form_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.employee_confidential_form_file.url }}" target="_blank" download="{{ employee.employee_confidential_form_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Leave Application</label>
-                        <!-- <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application" value="{{ employee.leave_application_id }}"> -->
-                        <input type="file" name="leave_application_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.leave_application_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.leave_application_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.leave_application_file.url }}" target="_blank" download="{{ employee.leave_application_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Full and Final Settlement Copy</label>
-                        <!-- <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy" value="{{ employee.full_final_settlement_copy_id }}"> -->
-                        <input type="file" name="full_and_final_settlement_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.full_final_settlement_copy_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.full_final_settlement_copy_file.url }}" target="_blank" download="{{ employee.full_final_settlement_copy_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Labor Contract</label>
-                        <!-- <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract" value="{{ employee.labor_contract_id }}">
-                        <label class="col-form-label mt-2">Issued Date</label>
-                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date" value="{{ employee.labor_contract_issued_date|date:'Y-m-d' }}">
-                        <label class="col-form-label mt-2">Expiry Date</label>
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date" value="{{ employee.labor_contract_expiry_date|date:'Y-m-d' }}"> -->
-                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
-                        {% if employee.labor_contract_file %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.labor_contract_file.url }}" target="_blank" download="{{ employee.labor_contract_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
-                    </div>
-                </div>
+                {% endfor %}
             </div>
+            <button type="button" class="btn btn-primary mt-3" onclick="addRowEdit('{{ employee.employee_id }}')">
+                <i class="fas fa-plus"></i> Add Document
+            </button>
         </div>
     </div>
 </div>
 
+<script>
+    const documentsToRemove = [];
 
+function removeDocument(button) {
+    const row = button.closest('.document-upload-row');
+    if (row) {
+        const documentId = row.querySelector('.document-id').value; 
+        if (documentId) { 
+            documentsToRemove.push(documentId); 
+            console.log('Document ID to remove:', documentId); 
+        } else {
+            console.error("Document ID is empty."); 
+        }
+        row.remove(); 
+        console.log('Documents to remove:', documentsToRemove);
+    }
+    
+    updateDocumentsToRemoveInput();
+}
+
+function updateDocumentsToRemoveInput() {
+    let input = document.querySelector(`#editEmployeeForm_{{ employee.employee_id }} input[name="documents_to_remove"]`);
+    if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'documents_to_remove';
+        document.getElementById('editEmployeeForm_{{ employee.employee_id }}').appendChild(input);
+    }
+    input.value = documentsToRemove.join(','); // Join IDs with commas
+}
+
+    function addRowEdit(employeeId) {
+        const container = document.getElementById(`documentUploadContainerEdit_${employeeId}`);
+        const newRow = document.createElement('div');
+        newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
+        newRow.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Document Type</label>
+                    <select class="form-select" name="document_type[]">
+                        {% for doc in doc_data %}
+                        <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">File Upload</label>
+                    <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                </div>
+                <div class="col-md-4 text-end">
+                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(newRow);
+    }
+
+    function removeRow(button) {
+        const row = button.closest('.document-upload-row');
+        if (row) {
+            row.remove();
+        }
+    }
+</script>
+<!-- /Edit Document Uploads Section -->
+ 
 <!-- Add Dependent Details Section -->
 <div class="accordion-item">
     <h2 class="accordion-header" id="headingDependentDetails">
@@ -3058,162 +2834,84 @@
     </h2>
     <div id="collapseDocumentUploads" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploads" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
-            <div class="row">
-                <!-- Document Upload Fields -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Manpower Request Form</label>
-                        <!-- <input type="text" name="manpower_request_id" class="form-control" placeholder="Enter Manpower Request"> -->
-                        <input type="file" name="manpower_request_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Interview Assessment Form</label>
-                        <!-- <input type="text" name="interview_assessment_id" class="form-control" placeholder="Enter Interview Assessment"> -->
-                        <input type="file" name="interview_assessment_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Copy</label>
-                        <input type="text" name="passport_copy_id" class="form-control" placeholder="Enter Passport Copy">
-                        <input type="date" name="passport_copy_issued_date" class="form-control mt-2" placeholder="Issued Date">
-                        <input type="date" name="passport_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
-                        <input type="file" name="passport_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div> -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Photo</label>
-                        <input type="text" name="photo_id" class="form-control" placeholder="Enter Photo">
-                        <input type="file" name="photo_file" class="form-control mt-2" accept="image/*">
-                    </div>
-                </div> -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Offer Letter</label>
-                        <!-- <input type="text" name="offer_letter_id" class="form-control" placeholder="Enter Offer Letter"> -->
-                        <input type="file" name="offer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nominee Form</label>
-                        <!-- <input type="text" name="nominee_form_id" class="form-control" placeholder="Enter Nominee Form"> -->
-                        <input type="file" name="nominee_form_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Copy</label>
-                        <input type="text" name="visa_copy_id" class="form-control" placeholder="Enter Visa Copy">
-                        <input type="date" name="visa_copy_issued_date" class="form-control mt-2" placeholder="Issued Date">
-                        <input type="date" name="visa_copy_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
-                        <input type="file" name="visa_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div> -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates ID</label>
-                        <input type="text" name="emirates_id_id" class="form-control" placeholder="Enter Emirates ID">
-                        <input type="date" name="emirates_id_issued_date" class="form-control mt-2" placeholder="Issued Date">
-                        <input type="date" name="emirates_id_expiry_date" class="form-control mt-2" placeholder="Expiry Date">
-                        <input type="file" name="emirates_id_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div> -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Job Offer</label>
-                        <!-- <input type="text" name="job_offer_id" class="form-control" placeholder="Enter Job Offer"> -->
-                        <input type="file" name="job_offer_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Salary Certificate</label>
-                        <!-- <input type="text" name="salary_certificate_id" class="form-control" placeholder="Enter Salary Certificate"> -->
-                        <input type="file" name="salary_certificate_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Salary Transfer Letter</label>
-                        <!-- <input type="text" name="salary_transfer_letter_id" class="form-control" placeholder="Enter Salary Transfer Letter"> -->
-                        <input type="file" name="salary_transfer_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Increment Letter</label>
-                        <!-- <input type="text" name="increment_letter_id" class="form-control" placeholder="Enter Increment Letter"> -->
-                        <input type="file" name="increment_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Warning Letter</label>
-                        <!-- <input type="text" name="warning_letter_id" class="form-control" placeholder="Enter Warning Letter"> -->
-                        <input type="file" name="warning_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Experience Letter</label>
-                        <!-- <input type="text" name="experience_letter_id" class="form-control" placeholder="Enter Experience Letter"> -->
-                        <input type="file" name="experience_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Resignation Letter</label>
-                        <!-- <input type="text" name="resignation_letter_id" class="form-control" placeholder="Enter Resignation Letter"> -->
-                        <input type="file" name="resignation_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Termination Letter</label>
-                        <!-- <input type="text" name="termination_letter_id" class="form-control" placeholder="Enter Termination Letter"> -->
-                        <input type="file" name="termination_letter_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Confidential Form</label>
-                        <!-- <input type="text" name="employee_confidential_form_id" class="form-control" placeholder="Enter Employee Confidential Form"> -->
-                        <input type="file" name="employee_confidential_form_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Leave Application</label>
-                        <!-- <input type="text" name="leave_application_id" class="form-control" placeholder="Enter Leave Application"> -->
-                        <input type="file" name="leave_application_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Full and Final Settlement Copy</label>
-                        <!-- <input type="text" name="full_and_final_settlement_copy_id" class="form-control" placeholder="Enter Full and Final Settlement Copy"> -->
-                        <input type="file" name="full_and_final_settlement_copy_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Labor Contract</label>
-                        <!-- <input type="text" name="labor_contract_id" class="form-control" placeholder="Enter Labor Contract">
-                        <label class="col-form-label mt-2">Issued Date</label>
-                        <input type="date" name="labor_contract_issued_date" class="form-control mt-2" placeholder="Issued Date">
-                        <label class="col-form-label mt-2">Expiry Date</label>
-                        <input type="date" name="labor_contract_expiry_date" class="form-control mt-2" placeholder="Expiry Date"> -->
-                        <input type="file" name="labor_contract_file" class="form-control mt-2" accept="application/pdf,image/*">
-                    </div>
-                </div>
-            </div>
+            <table class="table" id="documentUploadTable">
+                <thead>
+                    <tr>
+                        <th>Document Type</th>
+                        <th>File Upload</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="form-select" name="document_type[]">
+                                {% for document in doc_data %}
+                                    <option value="{{ document.base_value }}">{{ document.base_description }}</option>  <!-- Adjust 'name' to the actual field you want to display -->
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addRow()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<script>
+    function addRow() {
+        const table = document.getElementById('documentUploadTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <td>
+                <select class="form-select" name="document_type[]">
+                    {% for document in doc_data %}
+                        <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addRow()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        `;
+    }
+
+    function removeRow(button) {
+        const row = button.parentNode.parentNode;
+        const table = document.getElementById('documentUploadTable').getElementsByTagName('tbody')[0];
+
+        // Ensure at least one row remains
+        if (table.rows.length > 1) {
+            row.parentNode.removeChild(row);
+        } else {
+            // Instead of alert, you can show a message in the UI
+            const message = document.createElement('div');
+            message.className = 'alert alert-warning';
+            message.innerText = "At least one row must remain.";
+            document.querySelector('.accordion-body').insertBefore(message, table);
+            setTimeout(() => message.remove(), 3000); // Remove message after 3 seconds
+        }
+    }
+</script>
 
 <!-- Add Dependent Details Section -->
 <div class="accordion-item">

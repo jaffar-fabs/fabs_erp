@@ -96,54 +96,6 @@ class Employee(models.Model):
     emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
     work_permit_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Work permit document upload
     profile_picture = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Profile pictur
-    spouse_visa_copy = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    dependent_emirates_id = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    dependent_passport = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    child_birth_certificate = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-
-    # Document Uploads
-    manpower_request_id = models.CharField(max_length=50, blank=True, null=True)
-    manpower_request_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    interview_assessment_id = models.CharField(max_length=50, blank=True, null=True)
-    interview_assessment_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    passport_copy_id = models.CharField(max_length=50, blank=True, null=True)
-    passport_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    photo_id = models.CharField(max_length=50, blank=True, null=True)
-    photo_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    offer_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    offer_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    nominee_form_id = models.CharField(max_length=50, blank=True, null=True)
-    nominee_form_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    change_status_id = models.CharField(max_length=50, blank=True, null=True)
-    change_status_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    visa_copy_id = models.CharField(max_length=50, blank=True, null=True)
-    visa_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    emirates_id_id = models.CharField(max_length=50, blank=True, null=True)
-    emirates_id_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    labor_contract_id = models.CharField(max_length=50, blank=True, null=True)
-    labor_contract_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    job_offer_id = models.CharField(max_length=50, blank=True, null=True)
-    job_offer_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    salary_certificate_id = models.CharField(max_length=50, blank=True, null=True)
-    salary_certificate_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    salary_transfer_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    salary_transfer_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    increment_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    increment_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    warning_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    warning_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    experience_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    experience_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    resignation_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    resignation_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    termination_letter_id = models.CharField(max_length=50, blank=True, null=True)
-    termination_letter_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    employee_confidential_form_id = models.CharField(max_length=50, blank=True, null=True)
-    employee_confidential_form_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    leave_application_id = models.CharField(max_length=50, blank=True, null=True)
-    leave_application_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
-    full_final_settlement_copy_id = models.CharField(max_length=50, blank=True, null=True)
-    full_final_settlement_copy_file = models.FileField(upload_to=employee_document_path, blank=True, null=True)
 
     # Fields with additional date inputs
     passport_issued_date = models.DateField(blank=True, null=True)
@@ -280,6 +232,24 @@ class Employee(models.Model):
         return f"{self.emp_name} ({self.emp_code})"
     
 # ------------------------------------------------------------------------------------------------------------
+
+# Employee Document
+class EmployeeDocument(models.Model):
+    comp_code = models.CharField(max_length=15)  # Removed default value
+    document_id = models.AutoField(primary_key=True)  # Primary key for the document
+    emp_code = models.CharField(max_length=50)  # Employee code
+    document_type = models.CharField(max_length=250)  # Document type
+    document_file = models.FileField(upload_to=employee_document_path)  # Document file
+    created_by = models.BigIntegerField()  # Created by
+    created_on = models.DateTimeField(auto_now_add=True)  # Created on
+    modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
+    modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
+
+    def __str__(self):
+        return f"{self.document_name} ({self.emp_code})"
+
+
+#------------------------------------------------------------------------------------------------------------
 class EarnDeductMaster(models.Model):
     comp_code = models.CharField(max_length=15)
     earndeduct_id = models.BigAutoField(primary_key=True)

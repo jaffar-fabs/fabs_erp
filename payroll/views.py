@@ -38,7 +38,8 @@ from .models import (
     CompanyMaster,
     GradeMaster, 
     Employee,
-    WorkerAttendanceRegister
+    WorkerAttendanceRegister,
+    EmployeeDocument
 )
 
 # Initialize COMP_CODE globally
@@ -87,6 +88,10 @@ def employee_master(request):
         employees_page = paginator.page(1)
     except EmptyPage:
         employees_page = paginator.page(paginator.num_pages)
+
+    # Fetch documents for each employee
+    for employee in employees_page:
+        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
 
     # Prepare the context for the template
     context = {
@@ -162,30 +167,6 @@ def save_employee(request, employee_id=None):
         employee.emirate_document = request.FILES.get("emirate_document") or employee.emirate_document
         employee.work_permit_document = request.FILES.get("work_permit_document") or employee.work_permit_document
         employee.profile_picture = request.FILES.get("profile_picture") or employee.profile_picture
-        employee.full_final_settlement_copy_id = request.POST.get("full_and_final_settlement_copy_id")
-        employee.full_final_settlement_copy_file = request.FILES.get("full_and_final_settlement_copy_file") or employee.full_final_settlement_copy_file
-
-        # Additional document fields
-        employee.manpower_request_file = request.FILES.get("manpower_request_file") or employee.manpower_request_file
-        employee.interview_assessment_file = request.FILES.get("interview_assessment_file") or employee.interview_assessment_file
-        employee.passport_copy_file = request.FILES.get("passport_copy_file") or employee.passport_copy_file
-        employee.photo_file = request.FILES.get("photo_file") or employee.photo_file
-        employee.offer_letter_file = request.FILES.get("offer_letter_file") or employee.offer_letter_file
-        employee.nominee_form_file = request.FILES.get("nominee_form_file") or employee.nominee_form_file
-        employee.change_status_file = request.FILES.get("change_status_file") or employee.change_status_file
-        employee.visa_copy_file = request.FILES.get("visa_copy_file") or employee.visa_copy_file
-        employee.emirates_id_file = request.FILES.get("emirates_id_file") or employee.emirates_id_file
-        employee.labor_contract_file = request.FILES.get("labor_contract_file") or employee.labor_contract_file
-        employee.job_offer_file = request.FILES.get("job_offer_file") or employee.job_offer_file
-        employee.salary_certificate_file = request.FILES.get("salary_certificate_file") or employee.salary_certificate_file
-        employee.salary_transfer_letter_file = request.FILES.get("salary_transfer_letter_file") or employee.salary_transfer_letter_file
-        employee.increment_letter_file = request.FILES.get("increment_letter_file") or employee.increment_letter_file
-        employee.warning_letter_file = request.FILES.get("warning_letter_file") or employee.warning_letter_file
-        employee.experience_letter_file = request.FILES.get("experience_letter_file") or employee.experience_letter_file
-        employee.resignation_letter_file = request.FILES.get("resignation_letter_file") or employee.resignation_letter_file
-        employee.termination_letter_file = request.FILES.get("termination_letter_file") or employee.termination_letter_file
-        employee.employee_confidential_form_file = request.FILES.get("employee_confidential_form_file") or employee.employee_confidential_form_file
-        employee.leave_application_file = request.FILES.get("leave_application_file") or employee.leave_application_file
 
         # Additional details
         employee.passport_details = request.POST.get("passport_details")
@@ -209,27 +190,6 @@ def save_employee(request, employee_id=None):
         employee.mohra_designation = request.POST.get("mohra_designation")
         employee.work_permit_number = request.POST.get("work_permit_number")
         employee.work_permit_expiry = request.POST.get("work_permit_expiry") or None
-
-        employee.manpower_request_id = request.POST.get("manpower_request_id")
-        employee.interview_assessment_id = request.POST.get("interview_assessment_id")
-        employee.passport_copy_id = request.POST.get("passport_copy_id")
-        employee.photo_id = request.POST.get("photo_id")
-        employee.offer_letter_id = request.POST.get("offer_letter_id")
-        employee.nominee_form_id = request.POST.get("nominee_form_id")
-        employee.change_status_id = request.POST.get("change_status_id")
-        employee.visa_copy_id = request.POST.get("visa_copy_id")
-        employee.emirates_id_id = request.POST.get("emirates_id_id")
-        employee.labor_contract_id = request.POST.get("labor_contract_id")
-        employee.job_offer_id = request.POST.get("job_offer_id")
-        employee.salary_certificate_id = request.POST.get("salary_certificate_id")
-        employee.salary_transfer_letter_id = request.POST.get("salary_transfer_letter_id")
-        employee.increment_letter_id = request.POST.get("increment_letter_id")
-        employee.warning_letter_id = request.POST.get("warning_letter_id")
-        employee.experience_letter_id = request.POST.get("experience_letter_id")
-        employee.resignation_letter_id = request.POST.get("resignation_letter_id")
-        employee.termination_letter_id = request.POST.get("termination_letter_id")
-        employee.employee_confidential_form_id = request.POST.get("employee_confidential_form_id")
-        employee.leave_application_id = request.POST.get("leave_application_id")
 
         employee.labor_contract_issued_date = request.POST.get("labor_contract_issued_date") or None
         employee.labor_contract_expiry_date = request.POST.get("labor_contract_expiry_date") or None
@@ -343,7 +303,7 @@ def save_employee(request, employee_id=None):
         employee.select_camp = request.POST.get("select_camp")
         employee.room_no = request.POST.get("room_no")
         employee.outside_location = request.POST.get("outside_location")
-        employee.room_rent = request.POST.get("room_rent") or None
+        employee.room_rent = request.POST.get("room_rent") or 0
 
         # Save employee
         employee.save()
@@ -353,9 +313,45 @@ def save_employee(request, employee_id=None):
             employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', employee.emp_code)
             os.makedirs(employee_folder_path, exist_ok=True)
 
+        # Process the form data
+        documents_to_remove = request.POST.get('documents_to_remove', '').split(',')
+        documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter out empty or invalid IDs
+
+        # Remove documents
+    for doc_id in documents_to_remove:
+        try:
+            document = EmployeeDocument.objects.get(document_id=doc_id) 
+            if document.document_file: 
+                file_path = document.document_file.path  
+                if os.path.isfile(file_path):  
+                    os.remove(file_path)  
+            document.delete() 
+        except EmployeeDocument.DoesNotExist:
+            continue  
+        except Exception as e:
+            print(f"Error deleting document {doc_id}: {e}")
+
+        # Save new documents
+        document_types = request.POST.getlist("document_type[]")
+        document_files = request.FILES.getlist("document_file[]")
+
+        for doc_type, doc_file in zip(document_types, document_files):
+            EmployeeDocument.objects.create (
+                comp_code=COMP_CODE,
+                emp_code=employee.emp_code,
+                document_type=doc_type,
+                document_file=doc_file,
+                created_by=1,  # Replace with actual user ID if available
+            )
+
+        messages.success(request, "Employee details and documents updated successfully.")
         return redirect('/employee')
 
+    # Fetch employee data and documents for editing
     employee_data = Employee.objects.filter(comp_code=COMP_CODE)
+    for employee in employee_data:
+        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
+
     return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
 
 def deactivate_employee(request, employee_id):
@@ -2386,7 +2382,7 @@ class AdvanceMasterList(View):
         }
 
         try:
-            if advance_id:  # If advance_id is provided, update the record
+            if (advance_id):  # If advance_id is provided, update the record
                 advance_master = AdvanceMaster.objects.get(advance_id=advance_id)
                 for key, value in advance_data.items():
                     setattr(advance_master, key, value)

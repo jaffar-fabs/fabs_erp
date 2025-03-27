@@ -86,6 +86,7 @@ TEMPLATES = [
                 'payroll.context_processors.get_place',
                 'payroll.context_processors.get_bank',
                 'payroll.context_processors.get_branch',
+                'payroll.context_processors.get_documents',
             ],
         },
     },

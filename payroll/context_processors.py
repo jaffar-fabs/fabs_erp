@@ -50,6 +50,13 @@ def get_branch(request):
         'branch_data': branch_data
     }
 
+def get_documents(request):
+    comp_code = get_comp_code(request)
+    doc_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DOC')
+    return {
+        'doc_data': doc_data
+    }
+
 def check_process_cycle(request):
     if request.method == 'POST':
         process_cycle = request.POST.get('process_cycle')
