@@ -21,13 +21,18 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Base Type <span class="text-danger">*</span></label>
+                                        <label class="col-form-label">Base Type <span
+                                                class="text-danger">*</span></label>
                                         <div class="dropdown">
-                                            <input type="text" id="base_search" class="form-control dropdown-toggle" placeholder="Search and Select Base Type" autocomplete="off" data-bs-toggle="dropdown">
+                                            <input type="text" id="base_search" class="form-control dropdown-toggle"
+                                                placeholder="Search and Select Base Type" autocomplete="off"
+                                                data-bs-toggle="dropdown">
                                             <ul id="base_dropdown" class="dropdown-menu w-100">
                                                 {% for base in base_type_suggestions %}
                                                 <li>
-                                                    <a class="dropdown-item" href="#" data-value="{{ base.base_description }}" data-base-value="{{ base.base_value }}">
+                                                    <a class="dropdown-item" href="#"
+                                                        data-value="{{ base.base_description }}"
+                                                        data-base-value="{{ base.base_value }}">
                                                         {{ base.base_description }}
                                                     </a>
                                                 </li>
@@ -360,23 +365,23 @@
 
         // Search functionality
         searchInput.addEventListener("input", function () {
-            let searchText = searchInput.value.toLowerCase();
-            let items = dropdown.getElementsByTagName("a");
+            const searchText = searchInput.value.toLowerCase().trim(); // Sanitize user input
+            const items = dropdown.getElementsByTagName("a");
 
             for (let item of items) {
-                let text = item.textContent.toLowerCase();
-                if (text.includes(searchText)) { item.style.display = "block" } 
-                else { item.style.display = "none" }
+                const text = item.textContent.toLowerCase().trim(); // Sanitize item text
+                item.style.display = text.includes(searchText) ? "block" : "none";
             }
         });
 
         // Handle selection from dropdown
         dropdown.addEventListener("click", function (event) {
             if (event.target.tagName === "A") {
-                searchInput.value = event.target.textContent; 
-                hiddenBaseDesc.value = event.target.getAttribute("data-value");
-                hiddenBaseType.value = event.target.getAttribute("data-base-value");
-                searchInput.classList.remove("show"); 
+                const selectedValue = event.target.textContent.trim(); // Removes leading and trailing whitespace
+                searchInput.value = selectedValue;
+                hiddenBaseDesc.value = event.target.getAttribute("data-value").trim();
+                hiddenBaseType.value = event.target.getAttribute("data-base-value").trim();
+                document.querySelector("#base_search").dropdown('hide'); // Properly hides the dropdown
             }
         });
 
@@ -392,6 +397,10 @@
     .dropdown-menu {
         max-height: 200px;
         overflow-y: auto;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        transform: none;
     }
     .dropdown-item {
         cursor: pointer;
