@@ -309,7 +309,7 @@
       document.getElementById('addMappingForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
-        fetch("{% url 'user_role_mapping_create' %}", {
+        fetch(this.action, {  // Use the form's action attribute
           method: 'POST',
           body: formData,
           headers: {
@@ -326,31 +326,36 @@
         })
         .catch(error => console.error('Error:', error));
       });
-
-      // Edit Mapping Form Submission
-      
-      document.getElementById('editMappingForm_{{ mapping.mappingid }}').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch("{% url 'user_role_mapping_update' mapping.mappingid %}", {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            document.getElementById('editError_{{ mapping.mappingid }}').style.display = 'block';
-            document.getElementById('editError_{{ mapping.mappingid }}').innerText = data.error;
-          } else {
-            window.location.reload();
-          }
-        })
-        .catch(error => console.error('Error:', error));
+    
+      // Edit Mapping Form Submission - Modified to work with all forms
+      document.querySelectorAll('form[id^="editMappingForm_"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          fetch(this.action, {  // Use the form's action attribute
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            const errorElement = this.querySelector('.alert-danger');
+            if (data.error) {
+              if (errorElement) {
+                errorElement.style.display = 'block';
+                errorElement.innerText = data.error;
+              } else {
+                alert(data.error);
+              }
+            } else {
+              window.location.reload();
+            }
+          })
+          .catch(error => console.error('Error:', error));
+        });
       });
-      
     });
-  </script>
+    </script>
 {% endblock content %}
