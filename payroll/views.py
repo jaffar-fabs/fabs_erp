@@ -1265,7 +1265,7 @@ class UserMasterUpdate(View):
             user.full_clean()
             user.save()
 
-            return redirect('user_list')
+            return JsonResponse({'status': 'success', 'redirect_url': reverse('user_list')})
 
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
