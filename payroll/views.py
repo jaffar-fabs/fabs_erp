@@ -2230,6 +2230,8 @@ def payroll_processing(request):
                 basic_per_hour = basic_per_day / 8                
                 ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
                 # ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
+                gross_basic = basic_per_day * total_working_days
+                gross_allowance = allowance_per_day * total_working_days
 
                 payroll_data.append({
                     'employee_code': employee.emp_code,
@@ -2247,6 +2249,8 @@ def payroll_processing(request):
                     'working_days': total_working_days,
                     'total_ot1': ot1_hrs,
                     'total_ot2': ot2_hrs,
+                    'gross_basic': gross_basic,
+                    'gross_allowance': gross_allowance,
                     # 'advance_total': advance_data.get('total_advance', 0),
                     # 'advance_paid': advance_data.get('total_paid', 0),
                     # 'advance_balance': advance_data.get('total_balance', 0)
