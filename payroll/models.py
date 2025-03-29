@@ -12,6 +12,59 @@ def company_logo_upload_path(instance, filename):
     safe_code = str(instance.company_code).replace(" ", "_").replace("/", "_")
     return os.path.join('company_logos', safe_code, filename)
 
+# -------------------------------------------------------------------------------
+# Leave Master
+
+class LeaveMaster(models.Model):
+    class Meta:
+        db_table = 'payroll_leavemaster'  # Custom table name
+
+    # Choices for different fields
+    DAY_TYPE_CHOICES = [
+        ('Calendar', 'Calendar Days'),
+        ('Working', 'Working Days'),
+    ]
+
+    PAYMENT_TYPE_CHOICES = [
+        ('Paid', 'Paid Leave'),
+        ('Unpaid', 'Unpaid Leave'),
+        ('Half Paid', 'Half Paid Leave'),
+    ]
+
+    FREQUENCY_CHOICES = [
+        ('Monthly', 'Monthly'),
+        ('Yearly', 'Yearly'),
+        ('One-time', 'One-time'),
+    ]
+
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('All', 'All Genders'),
+    ]
+
+    leave_code = models.CharField(max_length=20, unique=True)  # Unique leave code
+    leave_description = models.TextField()  # Description of leave
+    work_month = models.PositiveIntegerField()  # Number of work months required for eligibility
+    eligible_days = models.PositiveIntegerField()  # Number of eligible leave days
+    eligible_day_type = models.CharField(max_length=10, choices=DAY_TYPE_CHOICES)  # Calendar or Working Days
+    payment_type = models.CharField(max_length=10, choices=PAYMENT_TYPE_CHOICES)  # Paid, Unpaid, Half Paid
+    frequency = models.CharField(max_length=10, choices=FREQUENCY_CHOICES)  # Monthly, Yearly, One-time
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='All')  # Gender eligibility
+    grade = models.CharField(max_length=50, blank=True, null=True)  # Employee grade (if applicable)
+    carry_forward = models.BooleanField(default=False)  # Can leave be carried forward?
+    carry_forward_period = models.PositiveIntegerField(default=0, help_text="Months allowed for carry forward")  # Carry forward period in months
+    encashment = models.BooleanField(default=False)  # Whether the leave can be encashed
+
+    created_at = models.DateTimeField(auto_now_add=True)  # Auto timestamp on creation
+    updated_at = models.DateTimeField(auto_now=True)  # Auto timestamp on update
+
+    def __str__(self):
+        return f"{self.leave_code} - {self.leave_description}"
+
+
+# -------------------------------------------------------------------------------
+
 class Employee(models.Model):
     comp_code = models.CharField(max_length=15)  # Removed default value
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
