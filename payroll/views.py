@@ -2387,7 +2387,7 @@ def payroll_processing(request):
                     'total_ot1': f"{ot1_hrs:.2f}",
                     'total_ot2': f"{ot2_hrs:.2f}",
                 })
-            print(payroll_insert)
+            # print(payroll_insert)
             # print(payroll_data)
             messages.success(request, "Payroll processed successfully.")
             return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})
