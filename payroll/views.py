@@ -39,7 +39,11 @@ from .models import (
     GradeMaster, 
     Employee,
     WorkerAttendanceRegister,
-    EmployeeDocument
+    EmployeeDocument,
+    PayrollEarnDeduct,
+    EarnDeductMaster,
+    EarnDeductMaster,
+    LeaveMaster
 )
 
 # Initialize COMP_CODE globally
@@ -123,7 +127,7 @@ def employee_master(request):
             )
         except Exception as e:
             print(f"Error in keyword search: {e}")
-            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+        return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
     paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
