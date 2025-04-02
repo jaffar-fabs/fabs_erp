@@ -39,9 +39,7 @@ from .models import (
     GradeMaster, 
     Employee,
     WorkerAttendanceRegister,
-    EmployeeDocument,
-    EarnDeductMaster,
-    PayrollEarnDeduct
+    EmployeeDocument
 )
 
 # Initialize COMP_CODE globally
@@ -50,6 +48,52 @@ COMP_CODE = None
 def set_comp_code(request):
     global COMP_CODE
     COMP_CODE = request.session.get("comp_code")
+
+# -----Leave Master
+
+def create_leave_master(request):
+    if request.method == 'POST':
+        # Get data from the POST request
+        leave_code = request.POST.get('leave_code')
+        leave_description = request.POST.get('leave_description')
+        work_month = request.POST.get('work_month')
+        eligible_days = request.POST.get('eligible_days')
+        eligible_day_type = request.POST.get('eligible_day_type')
+        payment_type = request.POST.get('payment_type')
+        frequency = request.POST.get('frequency')
+        gender = request.POST.get('gender')
+        grade = request.POST.get('grade')
+        carry_forward = request.POST.get('carry_forward') == 'on'  # Checkbox field
+        carry_forward_period = request.POST.get('carry_forward_period')
+        encashment = request.POST.get('encashment') == 'on'  # Checkbox field
+
+        # Save data to the database
+        LeaveMaster.objects.create(
+            leave_code=leave_code,
+            leave_description=leave_description,
+            work_month=int(work_month),
+            eligible_days=int(eligible_days),
+            eligible_day_type=eligible_day_type,
+            payment_type=payment_type,
+            frequency=frequency,
+            gender=gender,
+            grade=grade if grade else None,
+            carry_forward=carry_forward,
+            carry_forward_period=int(carry_forward_period) if carry_forward_period else 0,
+            encashment=encashment
+        )
+        # Redirect to the leave master list
+        return redirect('leavemaster_list')
+
+    # Render the template for GET request
+    return render(request, 'pages/payroll/leave_master/leavemaster.html')
+
+def leave_master_list(request):
+    # Fetch all leave records from the database
+    leavemaster = LeaveMaster.objects.all()
+    return render(request, 'pages/payroll/leave_master/leavemaster.html', {'leavemaster': leavemaster})
+# -----Leave Master
+
 
 def employee_master(request):
     set_comp_code(request)
