@@ -1006,7 +1006,7 @@
                             {% if document.document_file %}
                             <div class="mt-2">
                                 <strong>Current File:</strong>
-                                <input type="hidden" value="{{ document.document_id }}" class="document-id"> <!-- Ensure this is the correct ID -->
+                                <input type="hidden" value="{{ document.id }}" class="document-id"> <!-- Ensure this is the correct ID -->
                                 <a href="{{ document.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">
                                     <i class="fas fa-eye"></i> <!-- Eye icon for preview -->
                                 </a>
@@ -1031,71 +1031,101 @@
         </div>
     </div>
 </div>
-
 <script>
     const documentsToRemove = [];
+    const newDocuments = []; // Array to hold newly added documents
 
-function removeDocument(button) {
-    const row = button.closest('.document-upload-row');
-    if (row) {
-        const documentId = row.querySelector('.document-id').value; 
-        if (documentId) { 
-            documentsToRemove.push(documentId); 
-            console.log('Document ID to remove:', documentId); 
-        } else {
-            console.error("Document ID is empty."); 
+    function removeDocument(button) {
+        const row = button.closest('.document-upload-row');
+        if (row) {
+            const documentId = row.dataset.documentId; 
+            if (documentId) { 
+                documentsToRemove.push(documentId); 
+            }
+            row.remove(); 
         }
-        row.remove(); 
-        console.log('Documents to remove:', documentsToRemove);
+        updateDocumentsToRemoveInput();
     }
-    
-    updateDocumentsToRemoveInput();
-}
 
-function updateDocumentsToRemoveInput() {
-    let input = document.querySelector(`#editEmployeeForm_{{ employee.employee_id }} input[name="documents_to_remove"]`);
-    if (!input) {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'documents_to_remove';
-        document.getElementById('editEmployeeForm_{{ employee.employee_id }}').appendChild(input);
+    function updateDocumentsToRemoveInput() {
+        let input = document.querySelector(`#editEmployeeForm_{{ employee.employee_id }} input[name="documents_to_remove"]`);
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'documents_to_remove';
+            document.getElementById('editEmployeeForm_{{ employee.employee_id }}').appendChild(input);
+        }
+        input.value = documentsToRemove.join(','); // Join IDs with commas
     }
-    input.value = documentsToRemove.join(','); // Join IDs with commas
-}
 
     function addRowEdit(employeeId) {
-        const container = document.getElementById(`documentUploadContainerEdit_${employeeId}`);
-        const newRow = document.createElement('div');
-        newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
-        newRow.innerHTML = `
-            <div class="row align-items-center">
-                <div class="col-md-4">
-                    <label class="form-label">Document Type</label>
-                    <select class="form-select" name="document_type[]">
-                        {% for doc in doc_data %}
-                        <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">File Upload</label>
-                    <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
-                </div>
-                <div class="col-md-4 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">
-                        <i class="fas fa-times"></i> Remove
-                    </button>
-                </div>
+    const container = document.getElementById(`documentUploadContainerEdit_${employeeId}`);
+    const newRow = document.createElement('div');
+    newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
+    newRow.innerHTML = `
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <label class="form-label">Document Type</label>
+                <select class="form-select" name="document_type[]">
+                    {% for doc in doc_data %}
+                    <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
+                    {% endfor %}
+                </select>
             </div>
-        `;
-        container.appendChild(newRow);
-    }
+            <div class="col-md-4">
+                <label class="form-label">File Upload</label>
+                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                    <i class="fas fa-times"></i> Remove
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(newRow);
 
+    // Add a new document entry to the newDocuments array
+    newDocuments.push({
+        documentType: '', // Placeholder for the document type
+        file: null // Placeholder for the file input
+    });
+
+    // Add event listeners to update the newDocuments array when values change
+    const selectElement = newRow.querySelector('select[name="document_type[]"]');
+    const fileInput = newRow.querySelector('input[name="document_file[]"]');
+
+    selectElement.addEventListener('change', function() {
+        newDocuments[newDocuments.length - 1].documentType = this.value; // Update the last added document type
+        logDocuments(); // Log the updated documents
+    });
+
+    fileInput.addEventListener('change', function() {
+        newDocuments[newDocuments.length - 1].file = this.files[0] ? this.files[0].name : null; // Update the last added file name
+        logDocuments(); // Log the updated documents
+    });
+}
+
+// Log the form data before submission
+function logFormData() {
+    const documentTypes = Array.from(document.querySelectorAll('select[name="document_type[]"]')).map(select => select.value);
+    const documentFiles = Array.from(document.querySelectorAll('input[name="document_file[]"]')).map(input => input.files[0] ? input.files[0].name : null);
+    
+    console.log("Document Types:", documentTypes);
+    console.log("Document Files:", documentFiles);
+}
+
+// Call logFormData before form submission
+document.getElementById('editEmployeeForm_{{ employee.employee_id }}').addEventListener('submit', logFormData);
     function removeRow(button) {
         const row = button.closest('.document-upload-row');
         if (row) {
             row.remove();
         }
+    }
+
+    function logDocuments() {
+        console.log("New Documents:", newDocuments);
     }
 </script>
 <!-- /Edit Document Uploads Section -->
@@ -2896,19 +2926,24 @@ function updateDocumentsToRemoveInput() {
     }
 
     function removeRow(button) {
-        const row = button.parentNode.parentNode;
-        const table = document.getElementById('documentUploadTable').getElementsByTagName('tbody')[0];
+        const row = button.closest('.document-upload-row');
+        const tableBody = row.parentNode; // Get the parent node of the row (table body)
 
         // Ensure at least one row remains
-        if (table.rows.length > 1) {
-            row.parentNode.removeChild(row);
+        if (tableBody.children.length > 1) {
+            row.remove(); // Remove the row
         } else {
-            // Instead of alert, you can show a message in the UI
+            // Show a warning message if trying to remove the last row
             const message = document.createElement('div');
             message.className = 'alert alert-warning';
             message.innerText = "At least one row must remain.";
-            document.querySelector('.accordion-body').insertBefore(message, table);
-            setTimeout(() => message.remove(), 3000); // Remove message after 3 seconds
+            
+            // Find the closest accordion body to insert the message
+            const accordionBody = button.closest('.accordion-body');
+            if (accordionBody) {
+                accordionBody.insertBefore(message, tableBody);
+                setTimeout(() => message.remove(), 3000); // Remove the message after 3 seconds
+            }
         }
     }
 </script>
@@ -3195,5 +3230,9 @@ $(document).ready(function() {
         }
     });
 });
+
+document.getElementById('editEmployeeForm_{{ employee.employee_id }}').onsubmit = function() {
+    console.log("Form submitted");
+};
 </script>
 {% endblock %}

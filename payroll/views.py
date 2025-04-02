@@ -39,7 +39,9 @@ from .models import (
     GradeMaster, 
     Employee,
     WorkerAttendanceRegister,
-    EmployeeDocument
+    EmployeeDocument,
+    EarnDeductMaster,
+    PayrollEarnDeduct
 )
 
 # Initialize COMP_CODE globally
@@ -318,31 +320,53 @@ def save_employee(request, employee_id=None):
         documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter out empty or invalid IDs
 
         # Remove documents
-    for doc_id in documents_to_remove:
-        try:
-            document = EmployeeDocument.objects.get(document_id=doc_id) 
-            if document.document_file: 
-                file_path = document.document_file.path  
-                if os.path.isfile(file_path):  
-                    os.remove(file_path)  
-            document.delete() 
-        except EmployeeDocument.DoesNotExist:
-            continue  
-        except Exception as e:
-            print(f"Error deleting document {doc_id}: {e}")
+        for doc_id in documents_to_remove:
+            try:
+                document = EmployeeDocument.objects.get(document_id=doc_id)
+                if document.document_file:
+                    file_path = document.document_file.path
+                    if os.path.exists(file_path):
+                        os.remove(file_path)  # Delete the file from the filesystem
+                document.delete()
+            except EmployeeDocument.DoesNotExist:
+                continue
+            except Exception as e:
+                print(f"Error deleting document {doc_id}: {e}")
 
-        # Save new documents
+       # Process the form data for documents
         document_types = request.POST.getlist("document_type[]")
         document_files = request.FILES.getlist("document_file[]")
 
+        # Print new documents
+        print("New Documents:")
         for doc_type, doc_file in zip(document_types, document_files):
-            EmployeeDocument.objects.create (
-                comp_code=COMP_CODE,
-                emp_code=employee.emp_code,
-                document_type=doc_type,
-                document_file=doc_file,
-                created_by=1,  # Replace with actual user ID if available
-            )
+            if doc_type and doc_file:  # Ensure both type and file are provided
+                print(f"Type: {doc_type}, File: {doc_file}")
+
+        # Print existing documents
+        existing_documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
+        print("Existing Documents:")
+        for doc in existing_documents:
+            print(f"ID: {doc.document_id}, Type: {doc.document_type}, File: {doc.document_file.url if doc.document_file else 'No file'}")
+
+        # Print new documents
+        print("New Documents:")
+        for doc_type, doc_file in zip(document_types, document_files):
+            print(f"Type: {doc_type}, File: {doc_file}")
+
+        # Save new documents to the database
+        for doc_type, doc_file in zip(document_types, document_files):
+            if doc_type and doc_file:  # Ensure both type and file are provided
+                EmployeeDocument.objects.create(
+                    comp_code=COMP_CODE,
+                    emp_code=employee.emp_code,
+                    document_type=doc_type,
+                    document_file=doc_file,
+                    created_by=1,  # Replace with actual user ID if available
+                )
+
+        # Fetch updated documents for the employee
+        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
 
         messages.success(request, "Employee details and documents updated successfully.")
         return redirect('/employee')
@@ -353,6 +377,7 @@ def save_employee(request, employee_id=None):
         employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
 
     return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
+
 
 def deactivate_employee(request, employee_id):
     set_comp_code(request)
@@ -675,9 +700,9 @@ class Paycycle(View):
         max_mn_hrs = request.POST.get('max_mn_hrs')
         max_an_hrs = request.POST.get('max_an_hrs')
         max_ot1_hrs = request.POST.get('max_ot1_hrs')
-        ot1_amt = request.POST.get('ot1_amt')
+        ot1_amt = request.POST.get('ot1_amt') or 0
         max_ot2_hrs = request.POST.get('max_ot2_hrs')
-        ot2_amt = request.POST.get('ot2_amt')
+        ot2_amt = request.POST.get('ot2_amt') or 0
         process_comp_flag = request.POST.get('process_comp_flag')
         is_active = "Y" if "is_active" in request.POST else "N"
         
@@ -2196,6 +2221,7 @@ def payroll_processing(request):
             employee_data = Employee.objects.filter(process_cycle=paycycle, comp_code=COMP_CODE)
 
             # Prepare payroll data
+            payroll_insert = []
             payroll_data = []
             for employee in employee_data:
                 # Fetch attendance data for the employee
@@ -2211,11 +2237,16 @@ def payroll_processing(request):
                     total_ot2=Sum('ot2')
                 )
 
-                # Fetch advance details for the employee
+                # Fetch all active advances for the employee
                 advance_data = AdvanceMaster.objects.filter(
                     comp_code=COMP_CODE, emp_code=employee.emp_code, is_active=True
                 )
-                print("Advance Data:", advance_data)
+
+                total_installment_amt = 0
+                for advance in advance_data:
+                    next_repayment_date = advance.next_repayment_date
+                    if next_repayment_date and (paycycle_data.date_from <= next_repayment_date <= paycycle_data.date_to):
+                        total_installment_amt += advance.instalment_amt
 
                 # Calculate total working hours
                 total_working_days = (attendance_data.get('total_morning', 0) + attendance_data.get('total_afternoon', 0)) / 8
@@ -2224,48 +2255,100 @@ def payroll_processing(request):
                 basic_per_day = employee.basic_pay / paycycle_data.days_per_month if employee.basic_pay else 0
                 allowance_per_day = employee.allowance / paycycle_data.days_per_month if employee.allowance else 0
 
+                # Calculate total basic and allowance
+                total_basic = basic_per_day * total_working_days
+                total_allowance = allowance_per_day * total_working_days
+
+                # Initialize earnings and deductions
+                earn_amount = 0
+                deduct_amount = 0
+
+                # Fetch Earnings and Deductions Fixed
+                earn_deduct_data = EarnDeductMaster.objects.filter(
+                    comp_code=COMP_CODE,
+                    employee_code=employee.emp_code,
+                    is_active=True
+                )
+
+                for record in earn_deduct_data:
+                    if record.earn_type == 'EARNINGS':
+                        if record.prorated_flag:
+                            earn_amount += (record.earn_deduct_amt / paycycle_data.days_per_month) * total_working_days
+                        else:
+                            earn_amount += record.earn_deduct_amt
+                    elif record.earn_type == 'DEDUCTIONS':
+                        if record.prorated_flag:
+                            deduct_amount += (record.earn_deduct_amt / paycycle_data.days_per_month) * total_working_days
+                        else:
+                            deduct_amount += record.earn_deduct_amt
+
+                # Fetch Adhoc Earnings and Deductions
+                adhoc_earn_amount = 0
+                adhoc_deduct_amount = 0
+
+                adhoc_earn_deduct_data = PayrollEarnDeduct.objects.filter(
+                    comp_code=COMP_CODE,
+                    emp_code=employee.emp_code,
+                    is_active=True
+                )
+
+                for adhoc_record in adhoc_earn_deduct_data:
+                    if adhoc_record.earn_deduct_type == 'EARNINGS' and adhoc_record.pay_process_month == paycycle_data.pay_process_month:
+                        adhoc_earn_amount += adhoc_record.pay_amount
+                    else:
+                        adhoc_deduct_amount += adhoc_record.pay_amount
+
                 # Calculate OT1 and OT2 amounts
                 ot1_hrs = attendance_data.get('total_ot1', 0)
                 ot2_hrs = attendance_data.get('total_ot2', 0)
                 basic_per_hour = basic_per_day / 8                
                 ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
-                # ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
-                gross_basic = basic_per_day * total_working_days
-                gross_allowance = allowance_per_day * total_working_days
+                ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
 
+                # Total Earnings and Deductions
+                total_earnings =  earn_amount + adhoc_earn_amount + ot1_amt + ot2_amt
+                total_deductions = deduct_amount + adhoc_deduct_amount + total_installment_amt
+
+                # Calculate Net Pay
+                net_pay = total_basic + total_allowance + total_earnings - total_deductions
+                
                 payroll_data.append({
                     'employee_code': employee.emp_code,
                     'employee_name': employee.emp_name,
-                    'Basic': employee.basic_pay,
-                    'Allowance': employee.allowance,
-                    'basic_per_day': basic_per_day,
-                    'basic_per_hour': basic_per_hour,
-                    'allowance_per_day': allowance_per_day,
-                    'ot1_amt': ot1_amt,
-                    # 'ot2_amt': ot2_amt,
+                    'Basic': f"{employee.basic_pay:.2f}" if employee.basic_pay else "0.00",
+                    'Allowance': f"{employee.allowance:.2f}" if employee.allowance else "0.00",
+                    'basic_per_day': f"{basic_per_day:.2f}",
+                    'basic_per_hour': f"{basic_per_hour:.2f}",
+                    'allowance_per_day': f"{allowance_per_day:.2f}",
+                    'total_basic': f"{total_basic:.2f}",
+                    'total_allowance': f"{total_allowance:.2f}",
+                    'earn_amount': f"{earn_amount:.2f}",
+                    'deduct_amount': f"{deduct_amount:.2f}",
+                    'adhoc_earn_amount': f"{adhoc_earn_amount:.2f}",
+                    'adhoc_deduct_amount': f"{adhoc_deduct_amount:.2f}",
+                    'total_earnings': f"{total_earnings:.2f}",
+                    'total_deductions': f"{total_deductions:.2f}",
+                    'ot1_amt': f"{ot1_amt:.2f}",
+                    'ot2_amt': f"{ot2_amt:.2f}",
+                    'installment_amt': f"{total_installment_amt:.2f}",
+                    'net_pay': f"{net_pay:.2f}",
                     'paycycle': paycycle,
                     'paymonth': paymonth,
                     'total_days': paycycle_data.days_per_month,
-                    'working_days': total_working_days,
-                    'total_ot1': ot1_hrs,
-                    'total_ot2': ot2_hrs,
-                    'gross_basic': gross_basic,
-                    'gross_allowance': gross_allowance,
-                    # 'advance_total': advance_data.get('total_advance', 0),
-                    # 'advance_paid': advance_data.get('total_paid', 0),
-                    # 'advance_balance': advance_data.get('total_balance', 0)
+                    'working_days': f"{total_working_days:.2f}",
+                    'total_ot1': f"{ot1_hrs:.2f}",
+                    'total_ot2': f"{ot2_hrs:.2f}",
                 })
-
-            # Debugging: Print payroll data
-            print("Payroll Data:", payroll_data)
-
+            print(payroll_insert)
+            # print(payroll_data)
             messages.success(request, "Payroll processed successfully.")
+            return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})
         except Exception as e:
             messages.error(request, f"Error processing payroll: {str(e)}")
 
         return redirect('payroll_processing')
 
-    return render(request, 'pages/payroll/payroll_processing/payroll_processing.html')
+    return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': []})
 
 def cancel_payroll_processing(request):
     if request.method == 'POST':

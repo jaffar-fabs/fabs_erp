@@ -690,7 +690,7 @@ class PayrollEarnDeduct(models.Model):
     unique_id = models.BigAutoField(primary_key=True)  # Identity column
     comp_code = models.CharField(max_length=20, null=False)
     emp_code =models.CharField(max_length=20, null=False)
-    pay_process_month = models.DateField(null=True, blank=True, default=None)
+    pay_process_month = models.CharField(null=True, blank=True, default=None)
     pay_process_cycle = models.CharField(max_length=50, null=True, blank=True)
     earn_deduct_code = models.CharField(max_length=50, null=True, blank=True)
     earn_deduct_type = models.CharField(max_length=50, null=True, blank=True)
