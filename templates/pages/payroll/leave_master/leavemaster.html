@@ -65,7 +65,6 @@
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="no-sort"></th>
                                         <th>Leave Code</th>
                                         <th>Description</th>
                                         <th>Work Month</th>
@@ -88,24 +87,15 @@
                                         <td>{{ record.get_frequency_display }}</td>
                                         <td>
                                             <div class="dropdown table-action">
-                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item" href="#">
-                                                        <i class="ti ti-bounce-right text-info"></i>Add Activity
-                                                    </a>
-                                                    <a class="dropdown-item" data-bs-toggle="offcanvas"
-                                                        data-bs-target="#offcanvas_edit" href="#">
                                                         <i class="ti ti-edit text-blue"></i>Edit
                                                     </a>
-                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_leave">
+                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_leave">
                                                         <i class="ti ti-trash text-danger"></i>Delete
-                                                    </a>
-                                                    <a class="dropdown-item" href="javascript:void(0);">
-                                                        <i class="ti ti-eye text-blue-light"></i>Preview
                                                     </a>
                                                 </div>
                                             </div>

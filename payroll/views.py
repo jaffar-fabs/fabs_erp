@@ -83,13 +83,16 @@ def create_leave_master(request):
             carry_forward_period=int(carry_forward_period) if carry_forward_period else 0,
             encashment=encashment
         )
-        # Redirect to the list view or success page
+        # Redirect to the leave master list
         return redirect('leavemaster_list')
 
     # Render the template for GET request
     return render(request, 'pages/payroll/leave_master/leavemaster.html')
 
-
+def leave_master_list(request):
+    # Fetch all leave records from the database
+    leavemaster = LeaveMaster.objects.all()
+    return render(request, 'pages/payroll/leave_master/leavemaster.html', {'leavemaster': leavemaster})
 # -----Leave Master
 
 
