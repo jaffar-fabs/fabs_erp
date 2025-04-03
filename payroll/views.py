@@ -156,6 +156,13 @@ def employee_master(request):
 def save_employee(request, employee_id=None):
     set_comp_code(request)
     if request.method == "POST":
+        emp_code = request.POST.get("emp_code")
+        
+        # Check if emp_code already exists for new employees
+        if not employee_id and Employee.objects.filter(emp_code=emp_code, comp_code=COMP_CODE).exists():
+            messages.error(request, "Employee Code already exists.")
+            return redirect('/employee')
+
         if employee_id:
             employee = get_object_or_404(Employee, employee_id=employee_id)
             employee.modified_by = 1  # Replace with actual user ID if available
@@ -167,7 +174,7 @@ def save_employee(request, employee_id=None):
 
         # Assign values from request
         employee.comp_code = COMP_CODE
-        employee.emp_code = request.POST.get("emp_code")
+        employee.emp_code = emp_code
         employee.emp_name = request.POST.get("emp_name_passport")
         employee.surname = request.POST.get("surname")
         employee.dob = request.POST.get("dob") or None
@@ -358,16 +365,14 @@ def save_employee(request, employee_id=None):
         # Save employee
         employee.save()
 
-        # Create folder for new employee
-        if not employee_id:
-            employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', employee.emp_code)
-            os.makedirs(employee_folder_path, exist_ok=True)
+        # Create folder for the employee if it doesn't exist
+        employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', emp_code)
+        os.makedirs(employee_folder_path, exist_ok=True)
 
-        # Process the form data
+        # Handle document removal
         documents_to_remove = request.POST.get('documents_to_remove', '').split(',')
-        documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter out empty or invalid IDs
+        documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter valid IDs
 
-        # Remove documents
         for doc_id in documents_to_remove:
             try:
                 document = EmployeeDocument.objects.get(document_id=doc_id)
@@ -381,26 +386,25 @@ def save_employee(request, employee_id=None):
             except Exception as e:
                 print(f"Error deleting document {doc_id}: {e}")
 
-       # Process the form data for documents
+        # Handle new document uploads
+        document_types = request.POST.getlist("document_type[]")
+        document_files = request.FILES.getlist("document_file[]")
+        print("Document Types:", document_types)
+        print("Document Files:", document_files)
+
+        # Print the new documents for debugging
+        print("New Documents Received:")
+        for doc_type, doc_file in zip(document_types, document_files):
+            print(f"Document Type: {doc_type}, File Name: {doc_file.name}")
+
+        # Fetch new documents from the request
         document_types = request.POST.getlist("document_type[]")
         document_files = request.FILES.getlist("document_file[]")
 
-        # Print new documents
-        print("New Documents:")
+        # Print the appended document types and files for debugging
+        print("Appended Documents:")
         for doc_type, doc_file in zip(document_types, document_files):
-            if doc_type and doc_file:  # Ensure both type and file are provided
-                print(f"Type: {doc_type}, File: {doc_file}")
-
-        # Print existing documents
-        existing_documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
-        print("Existing Documents:")
-        for doc in existing_documents:
-            print(f"ID: {doc.document_id}, Type: {doc.document_type}, File: {doc.document_file.url if doc.document_file else 'No file'}")
-
-        # Print new documents
-        print("New Documents:")
-        for doc_type, doc_file in zip(document_types, document_files):
-            print(f"Type: {doc_type}, File: {doc_file}")
+            print(f"Document Type: {doc_type}, File Name: {doc_file.name}")
 
         # Save new documents to the database
         for doc_type, doc_file in zip(document_types, document_files):
@@ -2188,7 +2192,7 @@ def upload_attendance_data(request):
                 ot2 = float(row['OT2'])
 
                 cur_date = start_date
-                while cur_date <= end_date:
+                while (cur_date <= end_date):
                     vOTHours = 0
                     vHoliday = HolidayMaster.objects.filter(comp_code=COMP_CODE, holiday_date=cur_date).count()
 

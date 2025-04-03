@@ -986,38 +986,52 @@
     </h2>
     <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
-            <div id="documentUploadContainerEdit_{{ employee.employee_id }}">
+            <!-- Static Upload Fields -->
+            <div class="card p-3 mb-2 shadow-sm">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label">Document Type</label>
+                        <!-- Add employee ID to select ID -->
+                        <select id="documentTypeSelect_{{ employee.employee_id }}" class="form-select">
+                            {% for doc in doc_data %}
+                            <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">File Upload</label>
+                        <!-- Add employee ID to file input ID -->
+                        <input type="file" id="documentFileInput_{{ employee.employee_id }}" class="form-control" accept="application/pdf,image/*">
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <!-- Pass employee ID to function -->
+                        <button type="button" class="btn btn-primary" onclick="addNewDocument('{{ employee.employee_id }}')">
+                            <i class="fas fa-plus"></i> Add Document
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Document List (no changes here) -->
+            <div id="documentList_{{ employee.employee_id }}">
                 {% for document in employee.documents %}
                 <div class="card p-3 mb-2 shadow-sm document-upload-row" data-document-id="{{ document.id }}">
                     <div class="row align-items-center">
                         <div class="col-md-4">
-                            <label class="form-label">Document Type</label>
-                            <select class="form-select" name="document_type[]">
-                                {% for doc in doc_data %}
-                                <option value="{{ doc.base_value }}" {% if document.document_type == doc.base_value %}selected{% endif %}>
-                                    {{ doc.base_description }}
-                                </option>
-                                {% endfor %}
-                            </select>
+                            <strong>{{ document.document_type }}</strong>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">File Upload</label>
-                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
                             {% if document.document_file %}
-                            <div class="mt-2">
-                                <strong>Current File:</strong>
-                                <input type="hidden" value="{{ document.id }}" class="document-id"> <!-- Ensure this is the correct ID -->
-                                <a href="{{ document.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-eye"></i> <!-- Eye icon for preview -->
-                                </a>
-                                <a href="{{ document.document_file.url }}" download class="btn btn-sm btn-secondary">
-                                    <i class="fas fa-download"></i> <!-- Download icon -->
-                                </a>
-                            </div>
+                            <a href="{{ document.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                            <a href="{{ document.document_file.url }}" download class="btn btn-sm btn-secondary">
+                                <i class="fas fa-download"></i> Download
+                            </a>
                             {% endif %}
                         </div>
                         <div class="col-md-4 text-end">
-                            <button type="button" class="btn btn-danger" onclick="removeDocument(this)">
+                            <button type="button" class="btn btn-danger" onclick="removeDocument(this, '{{ document.id }}')">
                                 <i class="fas fa-times"></i> Remove
                             </button>
                         </div>
@@ -1025,110 +1039,69 @@
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" class="btn btn-primary mt-3" onclick="addRowEdit('{{ employee.employee_id }}')">
-                <i class="fas fa-plus"></i> Add Document
-            </button>
         </div>
     </div>
 </div>
+
 <script>
     const documentsToRemove = [];
-    const newDocuments = []; // Array to hold newly added documents
 
-    function removeDocument(button) {
+    function addNewDocument(employeeId) {
+        // Use unique IDs with employeeId
+        const fileInput = document.getElementById(`documentFileInput_${employeeId}`);
+        const docTypeSelect = document.getElementById(`documentTypeSelect_${employeeId}`);
+        const container = document.getElementById(`documentList_${employeeId}`);
+
+        if (!fileInput || !docTypeSelect || !container) {
+            console.error("Required elements not found!");
+            return;
+        }
+
+        // Check file selection
+        if (fileInput.files.length === 0) {
+            alert("Please select a file before adding.");
+            return;
+        }
+
+        const selectedFile = fileInput.files[0];
+        const documentType = docTypeSelect.options[docTypeSelect.selectedIndex]?.text;
+
+        const newRow = document.createElement('div');
+        newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
+        newRow.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label">Document Type</label>
+                    <input type="text" class="form-control" value="${documentType}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">File</label>
+                    <input type="text" class="form-control" value="${selectedFile.name}" readonly>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(newRow);
+        fileInput.value = ''; // Reset input
+    }
+
+    function removeDocument(button, documentId) {
         const row = button.closest('.document-upload-row');
-        if (row) {
-            const documentId = row.dataset.documentId; 
-            if (documentId) { 
-                documentsToRemove.push(documentId); 
-            }
-            row.remove(); 
-        }
-        updateDocumentsToRemoveInput();
+        if (documentId) documentsToRemove.push(documentId);
+        row.remove();
     }
-
-    function updateDocumentsToRemoveInput() {
-        let input = document.querySelector(`#editEmployeeForm_{{ employee.employee_id }} input[name="documents_to_remove"]`);
-        if (!input) {
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'documents_to_remove';
-            document.getElementById('editEmployeeForm_{{ employee.employee_id }}').appendChild(input);
-        }
-        input.value = documentsToRemove.join(','); // Join IDs with commas
-    }
-
-    function addRowEdit(employeeId) {
-    const container = document.getElementById(`documentUploadContainerEdit_${employeeId}`);
-    const newRow = document.createElement('div');
-    newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
-    newRow.innerHTML = `
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <label class="form-label">Document Type</label>
-                <select class="form-select" name="document_type[]">
-                    {% for doc in doc_data %}
-                    <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">File Upload</label>
-                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
-            </div>
-            <div class="col-md-4 text-end">
-                <button type="button" class="btn btn-danger" onclick="removeRow(this)">
-                    <i class="fas fa-times"></i> Remove
-                </button>
-            </div>
-        </div>
-    `;
-    container.appendChild(newRow);
-
-    // Add a new document entry to the newDocuments array
-    newDocuments.push({
-        documentType: '', // Placeholder for the document type
-        file: null // Placeholder for the file input
-    });
-
-    // Add event listeners to update the newDocuments array when values change
-    const selectElement = newRow.querySelector('select[name="document_type[]"]');
-    const fileInput = newRow.querySelector('input[name="document_file[]"]');
-
-    selectElement.addEventListener('change', function() {
-        newDocuments[newDocuments.length - 1].documentType = this.value; // Update the last added document type
-        logDocuments(); // Log the updated documents
-    });
-
-    fileInput.addEventListener('change', function() {
-        newDocuments[newDocuments.length - 1].file = this.files[0] ? this.files[0].name : null; // Update the last added file name
-        logDocuments(); // Log the updated documents
-    });
-}
-
-// Log the form data before submission
-function logFormData() {
-    const documentTypes = Array.from(document.querySelectorAll('select[name="document_type[]"]')).map(select => select.value);
-    const documentFiles = Array.from(document.querySelectorAll('input[name="document_file[]"]')).map(input => input.files[0] ? input.files[0].name : null);
     
-    console.log("Document Types:", documentTypes);
-    console.log("Document Files:", documentFiles);
-}
-
-// Call logFormData before form submission
-document.getElementById('editEmployeeForm_{{ employee.employee_id }}').addEventListener('submit', logFormData);
     function removeRow(button) {
-        const row = button.closest('.document-upload-row');
-        if (row) {
-            row.remove();
-        }
-    }
-
-    function logDocuments() {
-        console.log("New Documents:", newDocuments);
+        button.closest('.document-upload-row').remove();
     }
 </script>
 <!-- /Edit Document Uploads Section -->
+
  
 <!-- Add Dependent Details Section -->
 <div class="accordion-item">
@@ -3233,6 +3206,109 @@ $(document).ready(function() {
 
 document.getElementById('editEmployeeForm_{{ employee.employee_id }}').onsubmit = function() {
     console.log("Form submitted");
+};
+</script>
+<script>
+const newDocuments = [];
+
+function addNewDocument(employeeId) {
+    const fileInput = document.getElementById(`documentFileInput_${employeeId}`);
+    const docTypeSelect = document.getElementById(`documentTypeSelect_${employeeId}`);
+    const container = document.getElementById(`documentList_${employeeId}`);
+
+    if (!fileInput || !docTypeSelect || !container) {
+        console.error("Required elements not found!");
+        return;
+    }
+
+    if (fileInput.files.length === 0) {
+        alert("Please select a file before adding.");
+        return;
+    }
+
+    const selectedFile = fileInput.files[0];
+    const documentType = docTypeSelect.options[docTypeSelect.selectedIndex]?.value;
+
+    const newRow = document.createElement('div');
+    newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
+    newRow.innerHTML = `
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <label class="form-label">Document Type</label>
+                <input type="text" class="form-control" value="${docTypeSelect.options[docTypeSelect.selectedIndex]?.text}" readonly>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">File</label>
+                <input type="text" class="form-control" value="${selectedFile.name}" readonly>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn btn-danger" onclick="removeRow(this, ${newDocuments.length})">
+                    <i class="fas fa-times"></i> Remove
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(newRow);
+
+    // Add the document to the newDocuments array
+    newDocuments.push({
+        document_type: documentType,
+        document_file: selectedFile
+    });
+
+    console.log("New Documents Array (After Adding):", newDocuments);
+
+    fileInput.value = ''; // Reset input
+}
+
+function removeRow(button, index) {
+    const row = button.closest('.document-upload-row');
+    if (index >= 0 && index < newDocuments.length) {
+        newDocuments.splice(index, 1);
+    }
+
+    console.log("New Documents Array (After Removing):", newDocuments);
+    
+    row.remove();
+}
+
+document.getElementById('editEmployeeForm_{{ employee.employee_id }}').onsubmit = function (event) {
+    // Prevent default form submission
+    event.preventDefault();
+
+    const formData = new FormData(this);
+
+    // Append new documents to the FormData
+    newDocuments.forEach((doc, index) => {
+        formData.append(`document_type[]`, doc.document_type);
+        formData.append(`document_file[]`, doc.document_file);
+    });
+
+    console.log("Form Data before sending:", [...formData.entries()]);
+
+    // Submit the form using fetch
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response from backend:", data);
+        if (data.success) {
+            alert("Employee updated successfully!");
+            location.reload();
+        } else {
+            alert("Error updating employee. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+    });
 };
 </script>
 {% endblock %}
