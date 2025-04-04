@@ -208,6 +208,7 @@ def save_employee(request, employee_id=None):
         employee.basic_pay = request.POST.get("basic_pay") or None
         employee.allowance = request.POST.get("allowance") or None
         employee.grade_code = request.POST.get("grade_code")
+        employee.prj_code = request.POST.get("prj_code")
         employee.designation = request.POST.get("designation")
         employee.department = request.POST.get("department")
         employee.date_of_join = request.POST.get("date_of_join") or None

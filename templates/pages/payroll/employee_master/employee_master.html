@@ -472,6 +472,20 @@
                                         </select>
                                     </div>                                    
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Project</label>
+                                        <select name="prj_code" class="form-control">
+                                            <option value="">Select</option>
+                                            {% for grade in project_data %}
+                                            <option value="{{ grade.prj_code }}" {% if employee.prj_code == grade.prj_code %}selected{% endif %}>
+                                                {{ grade.prj_code }} - {{ grade.prj_name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>                                    
+                                </div>
                                 
                             </div>
                         </div>
@@ -2443,6 +2457,20 @@
                             <option value="">Select</option>
                             {% for statuses in grade_code_data %}
                                 <option value="{{ statuses.grade_code }}">{{ statuses.grade_desc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+
+                <!-- Project Code (Dropdown) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project</label>
+                        <select name="prj_code" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in project_data %}
+                                <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
