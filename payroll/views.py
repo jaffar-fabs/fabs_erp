@@ -88,15 +88,17 @@ def create_leave_master(request):
             encashment=encashment
         )
         # Redirect to the leave master list
-        return redirect('leavemaster_list')
+        return redirect('leavemaster')
 
     # Render the template for GET request
     return render(request, 'pages/payroll/leave_master/leavemaster.html')
 
 def leave_master_list(request):
-    # Fetch all leave records from the database
+    # Fetch all leave records to display in the list
     leavemaster = LeaveMaster.objects.all()
     return render(request, 'pages/payroll/leave_master/leavemaster.html', {'leavemaster': leavemaster})
+
+
 # -----Leave Master
 
 
