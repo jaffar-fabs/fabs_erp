@@ -43,7 +43,8 @@ from .models import (
     PayrollEarnDeduct,
     EarnDeductMaster,
     EarnDeductMaster,
-    LeaveMaster
+    LeaveMaster,
+    PayProcess
 )
 
 # Initialize COMP_CODE globally
@@ -2273,7 +2274,6 @@ def payroll_processing(request):
             employee_data = Employee.objects.filter(process_cycle=paycycle, comp_code=COMP_CODE)
 
             # Prepare payroll data
-            payroll_insert = []
             payroll_data = []
             for employee in employee_data:
                 # Fetch attendance data for the employee
@@ -2289,9 +2289,11 @@ def payroll_processing(request):
                     total_ot2=Sum('ot2')
                 )
 
-                # Fetch all active advances for the employee
                 advance_data = AdvanceMaster.objects.filter(
-                    comp_code=COMP_CODE, emp_code=employee.emp_code, is_active=True
+                    comp_code=COMP_CODE,
+                    emp_code=employee.emp_code,
+                    is_active=True,
+                    next_repayment_date__range=(paycycle_data.date_from, paycycle_data.date_to)
                 )
 
                 total_installment_amt = 0
@@ -2341,11 +2343,12 @@ def payroll_processing(request):
                 adhoc_earn_deduct_data = PayrollEarnDeduct.objects.filter(
                     comp_code=COMP_CODE,
                     emp_code=employee.emp_code,
-                    is_active=True
+                    is_active=True,
+                    pay_process_month=paymonth
                 )
 
                 for adhoc_record in adhoc_earn_deduct_data:
-                    if adhoc_record.earn_deduct_type == 'EARNINGS' and adhoc_record.pay_process_month == paycycle_data.pay_process_month:
+                    if adhoc_record.earn_deduct_type == 'EARNINGS':
                         adhoc_earn_amount += adhoc_record.pay_amount
                     else:
                         adhoc_deduct_amount += adhoc_record.pay_amount
@@ -2353,17 +2356,18 @@ def payroll_processing(request):
                 # Calculate OT1 and OT2 amounts
                 ot1_hrs = attendance_data.get('total_ot1', 0)
                 ot2_hrs = attendance_data.get('total_ot2', 0)
-                basic_per_hour = basic_per_day / 8                
+                basic_per_hour = basic_per_day / 8
                 ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
                 ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
 
                 # Total Earnings and Deductions
-                total_earnings =  earn_amount + adhoc_earn_amount + ot1_amt + ot2_amt
+                total_earnings = earn_amount + adhoc_earn_amount + ot1_amt + ot2_amt
                 total_deductions = deduct_amount + adhoc_deduct_amount + total_installment_amt
 
                 # Calculate Net Pay
                 net_pay = total_basic + total_allowance + total_earnings - total_deductions
                 
+                # Append data for HTML rendering
                 payroll_data.append({
                     'employee_code': employee.emp_code,
                     'employee_name': employee.emp_name,
@@ -2391,8 +2395,80 @@ def payroll_processing(request):
                     'total_ot1': f"{ot1_hrs:.2f}",
                     'total_ot2': f"{ot2_hrs:.2f}",
                 })
-            # print(payroll_insert)
-            # print(payroll_data)
+
+                # Delete existing records for the employee in the given pay cycle and month
+                PayProcess.objects.filter(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code
+                ).delete()
+
+                # Prepare new records for bulk insertion
+                new_records = []
+
+                # Insert net pay record
+                new_records.append(PayProcess(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code,
+                    project_code=employee.department,
+                    earn_type='NET',
+                    earn_code='ER999',
+                    morning=attendance_data.get('total_morning', 0),
+                    afternoon=attendance_data.get('total_afternoon', 0),
+                    ot1=ot1_hrs,
+                    ot2=ot2_hrs,
+                    amount=net_pay,
+                    earn_reports='NET PAY'
+                ))
+
+                # Insert additional earnings and deductions
+                for record in earn_deduct_data:
+                    new_records.append(PayProcess(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.department,
+                        earn_type=record.earn_type,
+                        earn_code=record.earn_deduct_code,
+                        amount=record.earn_deduct_amt,
+                        earn_reports=record.earn_deduct_code
+                    ))
+
+                # Insert adhoc earnings and deductions
+                for adhoc_record in adhoc_earn_deduct_data:
+                    new_records.append(PayProcess(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.department,
+                        earn_type=adhoc_record.earn_deduct_type,
+                        earn_code=adhoc_record.earn_deduct_code,
+                        amount=adhoc_record.pay_amount,
+                        earn_reports=adhoc_record.earn_deduct_code
+                    ))
+
+                for advance_record in advance_data:
+                    new_records.append(PayProcess(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.department,
+                        earn_type='DEDUCTIONS',
+                        earn_code=advance_record.advance_code,
+                        amount=advance_record.instalment_amt,
+                        earn_reports='DEDUCTIONS'
+                    ))
+
+                # Bulk insert new records
+                PayProcess.objects.bulk_create(new_records)
+
+
             messages.success(request, "Payroll processed successfully.")
             return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})
         except Exception as e:
