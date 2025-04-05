@@ -12,7 +12,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="{% url 'leavemaster_add' %}">
+        <form method="POST" action="{% url 'create_leavemaster' %}">
             {% csrf_token %}
             <div>
                 <div class="row">
@@ -20,7 +20,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Leave Code <span class="text-danger">*</span></label>
-                            <input type="text" name="leave_code" class="form-control" required>
+                            <input type="text" name="leave_code" class="form-control" autocomplete="of" required>
                         </div>
                     </div>
 

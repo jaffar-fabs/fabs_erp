@@ -52,9 +52,8 @@ urlpatterns = [
     path('get-employee-data/<str:emp_code>/', get_employee_data, name='get_employee_data'),
 
     #leav Master urls
-    path('leavemaster/add/', views.create_leave_master, name='leavemaster_add'),
-    path('leavemaster/list/', views.leave_master_list, name='leavemaster_list'),
-  
+    path('leavemaster/', views.leave_master_list, name='leavemaster'),
+    path('leavemaster/add/', views.create_leave_master, name='create_leavemaster'),
 
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),
