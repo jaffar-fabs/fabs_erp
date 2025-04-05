@@ -22,9 +22,10 @@
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
                         <select class="select2" name="emp_code" required>
                             <option value="">Choose</option>
-                            <option value="E001">E001</option>
-                            <option value="E002">E002</option>
-                        </select>
+                            {% for emp in employee_data %}
+                                <option value="{{ emp.emp_code }}">{{ emp.emp_code }} - {{ emp.emp_name }}</option>
+                            {% endfor %}
+                        </select>                        
                     </div>
                 </div>
 
@@ -34,9 +35,10 @@
                         <label class="col-form-label">Advance Code <span class="text-danger">*</span></label>
                         <select class="select2" name="advance_code" required>
                             <option value="">Choose</option>
-                            <option value="A001">A001</option>
-                            <option value="A002">A002</option>
-                        </select>
+                            {% for deduction in deductions_data %}
+                                <option value="{{ deduction.base_value }}">{{ deduction.base_value }} - {{ deduction.base_description }}</option>
+                            {% endfor %}
+                        </select>                        
                     </div>
                 </div>
 
@@ -221,8 +223,9 @@
                         <label class="form-label">Employee Code <span class="text-danger">*</span></label>
                         <select class="select2" name="emp_code" required>
                             <option value="">Choose</option>
-                            <option value="E001">E001</option>
-                            <option value="E002">E002</option>
+                            {% for emp in employee_data %}
+                                <option value="{{ emp.emp_code }}">{{ emp.emp_code }} - {{ emp.emp_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -233,10 +236,10 @@
                         <label class="form-label">Advance Code <span class="text-danger">*</span></label>
                         <select class="select2" name="advance_code" required>
                             <option value="">Choose</option>
-                            {% comment %} <option value="">Choose</option> {% endcomment %}
-                            <option value="A001">A001</option>
-                            <option value="A002">A002</option>
-                        </select>
+                            {% for deduction in deductions_data %}
+                                <option value="{{ deduction.base_value }}">{{ deduction.base_value }} - {{ deduction.base_description }}</option>
+                            {% endfor %}
+                        </select>                        
                     </div>
                 </div>
 

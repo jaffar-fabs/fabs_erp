@@ -5,6 +5,11 @@ from django.http import  JsonResponse
 from .views import set_comp_code
 
 def get_comp_code(request):
+    global PAY_CYCLES
+    pay_cycles_raw = request.session.get("user_paycycles", "")
+
+    # Split pay cycles by ":" if it's a string, default to empty list
+    PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
     return request.session.get('comp_code')
 
 def gender_data(request):
@@ -159,7 +164,21 @@ def project(request):
 
 def employee(request):
     comp_code = get_comp_code(request)
-    employee_data = Employee.objects.filter(comp_code=comp_code)
+    employee_data = Employee.objects.filter(comp_code=comp_code, process_cycle__in = PAY_CYCLES)
     return {
         'employee_data': employee_data
+        }
+
+def get_earnings(requests):
+    comp_code = get_comp_code(requests)
+    earnings_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'EARNINGS')
+    return {
+        'earnings_data': earnings_data
+        }
+
+def get_deductions(requests):
+    comp_code = get_comp_code(requests)
+    deductions_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'DEDUCTION')
+    return {
+        'deductions_data': deductions_data
         }

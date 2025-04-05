@@ -2702,7 +2702,7 @@ class AdvanceMasterList(View):
 
         # Prepare the data
         advance_data = {
-            'comp_code': '1000',
+            'comp_code': COMP_CODE,
             'emp_code': data.get('emp_code'),
             'advance_code': data.get('advance_code'),
             'advance_reference': data.get('advance_reference'),
@@ -2952,9 +2952,9 @@ def update_adhoc_earn_deduct(request, emp_code):
         print(f"Error updating records: {str(e)}")
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
-def delete_adhoc_earn_deduct(request, unique_id):
+def delete_adhoc_earn_deduct(request, emp_code):
     if request.method == 'POST':
-        record = get_object_or_404(PayrollEarnDeduct, unique_id=unique_id)
+        record = get_object_or_404(PayrollEarnDeduct, emp_code=emp_code)
         record.delete()
         return redirect('adhoc_earn_deduct_list')
 
