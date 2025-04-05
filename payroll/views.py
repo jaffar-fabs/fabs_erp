@@ -44,7 +44,8 @@ from .models import (
     EarnDeductMaster,
     EarnDeductMaster,
     LeaveMaster,
-    PayProcess
+    PayProcess,
+    PayrollEarnDeduct
 )
 
 # Initialize COMP_CODE globally
@@ -52,7 +53,13 @@ COMP_CODE = None
 
 def set_comp_code(request):
     global COMP_CODE
+    global PAY_CYCLES
+
     COMP_CODE = request.session.get("comp_code")
+    pay_cycles_raw = request.session.get("user_paycycles", "")
+
+    # Split pay cycles by ":" if it's a string, default to empty list
+    PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
 
 # -----Leave Master
 
@@ -117,7 +124,7 @@ def employee_master(request):
         current_url = f"{get_url}?"
 
     # Initialize the query
-    query = Employee.objects.filter(comp_code=COMP_CODE)
+    query = Employee.objects.filter(comp_code=COMP_CODE, process_cycle__in=PAY_CYCLES)
 
     # Apply search filter if a keyword is provided
     if keyword:
@@ -483,6 +490,7 @@ def my_login_view(request):
             if password == user.password:
                 request.session["username"] = user.user_id
                 request.session["comp_code"] = user.comp_code  # Set comp_code in session
+                request.session["user_paycycles"] = user.user_paycycles
 
                 # Fetch role ID from UserRoleMapping
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
@@ -2565,6 +2573,54 @@ def fetch_paymonth(request):
             return JsonResponse({'options': options})
     return JsonResponse({'options': '<option value="">Select Paymonth</option>'})
 
+
+def fetch_paymonth_adhoc(request):
+    set_comp_code(request)  # Ensure this function is defined and works correctly
+    paycycle = request.GET.get('paycycle')
+    
+    if paycycle:
+        paymonths = PaycycleMaster.objects.filter(
+            comp_code=COMP_CODE,
+            process_cycle=paycycle
+        ).values_list('pay_process_month', flat=True).distinct()
+        
+        employees = Employee.objects.filter(
+            comp_code=COMP_CODE,
+            process_cycle=paycycle
+        ).values('emp_code', 'emp_name')  # Adjust fields as necessary
+        
+        # Prepare paymonth options
+        options = '<option value="">-- Select Paymonth --</option>'
+        for month in paymonths:
+            options += f'<option value="{month}">{month}</option>'
+        
+        # Prepare employee options
+        employee_options = '<option value="">-- Select Employee --</option>'
+        for employee in employees:
+            employee_options += f'<option value="{employee["emp_code"]}">{employee["emp_code"]} - {employee["emp_name"]}</option>'
+        
+        return JsonResponse({'options': options, 'employees': employee_options})
+    
+    return JsonResponse({'options': '<option value="">-- Select Paymonth --</option>', 'employees': '<option value="">-- Select Employee --</option>'})
+
+
+def fetch_codes(request):
+    set_comp_code(request)  # Make sure this function is defined
+    type = request.GET.get('type')
+    codes = []
+    
+    if type in ["EARNINGS", "DEDUCTION"]:
+        
+        codes = CodeMaster.objects.filter(
+            base_type=type,
+            comp_code=COMP_CODE,
+            is_active='Y'
+        ).values_list('base_value', 'base_description')
+    return JsonResponse({
+        'codes': list(codes),
+        'status': 'success'
+    })
+
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -2776,6 +2832,131 @@ def update_advance_details(request, advance_id):
             logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
             return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
+
+
+# Adhoc Earn Deduct
+
+def adhoc_earn_deduct_list(request):
+    set_comp_code(request)
+    distinct_employees = PayrollEarnDeduct.objects.filter(comp_code=COMP_CODE).values(
+        'emp_code', 'pay_process_month', 'pay_process_cycle'
+    ).distinct()
+    
+    adhoc_groups = []
+    for emp in distinct_employees:
+        entries = PayrollEarnDeduct.objects.filter(
+            comp_code=COMP_CODE,
+            emp_code=emp['emp_code'],
+            pay_process_month=emp['pay_process_month'],
+            pay_process_cycle=emp['pay_process_cycle']
+        )
+        adhoc_groups.append({
+            'emp_code': emp['emp_code'],
+            'pay_process_month': emp['pay_process_month'],
+            'pay_process_cycle': emp['pay_process_cycle'],
+            'entries': entries
+        })
+
+    
+    return render(request, 'pages/payroll/adhoc_earn_deduct/adhoc_earn_deduct.html', {'adhoc_groups': adhoc_groups})
+
+
+def create_adhoc_earn_deduct(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            # Common fields
+            pay_process_month = request.POST.get('pay_process_month', '')
+            pay_process_cycle = request.POST.get('pay_process_cycle', '')
+            emp_code = request.POST.get('emp_code', '')
+
+            # Dynamic fields (multiple entries)
+            earn_deduct_codes = request.POST.getlist('earn_deduct_code[]')
+            earn_deduct_types = request.POST.getlist('earn_deduct_type[]')
+            pay_amounts = request.POST.getlist('pay_amount[]')
+            project_codes = request.POST.getlist('project_code[]')
+            is_active_flags = request.POST.getlist('is_active[]')
+
+            # Iterate through the dynamic fields and create records
+            for i in range(len(earn_deduct_codes)):
+                    PayrollEarnDeduct.objects.create(
+                        comp_code=COMP_CODE,
+                        emp_code=emp_code,
+                        pay_process_month=pay_process_month,
+                        pay_process_cycle=pay_process_cycle,
+                        earn_deduct_code=earn_deduct_codes[i],
+                        earn_deduct_type=earn_deduct_types[i],
+                        pay_amount=pay_amounts[i],
+                        project_code=project_codes[i] if project_codes[i] else None,
+                        is_active=is_active_flags[i],
+                        created_by=request.user.id if request.user.is_authenticated else 1
+                    )
+
+            # Redirect to the list page after successful creation
+            return redirect('adhoc_earn_deduct_list')
+
+        except Exception as e:
+            # Handle errors and return a JSON response
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+    # If not POST, return a bad request response
+    return JsonResponse({'success': False, 'message': 'Invalid request method!'}, status=405)
+
+def update_adhoc_earn_deduct(request, emp_code):
+    set_comp_code(request)
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method!'}, status=405)
+
+    try:
+        pay_process_month = request.POST.get('pay_process_month')
+        pay_process_cycle = request.POST.get('pay_process_cycle')
+
+        # Get lists from POST data
+        earn_deduct_codes = request.POST.getlist('earn_deduct_code[]')
+        earn_deduct_types = request.POST.getlist('earn_deduct_type[]')
+        pay_amounts = request.POST.getlist('pay_amount[]')
+        project_codes = request.POST.getlist('project_code[]')
+        is_active_flags = request.POST.getlist('is_active[]')
+
+        # Get all existing records for this employee/month/cycle
+        existing_records = PayrollEarnDeduct.objects.filter(
+            comp_code=COMP_CODE,
+            emp_code=emp_code,
+            pay_process_month=pay_process_month,
+            pay_process_cycle=pay_process_cycle
+        )
+
+        # First delete all existing records (we'll recreate them with updated values)
+        existing_records.delete()
+
+        # Create new records with the updated values
+        for i in range(len(earn_deduct_codes)):
+            PayrollEarnDeduct.objects.create(
+                comp_code=COMP_CODE,
+                emp_code=emp_code,
+                earn_deduct_code=earn_deduct_codes[i],
+                earn_deduct_type=earn_deduct_types[i],
+                pay_amount=pay_amounts[i],
+                project_code=project_codes[i] if project_codes[i] else None,
+                is_active=is_active_flags[i] == 'True',
+                pay_process_month=pay_process_month,
+                pay_process_cycle=pay_process_cycle,
+                created_by=request.user.id if request.user.is_authenticated else 1,
+                modified_by=request.user.id if request.user.is_authenticated else 1
+            )
+
+        return redirect('adhoc_earn_deduct_list')
+
+    except Exception as e:
+        print(f"Error updating records: {str(e)}")
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+def delete_adhoc_earn_deduct(request, unique_id):
+    if request.method == 'POST':
+        record = get_object_or_404(PayrollEarnDeduct, unique_id=unique_id)
+        record.delete()
+        return redirect('adhoc_earn_deduct_list')
 
 
 

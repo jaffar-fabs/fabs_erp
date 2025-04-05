@@ -2,12 +2,14 @@
 
 from .models import CodeMaster, GradeMaster, Employee, projectMatster,PaycycleMaster
 from django.http import  JsonResponse
+from .views import set_comp_code
 
 def get_comp_code(request):
     return request.session.get('comp_code')
 
 def gender_data(request):
     comp_code = get_comp_code(request)
+    set_comp_code(request)
     gender_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='SEX')
     return {
         'gender_data': gender_data

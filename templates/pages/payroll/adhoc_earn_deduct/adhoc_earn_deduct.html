@@ -1,0 +1,421 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h4 class="page-title">Adhoc Earnings and Deductions</h4>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="head-icons">
+                                <a href="" data-bs-toggle="tooltip" title="Refresh"><i class="ti ti-refresh-dot"></i></a>
+                                <a href="javascript:void(0);" id="collapse-header" data-bs-toggle="tooltip" title="Collapse"><i class="ti ti-chevrons-up"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <!-- Search -->
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Adhoc Records" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center justify-content-sm-end">
+                                    <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add Record
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Search -->
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Manage Adhoc Records List -->
+                        <div class="table-responsive">
+                            <table class="table datatable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Employee Code</th>
+                                        <th>Month</th>
+                                        <th>Process Cycle</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for group in adhoc_groups %}
+                                    <tr>
+                                        <td>{{ group.emp_code }}</td>
+                                        <td>{{ group.pay_process_month }}</td>
+                                        <td>{{ group.pay_process_cycle }}</td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#" data-bs-toggle="offcanvas" 
+                                                       data-bs-target="#offcanvas_edit_{{ group.emp_code }}_{{ group.pay_process_month }}_{{ group.pay_process_cycle|slugify }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <form method="post" action="{% url 'delete_adhoc_earn_deduct' group.emp_code %}" style="display:inline;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="pay_process_month" value="{{ group.pay_process_month }}">
+                                                        <input type="hidden" name="pay_process_cycle" value="{{ group.pay_process_cycle }}">
+                                                        <button type="submit" class="dropdown-item text-danger">
+                                                            <i class="ti ti-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add New Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h5>Add Adhoc Earnings/Deductions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'create_adhoc_earn_deduct' %}" id="add-form">
+            {% csrf_token %}
+            <!-- Common Fields -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Process Cycle</label>
+                    <select name="pay_process_cycle" id="paycycle" class="form-control" required>
+                        <option value="">-- Select Process Cycle --</option>
+                        {% for cycle in paycycle_data %}
+                            <option value="{{ cycle.base_value }}">{{ cycle.base_value }} - {{ cycle.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>                
+                <div class="col-md-4">
+                    <label class="form-label">Pay Process Month</label>
+                    <select name="pay_process_month" id="paymonth" class="form-control" required>
+                        <option value="">-- Select Paymonth --</option>
+                    </select>
+                </div>                
+                <div class="col-md-4">
+                    <label class="form-label">Employee</label>
+                    <select name="emp_code" id="employee" class="form-control" required>
+                        <option value="">-- Select Employee --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Fields -->
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="15%">Type</th>
+                            <th width="20%">E/D Code</th>
+                            <th width="15%">Amount</th>
+                            <th width="20%">Project Code</th>
+                            <th width="10%">Active</th>
+                            <th width="20%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dynamic-fields-container">
+                        <tr class="dynamic-field">
+                            <td>
+                                <select name="earn_deduct_type[]" class="form-select earn-deduct-type" required>
+                                    <option value="">Select</option>
+                                    <option value="EARNINGS">Earnings</option>
+                                    <option value="DEDUCTION">Deductions</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="earn_deduct_code[]" class="form-select earn-deduct-code" required>
+                                    <option value="">Select E/D Code</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" name="pay_amount[]" class="form-control" required>
+                            </td>
+                            <td>
+                                <select name="project_code[]" class="form-control project-select">
+                                    <option value="">-- Select Project --</option>
+                                    {% for project in project_data %}
+                                        <option value="{{ project.prj_code }}">
+                                            {{ project.prj_code }} - {{ project.prj_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <input type="hidden" name="is_active[]" value="True">
+                                <input type="checkbox" class="form-check-input is-active-checkbox" checked>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm remove-field">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end">
+                <button type="button" id="add-field" class="btn btn-success btn-sm me-2">
+                    <i class="ti ti-plus"></i> Add Row
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ti ti-check me-1"></i> Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Offcanvases (One for each employee group) -->
+{% for group in adhoc_groups %}
+<div class="offcanvas offcanvas-end" tabindex="-1" 
+     id="offcanvas_edit_{{ group.emp_code }}_{{ group.pay_process_month }}_{{ group.pay_process_cycle|slugify }}">
+    <div class="offcanvas-header border-bottom">
+        <h5>Edit Adhoc Earnings/Deductions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'update_adhoc_earn_deduct' group.emp_code %}" class="edit-form">
+            {% csrf_token %}
+            <input type="hidden" name="pay_process_month" value="{{ group.pay_process_month }}">
+            <input type="hidden" name="pay_process_cycle" value="{{ group.pay_process_cycle }}">
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Month</label>
+                    <input type="text" class="form-control" value="{{ group.pay_process_month }}" disabled>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Process Cycle</label>
+                    <select name="pay_process_cycle" class="form-control" disabled >
+                        {% for cycle in paycycle_data %}
+                            <option value="{{ cycle.base_value }}" 
+                                    {% if cycle.base_value == group.pay_process_cycle %}selected{% endif %}>
+                                {{ cycle.base_value }} - {{ cycle.base_description }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Employee</label>
+                    <select name="emp_code" class="form-control" disabled>
+                        {% for employee in employee_data %}
+                            <option value="{{ employee.emp_code }}" 
+                                    {% if employee.emp_code == group.emp_code %}selected{% endif %}>
+                                {{ employee.emp_code }} - {{ employee.emp_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th width="15%">Type</th>
+                            <th width="20%">E/D Code</th>
+                            <th width="15%">Amount</th>
+                            <th width="20%">Project Code</th>
+                            <th width="10%">Active</th>
+                            <th width="20%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dynamic-fields-edit-{{ group.emp_code }}-{{ group.pay_process_month }}-{{ group.pay_process_cycle|slugify }}">
+                        {% for entry in group.entries %}
+                        <tr class="dynamic-field" data-current-code="{{ entry.earn_deduct_code }}">
+                            <td>
+                                <select name="earn_deduct_type[]" class="form-select earn-deduct-type" required>
+                                    <option value="EARNINGS" {% if entry.earn_deduct_type == 'EARNINGS' %}selected{% endif %}>Earnings</option>
+                                    <option value="DEDUCTION" {% if entry.earn_deduct_type == 'DEDUCTION' %}selected{% endif %}>Deductions</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select name="earn_deduct_code[]" class="form-select earn-deduct-code" required>
+                                    <option value="">Select E/D Code</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" name="pay_amount[]" value="{{ entry.pay_amount }}" class="form-control" required>
+                            </td>
+                            <td>
+                                <select name="project_code[]" class="form-control">
+                                    <option value="">-- Select Project --</option>
+                                    {% for project in project_data %}
+                                        <option value="{{ project.prj_code }}"
+                                                {% if project.prj_code == entry.project_code %}selected{% endif %}>
+                                            {{ project.prj_code }} - {{ project.prj_name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <input type="hidden" name="is_active[]" value="{% if entry.is_active %}True{% else %}False{% endif %}">
+                                <input type="checkbox" class="form-check-input is-active-checkbox" {% if entry.is_active %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm remove-field">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="ti ti-check me-1"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Paycycle change handler
+    $('#paycycle').on('change', function() {
+        var paycycle = $(this).val();
+        var $paymonth = $('#paymonth');
+        var $employee = $('#employee');
+        
+        if (paycycle) {
+            $.ajax({
+                url: '{% url "fetch_paymonth_adhoc" %}',
+                type: 'GET',
+                data: { paycycle: paycycle },
+                success: function(response) {
+                    $paymonth.html(response.options);
+                    $employee.html(response.employees);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching paymonth:", error);
+                    $paymonth.html('<option value="">-- Select Paymonth --</option>');
+                    $employee.html('<option value="">-- Select Employee --</option>');
+                }
+            });
+        } else {
+            $paymonth.html('<option value="">-- Select Paymonth --</option>');
+            $employee.html('<option value="">-- Select Employee --</option>');
+        }
+    });
+
+    // Fetch E/D codes based on type
+    function fetchCodes(typeSelect) {
+        const type = typeSelect.value;
+        const row = typeSelect.closest('.dynamic-field');
+        const codeSelect = row.querySelector('.earn-deduct-code');
+        
+        if (type) {
+            fetch(`{% url 'fetch_codes' %}?type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    codeSelect.innerHTML = '<option value="">Select E/D Code</option>';
+                    data.codes.forEach(code => {
+                        const option = document.createElement('option');
+                        option.value = code[0];
+                        option.textContent = `${code[0]} - ${code[1]}`;
+                        codeSelect.appendChild(option);
+                    });
+                    
+                    // Set current value for edit forms
+                    if (row.dataset.currentCode) {
+                        codeSelect.value = row.dataset.currentCode;
+                    }
+                })
+                .catch(error => console.error('Error fetching codes:', error));
+        } else {
+            codeSelect.innerHTML = '<option value="">Select E/D Code</option>';
+        }
+    }
+
+    // Initialize E/D codes for edit forms
+    function initializeEditForms() {
+        document.querySelectorAll('.edit-form .dynamic-field').forEach(row => {
+            const typeSelect = row.querySelector('.earn-deduct-type');
+            if (typeSelect && typeSelect.value) {
+                fetchCodes(typeSelect);
+            }
+        });
+    }
+
+    // Checkbox change handler for both add and edit forms
+    $(document).on('change', '.is-active-checkbox', function() {
+        const checkbox = $(this);
+        const hiddenInput = checkbox.prev('input[type="hidden"]');
+        hiddenInput.val(checkbox.is(':checked') ? 'True' : 'False');
+    });
+
+    // Type change handler
+    $(document).on('change', '.earn-deduct-type', function() {
+        fetchCodes(this);
+    });
+
+    // Add new row
+    $('#add-field').on('click', function() {
+        const container = $('#dynamic-fields-container');
+        const newField = container.find('.dynamic-field').first().clone();
+        
+        // Clear values
+        newField.find('input[type="number"], input[type="text"]').val('');
+        newField.find('.earn-deduct-code').html('<option value="">Select E/D Code</option>');
+        newField.find('.earn-deduct-type').val('');
+        
+        // Reset checkbox state
+        newField.find('.is-active-checkbox').prop('checked', true);
+        newField.find('input[name="is_active[]"]').val('True');
+        
+        container.append(newField);
+    });
+
+    // Remove row
+    $(document).on('click', '.remove-field', function() {
+        const row = $(this).closest('.dynamic-field');
+        const container = row.parent();
+        if (container.find('.dynamic-field').length > 1) {
+            row.remove();
+        } else {
+            alert("At least one entry is required.");
+        }
+    });
+
+    // Initialize edit forms when loaded
+    initializeEditForms();
+});
+</script>
+{% endblock %}

@@ -123,6 +123,8 @@ urlpatterns = [
     path('payroll/payroll_processing/', payroll_views.payroll_processing, name='payroll_processing'),
     path('payroll/cancel_payroll_processing/', payroll_views.cancel_payroll_processing, name='cancel_payroll_processing'),
     path('payroll/fetch_paymonth/', payroll_views.fetch_paymonth, name='fetch_paymonth'),
+    path('payroll/fetch_paymonth_adhoc/', payroll_views.fetch_paymonth_adhoc, name='fetch_paymonth_adhoc'),
+    path('fetch_codes/', views.fetch_codes, name='fetch_codes'),
     
     # Advance Master
     path('payroll/advance_master/', views.AdvanceMasterList.as_view(), name='advance_master'),
@@ -130,7 +132,11 @@ urlpatterns = [
     path('update-advance-details/<int:advance_id>/', views.update_advance_details, name='update_advance_details'),
     path('toggle-active-status/<int:advance_id>/', views.toggle_active_status, name='toggle_active_status'),
 
-
+    # Adhoc Earn Deduct
+    path('adhoc-earn-deduct/', views.adhoc_earn_deduct_list, name='adhoc_earn_deduct_list'),
+    path('adhoc-earn-deduct/create/', views.create_adhoc_earn_deduct, name='create_adhoc_earn_deduct'),
+    path('adhoc-earn-deduct/update/<str:emp_code>/', views.update_adhoc_earn_deduct, name='update_adhoc_earn_deduct'),
+    path('adhoc-earn-deduct/delete/<str:emp_code>/', views.delete_adhoc_earn_deduct, name='delete_adhoc_earn_deduct'),
 ]
 
 
