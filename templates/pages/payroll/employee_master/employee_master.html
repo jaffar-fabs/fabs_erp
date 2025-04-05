@@ -2398,7 +2398,7 @@
 </div>
 
 
-                <!-- Payment Details -->
+<!-- Payment Details -->
 <div class="accordion-item">
     <h2 class="accordion-header" id="headingPaymentDetails">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
@@ -2410,15 +2410,7 @@
         data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <div class="row">
-                <!-- Labour ID -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Labour ID</label>
-                        <input type="text" name="labour_id" class="form-control">
-                    </div>
-                </div> -->
-                
-                <!-- Process Cycle (Dropdown) -->
+                <!-- Existing Fields -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Process Cycle</label>
@@ -2431,7 +2423,6 @@
                     </div>
                 </div>
 
-                <!-- Basic Pay -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
@@ -2440,7 +2431,6 @@
                     </div>
                 </div>
 
-                <!-- Allowance -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
@@ -2449,7 +2439,6 @@
                     </div>
                 </div>
 
-                <!-- Grade Code (Dropdown) -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade</label>
@@ -2462,8 +2451,6 @@
                     </div>
                 </div>
 
-
-                <!-- Project Code (Dropdown) -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project</label>
@@ -2476,11 +2463,78 @@
                     </div>
                 </div>
 
-                
+                <!-- Dynamic Allowances Section -->
+                <div class="col-md-12">
+                    <h5>Dynamic Allowances</h5>
+                    <table class="table" id="allowancesTable">
+                        <thead>
+                            <tr>
+                                <th>Allowance Code</th>
+                                <th>Amount</th>
+                                <th>Prorated</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Existing Allowances -->
+                            {% for allowance in employee.allowances %}
+                            <tr>
+                                <td>
+                                    <input type="text" name="earn_deduct_code[]" class="form-control" value="{{ allowance.earn_deduct_code }}" required>
+                                </td>
+                                <td>
+                                    <input type="number" name="earn_deduct_amt[]" class="form-control" value="{{ allowance.earn_deduct_amt }}" step="0.01" required>
+                                </td>
+                                <td>
+                                    <select name="prorated_flag[]" class="form-select">
+                                        <option value="true" {% if allowance.prorated_flag %}selected{% endif %}>Yes</option>
+                                        <option value="false" {% if not allowance.prorated_flag %}selected{% endif %}>No</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" onclick="removeAllowanceRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary" onclick="addAllowanceRow()">Add Allowance</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function addAllowanceRow() {
+        const table = document.getElementById('allowancesTable').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <tr>
+                <td>
+                    <input type="text" name="earn_deduct_code[]" class="form-control" required>
+                </td>
+                <td>
+                    <input type="number" name="earn_deduct_amt[]" class="form-control" step="0.01" required>
+                </td>
+                <td>
+                    <select name="prorated_flag[]" class="form-select">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeAllowanceRow(this)">Remove</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    function removeAllowanceRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+    }
+</script>
 
 
                 <!-- Account Details -->

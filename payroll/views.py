@@ -2361,17 +2361,19 @@ def payroll_processing(request):
                 ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
                 ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
 
+                other_earnings = earn_amount + adhoc_earn_amount
                 # Total Earnings and Deductions
-                total_earnings = earn_amount + adhoc_earn_amount + ot1_amt + ot2_amt
+                total_earnings = total_basic + total_allowance + earn_amount + adhoc_earn_amount + ot1_amt + ot2_amt
                 total_deductions = deduct_amount + adhoc_deduct_amount + total_installment_amt
 
                 # Calculate Net Pay
-                net_pay = total_basic + total_allowance + total_earnings - total_deductions
+                net_pay =  total_earnings - total_deductions
                 
                 # Append data for HTML rendering
                 payroll_data.append({
                     'employee_code': employee.emp_code,
                     'employee_name': employee.emp_name,
+                    'Designation' : employee.designation,
                     'Basic': f"{employee.basic_pay:.2f}" if employee.basic_pay else "0.00",
                     'Allowance': f"{employee.allowance:.2f}" if employee.allowance else "0.00",
                     'basic_per_day': f"{basic_per_day:.2f}",
@@ -2395,6 +2397,7 @@ def payroll_processing(request):
                     'working_days': f"{total_working_days:.2f}",
                     'total_ot1': f"{ot1_hrs:.2f}",
                     'total_ot2': f"{ot2_hrs:.2f}",
+                    'other_earnings': f"{other_earnings:.2f}"
                 })
 
                 # Delete existing records for the employee in the given pay cycle and month
@@ -2423,6 +2426,70 @@ def payroll_processing(request):
                     ot2=ot2_hrs,
                     amount=net_pay,
                     earn_reports='NET PAY'
+                ))
+
+                new_records.append(PayProcess(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code,
+                    project_code=employee.department,
+                    earn_type='EARNINGS',
+                    earn_code='ER001',
+                    morning=attendance_data.get('total_morning', 0),
+                    afternoon=attendance_data.get('total_afternoon', 0),
+                    ot1=ot1_hrs,
+                    ot2=ot2_hrs,
+                    amount=total_basic,
+                    earn_reports='EARN BASIC'
+                ))
+
+                new_records.append(PayProcess(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code,
+                    project_code=employee.department,
+                    earn_type='EARNINGS',
+                    earn_code='ER002',
+                    morning=attendance_data.get('total_morning', 0),
+                    afternoon=attendance_data.get('total_afternoon', 0),
+                    ot1=ot1_hrs,
+                    ot2=ot2_hrs,
+                    amount=total_allowance,
+                    earn_reports='EARN ALLOWANCE'
+                ))
+
+                new_records.append(PayProcess(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code,
+                    project_code=employee.department,
+                    earn_type='EARNINGS',
+                    earn_code='ER003',
+                    # morning=attendance_data.get('total_morning', 0),
+                    # afternoon=attendance_data.get('total_afternoon', 0),
+                    ot1=ot1_hrs,
+                    # ot2=ot2_hrs,
+                    amount=ot1_amt,
+                    earn_reports='EARN OT1'
+                ))
+
+                new_records.append(PayProcess(
+                    comp_code=COMP_CODE,
+                    pay_cycle=paycycle,
+                    pay_month=paymonth,
+                    employee_code=employee.emp_code,
+                    project_code=employee.department,
+                    earn_type='EARNINGS',
+                    earn_code='ER004',
+                    # morning=attendance_data.get('total_morning', 0),
+                    # afternoon=attendance_data.get('total_afternoon', 0),
+                    # ot1=ot1_hrs,
+                    ot2=ot2_hrs,
+                    amount=ot2_amt,
+                    earn_reports='EARN OT2'
                 ))
 
                 # Insert additional earnings and deductions
@@ -2463,7 +2530,7 @@ def payroll_processing(request):
                         earn_type='DEDUCTIONS',
                         earn_code=advance_record.advance_code,
                         amount=advance_record.instalment_amt,
-                        earn_reports='DEDUCTIONS'
+                        earn_reports='Advance Loan'
                     ))
 
                 # Bulk insert new records

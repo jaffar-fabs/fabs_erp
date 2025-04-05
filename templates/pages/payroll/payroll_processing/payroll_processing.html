@@ -79,12 +79,20 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Employee Code</th>
+                                <th>Emp Code</th>
                                 <th>Employee Name</th>
-                                <th>Basic</th>
-                                <th>Allowance</th>
-                                <th>Total Earnings</th>
-                                <th>Total Deductions</th>
+                                <th>Designation</th>
+                                <th>A Basic</th>
+                                <th>A Allowance</th>
+                                <th>OT 1 Hrs</th>
+                                <th>OT 2 Hrs</th>
+                                <th>Er Basic</th>
+                                <th>Er Allowance</th>
+                                <th>OT 1 Er</th>
+                                <th>OT 2 Er</th>
+                                <th>Other Earnings</th>
+                                <th>Gross Earnings</th>
+                                <th>Gross Deductions</th>
                                 <th>Net Pay</th>
                             </tr>
                         </thead>
@@ -93,8 +101,16 @@
                             <tr>
                                 <td>{{ row.employee_code }}</td>
                                 <td>{{ row.employee_name }}</td>
+                                <td>{{ row.Designation }}</td>
+                                <td>{{ row.Basic }}</td>
+                                <td>{{ row.Allowance }}</td>
+                                <td>{{ row.total_ot1 }}</td>
+                                <td>{{ row.total_ot2 }}</td>
                                 <td>{{ row.total_basic }}</td>
                                 <td>{{ row.total_allowance }}</td>
+                                <td>{{ row.ot1_amt }}</td>
+                                <td>{{ row.ot2_amt }}</td>
+                                <td>{{ row.other_earnings }}</td>
                                 <td>{{ row.total_earnings }}</td>
                                 <td>{{ row.total_deductions }}</td>
                                 <td>{{ row.net_pay }}</td>
