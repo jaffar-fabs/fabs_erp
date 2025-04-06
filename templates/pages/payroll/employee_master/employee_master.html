@@ -118,7 +118,7 @@
                                         </td>
                                     </tr>
                                     <!-- Edit Employee Offcanvas -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit_{{ employee.employee_id }}">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit_{{ employee.employee_id }}">
     <div class="offcanvas-header border-bottom">
         <h4>Edit Employee</h4>
         <button type="button"
@@ -132,7 +132,7 @@
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
-            <div class="accordion" id="employeeAccordion">
+            <div class="accordion" id="employeeAccordion" style="width: 1000px;">
 
                 <!-- Personal Details -->
                 <div class="accordion-item">
@@ -2101,7 +2101,7 @@
 </div>
 
 <!-- Add Employee Offcanvas -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+<div class="offcanvas offcanvas-end " tabindex="-1" id="offcanvas_add">
     <div class="offcanvas-header border-bottom">
         <h4>Add New Employee</h4>
         <button type="button"
@@ -2115,7 +2115,7 @@
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
-            <div class="accordion" id="employeeAccordion">
+            <div class="accordion" id="employeeAccordion" style="width: 1000px;">
 
                 <!-- Personal Details -->
 <div class="accordion-item">
