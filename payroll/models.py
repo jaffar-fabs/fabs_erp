@@ -14,12 +14,7 @@ def company_logo_upload_path(instance, filename):
 
 # -------------------------------------------------------------------------------
 # Leave Master
-
 class LeaveMaster(models.Model):
-    class Meta:
-        db_table = 'payroll_leavemaster'  # Custom table name
-
-    # Choices for different fields
     DAY_TYPE_CHOICES = [
         ('Calendar', 'Calendar Days'),
         ('Working', 'Working Days'),
@@ -55,13 +50,13 @@ class LeaveMaster(models.Model):
     carry_forward = models.BooleanField(default=False)  # Can leave be carried forward?
     carry_forward_period = models.PositiveIntegerField(default=0, help_text="Months allowed for carry forward")  # Carry forward period in months
     encashment = models.BooleanField(default=False)  # Whether the leave can be encashed
+    encashment_days = models.PositiveIntegerField(default=0, help_text="Number of days allowed for encashment")  # Encashment days
 
     created_at = models.DateTimeField(auto_now_add=True)  # Auto timestamp on creation
     updated_at = models.DateTimeField(auto_now=True)  # Auto timestamp on update
 
     def __str__(self):
         return f"{self.leave_code} - {self.leave_description}"
-
 
 # -------------------------------------------------------------------------------
 #Payprocess

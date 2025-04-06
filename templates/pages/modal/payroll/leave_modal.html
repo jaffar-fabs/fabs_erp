@@ -36,7 +36,8 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Work Month <span class="text-danger">*</span></label>
-                            <input type="number" name="work_month" class="form-control" min="0" autocomplete="off" required>
+                            <input type="number" name="work_month" class="form-control" min="0" autocomplete="off"
+                                required>
                         </div>
                     </div>
 
@@ -116,15 +117,11 @@
                             <label for="carry_forward" class="col-form-label">Carry Forward</label>
                             <input type="checkbox" id="carry_forward" name="carry_forward" class="form-check-input">
                         </div>
-                    </div>
-
-                    <!-- Carry Forward Period -->
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="carry_forward_period" class="col-form-label">Carry Forward Period
-                                (Months)</label>
-                            <input type="number" id="carry_forward_period" name="carry_forward_period"
-                                class="form-control" min="0">
+                        <!-- Carry Forward Days Input -->
+                        <div class="mb-3" id="carry_forward_days_input" style="display: none;">
+                            <label for="carry_forward_days" class="col-form-label">Carry Forward Days</label>
+                            <input type="number" id="carry_forward_days" name="carry_forward_days" class="form-control"
+                                min="0">
                         </div>
                     </div>
 
@@ -133,6 +130,12 @@
                         <div class="mb-3">
                             <label for="encashment" class="col-form-label">Encashment</label>
                             <input type="checkbox" id="encashment" name="encashment" class="form-check-input">
+                        </div>
+                        <!-- Encashment Days Input -->
+                        <div class="mb-3" id="encashment_days_input" style="display: none;">
+                            <label for="encashment_days" class="col-form-label">Encashment Days</label>
+                            <input type="number" id="encashment_days" name="encashment_days" class="form-control"
+                                min="0">
                         </div>
                     </div>
                     <!-- Modal Footer -->
@@ -149,3 +152,17 @@
 </div>
 </div>
 <!-- /Add New Leave Modal -->
+
+<script>
+    // Toggle Carry Forward Days Input
+    document.getElementById('carry_forward').addEventListener('change', function () {
+        const carryForwardInput = document.getElementById('carry_forward_days_input');
+        carryForwardInput.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Toggle Encashment Days Input
+    document.getElementById('encashment').addEventListener('change', function () {
+        const encashmentInput = document.getElementById('encashment_days_input');
+        encashmentInput.style.display = this.checked ? 'block' : 'none';
+    });
+</script>
