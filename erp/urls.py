@@ -54,7 +54,7 @@ urlpatterns = [
     #leav Master urls
     path('leavemaster/', views.leave_master_list, name='leavemaster'),
     path('leavemaster/add/', views.create_leave_master, name='create_leavemaster'),
-
+    path('leavemaster/delete/<int:pk>/', views.delete_leavemaster, name='delete_leavemaster'),
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),
     path('update_seed_status/<int:seed_id>/', views.update_seed_status, name='update_seed_status'),
