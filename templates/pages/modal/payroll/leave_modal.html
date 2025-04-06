@@ -177,6 +177,181 @@
     </div>
 </div>
 
+
+<!-- Edit Project -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Project</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="projects">
+            <div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="col-form-label">Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project ID<span class="text-danger"> *</span></label>
+                            <input class="form-control" type="text" value="12">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Type <span
+                                    class="text-danger">*</span></label>
+                            <select class="select2">
+                                <option>Choose</option>
+                                <option>Mobile App</option>
+                                <option selected>Meeting</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Client <span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Select</option>
+                                <option selected>NovaWave LLC</option>
+                                <option>Silver Hawk</option>
+                                <option>Harbor View</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Category <span class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Select</option>
+                                <option selected>Harbor View</option>
+                                <option>LLC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Project Timing <span
+                                    class="text-danger">*</span></label>
+                            <select class="select">
+                                <option>Select</option>
+                                <option selected>Hourly</option>
+                                <option>Weekly</option>
+                                <option>Monthly</option>
+                                <option>Less than 1 Month</option>
+                                <option>Less than 3 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Price <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Amount <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Total <span class="text-danger">*</span></label>
+                            <input class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Responsible Persons <span
+                                    class="text-danger">*</span></label>
+                            <select class="multiple-img" multiple="multiple">
+                                <option data-image="{% static 'assets/img/profiles/avatar-19.jpg' %}" selected>Darlee Robertson
+                                </option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-20.jpg' %}">Sharon Roy</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-21.jpg' %}">Vaughan</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-23.jpg' %}">Jessica</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-16.jpg' %}">Carol Thomas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Team Leader <span class="text-danger">*</span></label>
+                            <select class="multiple-img" multiple="multiple">
+                                <option data-image="{% static 'assets/img/profiles/avatar-19.jpg' %}">Darlee Robertson</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-20.jpg' %}" selected>Sharon Roy
+                                </option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-21.jpg' %}">Vaughan</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-23.jpg' %}">Jessica</option>
+                                <option data-image="{% static 'assets/img/profiles/avatar-16.jpg' %}">Carol Thomas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" value="29-02-2020">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Due Date <span class="text-danger">*</span></label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class="ti ti-calendar-event"></i></span>
+                                <input type="text" class="form-control datetimepicker" value="29-02-2020">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Priority</label>
+                            <select class="select">
+                                <option>Select</option>
+                                <option selected>High</option>
+                                <option>Low</option>
+                                <option>Medium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Status</label>
+                            <select class="select">
+                                <option>Select</option>
+                                <option selected>Active</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label class="col-form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="button" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- /Edit Project -->
+
+
 <script>
     // Toggle Carry Forward Days Input
     document.getElementById('carry_forward').addEventListener('change', function () {
