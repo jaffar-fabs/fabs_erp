@@ -105,7 +105,12 @@ def leave_master_list(request):
     leavemaster = LeaveMaster.objects.all()
     return render(request, 'pages/payroll/leave_master/leavemaster.html', {'leavemaster': leavemaster})
 
-
+def delete_leavemaster(request, pk):
+    if request.method == 'POST':
+        record = get_object_or_404(LeaveMaster, pk=pk)
+        record.delete()
+        return JsonResponse({'success': True})  # Return JSON response
+    return JsonResponse({'success': False}, status=400)
 # -----Leave Master
 
 
