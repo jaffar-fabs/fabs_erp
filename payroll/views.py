@@ -76,9 +76,8 @@ def create_leave_master(request):
         gender = request.POST.get('gender')
         grade = request.POST.get('grade')
         carry_forward = request.POST.get('carry_forward') == 'on'  # Checkbox field
-        carry_forward_days = request.POST.get('carry_forward_days') if carry_forward else 0  # Only save if checked
+        carry_forward_period = request.POST.get('carry_forward_period')
         encashment = request.POST.get('encashment') == 'on'  # Checkbox field
-        encashment_days = request.POST.get('encashment_days') if encashment else 0  # Only save if checked
 
         # Save data to the database
         LeaveMaster.objects.create(
@@ -92,9 +91,8 @@ def create_leave_master(request):
             gender=gender,
             grade=grade if grade else None,
             carry_forward=carry_forward,
-            carry_forward_period=int(carry_forward_days) if carry_forward_days else 0,
-            encashment=encashment,
-            encashment_days=int(encashment_days) if encashment_days else 0
+            carry_forward_period=int(carry_forward_period) if carry_forward_period else 0,
+            encashment=encashment
         )
         # Redirect to the leave master list
         return redirect('leavemaster')
@@ -2285,14 +2283,14 @@ def payroll_processing(request):
 
             # Fetch employee data using paycycle
             employee_data = Employee.objects.filter(process_cycle=paycycle, comp_code=COMP_CODE)
-
+            print(employee_data)
             # Prepare payroll data
             payroll_data = []
             for employee in employee_data:
                 # Fetch attendance data for the employee
                 attendance_data = WorkerAttendanceRegister.objects.filter(
                     comp_code=COMP_CODE,
-                    employee_code=employee.emp_code,
+                    employee_code = employee.emp_code,
                     pay_cycle=paycycle,
                     pay_process_month=paymonth
                 ).aggregate(
@@ -2301,6 +2299,12 @@ def payroll_processing(request):
                     total_ot1=Sum('ot1'),
                     total_ot2=Sum('ot2')
                 )
+                total_morning = attendance_data.get('total_morning')
+                total_afternoon = attendance_data.get('total_afternoon')
+
+                # 🔥 Skip this employee if both morning and afternoon are None or 0
+                if not total_morning and not total_afternoon:
+                    continue  # Skip to next employee
 
                 advance_data = AdvanceMaster.objects.filter(
                     comp_code=COMP_CODE,
