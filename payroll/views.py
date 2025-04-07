@@ -407,33 +407,25 @@ def save_employee(request, employee_id=None):
         earn_deduct_amounts = request.POST.getlist("entry_amount[]")
         prorated_flags = request.POST.getlist("entry_proated_flag[]")
 
+        # Delete existing entries for the employee
+        EarnDeductMaster.objects.filter(
+            comp_code=COMP_CODE,
+            employee_code=emp_code
+        ).delete()  # Remove all existing entries for this employee
+
+        # Create new entries
         for entry_type, entry_code, entry_amount, prorated_flag in zip(earn_deduct_types, earn_deduct_codes, earn_deduct_amounts, prorated_flags):
             if entry_type and entry_code and entry_amount:  # Ensure all fields are provided
-                # Check if the entry already exists
-                existing_entry = EarnDeductMaster.objects.filter(
+                EarnDeductMaster.objects.create(
                     comp_code=COMP_CODE,
                     employee_code=emp_code,
-                    earn_deduct_code=entry_code
-                ).first()  # Get the first matching entry or None
-
-                if existing_entry:
-                    # Update the existing entry
-                    existing_entry.earn_deduct_amt = entry_amount
-                    existing_entry.prorated_flag = prorated_flag == 'Yes'  # Convert to boolean
-                    existing_entry.earn_type = entry_type
-                    existing_entry.save()  # Save the updated entry
-                else:
-                    # Create a new entry
-                    EarnDeductMaster.objects.create(
-                        comp_code=COMP_CODE,
-                        employee_code=emp_code,
-                        earn_deduct_code=entry_code,
-                        earn_deduct_amt=entry_amount,
-                        prorated_flag=prorated_flag == 'Yes',  # Convert to boolean
-                        created_by=1,  # Replace with actual user ID if available
-                        instance_id=employee_id or emp_code,  # Use employee_id if editing, otherwise use emp_code
-                        earn_type=entry_type
-                    )
+                    earn_deduct_code=entry_code,
+                    earn_deduct_amt=entry_amount,
+                    prorated_flag=prorated_flag == 'Yes',  # Convert to boolean
+                    created_by=1,  # Replace with actual user ID if available
+                    instance_id=employee_id or emp_code,  # Use employee_id if editing, otherwise use emp_code
+                    earn_type=entry_type
+                )
 
         # Create folder for the employee if it doesn't exist
         employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', emp_code)

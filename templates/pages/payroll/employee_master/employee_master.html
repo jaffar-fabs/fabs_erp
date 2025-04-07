@@ -417,14 +417,15 @@
                 </div>
 
                 <!-- Payment Details -->
-<!-- Payment Details -->
 <div class="accordion-item">
     <h2 class="accordion-header" id="headingPaymentDetails">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
             Salary Details
         </button>
     </h2>
-    <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails" data-bs-parent="#employeeAccordion">
+    <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails"
+        data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
@@ -486,7 +487,7 @@
             <div class="mt-4" id="multiEntryContainer">
                 <h5>Additional Earnings/Deductions</h5>
                 {% for entry in employee.earn_deducts %}
-                <div class="multi-entry mb-3">
+                <div class="multi-entry_edit mb-3">
                     <div class="row">
                         <div class="col-md-3">
                             <input type="text" name="entry_type[]" class="form-control" value="{{ entry.earn_type }}" placeholder="Type" required>
@@ -504,22 +505,22 @@
                             </select>
                         </div>
                         <div class="col-md-1">
-                            <button type="button" class="btn btn-danger remove-entry">Remove</button>
+                            <button type="button" class="btn btn-danger remove-entry_edit">Remove</button>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-            <button type="button" class="btn btn-primary" id="addEntry">Add Entry</button>
+            <button type="button" class="btn btn-primary" id="addEntry_edit">Add Entry</button>
         </div>
     </div>
 </div>
 
 <script>
-    document.getElementById('addEntry').addEventListener('click', function() {
+    document.getElementById('addEntry_edit').addEventListener('click', function() {
         const container = document.getElementById('multiEntryContainer');
- const newEntry = document.createElement('div');
-        newEntry.classList.add('multi-entry', 'mb-3');
+        const newEntry = document.createElement('div');
+        newEntry.classList.add('multi-entry_edit', 'mb-3');
         newEntry.innerHTML = `
             <div class="row">
                 <div class="col-md-3">
@@ -538,7 +539,7 @@
                     </select>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-danger remove-entry">Remove</button>
+                    <button type="button" class="btn btn-danger remove-entry_edit">Remove</button>
                 </div>
             </div>
         `;
@@ -546,8 +547,8 @@
     });
 
     document.getElementById('multiEntryContainer').addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-entry')) {
-            e.target.closest('.multi-entry').remove();
+        if (e.target.classList.contains('remove-entry_edit')) {
+            e.target.closest('.multi-entry_edit').remove();
         }
     });
 </script>
