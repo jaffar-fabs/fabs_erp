@@ -183,21 +183,21 @@ class Employee(models.Model):
 
     # Camp Details
     camp_type = models.CharField(
-        max_length=10, 
-        choices=[('self', 'Self'), ('camp', 'Camp')], 
+        max_length=50, 
         blank=True, 
         null=True
     )  # Type of accommodation
     camp_inside_outside = models.CharField(
-        max_length=10, 
-        choices=[('inside', 'Inside'), ('outside', 'Outside'), ('inCamp', 'In Camp')], 
+        max_length=100, 
         blank=True, 
         null=True
     )  # Inside/Outside/In Camp
-    select_camp = models.CharField(max_length=50, blank=True, null=True)  # Selected camp
-    room_no = models.CharField(max_length=20, blank=True, null=True)  # Room number
+    select_camp = models.CharField(max_length=100, blank=True, null=True)  # Selected camp
+    room_no = models.CharField(max_length=100, blank=True, null=True)  # Room number
     outside_location = models.CharField(max_length=100, blank=True, null=True)  # Outside location
-    room_rent = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Room rent
+    room_rent = models.CharField(max_length=100, blank=True, null=True)  # Room rent
+    client_name = models.CharField(max_length=150, null=True,blank=True)
+    client_location = models.CharField(max_length=150, null=True,blank=True)
 
     # Dependent Details
     father_visa_copy_id = models.CharField(max_length=50, blank=True, null=True)

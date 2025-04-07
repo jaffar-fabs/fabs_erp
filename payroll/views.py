@@ -142,7 +142,7 @@ def employee_master(request):
             )
         except Exception as e:
             print(f"Error in keyword search: {e}")
-        return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
     paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
@@ -154,9 +154,10 @@ def employee_master(request):
     except EmptyPage:
         employees_page = paginator.page(paginator.num_pages)
 
-    # Fetch documents for each employee
+    # Fetch documents and earnings/deductions for each employee
     for employee in employees_page:
         employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
+        employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
 
     # Prepare the context for the template
     context = {
@@ -186,7 +187,13 @@ def save_employee(request, employee_id=None):
             employee = Employee()
             employee.created_by = 1  # Replace with actual user ID if available
             employee.created_on = now()
+            
+        dodcument_types_edit = request.POST.getlist("document_type_edit[]")
+        dodcument_files_edit = request.FILES.getlist("document_file_edit[]")  # Ensure this matches the input name
 
+        # Debugging: Print the document types and files
+        print("Document Types Edit:", dodcument_types_edit)
+        print("Document Files Edit:", dodcument_files_edit)
         # Assign values from request
         employee.comp_code = COMP_CODE
         employee.emp_code = emp_code
@@ -373,13 +380,60 @@ def save_employee(request, employee_id=None):
         # Camp Details
         employee.camp_type = request.POST.get("camp_type")
         employee.camp_inside_outside = request.POST.get("camp_inside_outside")
-        employee.select_camp = request.POST.get("select_camp")
-        employee.room_no = request.POST.get("room_no")
-        employee.outside_location = request.POST.get("outside_location")
-        employee.room_rent = request.POST.get("room_rent") or 0
+
+        # Handle accommodation details based on the selected type
+        if employee.camp_inside_outside == "client_accommodation":
+            employee.client_name = request.POST.get("client_name")  # New field for Client Name
+            employee.client_location = request.POST.get("client_location")  # New field for Client Location
+            # You can add any additional logic specific to client accommodation here
+        elif employee.camp_inside_outside == "camp":
+            employee.select_camp = request.POST.get("select_camp")
+            employee.room_no = request.POST.get("room_no")
+            # You can add any additional logic specific to camp accommodation here
+        elif employee.camp_inside_outside == "outside":
+            employee.outside_location = request.POST.get("outside_location")
+            employee.room_rent = request.POST.get("room_rent")
+            # You can add any additional logic specific to outside accommodation here
+        else:
+            # If none of the conditions are met, you can choose to pass or handle it differently
+            pass
 
         # Save employee
         employee.save()
+        
+        # Handle Earn/Deduct entries
+        earn_deduct_types = request.POST.getlist("entry_type[]")
+        earn_deduct_codes = request.POST.getlist("entry_code[]")
+        earn_deduct_amounts = request.POST.getlist("entry_amount[]")
+        prorated_flags = request.POST.getlist("entry_proated_flag[]")
+
+        for entry_type, entry_code, entry_amount, prorated_flag in zip(earn_deduct_types, earn_deduct_codes, earn_deduct_amounts, prorated_flags):
+            if entry_type and entry_code and entry_amount:  # Ensure all fields are provided
+                # Check if the entry already exists
+                existing_entry = EarnDeductMaster.objects.filter(
+                    comp_code=COMP_CODE,
+                    employee_code=emp_code,
+                    earn_deduct_code=entry_code
+                ).first()  # Get the first matching entry or None
+
+                if existing_entry:
+                    # Update the existing entry
+                    existing_entry.earn_deduct_amt = entry_amount
+                    existing_entry.prorated_flag = prorated_flag == 'Yes'  # Convert to boolean
+                    existing_entry.earn_type = entry_type
+                    existing_entry.save()  # Save the updated entry
+                else:
+                    # Create a new entry
+                    EarnDeductMaster.objects.create(
+                        comp_code=COMP_CODE,
+                        employee_code=emp_code,
+                        earn_deduct_code=entry_code,
+                        earn_deduct_amt=entry_amount,
+                        prorated_flag=prorated_flag == 'Yes',  # Convert to boolean
+                        created_by=1,  # Replace with actual user ID if available
+                        instance_id=employee_id or emp_code,  # Use employee_id if editing, otherwise use emp_code
+                        earn_type=entry_type
+                    )
 
         # Create folder for the employee if it doesn't exist
         employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', emp_code)
@@ -405,22 +459,6 @@ def save_employee(request, employee_id=None):
         # Handle new document uploads
         document_types = request.POST.getlist("document_type[]")
         document_files = request.FILES.getlist("document_file[]")
-        print("Document Types:", document_types)
-        print("Document Files:", document_files)
-
-        # Print the new documents for debugging
-        print("New Documents Received:")
-        for doc_type, doc_file in zip(document_types, document_files):
-            print(f"Document Type: {doc_type}, File Name: {doc_file.name}")
-
-        # Fetch new documents from the request
-        document_types = request.POST.getlist("document_type[]")
-        document_files = request.FILES.getlist("document_file[]")
-
-        # Print the appended document types and files for debugging
-        print("Appended Documents:")
-        for doc_type, doc_file in zip(document_types, document_files):
-            print(f"Document Type: {doc_type}, File Name: {doc_file.name}")
 
         # Save new documents to the database
         for doc_type, doc_file in zip(document_types, document_files):
