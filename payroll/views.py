@@ -2174,6 +2174,7 @@ def attendance_upload(request):
                         emp_code = row['Emp Code']
                         start_date = pd.to_datetime(row['Start Date']).date()  # Convert to date
                         end_date = pd.to_datetime(row['End Date']).date()  # Convert to date
+                        project_code = row['Project']  # Get the project code from the row
 
                         # Validate Start Date and End Date
                         if not (vstart_date <= start_date <= vend_date and vstart_date <= end_date <= vend_date):
@@ -2182,6 +2183,10 @@ def attendance_upload(request):
                         # Validate Employee Code
                         if not Employee.objects.filter(emp_code=emp_code, process_cycle=paycycle).exists():
                             df.at[index, 'Error'] += 'Invalid Emp Code for the selected paycycle. '
+
+                        # Validate Project Code
+                        if not projectMatster.objects.filter(prj_code=project_code).exists():
+                            df.at[index, 'Error'] += 'Invalid Project Code. '
 
                         # Validate for null values
                         if row.isnull().any():
