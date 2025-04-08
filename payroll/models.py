@@ -517,9 +517,6 @@ class UserMaster(models.Model):
 
     def __str__(self):
         return self.user_id
-    
-    class Meta:
-        db_table = 'tbl_erp_smas_user_master'
         
 # ------------------------------------------------------------------------------------------------------------
 
