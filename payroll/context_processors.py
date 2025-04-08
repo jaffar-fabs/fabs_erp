@@ -1,6 +1,6 @@
 # your_app/context_processors.py
 
-from .models import CodeMaster, GradeMaster, Employee, projectMatster,PaycycleMaster
+from .models import CodeMaster, GradeMaster, Employee, projectMaster,PaycycleMaster
 from django.http import  JsonResponse
 from .views import set_comp_code
 
@@ -157,7 +157,7 @@ def grade_code(request):
 
 def project(request):
     comp_code = get_comp_code(request)
-    project_data = projectMatster.objects.filter(comp_code=comp_code, is_active= True)
+    project_data = projectMaster.objects.filter(comp_code=comp_code, is_active= True)
     return {
         'project_data': project_data
         }

@@ -28,7 +28,7 @@ PAGINATION_SIZE = 6
 # Single import statement for models
 from .models import (
     PaycycleMaster,
-    projectMatster,
+    projectMaster,
     HolidayMaster,
     CodeMaster,
     SeedModel,
@@ -493,7 +493,7 @@ def index(request):
     
     # Count records for each model
     employee_count = Employee.objects.filter(comp_code=COMP_CODE).count()
-    project_count = projectMatster.objects.filter(comp_code=COMP_CODE).count()
+    project_count = projectMaster.objects.filter(comp_code=COMP_CODE).count()
     holiday_count = HolidayMaster.objects.filter(comp_code=COMP_CODE).count()
     seed_count = SeedModel.objects.filter(comp_code=COMP_CODE).count()
     paycycle_count = PaycycleMaster.objects.filter(comp_code=COMP_CODE).count()
@@ -902,7 +902,7 @@ def project(request):
     if request.method == "GET":
         if project_id:  # If `project_id` exists, return a JSON response with project data
             try:
-                project = projectMatster.objects.get(project_id=project_id, comp_code=COMP_CODE)
+                project = projectMaster.objects.get(project_id=project_id, comp_code=COMP_CODE)
                 return JsonResponse({
                     "project_id": project.project_id,
                     "prj_code": project.prj_code,
@@ -919,7 +919,7 @@ def project(request):
                     "is_active": project.is_active,
                     "comp_code": project.comp_code,
                 })
-            except projectMatster.DoesNotExist:
+            except projectMaster.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': 'Project not found'}, status=404)
         
         else:  # If `project_id` doesn't exist, render the page with paginated results
@@ -940,7 +940,7 @@ def project(request):
                 current_url = f"{get_url}?"
 
             # Initialize the query
-            query = projectMatster.objects.filter(comp_code=COMP_CODE)
+            query = projectMaster.objects.filter(comp_code=COMP_CODE)
 
             # Apply search filter if a keyword is provided
             if keyword:
@@ -1001,8 +1001,8 @@ def project(request):
     if request.method == "POST":
         
             project_id = request.POST.get("project_id")
-            if projectMatster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
-                project = get_object_or_404(projectMatster, project_id=int(project_id), comp_code=COMP_CODE)
+            if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
+                project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
 
                 project.prj_code = request.POST.get("project_code", project.prj_code)
                 project.prj_name = request.POST.get("project_name", project.prj_name)
@@ -1024,13 +1024,13 @@ def project(request):
 
             else:
                 prj_code=request.POST.get("project_code")
-                # if projectMatster.objects.filter(prj_code=prj_code).exists():
+                # if projectMaster.objects.filter(prj_code=prj_code).exists():
                 #     return JsonResponse(
                 #      {
                 #          "error": "Project Code already exists"
                 #          }
                 #     )
-                project = projectMatster(
+                project = projectMaster(
                 prj_code=request.POST.get("project_code"),
                 prj_name=request.POST.get("project_name"),
                 project_description=request.POST.get("project_description", "No description available"),
@@ -1050,9 +1050,9 @@ def project(request):
             return redirect("project")
 
 
-    # # projects = projectMatster.objects.filter(is_active=True).order_by('-created_on')
-    # projects = projectMatster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-    # project_count=projectMatster.objects.filter(comp_code=COMP_CODE)
+    # # projects = projectMaster.objects.filter(is_active=True).order_by('-created_on')
+    # projects = projectMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
+    # project_count=projectMaster.objects.filter(comp_code=COMP_CODE)
     # print("COUNT ",project_count)
     return render(request, template_name, context=context)
 
@@ -1062,7 +1062,7 @@ def check_project_code(request):
     if request.method == "POST":
         project_code = request.POST.get("project_code")
 
-        if projectMatster.objects.filter(prj_code=project_code, comp_code=COMP_CODE).exists():
+        if projectMaster.objects.filter(prj_code=project_code, comp_code=COMP_CODE).exists():
             return JsonResponse({"exists": True})  # Project code exists
         else:
             return JsonResponse({"exists": False})  # Project code is unique
@@ -1076,7 +1076,7 @@ def delete_project(request):
         project_id = request.POST.get("project_id")
 
         if project_id:
-            project = get_object_or_404(projectMatster, project_id=project_id, comp_code=COMP_CODE)
+            project = get_object_or_404(projectMaster, project_id=project_id, comp_code=COMP_CODE)
             project.is_active = False  
             project.save()
     return redirect("project")
@@ -2185,7 +2185,7 @@ def attendance_upload(request):
                             df.at[index, 'Error'] += 'Invalid Emp Code for the selected paycycle. '
 
                         # Validate Project Code
-                        if not projectMatster.objects.filter(prj_code=project_code).exists():
+                        if not projectMaster.objects.filter(prj_code=project_code).exists():
                             df.at[index, 'Error'] += 'Invalid Project Code. '
 
                         # Validate for null values

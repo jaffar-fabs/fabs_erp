@@ -517,41 +517,63 @@
 </div>
 
 <script>
-    document.getElementById('addEntry_edit').addEventListener('click', function() {
-        const container = document.getElementById('multiEntryContainer');
-        const newEntry = document.createElement('div');
-        newEntry.classList.add('multi-entry_edit', 'mb-3');
-        newEntry.innerHTML = `
-            <div class="row">
-                <div class="col-md-3">
-                    <input type="text" name="entry_type[]" class="form-control" placeholder="Type" required>
+    // Initialize the functionality when the edit offcanvas opens
+    document.getElementById('offcanvas_edit_{{ employee.employee_id }}').addEventListener('shown.bs.offcanvas', function() {
+        // Add entry button
+        document.getElementById('addEntry_edit').addEventListener('click', function() {
+            const container = document.getElementById('multiEntryContainer');
+            const newEntry = document.createElement('div');
+            newEntry.classList.add('multi-entry_edit', 'mb-3');
+            newEntry.innerHTML = `
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" name="entry_type[]" class="form-control" placeholder="Type" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="entry_code[]" class="form-control" placeholder="Code" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" name="entry_amount[]" class="form-control" placeholder="Amount" required min="0" step="0.01">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="entry_proated_flag[]" class="form-control">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger remove-entry_edit">Remove</button>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <input type="text" name="entry_code[]" class="form-control" placeholder="Code" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="entry_amount[]" class="form-control" placeholder="Amount" required min="0" step="0.01">
-                </div>
-                <div class="col-md-2">
-                    <select name="entry_proated_flag[]" class="form-control">
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-                <div class="col-md-1">
-                    <button type="button" class="btn btn-danger remove-entry_edit">Remove</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(newEntry);
+            `;
+            container.appendChild(newEntry);
+        });
+    
+        // Event delegation for remove buttons
+        document.getElementById('multiEntryContainer').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-entry_edit')) {
+                e.target.closest('.multi-entry_edit').remove();
+            }
+        });
     });
-
-    document.getElementById('multiEntryContainer').addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-entry_edit')) {
-            e.target.closest('.multi-entry_edit').remove();
-        }
-    });
-</script>
+    
+    // If you need to handle existing entries differently (like when editing)
+    function initializeExistingEntries() {
+        document.querySelectorAll('.multi-entry_edit .remove-entry_edit').forEach(button => {
+            button.addEventListener('click', function() {
+                const entryId = this.closest('.multi-entry_edit').dataset.entryId;
+                if (entryId) {
+                    // Add logic to mark existing entries for deletion if needed
+                    console.log('Marking entry for deletion:', entryId);
+                }
+                this.closest('.multi-entry_edit').remove();
+            });
+        });
+    }
+    
+    // Call this when the edit form loads if you have existing entries
+    initializeExistingEntries();
+    </script>
 
                 <!-- Account Details -->
                 <div class="accordion-item">
@@ -2049,10 +2071,17 @@
                     <tbody>
                         <tr>
                             <td>
-                                <input type="text" name="entry_type[]" class="form-control" required>
+                                <select name="entry_type[]" class="form-control entry-type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="EARNINGS">Earnings</option>
+                                    <option value="DEDUCTION">Deduction</option>
+                                </select>
                             </td>
                             <td>
-                                <input type="text" name="entry_code[]" class="form-control" required>
+                                <select name="entry_code[]" class="form-control code-dropdown" required>
+                                    <option value="">Select Code</option>
+                                    <!-- Options will be populated dynamically -->
+                                </select>
                             </td>
                             <td>
                                 <input type="number" name="entry_amount[]" class="form-control" required min="0" step="0.01">
@@ -2077,28 +2106,68 @@
 
 <script>
     document.getElementById('addEntry').addEventListener('click', function() {
-        const tableBody = document.querySelector('#multiEntryTable tbody');
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td><input type="text" name="entry_type[]" class="form-control" required></td>
-            <td><input type="text" name="entry_code[]" class="form-control" required></td>
-            <td><input type="number" name="entry_amount[]" class="form-control" required min="0" step="0.01"></td>
-            <td>
-                <select name="entry_proated_flag[]" class="form-control">
-                    <option value ="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </td>
-            <td><button type="button" class="btn btn-danger remove-entry">Remove</button></td>
-        `;
-        tableBody.appendChild(newRow);
-    });
+    const tableBody = document.querySelector('#multiEntryTable tbody');
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>
+            <select name="entry_type[]" class="form-control entry-type" required>
+                <option value="">Select Type</option>
+                <option value="EARNINGS">Earnings</option>
+                <option value="DEDUCTION">Deduction</option>
+            </select>
+        </td>
+        <td>
+            <select name="entry_code[]" class="form-control code-dropdown" required>
+                <option value="">Select Code</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+        </td>
+        <td>
+            <input type="number" name="entry_amount[]" class="form-control" required min="0" step="0.01">
+        </td>
+        <td>
+            <select name="entry_proated_flag[]" class="form-control">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </td>
+        <td><button type="button" class="btn btn-danger remove-entry">Remove</button></td>
+    `;
+    tableBody.appendChild(newRow);
+});
 
-    document.querySelector('#multiEntryTable').addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-entry')) {
-            e.target.closest('tr').remove();
+// Event delegation for dynamically added rows
+document.querySelector('#multiEntryTable').addEventListener('change', function(e) {
+    if (e.target.classList.contains('entry-type')) {
+        const selectedType = e.target.value;
+        const codeDropdown = e.target.closest('tr').querySelector('.code-dropdown');
+
+        // Clear previous options
+        codeDropdown.innerHTML = '<option value="">Select Code</option>';
+
+        if (selectedType) {
+            fetch(`/fetch_codes?type=${selectedType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        data.codes.forEach(code => {
+                            const option = document.createElement('option');
+                            option.value = code[0]; // Assuming base_value is the first element
+                            option.textContent = code[1]; // Assuming base_description is the second element
+                            codeDropdown.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching codes:', error));
         }
-    });
+    }
+});
+
+document.querySelector('#multiEntryTable').addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-entry')) {
+        e.target.closest('tr').remove();
+    }
+});
 </script>
                 <!-- Account Details -->
 <div class="accordion-item">

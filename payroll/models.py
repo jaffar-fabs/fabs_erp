@@ -443,7 +443,7 @@ class SeedModel(models.Model):
 
 # Project Master 
 
-class projectMatster(models.Model):
+class projectMaster(models.Model):
 
     comp_code = models.CharField(max_length=15)  # Removed default value
     project_id = models.BigAutoField(primary_key=True)
