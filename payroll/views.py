@@ -156,8 +156,9 @@ def employee_master(request):
 
     # Fetch documents and earnings/deductions for each employee
     for employee in employees_page:
-        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
+        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True)
         employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
+        employee.dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
 
     # Prepare the context for the template
     context = {
@@ -187,13 +188,7 @@ def save_employee(request, employee_id=None):
             employee = Employee()
             employee.created_by = 1  # Replace with actual user ID if available
             employee.created_on = now()
-            
-        dodcument_types_edit = request.POST.getlist("document_type_edit[]")
-        dodcument_files_edit = request.FILES.getlist("document_file_edit[]")  # Ensure this matches the input name
 
-        # Debugging: Print the document types and files
-        print("Document Types Edit:", dodcument_types_edit)
-        print("Document Files Edit:", dodcument_files_edit)
         # Assign values from request
         employee.comp_code = COMP_CODE
         employee.emp_code = emp_code
@@ -280,103 +275,6 @@ def save_employee(request, employee_id=None):
         employee.passport_issued_date = request.POST.get("passport_copy_issued_date") or None
         employee.passport_expiry_date = request.POST.get("passport_copy_expiry_date") or None
 
-        # Dependent Details
-        employee.father_visa_copy_id = request.POST.get("father_visa_copy_id")
-        employee.father_visa_copy_issued_date = request.POST.get("father_visa_copy_issued_date") or None
-        employee.father_visa_copy_expiry_date = request.POST.get("father_visa_copy_expiry_date") or None
-        employee.father_visa_copy_file = request.FILES.get("father_visa_copy_file") or employee.father_visa_copy_file
-
-        employee.father_emirates_id_id = request.POST.get("father_emirates_id_id")
-        employee.father_emirates_id_issued_date = request.POST.get("father_emirates_id_issued_date") or None
-        employee.father_emirates_id_expiry_date = request.POST.get("father_emirates_id_expiry_date") or None
-        employee.father_emirates_id_file = request.FILES.get("father_emirates_id_file") or employee.father_emirates_id_file
-
-        employee.father_passport_id = request.POST.get("father_passport_id")
-        employee.father_passport_issued_date = request.POST.get("father_passport_issued_date") or None
-        employee.father_passport_expiry_date = request.POST.get("father_passport_expiry_date") or None
-        employee.father_passport_file = request.FILES.get("father_passport_file") or employee.father_passport_file
-
-        employee.mother_visa_copy_id = request.POST.get("mother_visa_copy_id")
-        employee.mother_visa_copy_issued_date = request.POST.get("mother_visa_copy_issued_date") or None
-        employee.mother_visa_copy_expiry_date = request.POST.get("mother_visa_copy_expiry_date") or None
-        employee.mother_visa_copy_file = request.FILES.get("mother_visa_copy_file") or employee.mother_visa_copy_file
-
-        employee.mother_emirates_id_id = request.POST.get("mother_emirates_id_id")
-        employee.mother_emirates_id_issued_date = request.POST.get("mother_emirates_id_issued_date") or None
-        employee.mother_emirates_id_expiry_date = request.POST.get("mother_emirates_id_expiry_date") or None
-        employee.mother_emirates_id_file = request.FILES.get("mother_emirates_id_file") or employee.mother_emirates_id_file
-
-        employee.mother_passport_id = request.POST.get("mother_passport_id")
-        employee.mother_passport_issued_date = request.POST.get("mother_passport_issued_date") or None
-        employee.mother_passport_expiry_date = request.POST.get("mother_passport_expiry_date") or None
-        employee.mother_passport_file = request.FILES.get("mother_passport_file") or employee.mother_passport_file
-
-        employee.spouse_visa_copy_id = request.POST.get("spouse_visa_copy_id")
-        employee.spouse_visa_copy_issued_date = request.POST.get("spouse_visa_copy_issued_date") or None
-        employee.spouse_visa_copy_expiry_date = request.POST.get("spouse_visa_copy_expiry_date") or None
-        employee.spouse_visa_copy_file = request.FILES.get("spouse_visa_copy_file") or employee.spouse_visa_copy_file
-
-        employee.spouse_emirates_id_id = request.POST.get("spouse_emirates_id_id")
-        employee.spouse_emirates_id_issued_date = request.POST.get("spouse_emirates_id_issued_date") or None
-        employee.spouse_emirates_id_expiry_date = request.POST.get("spouse_emirates_id_expiry_date") or None
-        employee.spouse_emirates_id_file = request.FILES.get("spouse_emirates_id_file") or employee.spouse_emirates_id_file
-
-        employee.spouse_passport_id = request.POST.get("spouse_passport_id")
-        employee.spouse_passport_issued_date = request.POST.get("spouse_passport_issued_date") or None
-        employee.spouse_passport_expiry_date = request.POST.get("spouse_passport_expiry_date") or None
-        employee.spouse_passport_file = request.FILES.get("spouse_passport_file") or employee.spouse_passport_file
-
-        employee.child1_visa_copy_id = request.POST.get("child1_visa_copy_id")
-        employee.child1_visa_copy_issued_date = request.POST.get("child1_visa_copy_issued_date") or None
-        employee.child1_visa_copy_expiry_date = request.POST.get("child1_visa_copy_expiry_date") or None
-        employee.child1_visa_copy_file = request.FILES.get("child1_visa_copy_file") or employee.child1_visa_copy_file
-
-        employee.child1_emirates_id_id = request.POST.get("child1_emirates_id_id")
-        employee.child1_emirates_id_issued_date = request.POST.get("child1_emirates_id_issued_date") or None
-        employee.child1_emirates_id_expiry_date = request.POST.get("child1_emirates_id_expiry_date") or None
-        employee.child1_emirates_id_file = request.FILES.get("child1_emirates_id_file") or employee.child1_emirates_id_file
-
-        employee.child1_passport_id = request.POST.get("child1_passport_id")
-        employee.child1_passport_issued_date = request.POST.get("child1_passport_issued_date") or None
-        employee.child1_passport_expiry_date = request.POST.get("child1_passport_expiry_date") or None
-        employee.child1_passport_file = request.FILES.get("child1_passport_file") or employee.child1_passport_file
-
-        employee.child1_birth_certificate_file = request.FILES.get("child1_birth_certificate_file") or employee.child1_birth_certificate_file
-
-        employee.child2_visa_copy_id = request.POST.get("child2_visa_copy_id")
-        employee.child2_visa_copy_issued_date = request.POST.get("child2_visa_copy_issued_date") or None
-        employee.child2_visa_copy_expiry_date = request.POST.get("child2_visa_copy_expiry_date") or None
-        employee.child2_visa_copy_file = request.FILES.get("child2_visa_copy_file") or employee.child2_visa_copy_file
-
-        employee.child2_emirates_id_id = request.POST.get("child2_emirates_id_id")
-        employee.child2_emirates_id_issued_date = request.POST.get("child2_emirates_id_issued_date") or None
-        employee.child2_emirates_id_expiry_date = request.POST.get("child2_emirates_id_expiry_date") or None
-        employee.child2_emirates_id_file = request.FILES.get("child2_emirates_id_file") or employee.child2_emirates_id_file
-
-        employee.child2_passport_id = request.POST.get("child2_passport_id")
-        employee.child2_passport_issued_date = request.POST.get("child2_passport_issued_date") or None
-        employee.child2_passport_expiry_date = request.POST.get("child2_passport_expiry_date") or None
-        employee.child2_passport_file = request.FILES.get("child2_passport_file") or employee.child2_passport_file
-
-        employee.child2_birth_certificate_file = request.FILES.get("child2_birth_certificate_file") or employee.child2_birth_certificate_file
-
-        employee.child3_visa_copy_id = request.POST.get("child3_visa_copy_id")
-        employee.child3_visa_copy_issued_date = request.POST.get("child3_visa_copy_issued_date") or None
-        employee.child3_visa_copy_expiry_date = request.POST.get("child3_visa_copy_expiry_date") or None
-        employee.child3_visa_copy_file = request.FILES.get("child3_visa_copy_file") or employee.child3_visa_copy_file
-
-        employee.child3_emirates_id_id = request.POST.get("child3_emirates_id_id")
-        employee.child3_emirates_id_issued_date = request.POST.get("child3_emirates_id_issued_date") or None
-        employee.child3_emirates_id_expiry_date = request.POST.get("child3_emirates_id_expiry_date") or None
-        employee.child3_emirates_id_file = request.FILES.get("child3_emirates_id_file") or employee.child3_emirates_id_file
-
-        employee.child3_passport_id = request.POST.get("child3_passport_id")
-        employee.child3_passport_issued_date = request.POST.get("child3_passport_issued_date") or None
-        employee.child3_passport_expiry_date = request.POST.get("child3_passport_expiry_date") or None
-        employee.child3_passport_file = request.FILES.get("child3_passport_file") or employee.child3_passport_file
-
-        employee.child3_birth_certificate_file = request.FILES.get("child3_birth_certificate_file") or employee.child3_birth_certificate_file
-
         # Camp Details
         employee.camp_type = request.POST.get("camp_type")
         employee.camp_inside_outside = request.POST.get("camp_inside_outside")
@@ -385,22 +283,16 @@ def save_employee(request, employee_id=None):
         if employee.camp_inside_outside == "client_accommodation":
             employee.client_name = request.POST.get("client_name")  # New field for Client Name
             employee.client_location = request.POST.get("client_location")  # New field for Client Location
-            # You can add any additional logic specific to client accommodation here
         elif employee.camp_inside_outside == "camp":
             employee.select_camp = request.POST.get("select_camp")
             employee.room_no = request.POST.get("room_no")
-            # You can add any additional logic specific to camp accommodation here
         elif employee.camp_inside_outside == "outside":
             employee.outside_location = request.POST.get("outside_location")
             employee.room_rent = request.POST.get("room_rent")
-            # You can add any additional logic specific to outside accommodation here
-        else:
-            # If none of the conditions are met, you can choose to pass or handle it differently
-            pass
 
         # Save employee
         employee.save()
-        
+
         # Handle Earn/Deduct entries
         earn_deduct_types = request.POST.getlist("entry_type[]")
         earn_deduct_codes = request.POST.getlist("entry_code[]")
@@ -427,10 +319,6 @@ def save_employee(request, employee_id=None):
                     earn_type=entry_type
                 )
 
-        # Create folder for the employee if it doesn't exist
-        employee_folder_path = os.path.join(settings.MEDIA_ROOT, 'employee_documents', emp_code)
-        os.makedirs(employee_folder_path, exist_ok=True)
-
         # Handle document removal
         documents_to_remove = request.POST.get('documents_to_remove', '').split(',')
         documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter valid IDs
@@ -445,16 +333,17 @@ def save_employee(request, employee_id=None):
                 document.delete()
             except EmployeeDocument.DoesNotExist:
                 continue
-            except Exception as e:
-                print(f"Error deleting document {doc_id}: {e}")
 
         # Handle new document uploads
         document_types = request.POST.getlist("document_type[]")
         document_files = request.FILES.getlist("document_file[]")
+        print(document_types)
+        print(document_files)
 
         # Save new documents to the database
         for doc_type, doc_file in zip(document_types, document_files):
             if doc_type and doc_file:  # Ensure both type and file are provided
+                print(doc_type,doc_file)
                 EmployeeDocument.objects.create(
                     comp_code=COMP_CODE,
                     emp_code=employee.emp_code,
@@ -463,19 +352,42 @@ def save_employee(request, employee_id=None):
                     created_by=1,  # Replace with actual user ID if available
                 )
 
-        # Fetch updated documents for the employee
-        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
+        # Handle dependent details
+        dependent_relationships = request.POST.getlist("dependent_relationship[]")
+        dependent_doc_types = request.POST.getlist("dependent_doc_type[]")
+        dependent_doc_numbers = request.POST.getlist("dependent_doc_number[]")
+        dependent_issued_dates = request.POST.getlist("dependent_issued_date[]")
+        dependent_expiry_dates = request.POST.getlist("dependent_expiry_date[]")
+        dependent_doc_files = request.FILES.getlist("dependent_doc_file[]")
+        print(dependent_relationships,dependent_doc_types)
+        # Check if there are any dependent relationships
+        if dependent_relationships:
+            # Delete existing dependent entries for the employee
+            EmployeeDocument.objects.filter(emp_code=employee.emp_code).delete()  # Remove all existing entries for this employee
 
+            # Create new dependent entries
+            for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip(
+                    dependent_relationships, dependent_doc_types, dependent_doc_numbers,
+                    dependent_issued_dates, dependent_expiry_dates, dependent_doc_files):
+                print(relationship, doc_type, doc_number, issued_date, expiry_date, doc_file)
+                
+                if relationship and doc_type and doc_number:  # Ensure required fields are provided
+                    EmployeeDocument.objects.create(
+                        emp_code=employee.emp_code,
+                        relationship=relationship,
+                        document_type=doc_type,
+                        document_number=doc_number,
+                        issued_date=issued_date,
+                        expiry_date=expiry_date,
+                        document_file=doc_file if doc_file else None,  # Save file if provided
+                        created_by=1,  # Replace with actual user ID if available
+                    )
+
+        # Continue with the rest of your code
         messages.success(request, "Employee details and documents updated successfully.")
-        return redirect('/employee')
+        return JsonResponse({'success': True})
 
-    # Fetch employee data and documents for editing
-    employee_data = Employee.objects.filter(comp_code=COMP_CODE)
-    for employee in employee_data:
-        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code)
-
-    return render(request, 'pages/payroll/employee_master/employee_master.html', {'employees': employee_data})
-
+    return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=400)
 
 def deactivate_employee(request, employee_id):
     set_comp_code(request)
@@ -890,15 +802,18 @@ class Paycycle(View):
 def project(request):
     set_comp_code(request)
     template_name = 'pages/payroll/project_master/projects.html'
+    
     def col2num(self, col):
         import string
         num = 0
         for c in col:
             if c in string.ascii_letters:
                 num = num * 26 + (ord(c.upper()) - ord('A')) + 1
-        return num-1
+        return num - 1
+
     project_id = request.GET.get("project_id")
     print(project_id, 'project_id')
+    
     if request.method == "GET":
         if project_id:  # If `project_id` exists, return a JSON response with project data
             try:
@@ -912,7 +827,7 @@ def project(request):
                     "project_value": project.project_value,
                     "timeline_from": project.timeline_from,
                     "timeline_to": project.timeline_to,
-                    "prj_city": project.prj_city,
+                    "prj_city": project.prj_city.split(':') if project.prj_city else [],  # Split prj_city into a list
                     "consultant": project.consultant,
                     "main_contractor": project.main_contractor,
                     "sub_contractor": project.sub_contractor,
@@ -999,38 +914,36 @@ def project(request):
             return render(request, template_name, context)
        
     if request.method == "POST":
-        
-            project_id = request.POST.get("project_id")
-            if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
-                project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
+        project_id = request.POST.get("project_id")
 
-                project.prj_code = request.POST.get("project_code", project.prj_code)
-                project.prj_name = request.POST.get("project_name", project.prj_name)
-                project.project_description = request.POST.get("project_description", project.project_description)
-                project.project_type = request.POST.get("project_type", project.project_type)
-                project.project_value = request.POST.get("project_value", project.project_value)
-                project.timeline_from = request.POST.get("timeline_from", project.timeline_from)
-                project.timeline_to = request.POST.get("timeline_to", project.timeline_to)
-                project.prj_city = request.POST.get("prj_city", project.prj_city)
-                project.consultant = request.POST.get("consultant", project.consultant)
-                project.main_contractor = request.POST.get("main_contractor", project.main_contractor)
-                project.sub_contractor = request.POST.get("sub_contractor", project.sub_contractor)
-                project.is_active = request.POST.get("is_active") == "Active"
-                project.created_by=1
-                project.comp_code = request.POST.get("comp_code", project.comp_code)
+        # Get prj_city from the POST request
+        prj_city = request.POST.getlist('prj_city')  # Get list of selected cities
+        prj_city_str = ':'.join(prj_city)  # Convert list to colon-separated string
 
-                project.save()
-                return redirect("project")
+        if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
+            project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
 
-            else:
-                prj_code=request.POST.get("project_code")
-                # if projectMaster.objects.filter(prj_code=prj_code).exists():
-                #     return JsonResponse(
-                #      {
-                #          "error": "Project Code already exists"
-                #          }
-                #     )
-                project = projectMaster(
+            project.prj_code = request.POST.get("project_code", project.prj_code)
+            project.prj_name = request.POST.get("project_name", project.prj_name)
+            project.project_description = request.POST.get("project_description", project.project_description)
+            project.project_type = request.POST.get("project_type", project.project_type)
+            project.project_value = request.POST.get("project_value", project.project_value)
+            project.timeline_from = request.POST.get("timeline_from", project.timeline_from)
+            project.timeline_to = request.POST.get("timeline_to", project.timeline_to)
+            project.prj_city = prj_city_str  # Save the prj_city string
+            project.consultant = request.POST.get("consultant", project.consultant)
+            project.main_contractor = request.POST.get("main_contractor", project.main_contractor)
+            project.sub_contractor = request.POST.get("sub_contractor", project.sub_contractor)
+            project.is_active = request.POST.get("is_active") == "Active"
+            project.created_by = 1
+            project.comp_code = request.POST.get("comp_code", project.comp_code)
+
+            project.save()
+            return redirect("project")
+
+        else:
+            prj_code = request.POST.get("project_code")
+            project = projectMaster(
                 prj_code=request.POST.get("project_code"),
                 prj_name=request.POST.get("project_name"),
                 project_description=request.POST.get("project_description", "No description available"),
@@ -1038,24 +951,18 @@ def project(request):
                 project_value=request.POST.get("project_value", 0.00),
                 timeline_from=request.POST.get("timeline_from", "Not specified"),
                 timeline_to=request.POST.get("timeline_to", "Not specified"),
-                prj_city=request.POST.get("prj_city", 0),
+                prj_city=prj_city_str,  # Save the prj_city string
                 created_by=1,
                 consultant=request.POST.get("consultant", "Not Assigned"),
                 main_contractor=request.POST.get("main_contractor", "Not Assigned"),
                 sub_contractor=request.POST.get("sub_contractor", "Not Assigned"),
                 is_active=request.POST.get("is_active") == "Active",
-                comp_code=COMP_CODE,
-                )
-                project.save()
-            return redirect("project")
+                comp_code=COMP_CODE
+            )
+            project.save()
+        return redirect("project")
 
-
-    # # projects = projectMaster.objects.filter(is_active=True).order_by('-created_on')
-    # projects = projectMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-    # project_count=projectMaster.objects.filter(comp_code=COMP_CODE)
-    # print("COUNT ",project_count)
     return render(request, template_name, context=context)
-
 
 def check_project_code(request):
     set_comp_code(request)

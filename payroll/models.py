@@ -319,6 +319,11 @@ class EmployeeDocument(models.Model):
     modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
     modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
 
+    relationship = models.CharField(max_length=50,null=True,blank=True)
+    issued_date = models.DateField(null=True, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
+    document_number = models.CharField(max_length=100, null = True, blank= True)
+
     def __str__(self):
         return f"{self.document_name} ({self.emp_code})"
 
