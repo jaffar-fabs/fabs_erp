@@ -319,6 +319,11 @@ class EmployeeDocument(models.Model):
     modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
     modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
 
+    relationship = models.CharField(max_length=50,null=True,blank=True)
+    issued_date = models.DateField(null=True, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
+    document_number = models.CharField(max_length=100, null = True, blank= True)
+
     def __str__(self):
         return f"{self.document_name} ({self.emp_code})"
 
@@ -443,7 +448,7 @@ class SeedModel(models.Model):
 
 # Project Master 
 
-class projectMatster(models.Model):
+class projectMaster(models.Model):
 
     comp_code = models.CharField(max_length=15)  # Removed default value
     project_id = models.BigAutoField(primary_key=True)
@@ -517,9 +522,6 @@ class UserMaster(models.Model):
 
     def __str__(self):
         return self.user_id
-    
-    class Meta:
-        db_table = 'tbl_erp_smas_user_master'
         
 # ------------------------------------------------------------------------------------------------------------
 

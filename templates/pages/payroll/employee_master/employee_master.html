@@ -128,7 +128,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="editEmployeeForm_{{ employee.employee_id }}" method="post" action="{% url 'update_employee' employee.employee_id %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="editEmployeeForm" method="post" action="{% url 'update_employee' employee.employee_id %}" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
@@ -2868,10 +2868,6 @@ $(document).ready(function() {
         }
     });
 });
-
-document.getElementById('editEmployeeForm_{{ employee.employee_id }}').onsubmit = function() {
-    console.log("Form submitted");
-};
 </script>
 <script>
 const newDocuments = [];
@@ -2938,10 +2934,10 @@ function removeRow(button, index) {
     row.remove();
 }
 
-document.getElementById('editEmployeeForm_{{ employee.employee_id }}').onsubmit = function (event) {
+document.getElementById('editEmployeeForm').onsubmit = function (event) {
     // Prevent default form submission
     event.preventDefault();
-
+    alert('hi')
     const formData = new FormData(this);
 
     // Append new documents to the FormData
