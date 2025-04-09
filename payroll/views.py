@@ -337,8 +337,6 @@ def save_employee(request, employee_id=None):
         # Handle new document uploads
         document_types = request.POST.getlist("document_type[]")
         document_files = request.FILES.getlist("document_file[]")
-        print(document_types)
-        print(document_files)
 
         # Save new documents to the database
         for doc_type, doc_file in zip(document_types, document_files):
@@ -359,29 +357,27 @@ def save_employee(request, employee_id=None):
         dependent_issued_dates = request.POST.getlist("dependent_issued_date[]")
         dependent_expiry_dates = request.POST.getlist("dependent_expiry_date[]")
         dependent_doc_files = request.FILES.getlist("dependent_doc_file[]")
-        print(dependent_relationships,dependent_doc_types)
-        # Check if there are any dependent relationships
-        if dependent_relationships:
-            # Delete existing dependent entries for the employee
-            EmployeeDocument.objects.filter(emp_code=employee.emp_code).delete()  # Remove all existing entries for this employee
 
-            # Create new dependent entries
-            for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip(
-                    dependent_relationships, dependent_doc_types, dependent_doc_numbers,
-                    dependent_issued_dates, dependent_expiry_dates, dependent_doc_files):
-                print(relationship, doc_type, doc_number, issued_date, expiry_date, doc_file)
-                
-                if relationship and doc_type and doc_number:  # Ensure required fields are provided
-                    EmployeeDocument.objects.create(
-                        emp_code=employee.emp_code,
-                        relationship=relationship,
-                        document_type=doc_type,
-                        document_number=doc_number,
-                        issued_date=issued_date,
-                        expiry_date=expiry_date,
-                        document_file=doc_file if doc_file else None,  # Save file if provided
-                        created_by=1,  # Replace with actual user ID if available
-                    )
+        # Create new dependent entries
+        from itertools import zip_longest
+
+        for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip_longest(
+                dependent_relationships, dependent_doc_types, dependent_doc_numbers,
+                dependent_issued_dates, dependent_expiry_dates, dependent_doc_files):
+            print(relationship, doc_type, doc_number, issued_date, expiry_date, doc_file)
+
+            
+            if relationship and doc_type and doc_number:  # Ensure required fields are provided
+                EmployeeDocument.objects.create(
+                    emp_code=employee.emp_code,
+                    relationship=relationship,
+                    document_type=doc_type,
+                    document_number=doc_number,
+                    issued_date=issued_date,
+                    expiry_date=expiry_date,
+                    document_file=doc_file if doc_file else None,  # Save file if provided
+                    created_by=1,  # Replace with actual user ID if available
+                )
 
         # Continue with the rest of your code
         messages.success(request, "Employee details and documents updated successfully.")

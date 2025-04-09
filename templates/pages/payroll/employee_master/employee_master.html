@@ -1403,11 +1403,11 @@ document.getElementById('DOMContentLoaded', function() {
             <h6>New Dependent</h6>
             <div class="row mb-2">
                 <div class="col-md-4"><strong>Relationship:</strong></div>
-                <div class="col-md-8">${relationship}</div>
+                <div class="col-md-8" name="dependent_relationship[]" value="${relationship}">${relationship}</div>
             </div>
             <div class="row mb-2">
                 <div class="col-md-4"><strong>Document Type:</strong></div>
-                <div class="col-md-8">${docType}</div>
+                <div class="col-md-8" name="dependent_doc_type[]" value="${docType}">${docType}</div>
             </div>
             <div class="row mb-2">
                 <div class="col-md-4"><strong>Document Number:</strong></div>
@@ -1423,7 +1423,7 @@ document.getElementById('DOMContentLoaded', function() {
             </div>
             <div class="row mb-2">
                 <div class="col-md-4"><strong>File:</strong></div>
-                <div class="col-md-8">${docFile ? docFile.name : 'No document uploaded.'}</div>
+                <input type="hidden" name="dependent_doc_file[]" value="${docFile}">${docFile ? docFile.name : 'No document uploaded.'}
             </div>
             <div class="row mb-2">
                 <div class="col-md-4"><strong>Action:</strong></div>
@@ -2815,14 +2815,53 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
     form.onsubmit = function (event) {
         event.preventDefault();
         const formData = new FormData(this);
-        const employeeId = this.id.split('_')[1]; // Extract employee_id from form ID
+        const employeeId = this.id.split('_')[1];
 
         // Append new documents to the FormData
-        newDocuments.forEach((doc, index) => {
-            formData.append(`document_type[]`, doc.document_type);
-            formData.append(`document_file[]`, doc.document_file);
+        if (typeof newDocuments !== 'undefined') {
+            newDocuments.forEach((doc, index) => {
+                formData.append(`document_type[]`, doc.document_type);
+                formData.append(`document_file[]`, doc.document_file);
+            });
+        }
+
+        const dependentContainer = document.getElementById(`dependentsContainer_${employeeId}`);
+        const dependentEntries = dependentContainer.querySelectorAll('.dependent-entry');
+
+        dependentEntries.forEach((entry, index) => {
+            const docNumber = entry.querySelector('input[name="dependent_doc_number[]"]')?.value || '';
+            const issuedDate = entry.querySelector('input[name="dependent_issued_date[]"]')?.value || '';
+            const expiryDate = entry.querySelector('input[name="dependent_expiry_date[]"]')?.value || '';
+
+            const relationship = entry.querySelector('div[name="dependent_relationship[]"]')?.textContent.trim() || '';
+            const docType = entry.querySelector('div[name="dependent_doc_type[]"]')?.textContent.trim() || '';
+
+            // ✅ Grab the actual hidden input for file, if it's there
+            const docFileInput = entry.querySelector('input[name="dependent_doc_file[]"]');
+            const docFile = docFileInput?.files?.[0] || null;
+
+            // ✅ This alert will now work correctly
+            alert(
+                `New Dependent Details:\n` +
+                `Relationship: ${relationship}\n` +
+                `Document Type: ${docType}\n` +
+                `Document Number: ${docNumber}\n` +
+                `Issued Date: ${issuedDate}\n` +
+                `Expiry Date: ${expiryDate}\n` +
+                `File: ${docFile ? docFile.name : 'No file uploaded'}`
+            );
+
+            if (relationship && docType) {
+                formData.append('dependent_relationship[]', relationship);
+                formData.append('dependent_doc_type[]', docType);
+                formData.append('dependent_doc_number[]', docNumber);
+                formData.append('dependent_issued_date[]', issuedDate);
+                formData.append('dependent_expiry_date[]', expiryDate);
+                formData.append('dependent_doc_file[]', docFile || '');
+            }
         });
 
+        // Submit the form via fetch
         fetch(this.action, {
             method: 'POST',
             body: formData,
@@ -2836,7 +2875,7 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
                 alert(`Employee ${employeeId} updated successfully!`);
                 location.reload();
             } else {
-                alert(`Error updating employee ${employeeId}. Please try again.`);
+                alert(`Error updating employee ${employeeId}. ${data.error || 'Please try again.'}`);
             }
         })
         .catch(error => {
