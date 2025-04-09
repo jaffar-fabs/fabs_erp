@@ -117,7 +117,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="form-select" name="prj_city" required>
+                        <select class="form-control select2" multiple="multiple" name="prj_city" required>
                             <option value="">Select</option>
                             {% for city in pro_city_data %}
                                 <option value="{{ city.base_value }}">
@@ -273,7 +273,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="form-select" name="prj_city" id="prj_city" required>
+                        <select class="form-control select2" multiple="multiple" name="prj_city" id="prj_city" required>
                             <option value="">Select</option>
                                 {% for city in pro_city_data %}
                                     <option value="{{ city.base_value }}" {% if city.base_value == user.prj_city %}selected{% endif %}>
