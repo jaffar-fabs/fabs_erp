@@ -910,14 +910,7 @@ def project(request):
             return render(request, template_name, context)
        
     if request.method == "POST":
-<<<<<<< HEAD
-        
-            project_id = request.POST.get("project_id")
-            if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
-                project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
-=======
         project_id = request.POST.get("project_id")
->>>>>>> 0674805465192c3732ddbce732b40575665dd8ed
 
         # Get prj_city from the POST request
         prj_city = request.POST.getlist('prj_city')  # Get list of selected cities
@@ -926,17 +919,6 @@ def project(request):
         if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
             project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
 
-<<<<<<< HEAD
-            else:
-                prj_code=request.POST.get("project_code")
-                # if projectMaster.objects.filter(prj_code=prj_code).exists():
-                #     return JsonResponse(
-                #      {
-                #          "error": "Project Code already exists"
-                #          }
-                #     )
-                project = projectMaster(
-=======
             project.prj_code = request.POST.get("project_code", project.prj_code)
             project.prj_name = request.POST.get("project_name", project.prj_name)
             project.project_description = request.POST.get("project_description", project.project_description)
@@ -958,7 +940,6 @@ def project(request):
         else:
             prj_code = request.POST.get("project_code")
             project = projectMaster(
->>>>>>> 0674805465192c3732ddbce732b40575665dd8ed
                 prj_code=request.POST.get("project_code"),
                 prj_name=request.POST.get("project_name"),
                 project_description=request.POST.get("project_description", "No description available"),
@@ -977,14 +958,6 @@ def project(request):
             project.save()
         return redirect("project")
 
-<<<<<<< HEAD
-
-    # # projects = projectMaster.objects.filter(is_active=True).order_by('-created_on')
-    # projects = projectMaster.objects.filter(comp_code=COMP_CODE).order_by('-created_on')
-    # project_count=projectMaster.objects.filter(comp_code=COMP_CODE)
-    # print("COUNT ",project_count)
-=======
->>>>>>> 0674805465192c3732ddbce732b40575665dd8ed
     return render(request, template_name, context=context)
 
 def check_project_code(request):

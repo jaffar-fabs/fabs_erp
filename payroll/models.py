@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.db import models
 from django.utils.timezone import now
 from django.utils import timezone
@@ -731,8 +730,6 @@ class PayrollEarnDeduct(models.Model):
     
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-=======
 from django.db import models
 from django.utils.timezone import now
 from django.utils import timezone
@@ -1465,5 +1462,3 @@ class PayrollEarnDeduct(models.Model):
     
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
->>>>>>> 0674805465192c3732ddbce732b40575665dd8ed

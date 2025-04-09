@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.db import models
 
 class RoleMaster(models.Model):
@@ -68,7 +67,7 @@ class UserRoleMapping(models.Model):
 
     def __str__(self):
         return f"{self.comp_code} - {self.userid} - {self.roleid}"
-=======
+    
 from django.db import models
 
 class RoleMaster(models.Model):
@@ -138,4 +137,3 @@ class UserRoleMapping(models.Model):
 
     def __str__(self):
         return f"{self.comp_code} - {self.userid} - {self.roleid}"
->>>>>>> 0674805465192c3732ddbce732b40575665dd8ed
