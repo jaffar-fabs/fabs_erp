@@ -182,3 +182,17 @@ def get_deductions(requests):
     return {
         'deductions_data': deductions_data
         }
+
+def get_relatives(request):
+    comp_code = get_comp_code(request)
+    relatives_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'RELATIVES')
+    return {
+        'relatives_data': relatives_data
+        }
+
+def get_other_documents(request):
+    comp_code = get_comp_code(request)
+    other_documents_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'OTHER_DOCUMENTS')
+    return {
+        'other_documents_data': other_documents_data
+        }

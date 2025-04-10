@@ -88,7 +88,9 @@ TEMPLATES = [
                 'payroll.context_processors.get_branch',
                 'payroll.context_processors.get_documents',
                 'payroll.context_processors.get_earnings',
-                'payroll.context_processors.get_deductions'
+                'payroll.context_processors.get_deductions',
+                'payroll.context_processors.get_relatives',
+                'payroll.context_processors.get_other_documents',
             ],
         },
     },

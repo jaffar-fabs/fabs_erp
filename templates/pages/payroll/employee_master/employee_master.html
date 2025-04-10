@@ -1317,17 +1317,18 @@
                     <div class="col-md-2 mb-3">
                         <label class="col-form-label">Relationship</label>
                         <select class="form-select" id="new_relationship_{{ employee.employee_id }}">
-                            <option value="father">Father</option>
-                            <option value="mother">Mother</option>
-                            <option value="spouse">Spouse</option>
-                            <option value="child1">Child 1</option>
-                            <option value="child2">Child 2</option>
-                            <option value="child3">Child 3</option>
+                                {% for relative in relatives_data %}
+                                    <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
+                                {% endfor %}
+                                <option value="Father">Father</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
                         <label class="col-form-label">Document Type</label>
                         <select class="form-select" id="new_doc_type_{{ employee.employee_id }}">
+                            {% for document in other_documents_data %}
+                                <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                            {% endfor %}
                             <option value="visa">Visa Copy</option>
                             <option value="emirates_id">Emirates ID</option>
                             <option value="passport">Passport</option>
@@ -2514,16 +2515,17 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                     <tr>
                         <td>
                             <select class="form-select" name="dependent_relationship[]">
-                                <option value="father">Father</option>
-                                <option value="mother">Mother</option>
-                                <option value="spouse">Spouse</option>
-                                <option value="child1">Child 1</option>
-                                <option value="child2">Child 2</option>
-                                <option value="child3">Child 3</option>
+                                {% for relative in relatives_data %}
+                                    <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
+                                {% endfor %}
+                                <option value="Father">Father</option>
                             </select>
                         </td>
                         <td>
                             <select class="form-select" name="dependent_doc_type[]">
+                                {% for document in other_documents_data %}
+                                    <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                                {% endfor %}
                                 <option value="visa">Visa Copy</option>
                                 <option value="emirates_id">Emirates ID</option>
                                 <option value="passport">Passport</option>
@@ -2556,12 +2558,10 @@ function addDependentRow_add() {
     newRow.innerHTML = `
         <td>
             <select class="form-select" name="dependent_relationship[]">
-                <option value="father">Father</option>
-                <option value="mother">Mother</option>
-                <option value="spouse">Spouse</option>
-                <option value="child1">Child 1</option>
-                <option value="child2">Child 2</option>
-                <option value="child3">Child 3</option>
+                {% for relative in relatives_data %}
+                    <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
+                    <option value="Father">Father</option>
+                {% endfor %}
             </select>
         </td>
         <td>
