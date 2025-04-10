@@ -26,27 +26,7 @@ import pdb
 PAGINATION_SIZE = 6
 
 # Single import statement for models
-from .models import (
-    PaycycleMaster,
-    projectMaster,
-    HolidayMaster,
-    CodeMaster,
-    SeedModel,
-    Menu,
-    RoleMenu,
-    UserMaster,
-    CompanyMaster,
-    GradeMaster, 
-    Employee,
-    WorkerAttendanceRegister,
-    EmployeeDocument,
-    PayrollEarnDeduct,
-    EarnDeductMaster,
-    EarnDeductMaster,
-    LeaveMaster,
-    PayProcess,
-    PayrollEarnDeduct
-)
+from .models import *
 
 # Initialize COMP_CODE globally
 COMP_CODE = None
