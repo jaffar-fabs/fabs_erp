@@ -491,10 +491,19 @@
     <div class="card p-3 mb-2 shadow-sm" id="staticEntryFields_{{ employee.employee_id }}">
         <div class="row align-items-center">
             <div class="col-md-3">
-                <input type="text" id="static_entry_type_{{ employee.employee_id }}" class="form-control" placeholder="Type">
+                <select id="static_entry_type_{{ employee.employee_id }}" class="form-control"
+        onchange="handleTypeChange('{{ employee.employee_id }}')">
+    <option value="">Select Type</option>
+    <option value="EARNINGS">Earning</option>
+    <option value="DEDUCTION">Deduction</option>
+</select>
+
+                
             </div>
             <div class="col-md-3">
-                <input type="text" id="static_entry_code_{{ employee.employee_id }}" class="form-control" placeholder="Code">
+                <select id="static_entry_code_{{ employee.employee_id }}" class="form-control code-dropdown">
+                    <option value="">Select Code</option>
+                </select>                
             </div>
             <div class="col-md-3">
                 <input type="number" id="static_entry_amount_{{ employee.employee_id }}" class="form-control" placeholder="Amount" min="0" step="0.01">
@@ -546,7 +555,34 @@
         </div>
     </div>
 </div>
+<script>
+    function handleTypeChange(employeeId) {
+        const typeSelect = document.getElementById(`static_entry_type_${employeeId}`);
+        const selectedType = typeSelect.value;
+        const codeDropdown = document.getElementById(`static_entry_code_${employeeId}`);
 
+        // Clear existing options
+        codeDropdown.innerHTML = '<option value="">Select Code</option>';
+
+        if (selectedType) {
+            fetch(`/fetch_codes?type=${selectedType}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        data.codes.forEach(code => {
+                            const option = document.createElement('option');
+                            option.value = code[0]; // base_value
+                            option.textContent = code[1]; // base_description
+                            codeDropdown.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching codes:', error));
+        }
+    }
+</script>
+
+    
 <script>
     function addEntry(employeeId) {
         const type = document.getElementById(`static_entry_type_${employeeId}`).value;
@@ -1264,43 +1300,22 @@
                 <h5>Existing Dependents</h5>
                 {% for dependent in employee.dependents %}
                 <div class="dependent-entry mb-3 border p-3 rounded">
-                    <h6>Dependent {{ forloop.counter }}</h6>
                     <div class="row mb-2">
-                        <div class="col-md-4"><strong>Relationship:</strong></div>
-                        <div class="col-md-8">{{ dependent.relationship }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>Document Type:</strong></div>
-                        <div class="col-md-8">{{ dependent.document_type }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>Document Number:</strong></div>
-                        <div class="col-md-8">{{ dependent.document_number }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>Issued Date:</strong></div>
-                        <div class="col-md-8">{{ dependent.issued_date|date:'Y-m-d' }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>Expiry Date:</strong></div>
-                        <div class="col-md-8">{{ dependent.expiry_date|date:'Y-m-d' }}</div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>File:</strong></div>
-                        <div class="col-md-8">
+                        <div class="col-md-2"><strong>Dependent {{ forloop.counter }}:</strong></div>
+                        <div class="col-md-2">{{ dependent.relationship }}</div>
+                        <div class="col-md-2">{{ dependent.document_type }}</div>
+                        <div class="col-md-2">{{ dependent.document_number }}</div>
+                        <div class="col-md-2">{{ dependent.issued_date|date:'Y-m-d' }}</div>
+                        <div class="col-md-2">{{ dependent.expiry_date|date:'Y-m-d' }}</div>
+                        <div class="col-md-2">
                             {% if dependent.document_file %}
-                                <div>
-                                    <a href="{{ dependent.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                    <a href="{{ dependent.document_file.url }}" target="_blank" download="{{ dependent.document_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                                </div>
+                                <a href="{{ dependent.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ dependent.document_file.url }}" target="_blank" download="{{ dependent.document_file.name }}" class="btn btn-sm btn-secondary">Download</a>
                             {% else %}
                                 <span class="text-muted">No document uploaded.</span>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-md-4"><strong>Action:</strong></div>
-                        <div class="col-md-8">
+                        <div class="col-md-2">
                             <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">
                                 Remove
                             </button>
@@ -1317,10 +1332,10 @@
                     <div class="col-md-2 mb-3">
                         <label class="col-form-label">Relationship</label>
                         <select class="form-select" id="new_relationship_{{ employee.employee_id }}">
-                                {% for relative in relatives_data %}
-                                    <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
-                                {% endfor %}
-                                <option value="Father">Father</option>
+                            {% for relative in relatives_data %}
+                                <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
+                            {% endfor %}
+                            <option value="Father">Father</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
@@ -1347,8 +1362,7 @@
                         <label class="col-form-label">Expiry Date</label>
                         <input type="date" id="new_expiry_date_{{ employee.employee_id }}" class="form-control">
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">File Upload</label>
+                    <div class="col-md-2 mb-3 <label class="col-form-label">File Upload</label>
                         <input type="file" id="new_doc_file_{{ employee.employee_id }}" class="form-control" accept="application/pdf,image/*">
                     </div>
                 </div>
@@ -1372,34 +1386,15 @@
         const newEntry = document.createElement('div');
         newEntry.className = 'dependent-entry mb-3 border p-3 rounded';
         newEntry.innerHTML = `
-            <h6>New Dependent</h6>
             <div class="row mb-2">
-                <div class="col-md-4"><strong>Relationship:</strong></div>
-                <div class="col-md-8" name="dependent_relationship[]" value="${relationship}">${relationship}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>Document Type:</strong></div>
-                <div class="col-md-8" name="dependent_doc_type[]" value="${docType}">${docType}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>Document Number:</strong></div>
-                <div class="col-md-8"><input type="hidden" name="dependent_doc_number[]" value="${docNumber}">${docNumber}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>Issued Date:</strong></div>
-                <div class="col-md-8"><input type="hidden" name="dependent_issued_date[]" value="${issuedDate}">${issuedDate}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>Expiry Date:</strong></div>
-                <div class="col-md-8"><input type="hidden" name="dependent_expiry_date[]" value="${expiryDate}">${expiryDate}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>File:</strong></div>
-                <div class="col-md-8"><input type="hidden" name="dependent_doc_file[]" value="${docFile}">${docFile ? docFile.name : 'No document uploaded.'}</div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-4"><strong>Action:</strong></div>
-                <div class="col-md-8">
+                <div class="col-md-2"><strong>New Dependent:</strong></div>
+                <div class="col-md-2">${relationship}</div>
+                <div class="col-md-2">${docType}</div>
+                <div class="col-md-2">${docNumber}</div>
+                <div class="col-md-2">${issuedDate}</div>
+                <div class="col-md-2">${expiryDate}</div>
+                <div class="col-md-2">${docFile ? docFile.name : 'No document uploaded.'}</div>
+                <div class="col-md-2">
                     <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">Remove</button>
                 </div>
             </div>
