@@ -278,7 +278,7 @@ def save_employee(request, employee_id=None):
         earn_deduct_codes = request.POST.getlist("entry_code[]")
         earn_deduct_amounts = request.POST.getlist("entry_amount[]")
         prorated_flags = request.POST.getlist("entry_proated_flag[]")
-
+        print(earn_deduct_types,earn_deduct_codes,earn_deduct_amounts,prorated_flags)
         # Delete existing entries for the employee
         EarnDeductMaster.objects.filter(
             comp_code=COMP_CODE,
