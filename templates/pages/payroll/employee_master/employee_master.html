@@ -219,7 +219,41 @@
                             {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a status.</div>
-                    </div>                    
+                    </div>
+                </div>
+                
+                <!-- Sub Status (Same row as Status) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Sub Status</label>
+                        <select name="emp_sub_status" class="form-select">
+                            <option value="">Select</option>
+                            {% for sub_status in sub_status_data %}
+                            <option value="{{ sub_status.base_value }}" {% if employee.emp_sub_status == sub_status.base_value %}selected{% endif %}>
+                                {{ sub_status.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Password Release and Reason (Next line) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Password Release</label>
+                        <select name="password_release" class="form-select">
+                            <option value="">Select</option>
+                            <option value="Yes" {% if employee.password_release == 'Yes' %}selected{% endif %}>Yes</option>
+                            <option value="No" {% if employee.password_release == 'No' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Release Reason</label>
+                        <input type="text" name="release_reason" class="form-control" value="{{ employee.release_reason }}">
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -1608,7 +1642,7 @@ container.appendChild(newEntry);
                                         <div class="invalid-feedback">Please select a gender.</div>
                                     </div>
                                 </div>
-                                <!-- Status (Active, Inactive, On Leave) -->
+                                <!-- Status and Sub Status (Same Line) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
@@ -1621,6 +1655,36 @@ container.appendChild(newEntry);
                                         <div class="invalid-feedback">Please select a status.</div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Sub Status</label>
+                                        <select name="emp_sub_status" class="form-select">
+                                            <option value="">Select</option>
+                                            {% for sub in sub_status_data %}
+                                                <option value="{{ sub.base_value }}">{{ sub.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Password Release and Reason (Next Line) -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Password Release</label>
+                                        <select name="password_release" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Release Reason</label>
+                                        <input type="text" name="release_reason" class="form-control">
+                                    </div>
+                                </div>
+
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Father's Name</label>

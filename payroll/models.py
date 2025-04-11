@@ -94,6 +94,9 @@ class Employee(models.Model):
     dob = models.DateField(blank=True, null=True)  # Date of birth
     emp_sex = models.CharField(max_length=1, choices=[('1', 'Male'), ('2', 'Female')], default='1')  # Gender
     emp_status = models.CharField(max_length=50, blank=True, null=True)  # Employment status
+    emp_sub_status = models.CharField(max_length=50, blank=True, null=True)  # Sub employment status
+    password_release = models.CharField(max_length=10, blank=True, null=True)  # Yes or No
+    release_reason = models.CharField(max_length=255, blank=True, null=True)  # Reason for password release
     father_name = models.CharField(max_length=50, blank=True, null=True)  # Father's name
     mother_name = models.CharField(max_length=50, blank=True, null=True)  # Mother's name
     nationality = models.CharField(max_length=50, blank=True, null=True)  # Nationality
