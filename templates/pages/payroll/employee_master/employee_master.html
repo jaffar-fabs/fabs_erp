@@ -93,7 +93,7 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </td>                                        
-                                        <td>{{ employee.dob }}</td>
+                                        <td>{{ employee.dob|date:"d/m/Y" }}</td>
                                         <!-- <td>{{ employee.created_on }}</td> -->
                                         <td>
                                             <div class="dropdown table-action">
@@ -482,13 +482,13 @@
                         <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
                         <input type="number" name="allowance" class="form-control" required min="0" step="0.01" value="{{ employee.allowance }}" id="allowance">
                         <div class="invalid-feedback">Please enter a valid allowance amount (greater than or equal to 0).</div>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade</label>
@@ -521,40 +521,47 @@
 <div class="mt-4" id="multiEntryContainer_{{ employee.employee_id }}">
     <h5>Additional Earnings/Deductions</h5>
     
-    <!-- Static Entry Fields (Always Visible) -->
-    <div class="card p-3 mb-2 shadow-sm" id="staticEntryFields_{{ employee.employee_id }}">
-        <div class="row align-items-center">
-            <div class="col-md-3">
-                <select id="static_entry_type_{{ employee.employee_id }}" class="form-control"
-                    onchange="handleTypeChange('{{ employee.employee_id }}')">
+    <!-- Headings for Static Entry Fields -->
+<div class="row fw-bold px-3">
+    <div class="col-md-3">Type</div>
+    <div class="col-md-3">Code</div>
+    <div class="col-md-3">Amount</div>
+    <div class="col-md-2">Prorated Flag</div>
+    <div class="col-md-1 text-end">Action</div>
+</div>
+
+<!-- Static Entry Fields (Always Visible) -->
+<div class="card p-3 mb-2 shadow-sm" id="staticEntryFields_{{ employee.employee_id }}">
+    <div class="row align-items-center">
+        <div class="col-md-3">
+            <select id="static_entry_type_{{ employee.employee_id }}" class="form-control"
+                onchange="handleTypeChange('{{ employee.employee_id }}')">
                 <option value="">Select Type</option>
                 <option value="EARNINGS">Earning</option>
                 <option value="DEDUCTION">Deduction</option>
             </select>
-
-                
-            </div>
-            <div class="col-md-3">
-                <select id="static_entry_code_{{ employee.employee_id }}" class="form-control code-dropdown">
-                    <option value="">Select Code</option>
-                </select>                
-            </div>
-            <div class="col-md-3">
-                <input type="number" id="static_entry_amount_{{ employee.employee_id }}" class="form-control" placeholder="Amount" min="0" step="0.01">
-            </div>
-            <div class="col-md-2">
-                <select id="static_entry_proated_flag_{{ employee.employee_id }}" class="form-control">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="col-md-1 text-end">
-                <button type="button" class="btn btn-primary" onclick="addEntry('{{ employee.employee_id }}')">
-                    <i class="fas fa-plus"></i> Add
-                </button>
-            </div>
+        </div>
+        <div class="col-md-3">
+            <select id="static_entry_code_{{ employee.employee_id }}" class="form-control code-dropdown">
+                <option value="">Select Code</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="number" id="static_entry_amount_{{ employee.employee_id }}" class="form-control" placeholder="Amount" min="0" step="0.01">
+        </div>
+        <div class="col-md-2">
+            <select id="static_entry_proated_flag_{{ employee.employee_id }}" class="form-control">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+        <div class="col-md-1 text-end">
+            <button type="button" class="btn btn-primary" onclick="addEntry('{{ employee.employee_id }}')">
+                <i class="fas fa-plus"></i> Add
+            </button>
         </div>
     </div>
+</div>
 
     <!-- Container for Dynamic Entries -->
     <div id="entriesContainer_{{ employee.employee_id }}">
@@ -1059,20 +1066,20 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Persona Mohra Code</label>
+                        <label class="col-form-label">Personal Mohre Code</label>
                         <input type="text" name="mohra_number" class="form-control" value="{{ employee.mohra_number }}">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Name</label>
+                        <label class="col-form-label">Mohre Name</label>
                         <input type="text" name="mohra_name" class="form-control" value="{{ employee.mohra_name }}">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Designation</label>
+                        <label class="col-form-label">Mohre Designation</label>
                         <input type="text" name="mohra_designation" class="form-control" value="{{ employee.mohra_designation }}">
                     </div>
                 </div>                
@@ -1929,13 +1936,13 @@ container.appendChild(newEntry);
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
                         <input type="number" name="allowance" class="form-control" required min="0" step="0.01" id="allowance">
                         <div class="invalid-feedback">Please enter a valid allowance amount (greater than or equal to 0).</div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -1964,34 +1971,34 @@ container.appendChild(newEntry);
 
             <!-- Multi Entry Section -->
             <div class="mt-4">
-                <h5>Additional Entries</h5>
+                <h5>Additional Earnings/Deductions</h5>
                 <table class="table" id="multiEntryTable_add">
                     <thead>
                         <tr>
                             <th>Type</th>
                             <th>Code</th>
                             <th>Amount</th>
-                            <th>Proated Flag</th>
+                            <th>Prorated Flag</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                <select name="entry_type[]" class="form-control entry-type" required>
+                                <select name="entry_type[]" class="form-control entry-type" >
                                     <option value="">Select Type</option>
                                     <option value="EARNINGS">Earnings</option>
                                     <option value="DEDUCTION">Deduction</option>
                                 </select>
                             </td>
                             <td>
-                                <select name="entry_code[]" class="form-control code-dropdown" required>
+                                <select name="entry_code[]" class="form-control code-dropdown" >
                                     <option value="">Select Code</option>
                                     <!-- Options will be populated dynamically -->
                                 </select>
                             </td>
                             <td>
-                                <input type="number" name="entry_amount[]" class="form-control" required min="0" step="0.01">
+                                <input type="number" name="entry_amount[]" class="form-control" min="0" step="0.01">
                             </td>
                             <td>
                                 <select name="entry_proated_flag[]" class="form-control">
@@ -2375,20 +2382,20 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Personal Mohra Code</label>
+                        <label class="col-form-label">Personal Mohre Code</label>
                         <input type="text" name="mohra_number" class="form-control" placeholder="Enter Mohra Number">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Name</label>
+                        <label class="col-form-label">Mohre Name</label>
                         <input type="text" name="mohra_name" class="form-control" placeholder="Enter Mohra Name">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Mohra Designation</label>
+                        <label class="col-form-label">Mohre Designation</label>
                         <input type="text" name="mohra_designation" class="form-control" placeholder="Enter Mohra Designation">
                     </div>
                 </div>                

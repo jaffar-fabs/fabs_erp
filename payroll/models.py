@@ -128,7 +128,7 @@ class Employee(models.Model):
     labour_id = models.CharField(max_length=50, blank=True, null=True)  # Labour ID
     process_cycle = models.CharField(max_length=50, blank=True, null=True)  # Payment process cycle
     basic_pay = models.DecimalField(max_digits=10, decimal_places=2)  # Basic pay
-    allowance = models.DecimalField(max_digits=10, decimal_places=2)  # Allowance
+    allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Allowance
     grade_code = models.CharField(max_length=150, blank=True, null=True)  # Grade code
     prj_code = models.CharField(max_length=50, blank=True, null=True)
     designation = models.CharField(max_length=50, blank=True, null=True)  # Designation
