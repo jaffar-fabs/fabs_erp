@@ -1339,7 +1339,7 @@
             <div id="dependentsContainer_{{ employee.employee_id }}">
                 <!-- Button to Add New Dependent -->
             <h5 class="mt-4">Add New Dependent</h5>
-            <div class="new-dependent-entry mb-3">
+            <div class="new-dependent-entry-add mb-3">
                 <div class="row">
                     <div class="col-md-2 mb-3">
                         <label class="col-form-label">Relationship</label>
@@ -1383,7 +1383,7 @@
                 <!-- Existing Dependents -->
                 <h5>Existing Dependents</h5>
                 {% for dependent in employee.dependents %}
-                <div class="dependent-entry mb-3 border p-3 rounded">
+                <div class="dependent-entry-exist mb-3 border p-3 rounded">
                     <div class="row mb-2">
                         <div class="col-md-2"><strong>Dependent {{ forloop.counter }}:</strong></div>
                         <div class="col-md-2">{{ dependent.relationship }}</div>
@@ -1411,66 +1411,75 @@
         </div>
     </div>
 </div>
-
 <script>
-    function addDependentRowEdit(employeeId) {
-        const relationship = document.getElementById(`new_relationship_${employeeId}`).value;
-        const docType = document.getElementById(`new_doc_type_${employeeId}`).value;
-        const docNumber = document.getElementById(`new_doc_number_${employeeId}`).value;
-        const issuedDate = document.getElementById(`new_issued_date_${employeeId}`).value;
-        const expiryDate = document.getElementById(`new_expiry_date_${employeeId}`).value;
-        const docFile = document.getElementById(`new_doc_file_${employeeId}`).files[0];
+    const newDependents = [];
 
-        // Create a new entry for the dependent
-        const container = document.getElementById(`dependentsContainer_${employeeId}`);
-        const newEntry = document.createElement('div');
-newEntry.className = 'dependent-entry mb-3 border p-3 rounded';
-newEntry.innerHTML = `
-    <div class="row mb-2">
-        <div class="col-md-2"><strong>New Dependent:</strong></div>
-        <div class="col-md-2">
-            <div name="dependent_relationship[]">${relationship}</div>
-            <input type="hidden" name="dependent_relationship[]" value="${relationship}">
-        </div>
-        <div class="col-md-2">
-            <div name="dependent_doc_type[]">${docType}</div>
-            <input type="hidden" name="dependent_doc_type[]" value="${docType}">
-        </div>
-        <div class="col-md-2">
-            <input type="text" name="dependent_doc_number[]" class="form-control" value="${docNumber}">
-        </div>
-        <div class="col-md-2">
-            <input type="date" name="dependent_issued_date[]" class="form-control" value="${issuedDate}">
-        </div>
-        <div class="col-md-2">
-            <input type="date" name="dependent_expiry_date[]" class="form-control" value="${expiryDate}">
-        </div>
-        <div class="col-md-2">
-            <input type="file" name="dependent_doc_file[]" class="form-control">
-            ${docFile ? `<small>${docFile.name}</small>` : `<small>No document uploaded.</small>`}
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">Remove</button>
-        </div>
-    </div>
-`;
-container.appendChild(newEntry);
+function addDependentRowEdit(employeeId) {
+    const relationship = document.getElementById(`new_relationship_${employeeId}`).value;
+    const docType = document.getElementById(`new_doc_type_${employeeId}`).value;
+    const docNumber = document.getElementById(`new_doc_number_${employeeId}`).value;
+    const issuedDate = document.getElementById(`new_issued_date_${employeeId}`).value;
+    const expiryDate = document.getElementById(`new_expiry_date_${employeeId}`).value;
+    const docFile = document.getElementById(`new_doc_file_${employeeId}`);
 
-
-        // Clear the input fields after adding
-        document.getElementById(`new_relationship_${employeeId}`).value = 'father';
-        document.getElementById(`new_doc_type_${employeeId}`).value = 'visa';
-        document.getElementById(`new_doc_number_${employeeId}`).value = '';
-        document.getElementById(`new_issued_date_${employeeId}`).value = '';
-        document.getElementById(`new_expiry_date_${employeeId}`).value = '';
-        document.getElementById(`new_doc_file_${employeeId}`).value = '';
+    if (!docFile.files.length) {
+        alert("Please upload a file for the dependent.");
+        return;
     }
-    
-    function removeDependentRowEdit(button) {
-        const row = button.closest('.dependent-entry');
-        row.remove();
+
+    const file = docFile.files[0];
+
+    const index = newDependents.length;
+
+    const container = document.getElementById(`dependentsContainer_${employeeId}`);
+    const newEntry = document.createElement("div");
+    newEntry.className = "dependent-entry mb-3 border p-3 rounded";
+    newEntry.setAttribute('data-index', index);
+
+    newEntry.innerHTML = `
+        <div class="row mb-2">
+            <div class="col-md-2"><strong>${relationship}</strong></div>
+            <div class="col-md-2"><strong>${docType}</strong></div>
+            <div class="col-md-2">${docNumber}</div>
+            <div class="col-md-2">${issuedDate}</div>
+            <div class="col-md-2">${expiryDate}</div>
+            <div class="col-md-2">${file.name}</div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this, ${index})">
+                    Remove
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(newEntry);
+
+    newDependents.push({
+        relationship,
+        document_type: docType,
+        document_number: docNumber,
+        issued_date: issuedDate,
+        expiry_date: expiryDate,
+        document_file: file
+    });
+
+    // Clear inputs
+    document.getElementById(`new_relationship_${employeeId}`).value = '';
+    document.getElementById(`new_doc_type_${employeeId}`).value = '';
+    document.getElementById(`new_doc_number_${employeeId}`).value = '';
+    document.getElementById(`new_issued_date_${employeeId}`).value = '';
+    document.getElementById(`new_expiry_date_${employeeId}`).value = '';
+    docFile.value = '';
+}
+function removeDependentRowEdit(button, index) {
+    const entry = button.closest('.dependent-entry');
+    if (entry) entry.remove();
+    if (index >= 0 && index < newDependents.length) {
+        newDependents.splice(index, 1);
     }
+}
 </script>
+
             <div class="d-flex align-items-center justify-content-end mt-4">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
                 <button type="submit" class="btn btn-primary">Update Employee</button>
@@ -2879,39 +2888,17 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
 
         const dependentContainer = document.getElementById(`dependentsContainer_${employeeId}`);
         const dependentEntries = dependentContainer.querySelectorAll('.dependent-entry');
-
-        dependentEntries.forEach((entry, index) => {
-            const docNumber = entry.querySelector('input[name="dependent_doc_number[]"]')?.value || '';
-            const issuedDate = entry.querySelector('input[name="dependent_issued_date[]"]')?.value || '';
-            const expiryDate = entry.querySelector('input[name="dependent_expiry_date[]"]')?.value || '';
-
-            const relationship = entry.querySelector('div[name="dependent_relationship[]"]')?.textContent.trim() || '';
-            const docType = entry.querySelector('div[name="dependent_doc_type[]"]')?.textContent.trim() || '';
-
-            // ✅ Grab the actual hidden input for file, if it's there
-            const docFileInput = entry.querySelector('input[name="dependent_doc_file[]"]');
-            const docFile = docFileInput?.files?.[0] || null;
-
-            // ✅ This alert will now work correctly
-            alert(
-                `New Dependent Details:\n` +
-                `Relationship: ${relationship}\n` +
-                `Document Type: ${docType}\n` +
-                `Document Number: ${docNumber}\n` +
-                `Issued Date: ${issuedDate}\n` +
-                `Expiry Date: ${expiryDate}\n` +
-                `File: ${docFile ? docFile.name : 'No file uploaded'}`
-            );
-
-            if (relationship && docType) {
-                formData.append('dependent_relationship[]', relationship);
-                formData.append('dependent_doc_type[]', docType);
-                formData.append('dependent_doc_number[]', docNumber);
-                formData.append('dependent_issued_date[]', issuedDate);
-                formData.append('dependent_expiry_date[]', expiryDate);
-                formData.append('dependent_doc_file[]', docFile || '');
+        
+            if (typeof newDependents !== 'undefined') {
+                newDependents.forEach(dep => {
+                    formData.append('dependent_relationship[]', dep.relationship);
+                    formData.append('dependent_doc_type[]', dep.document_type);
+                    formData.append('dependent_doc_number[]', dep.document_number);
+                    formData.append('dependent_issued_date[]', dep.issued_date);
+                    formData.append('dependent_expiry_date[]', dep.expiry_date);
+                    formData.append('dependent_doc_file[]', dep.document_file);
+                });
             }
-        });
 
         // Handle Earnings/Deductions entries
         const entriesContainer = document.getElementById(`entriesContainer_${employeeId}`);
@@ -2925,7 +2912,7 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
 
             // Optional: validate if needed
             // if (!type || !code || !amount) return;
-            alert(type+code+amount+proratedFlag)
+            // alert(type+code+amount+proratedFlag)
             formData.append('entry_type[]', type);
             formData.append('entry_code[]', code);
             formData.append('entry_amount[]', amount);
