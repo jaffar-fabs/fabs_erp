@@ -1362,7 +1362,7 @@
                         <label class="col-form-label">Expiry Date</label>
                         <input type="date" id="new_expiry_date_{{ employee.employee_id }}" class="form-control">
                     </div>
-                    <div class="col-md-2 mb-3 <label class="col-form-label">File Upload</label>
+                    <div class="col-md-2 mb-3"><label class="col-form-label">File Upload</label>
                         <input type="file" id="new_doc_file_{{ employee.employee_id }}" class="form-control" accept="application/pdf,image/*">
                     </div>
                 </div>
@@ -1384,22 +1384,38 @@
         // Create a new entry for the dependent
         const container = document.getElementById(`dependentsContainer_${employeeId}`);
         const newEntry = document.createElement('div');
-        newEntry.className = 'dependent-entry mb-3 border p-3 rounded';
-        newEntry.innerHTML = `
-            <div class="row mb-2">
-                <div class="col-md-2"><strong>New Dependent:</strong></div>
-                <div class="col-md-2">${relationship}</div>
-                <div class="col-md-2">${docType}</div>
-                <div class="col-md-2">${docNumber}</div>
-                <div class="col-md-2">${issuedDate}</div>
-                <div class="col-md-2">${expiryDate}</div>
-                <div class="col-md-2">${docFile ? docFile.name : 'No document uploaded.'}</div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">Remove</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(newEntry);
+newEntry.className = 'dependent-entry mb-3 border p-3 rounded';
+newEntry.innerHTML = `
+    <div class="row mb-2">
+        <div class="col-md-2"><strong>New Dependent:</strong></div>
+        <div class="col-md-2">
+            <div name="dependent_relationship[]">${relationship}</div>
+            <input type="hidden" name="dependent_relationship[]" value="${relationship}">
+        </div>
+        <div class="col-md-2">
+            <div name="dependent_doc_type[]">${docType}</div>
+            <input type="hidden" name="dependent_doc_type[]" value="${docType}">
+        </div>
+        <div class="col-md-2">
+            <input type="text" name="dependent_doc_number[]" class="form-control" value="${docNumber}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="dependent_issued_date[]" class="form-control" value="${issuedDate}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="dependent_expiry_date[]" class="form-control" value="${expiryDate}">
+        </div>
+        <div class="col-md-2">
+            <input type="file" name="dependent_doc_file[]" class="form-control">
+            ${docFile ? `<small>${docFile.name}</small>` : `<small>No document uploaded.</small>`}
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">Remove</button>
+        </div>
+    </div>
+`;
+container.appendChild(newEntry);
+
 
         // Clear the input fields after adding
         document.getElementById(`new_relationship_${employeeId}`).value = 'father';
@@ -2807,15 +2823,15 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
             const docFile = docFileInput?.files?.[0] || null;
 
             // ✅ This alert will now work correctly
-            // alert(
-            //     `New Dependent Details:\n` +
-            //     `Relationship: ${relationship}\n` +
-            //     `Document Type: ${docType}\n` +
-            //     `Document Number: ${docNumber}\n` +
-            //     `Issued Date: ${issuedDate}\n` +
-            //     `Expiry Date: ${expiryDate}\n` +
-            //     `File: ${docFile ? docFile.name : 'No file uploaded'}`
-            // );
+            alert(
+                `New Dependent Details:\n` +
+                `Relationship: ${relationship}\n` +
+                `Document Type: ${docType}\n` +
+                `Document Number: ${docNumber}\n` +
+                `Issued Date: ${issuedDate}\n` +
+                `Expiry Date: ${expiryDate}\n` +
+                `File: ${docFile ? docFile.name : 'No file uploaded'}`
+            );
 
             if (relationship && docType) {
                 formData.append('dependent_relationship[]', relationship);
