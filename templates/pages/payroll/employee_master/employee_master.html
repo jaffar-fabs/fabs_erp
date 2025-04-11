@@ -1337,36 +1337,7 @@
          aria-labelledby="headingDependentDetails_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
         <div class="accordion-body">
             <div id="dependentsContainer_{{ employee.employee_id }}">
-                <!-- Existing Dependents -->
-                <h5>Existing Dependents</h5>
-                {% for dependent in employee.dependents %}
-                <div class="dependent-entry mb-3 border p-3 rounded">
-                    <div class="row mb-2">
-                        <div class="col-md-2"><strong>Dependent {{ forloop.counter }}:</strong></div>
-                        <div class="col-md-2">{{ dependent.relationship }}</div>
-                        <div class="col-md-2">{{ dependent.document_type }}</div>
-                        <div class="col-md-2">{{ dependent.document_number }}</div>
-                        <div class="col-md-2">{{ dependent.issued_date|date:'Y-m-d' }}</div>
-                        <div class="col-md-2">{{ dependent.expiry_date|date:'Y-m-d' }}</div>
-                        <div class="col-md-2">
-                            {% if dependent.document_file %}
-                                <a href="{{ dependent.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ dependent.document_file.url }}" target="_blank" download="{{ dependent.document_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            {% else %}
-                                <span class="text-muted">No document uploaded.</span>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- Button to Add New Dependent -->
+                <!-- Button to Add New Dependent -->
             <h5 class="mt-4">Add New Dependent</h5>
             <div class="new-dependent-entry mb-3">
                 <div class="row">
@@ -1408,6 +1379,34 @@
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="addDependentRowEdit('{{ employee.employee_id }}')">Add Another Dependent</button>
+            </div>
+                <!-- Existing Dependents -->
+                <h5>Existing Dependents</h5>
+                {% for dependent in employee.dependents %}
+                <div class="dependent-entry mb-3 border p-3 rounded">
+                    <div class="row mb-2">
+                        <div class="col-md-2"><strong>Dependent {{ forloop.counter }}:</strong></div>
+                        <div class="col-md-2">{{ dependent.relationship }}</div>
+                        <div class="col-md-2">{{ dependent.document_type }}</div>
+                        <div class="col-md-2">{{ dependent.document_number }}</div>
+                        <div class="col-md-2">{{ dependent.issued_date|date:'Y-m-d' }}</div>
+                        <div class="col-md-2">{{ dependent.expiry_date|date:'Y-m-d' }}</div>
+                        <div class="col-md-2">
+                            {% if dependent.document_file %}
+                                <a href="{{ dependent.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="{{ dependent.document_file.url }}" target="_blank" download="{{ dependent.document_file.name }}" class="btn btn-sm btn-secondary">Download</a>
+                            {% else %}
+                                <span class="text-muted">No document uploaded.</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
