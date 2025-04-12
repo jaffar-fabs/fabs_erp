@@ -139,6 +139,7 @@ def employee_master(request):
         employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True)
         employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
         employee.dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
+        employee.license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True,issued_date__isnull=True)
 
     # Prepare the context for the template
     context = {
@@ -178,7 +179,7 @@ def save_employee(request, employee_id=None):
         employee.emp_sex = request.POST.get("emp_sex")
         employee.emp_status = request.POST.get("emp_status")
         employee.emp_sub_status = request.POST.get("emp_sub_status")
-        employee.password_release = request.POST.get("password_release")
+        employee.passport_release = request.POST.get("passport_release")
         employee.release_reason = request.POST.get("release_reason")
         employee.father_name = request.POST.get("father_name")
         employee.mother_name = request.POST.get("mother_name")
@@ -352,6 +353,7 @@ def save_employee(request, employee_id=None):
             
             if relationship and doc_type and doc_number:  # Ensure required fields are provided
                 EmployeeDocument.objects.create(
+                    comp_code=COMP_CODE,
                     emp_code=employee.emp_code,
                     relationship=relationship,
                     document_type=doc_type,
@@ -361,6 +363,44 @@ def save_employee(request, employee_id=None):
                     document_file=doc_file if doc_file else None,  # Save file if provided
                     created_by=1,  # Replace with actual user ID if available
                 )
+
+        # Handle License and Passes Details
+        license_doc_types = request.POST.getlist("license_doc_type[]")
+        license_doc_numbers = request.POST.getlist("license_doc_number[]")
+        license_doc_files = request.FILES.getlist("license_doc_file[]")
+        license_work_locations = request.POST.getlist("work_location[]")
+        license_emirates_issued = request.POST.getlist("emirate_issued[]")
+        license_expiry_dates = request.POST.getlist("license_expiry_date[]")
+        license_categories = request.POST.getlist("license_category[]")
+        license_comments = request.POST.getlist("license_comments[]")
+
+        print(license_doc_types, license_doc_numbers, license_doc_files,
+                license_work_locations, license_emirates_issued, license_expiry_dates, license_categories, license_comments)
+
+        for doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments in zip_longest(
+                license_doc_types, license_doc_numbers, license_doc_files,
+                license_work_locations, license_emirates_issued,
+                license_expiry_dates, license_categories, license_comments):
+
+            print(doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments)
+
+            if doc_type and doc_number:
+                # Create document entry (adjust model and field names as needed)
+                EmployeeDocument.objects.create(
+                    comp_code=COMP_CODE,
+                    emp_code=employee.emp_code,
+                    document_type=doc_type,
+                    document_number=doc_number,
+                    document_file=doc_file if doc_file else None,
+                    staff_work_location=work_location,
+                    emirates_issued_by=emirate_issued,
+                    expiry_date=expiry_date,
+                    category=category,
+                    comments=comments,
+                    created_by=request.user.id if request.user.is_authenticated else 1
+                )
+
+
 
         # Continue with the rest of your code
         messages.success(request, "Employee details and documents updated successfully.")
