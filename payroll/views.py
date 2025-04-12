@@ -136,7 +136,7 @@ def employee_master(request):
 
     # Fetch documents and earnings/deductions for each employee
     for employee in employees_page:
-        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True)
+        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, document_number__isnull=True)
         employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
         employee.dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
         employee.license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True,issued_date__isnull=True)
