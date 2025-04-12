@@ -1490,97 +1490,104 @@ function removeDependentRowEdit(button, index) {
         </button>
     </h2>
     <div id="collapseLicensePasses_{{ employee.employee_id }}" class="accordion-collapse collapse"
-         aria-labelledby="headingLicensePasses_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
-        <div class="accordion-body">
-            <div id="licensesContainer_{{ employee.employee_id }}">
-                <!-- Add New License/Pass -->
-                <h5 class="mt-3">Add New License or Pass</h5>
-                <div class="row g-3 mb-4 align-items-end border p-3 rounded">
-                    <div class="col-md-3">
-                        <label class="form-label">{{ doc_type_heading|default:"Document Type" }}</label>
-                        <select class="form-select" id="new_license_type_{{ employee.employee_id }}">
-                            <option value="">-- Select --</option>
-                            <option value="license">License</option>
-                            <option value="site_medical">Site Medical</option>
-                            <option value="site_pass">Site Pass</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ doc_number_heading|default:"Document Number" }}</label>
-                        <input type="text" class="form-control" id="new_license_number_{{ employee.employee_id }}" placeholder="Enter Number">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ file_upload_heading|default:"Document Upload" }}</label>
-                        <input type="file" class="form-control" id="new_license_file_{{ employee.employee_id }}" accept="application/pdf,image/*">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ work_location_heading|default:"Staff Work Location" }}</label>
-                        <select class="form-select" id="new_license_work_location_{{ employee.employee_id }}">
-                            {% for location in work_locations %}
-                                <option value="{{ location.value }}">{{ location.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ emirate_issued_heading|default:"Emirate Issued By" }}</label>
-                        <select class="form-select" id="new_license_emirate_issued_{{ employee.employee_id }}">
-                            {% for emirate in emirates_list %}
-                                <option value="{{ emirate.value }}">{{ emirate.label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ expiry_date_heading|default:"Expiry Date" }}</label>
-                        <input type="date" class="form-control" id="new_license_expiry_date_{{ employee.employee_id }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ category_heading|default:"Category" }}</label>
-                        <select class="form-select" id="new_license_category_{{ employee.employee_id }}">
-                            <option value="">-- Select Category --</option>
-                            <option value="light">Light</option>
-                            <option value="heavy">Heavy</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label">{{ comments_heading|default:"Comments" }}</label>
-                        <input type="text" class="form-control" id="new_license_comments_{{ employee.employee_id }}" placeholder="Enter Comments">
-                    </div>
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-primary" onclick="addLicenseRowEdit('{{ employee.employee_id }}')">
-                            <i class="fas fa-plus"></i> Add License/Pass
-                        </button>
-                    </div>
+     aria-labelledby="headingLicensePasses_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div class="accordion-body">
+        <div id="licensesContainer_{{ employee.employee_id }}">
+            <!-- Add New License/Pass -->
+            <h5 class="mt-3">Add New License or Pass</h5>
+            <div class="d-flex flex-wrap gap-3 mb-4 border p-3 rounded align-items-end">
+
+                <!-- Document Type -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ doc_type_heading|default:"Document Type" }}</label>
+                    <select class="form-select" id="new_license_type_{{ employee.employee_id }}"
+                            onchange="toggleCategory('{{ employee.employee_id }}')">
+                        <option value="">-- Select --</option>
+                        <option value="license">License</option>
+                        <option value="site_medical">Site Medical</option>
+                        <option value="site_pass">Site Pass</option>
+                    </select>
                 </div>
 
-                <!-- Existing Licenses & Passes -->
-                <h5 class="mt-4">Existing Licenses & Passes</h5>
-                <div id="existingLicenses_{{ employee.employee_id }}">
-                    {% for license in employee.license_and_passes %}
-                        <div class="row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist">
-                            <div class="col-md-2"><strong>{{ license.document_type }}</strong></div>
-                            <div class="col-md-2">{{ license.document_number }}</div>
-                            <div class="col-md-2">{{ license.expiry_date|date:"Y-m-d" }}</div>
-                            <div class="col-md-3">
-                                {% if license.document_file %}
-                                    <a href="{{ license.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                    <a href="{{ license.document_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
-                                {% else %}
-                                    <span class="text-muted">No file</span>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-danger" onclick="removeLicenseRowEdit(this)">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
+                <!-- Document Number -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ doc_number_heading|default:"Document Number" }}</label>
+                    <input type="text" class="form-control" id="new_license_number_{{ employee.employee_id }}" placeholder="Enter Number">
                 </div>
+
+                <!-- File Upload -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ file_upload_heading|default:"Document Upload" }}</label>
+                    <input type="file" class="form-control" id="new_license_file_{{ employee.employee_id }}" accept="application/pdf,image/*">
+                </div>
+
+                <!-- Work Location -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ work_location_heading|default:"Staff Work Location" }}</label>
+                    <select class="form-select" id="new_license_work_location_{{ employee.employee_id }}">
+                        {% for location in work_locations %}
+                            <option value="{{ location.value }}">{{ location.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Emirate Issued -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ emirate_issued_heading|default:"Emirate Issued By" }}</label>
+                    <select class="form-select" id="new_license_emirate_issued_{{ employee.employee_id }}">
+                        {% for emirate in emirates_list %}
+                            <option value="{{ emirate.value }}">{{ emirate.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Expiry Date -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ expiry_date_heading|default:"Expiry Date" }}</label>
+                    <input type="date" class="form-control" id="new_license_expiry_date_{{ employee.employee_id }}">
+                </div>
+
+                <!-- Category -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ category_heading|default:"Category" }}</label>
+                    <select class="form-select" id="new_license_category_{{ employee.employee_id }}" disabled>
+                        <option value="">-- Select Category --</option>
+                        <option value="light">Light</option>
+                        <option value="heavy">Heavy</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+                <!-- Comments -->
+                <div class="flex-grow-1">
+                    <label class="form-label">{{ comments_heading|default:"Comments" }}</label>
+                    <input type="text" class="form-control" id="new_license_comments_{{ employee.employee_id }}" placeholder="Enter Comments">
+                </div>
+
+                <!-- Button -->
+                <div class="flex-grow-1">
+                    <button type="button" class="btn btn-primary mt-3" onclick="addLicenseRowEdit('{{ employee.employee_id }}')">
+                        <i class="fas fa-plus"></i> Add License/Pass
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
-</div>
+
+
+<script>
+    function toggleCategory(empId) {
+        const typeSelect = document.getElementById(`new_license_type_${empId}`);
+        const categorySelect = document.getElementById(`new_license_category_${empId}`);
+        if (typeSelect.value === "license") {
+            categorySelect.disabled = false;
+        } else {
+            categorySelect.disabled = true;
+            categorySelect.value = "";
+        }
+    }
+</script>
 
 <script>
     const newLicenses = [];
