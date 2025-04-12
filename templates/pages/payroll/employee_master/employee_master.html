@@ -1573,7 +1573,6 @@ function removeDependentRowEdit(button, index) {
 
             </div>
         </div>
-    </div>
 
 
 <script>
@@ -1588,6 +1587,35 @@ function removeDependentRowEdit(button, index) {
         }
     }
 </script>
+
+                <!-- Existing Licenses & Passes -->
+                <h5 class="mt-4">Existing Licenses & Passes</h5>
+                <div id="existingLicenses_{{ employee.employee_id }}">
+                    {% for license in employee.license_and_passes %}
+                        <div class="row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist">
+                            <div class="col-md-2"><strong>{{ license.document_type }}</strong></div>
+                            <div class="col-md-2">{{ license.document_number }}</div>
+                            <div class="col-md-2">{{ license.expiry_date|date:"Y-m-d" }}</div>
+                            <div class="col-md-3">
+                                {% if license.document_file %}
+                                    <a href="{{ license.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                    <a href="{{ license.document_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
+                                {% else %}
+                                    <span class="text-muted">No file</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-danger" onclick="removeLicenseRowEdit(this)">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     const newLicenses = [];
