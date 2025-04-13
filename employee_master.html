@@ -40,7 +40,7 @@
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
                                     <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvas_employee_master"><i
+                                        data-bs-target="#offcanvas_add"><i
                                             class="ti ti-square-rounded-plus me-2"></i>Add Employee</a>
                                 </div>
                             </div>
@@ -98,7 +98,7 @@
                                                     <a class="dropdown-item" href="javascript:void(0);"
                                                     data-id="{{ employee.employee_id }}"
                                                         data-bs-toggle="offcanvas"
-                                                        data-bs-target="#offcanvas_employee_master_edit">
+                                                        data-bs-target="#offcanvas_edit">
                                                             <i class="ti ti-edit text-blue"></i> Edit
                                                         </a>
                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_employee_{{ employee.employee_id }}"><i
@@ -184,6 +184,40 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Attach click event to all edit buttons
+        document.querySelectorAll('[data-bs-target="#offcanvas_edit"]').forEach(button => {
+            button.addEventListener('click', function () {
+                const employeeId = this.getAttribute('data-id');
+                const url = `/get_employee_details/${employeeId}/`; // Update with your URL pattern
+
+                // Fetch employee details
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Populate the form fields in the modal
+                            document.querySelector('input[name="emp_name_passport"]').value = data.data.emp_name;
+                            document.querySelector('input[name="surname"]').value = data.data.surname;
+                            document.querySelector('input[name="dob"]').value = data.data.dob;
+                            document.querySelector('select[name="emp_sex"]').value = data.data.emp_sex;
+                            document.querySelector('select[name="emp_status"]').value = data.data.emp_status;
+                            document.querySelector('select[name="emp_sub_status"]').value = data.data.emp_sub_status;
+                            // Populate other fields as needed
+                        } else {
+                            alert(data.error || 'Failed to fetch employee details.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching employee details:', error);
+                        alert('An error occurred while fetching employee details.');
+                    });
+            });
+        });
+    });
+</script>
 {% block contracts_modal %}
 {% include "pages/modal/payroll/employee_master_modal.html" %}
 {% endblock contracts_modal %}

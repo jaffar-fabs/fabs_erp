@@ -33,6 +33,166 @@
                     </div>
                 </div>
 
+                <!-- service type -->
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Service Type</label>
+                        <select name="service_type" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in service_type_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                 </div>
+
+                <!-- service_category -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Service Category</label>
+                        <select name="service_category" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in service_category_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Project City -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="prj_city" required>
+                            <option value="">Select</option>
+                            {% for city in pro_city_data %}
+                                <option value="{{ city.base_value }}">
+                                    {{ city.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- project sub location -->
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Sub Location</label>
+                        <select name="pro_sub_location" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in pro_sub_location_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        
+                    </div>
+                 </div>
+
+                <!-- customer -->
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Customer</label>
+                        <select name="customer" class="form-control select">
+                            <option value="">Select</option>
+                            <option value="cus1">Cus1</option>
+                            {% for type in customer_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                 </div>
+
+                <!-- Agreement ref -->
+                 <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Agreement Ref</label>
+                        <input type="text" name="agreement_ref" class="form-control">
+                    </div>
+                 </div>
+
+                <!-- op head -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">OP Head</label>
+                        <select name="op_head" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- manger -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Manager</label>
+                        <select name="manager" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- commercial manage -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Commercial Manager</label>
+                        <select name="commercial_manager" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- procruitement user -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Procurement User</label>
+                        <select name="procurement_user" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- indent user -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Indent User</label>
+                        <select name="indent_user" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Project Type -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -56,32 +216,6 @@
                     </div>
                 </div>
 
-                <!-- Main Contractor -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
-                        <select class="form-select" name="main_contractor" required>
-                            <option value="">Select</option>
-                            <option>NovaWave LLC</option>
-                            <option>Silver Hawk</option>
-                            <option>Harbor View</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Sub Contractor -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Sub Contractor <span class="text-danger">*</span></label>
-                        <select class="form-select" name="sub_contractor" required>
-                            <option value="">Select</option>
-                            <option>NovaWave LLC</option>
-                            <option>Silver Hawk</option>
-                            <option>Harbor View</option>
-                        </select>
-                    </div>
-                </div>
-
                 <!-- Start Date -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -98,37 +232,29 @@
                         <span id="date_error" class="text-danger"></span> <!-- Error message here -->
                     </div>
                 </div>
-
-                <!-- Consultant -->
-                <div class="col-md-6">
+                
+                <!-- final contract value -->
+                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
-                        <select class="multiple-img form-control" multiple name="consultant" required>
-                            <option>Darlee Robertson</option>
-                            <option>Sharon Roy</option>
-                            <option>Vaughan</option>
-                            <option>Jessica</option>
-                            <option>Carol Thomas</option>
-                        </select>
+                        <label class="col-form-label">Final Contract Value</label>
+                        <input type="text" name="final_contract_value" class="form-control">
                     </div>
-                </div>
+                 </div>
 
-                <!-- Project City -->
+                <!-- project status -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="form-control select2" multiple="multiple" name="prj_city" required>
+                        <label class="col-form-label">Project Status</label>
+                        <select name="project_status" class="form-control select">
                             <option value="">Select</option>
-                            {% for city in pro_city_data %}
-                                <option value="{{ city.base_value }}">
-                                    {{ city.base_description }}
+                            {% for type in project_status_data %}
+                                <option value="{{ type.base_value }}">
+                                    {{ type.base_description }}
                                 </option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-
-
 
                 <!-- Description -->
                 <div class="col-md-12">
@@ -188,6 +314,155 @@
                     </div>
                 </div>
 
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Service Type</label>
+                        <select name="service_type" id="service_type" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in service_type_data %}
+                                <option value="{{ type.base_value }}" {% if type.base_value == user.service_type %}selected{% endif %}>
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Service Category</label>
+                        <select name="service_category" id="service_category" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in service_category_data %}
+                                <option value="{{ type.base_value }}" {% if type.base_value == user.service_category %}selected{% endif %}>
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="prj_city" id="prj_city" required>
+                            <option value="">Select</option>
+                                {% for city in pro_city_data %}
+                                    <option value="{{ city.base_value }}" {% if city.base_value == user.prj_city %}selected{% endif %}>
+                                        {{ city.base_description }}
+                                    </option>
+                                {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Sub Location</label>
+                        <select name="pro_sub_location" id="pro_sub_location" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in pro_sub_location_data %}
+                                <option value="{{ type.base_value }}" {% if type.base_value == user.pro_sub_location %}selected{% endif %}>
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Customer</label>
+                        <select name="customer" id="customer" class="form-control select">
+                            <option value="">Select</option>
+                            <option value="cus1">cus1</option>
+                            {% for type in customer_data %}
+                                <option value="{{ type.base_value }}" {% if type.base_value == user.customer %}selected{% endif %}>
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Agreement Ref</label>
+                        <input type="text" id="agreement_ref" name="agreement_ref" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">OP Head</label>
+                        <select name="op_head" id="op_head" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.op_head %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Manager</label>
+                        <select name="manager" id="manager" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.manager %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Commercial Manager</label>
+                        <select name="commercial_manager" id="commercial_manager" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.commercial_manager %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Procurement User</label>
+                        <select name="procurement_user" id="procurement_user" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.procurement_user %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Indent User</label>
+                        <select name="indent_user" id="indent_user" class="form-control select">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.indent_user %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+
                 <!-- Row 2 -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -206,30 +481,6 @@
                     <div class="mb-3">
                         <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
                         <input class="form-control" id="project_value" name="project_value" type="text" required>
-                    </div>
-                </div>
-
-                <!-- Row 3 -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Main Contractor <span class="text-danger">*</span></label>
-                        <select class="select form-control" id="main_contractor" name="main_contractor" required>
-                            <option value="">Select</option>
-                            <option value="NovaWave LLC">NovaWave LLC</option>
-                            <option value="Silver Hawk">Silver Hawk</option>
-                            <option value="Harbor View">Harbor View</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Sub Contractor <span class="text-danger">*</span></label>
-                        <select class="select form-control" id="sub_contractor" name="sub_contractor" required>
-                            <option value="">Select</option>
-                            <option value="NovaWave LLC">NovaWave LLC</option>
-                            <option value="Silver Hawk">Silver Hawk</option>
-                            <option value="Harbor View">Harbor View</option>
-                        </select>
                     </div>
                 </div>
 
@@ -256,30 +507,23 @@
                     </div>
                 </div>
 
-                <!-- Consultant -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Consultant <span class="text-danger">*</span></label>
-                        <select class="multiple-img form-select" id="consultant" multiple name="consultant" required>
-                            <option value="Darlee Robertson">Darlee Robertson</option>
-                            <option value="Sharon Roy">Sharon Roy</option>
-                            <option value="Vaughan">Vaughan</option>
-                            <option value="Jessica">Jessica</option>
-                            <option value="Carol Thomas">Carol Thomas</option>
-                        </select>
-
+                        <label class="col-form-label">Final Contract Value</label>
+                        <input type="text" id="final_contract_value" name="final_contract_value" class="form-control">
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
-                        <select class="form-control select2" multiple="multiple" name="prj_city" id="prj_city" required>
+                        <label class="col-form-label">Project Status</label>
+                        <select name="project_status" id="project_status" class="form-control select">
                             <option value="">Select</option>
-                                {% for city in pro_city_data %}
-                                    <option value="{{ city.base_value }}" {% if city.base_value == user.prj_city %}selected{% endif %}>
-                                        {{ city.base_description }}
-                                    </option>
-                                {% endfor %}
+                            {% for type in project_status_data %}
+                                <option value="{{ type.base_value }}" {% if type.base_value == user.project_status %}selected{% endif %}>
+                                    {{ type.base_description }}
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>

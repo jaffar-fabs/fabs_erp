@@ -226,7 +226,7 @@
         offcanvasElement.show();
     
         // Clear form fields to indicate loading state
-        $("#prj_code, #prj_name, #project_description, #project_value, #from_date, #due_date, #prj_city, #comp_code, #project_id, #project_type, #main_contractor, #sub_contractor, #consultant").val("");
+        $("#prj_code, #prj_name, #project_description, #project_value, #from_date, #due_date, #prj_city, #comp_code, #project_id, #project_type, #service_type, #service_category, #pro_sub_location, #customer, #agreement_ref, #op_head,#manager,#commercial_manager,#procurement_user,#indent_user,#final_contract_value,#project_status").val("");
         $("#is_Active").prop("checked", false);
     
         $.ajax({
@@ -244,9 +244,18 @@
                 $("#comp_code").val(response.comp_code);
                 $("#project_id").val(response.project_id);
                 $("#project_type").val(response.project_type).trigger("change");
-                $("#main_contractor").val(response.main_contractor).trigger("change");
-                $("#sub_contractor").val(response.sub_contractor).trigger("change");
-                $("#consultant").val(response.consultant).trigger("change");
+                $("#service_type").val(response.service_type).trigger("change");
+                $("#service_category").val(response.service_category).trigger("change");
+                $("#pro_sub_location").val(response.pro_sub_location).trigger("change");
+                $("#customer").val(response.customer).trigger("change");
+                $("#agreement_ref").val(response.agreement_ref);
+                $("#op_head").val(response.op_head).trigger("change");
+                $("#manager").val(response.manager).trigger("change");
+                $("#commercial_manager").val(response.commercial_manager).trigger("change");
+                $("#procurement_user").val(response.procurement_user).trigger("change");
+                $("#indent_user").val(response.indent_user).trigger("change");
+                $("#final_contract_value").val(response.final_contract_value);
+                $("#project_status").val(response.project_status).trigger("change");
     
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);

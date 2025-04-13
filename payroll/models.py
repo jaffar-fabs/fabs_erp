@@ -466,15 +466,25 @@ class projectMaster(models.Model):
     timeline_from = models.DateField(null=False, blank=False)
     timeline_to = models.DateField(null=False, blank=False)
     prj_city = models.CharField(max_length=50, null=True, blank=True)
-    consultant = models.CharField(max_length=50, null=True, blank=True)
-    main_contractor = models.CharField(max_length=50, null=True, blank=True)
-    sub_contractor = models.CharField(max_length=50, null=True, blank=True)
     instance_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_by = models.BigIntegerField()
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    service_type = models.CharField(max_length=500, null=True, blank=True)  
+    service_category = models.CharField(max_length=500, null=True, blank=True)  
+    pro_sub_location = models.CharField(max_length=500, null=True, blank=True)
+    customer = models.CharField(max_length=500, null=True, blank=True)
+    agreement_ref = models.CharField(max_length=500, null=True, blank=True)
+    op_head = models.CharField(max_length=500, null=True, blank=True)
+    manager = models.CharField(max_length=500, null=True, blank=True)
+    commercial_manager = models.CharField(max_length=500, null=True, blank=True)
+    procurement_user = models.CharField(max_length=500, null=True, blank=True)
+    indent_user = models.CharField(max_length=500, null=True, blank=True)
+    final_contract_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    project_status = models.CharField(max_length=50, null=True, blank=True)
+
     
     def __str__(self):
         return self.prj_name

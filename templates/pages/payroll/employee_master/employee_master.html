@@ -1347,7 +1347,6 @@
                             {% for relative in relatives_data %}
                                 <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
                             {% endfor %}
-                            <option value="Father">Father</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
@@ -1356,10 +1355,6 @@
                             {% for document in other_documents_data %}
                                 <option value="{{ document.base_value }}">{{ document.base_description }}</option>
                             {% endfor %}
-                            <option value="visa">Visa Copy</option>
-                            <option value="emirates_id">Emirates ID</option>
-                            <option value="passport">Passport</option>
-                            <option value="birth_certificate">Birth Certificate</option>
                         </select>
                     </div>
                     <div class="col-md-2 mb-3">
@@ -1525,7 +1520,7 @@ function removeDependentRowEdit(button, index) {
                 <div class="flex-grow-1">
                     <label class="form-label">{{ work_location_heading|default:"Staff Work Location" }}</label>
                     <select class="form-select" id="new_license_work_location_{{ employee.employee_id }}">
-                        {% for location in work_locations %}
+                        {% for location in work_location_data %}
                             <option value="{{ location.value }}">{{ location.label }}</option>
                         {% endfor %}
                     </select>
@@ -2813,7 +2808,6 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                                 {% for relative in relatives_data %}
                                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
                                 {% endfor %}
-                                <option value="Father">Father</option>
                             </select>
                         </td>
                         <td>
@@ -2821,10 +2815,6 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                                 {% for document in other_documents_data %}
                                     <option value="{{ document.base_value }}">{{ document.base_description }}</option>
                                 {% endfor %}
-                                <option value="visa">Visa Copy</option>
-                                <option value="emirates_id">Emirates ID</option>
-                                <option value="passport">Passport</option>
-                                <option value="birth_certificate">Birth Certificate</option>
                             </select>
                         </td>
                         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
@@ -2855,16 +2845,14 @@ function addDependentRow_add() {
             <select class="form-select" name="dependent_relationship[]">
                 {% for relative in relatives_data %}
                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
-                    <option value="Father">Father</option>
                 {% endfor %}
             </select>
         </td>
         <td>
             <select class="form-select" name="dependent_doc_type[]">
-                <option value="visa">Visa Copy</option>
-                <option value="emirates_id">Emirates ID</option>
-                <option value="passport">Passport</option>
-                <option value="birth_certificate">Birth Certificate</option>
+                {% for document in other_documents_data %}
+                    <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                {% endfor %}
             </select>
         </td>
         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
@@ -2945,15 +2933,15 @@ function removeDependentRow_add(button) {
                         <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
                         <td>
                             <select class="form-select" name="work_location[]">
-                                {% for location in work_locations %}
-                                    <option value="{{ location.value }}">{{ location.label }}</option>
+                                {% for location in work_location_data %}
+                                    <option value="{{ location.base_value }}">{{ location.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
                         <td>
                             <select class="form-select" name="emirate_issued[]">
                                 {% for emirate in emirates_list %}
-                                    <option value="{{ emirate.value }}">{{ emirate.label }}</option>
+                                    <option value="{{ emirate.base_value }}">{{ emirate.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
@@ -3010,7 +2998,7 @@ function addLicenseRow_add() {
         <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
         <td>
             <select class="form-select" name="work_location[]">
-                {% for location in work_locations %}
+                {% for location in work_location_data %}
                     <option value="{{ location.value }}">{{ location.label }}</option>
                 {% endfor %}
             </select>

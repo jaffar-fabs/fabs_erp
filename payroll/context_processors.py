@@ -196,3 +196,46 @@ def get_other_documents(request):
     return {
         'other_documents_data': other_documents_data
         }
+
+def get_emirates(request):
+    comp_code = get_comp_code(request)
+    emirates_list = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'EMIRATES')
+    return {
+        'emirates_list': emirates_list
+        }
+
+def get_work_location(request):
+    comp_code = get_comp_code(request)
+    work_location_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'WORK_LOCATION')
+    return {
+        'work_location_data': work_location_data
+        }
+
+def get_service_type(request):
+    comp_code = get_comp_code(request)
+    service_type_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'SERVICE_TYPE')
+    return {
+        'service_type_data': service_type_data
+        }
+
+def get_service_category(request):
+    comp_code = get_comp_code(request)
+    service_category_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'SERVICE_CATEGORY')
+    return {
+        'service_category_data': service_category_data
+        }
+
+def get_pro_sub_location(request):
+    comp_code = get_comp_code(request)
+    pro_sub_location_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'PROJECT_SUB_LOCATION')
+    return {
+        'pro_sub_location_data': pro_sub_location_data
+        }
+
+
+def get_project_status(request):
+    comp_code = get_comp_code(request)
+    project_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'PROJECT_STATUS')
+    return {
+        'project_status_data': project_status_data
+        }

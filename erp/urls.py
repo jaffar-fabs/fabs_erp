@@ -39,6 +39,7 @@ urlpatterns = [
     path('sidebar', dashboard_view),
     path('employee',employee_master,name ='employee_master'),
     path('create_employee/', save_employee, name='create_employee'),
+    path('get_employee_details/<int:employee_id>/', views.get_employee_details, name='get_employee_details'),
     path('update_employee/<int:employee_id>/', save_employee, name='update_employee'),
     path('deactivate_employee/<str:employee_id>/', deactivate_employee, name='deactivate_employee'),
     path('after-login/', my_login_view, name='after-login'),

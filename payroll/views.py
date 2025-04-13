@@ -151,6 +151,33 @@ def employee_master(request):
 
     return render(request, 'pages/payroll/employee_master/employee_master.html', context)
 
+def get_employee_details(request, employee_id):
+    set_comp_code(request)
+
+    try:
+        # Fetch the employee details
+        employee = Employee.objects.get(employee_id=employee_id, comp_code=COMP_CODE)
+
+        # Fetch related data
+        documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, document_number__isnull=True)
+        earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
+        dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
+        license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, issued_date__isnull=True)
+
+        # Prepare the context
+        context = {
+            'employee': employee,
+            'documents': documents,
+            'earn_deducts': earn_deducts,
+            'dependents': dependents,
+            'license_and_passes': license_and_passes,
+        }
+
+        return render(request, 'pages/modal/payroll/employee_master_modal.html', context)
+
+    except Employee.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Employee not found'}, status=404)
+
 def save_employee(request, employee_id=None):
     set_comp_code(request)
     if request.method == "POST":
@@ -846,12 +873,21 @@ def project(request):
                     "project_value": project.project_value,
                     "timeline_from": project.timeline_from,
                     "timeline_to": project.timeline_to,
-                    "prj_city": project.prj_city.split(':') if project.prj_city else [],  # Split prj_city into a list
-                    "consultant": project.consultant,
-                    "main_contractor": project.main_contractor,
-                    "sub_contractor": project.sub_contractor,
+                    "prj_city": project.prj_city.split(':') if project.prj_city else [], 
                     "is_active": project.is_active,
                     "comp_code": project.comp_code,
+                    "service_type": project.service_type.split(':') if project.service_type else [], 
+                    "service_category": project.service_category.split(':') if project.service_category else [],
+                    "pro_sub_location": project.pro_sub_location.split(':') if project.pro_sub_location else [],
+                    "customer": project.customer,
+                    "agreement_ref": project.agreement_ref,
+                    "op_head": project.op_head,
+                    "manager": project.manager,
+                    "commercial_manager": project.commercial_manager,
+                    "procurement_user": project.procurement_user,
+                    "indent_user": project.indent_user,
+                    "final_contract_value": project.final_contract_value or 0,
+                    "project_status": project.project_status,
                 })
             except projectMaster.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': 'Project not found'}, status=404)
@@ -912,11 +948,20 @@ def project(request):
                     "timeline_from": project.timeline_from,
                     "timeline_to": project.timeline_to,
                     "prj_city": project.prj_city,
-                    "consultant": project.consultant,
-                    "main_contractor": project.main_contractor,
-                    "sub_contractor": project.sub_contractor,
                     "is_active": project.is_active,
                     "comp_code": project.comp_code,
+                    "service_type": project.service_type,
+                    "service_category": project.service_category,
+                    "pro_sub_location": project.pro_sub_location,
+                    "op_head": project.op_head,
+                    "manager": project.manager,
+                    "commercial_manager": project.commercial_manager,
+                    "procurement_user": project.procurement_user,
+                    "indent_user": project.indent_user,
+                    "customer": project.customer,
+                    "agreement_ref": project.agreement_ref,
+                    "project_status": project.project_status,
+                    "final_contract_value": project.final_contract_value
                 })
 
             # Prepare the context for the template
@@ -950,12 +995,21 @@ def project(request):
             project.timeline_from = request.POST.get("timeline_from", project.timeline_from)
             project.timeline_to = request.POST.get("timeline_to", project.timeline_to)
             project.prj_city = prj_city_str  # Save the prj_city string
-            project.consultant = request.POST.get("consultant", project.consultant)
-            project.main_contractor = request.POST.get("main_contractor", project.main_contractor)
-            project.sub_contractor = request.POST.get("sub_contractor", project.sub_contractor)
             project.is_active = request.POST.get("is_active") == "Active"
             project.created_by = 1
             project.comp_code = request.POST.get("comp_code", project.comp_code)
+            project.service_type = request.POST.get("service_type", project.service_type)
+            project.service_category = request.POST.get("service_category", project.service_category)
+            project.pro_sub_location = request.POST.get("pro_sub_location", project.pro_sub_location)
+            project.op_head = request.POST.get("op_head", project.op_head)
+            project.manager = request.POST.get("manager", project.manager)
+            project.commercial_manager = request.POST.get("commercial_manager", project.commercial_manager)
+            project.procurement_user = request.POST.get("procurement_user", project.procurement_user)
+            project.indent_user = request.POST.get("indent_user", project.indent_user)
+            project.customer = request.POST.get("customer", project.customer)
+            project.agreement_ref = request.POST.get("agreement_ref", project.agreement_ref)
+            project.final_contract_value = request.POST.get("final_contract_value", project.final_contract_value)
+            project.project_status = request.POST.get("project_status", project.project_status)
 
             project.save()
             return redirect("project")
@@ -972,11 +1026,20 @@ def project(request):
                 timeline_to=request.POST.get("timeline_to", "Not specified"),
                 prj_city=prj_city_str,  # Save the prj_city string
                 created_by=1,
-                consultant=request.POST.get("consultant", "Not Assigned"),
-                main_contractor=request.POST.get("main_contractor", "Not Assigned"),
-                sub_contractor=request.POST.get("sub_contractor", "Not Assigned"),
                 is_active=request.POST.get("is_active") == "Active",
-                comp_code=COMP_CODE
+                comp_code=COMP_CODE,
+                service_type=request.POST.get("service_type"),
+                service_category=request.POST.get("service_category"),
+                pro_sub_location=request.POST.get("pro_sub_location"),
+                op_head=request.POST.get("op_head"),
+                manager=request.POST.get("manager"),
+                commercial_manager=request.POST.get("commercial_manager"),
+                procurement_user=request.POST.get("procurement_user"),
+                indent_user=request.POST.get("indent_user"),
+                customer=request.POST.get("customer"),
+                agreement_ref=request.POST.get("agreement_ref"),
+                project_status=request.POST.get("project_status"),
+                final_contract_value=request.POST.get("final_contract_value") or 0.00,
             )
             project.save()
         return redirect("project")
