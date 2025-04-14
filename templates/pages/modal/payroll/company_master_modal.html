@@ -444,8 +444,8 @@
 
 
 
-                <div class="col-md-6 d-flex justify-content-center align-items-center">
-                    <div class="mb-3 d-flex align-items-center">
+                <div class="col-md-12">
+                    <div class="mb-3">
                         <label class="col-form-label me-2" for="is_active">Active</label>
                         <input type="hidden" name="is_active" value="false">
                         <input type="checkbox" class="form-check-input" id="is_Active" name="is_active" value="Active"
@@ -472,8 +472,10 @@
                         <!-- Initial row can be left empty and populated dynamically if editing -->
                     </tbody>
                 </table>
-                <div class="col-md-4 text-end">
+                <div class="col-md-12">
+                    <div class="mb-3">
                     <button type="button" class="btn btn-primary" onclick="add_document()"><i class="fas fa-plus"></i> Add Document</button>
+                </div>
                 </div>
                 <script>
                     function add_document(doc = {}) {
