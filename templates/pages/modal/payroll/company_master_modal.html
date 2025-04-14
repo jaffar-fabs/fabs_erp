@@ -203,8 +203,10 @@
                     <tr>
                         <td>
                             <select class="form-select" name="document_type[]" required>
-                                <option value="Document Type 1">Document Type 1</option>
-                                <option value="Document Type 2">Document Type 2</option>
+                                <option value="">Select Document</option>
+                                {% for comp_doc in comp_doc_data %}
+                                <option value="{{ comp_doc.base_value }}">{{ comp_doc.base_description }}</option>
+                                {% endfor %}
                             </select>
                         </td>
                         <td><input type="text" class="form-control" name="document_number[]" required></td>
@@ -231,9 +233,11 @@
                     var newRow = table.insertRow(table.rows.length);
                     newRow.innerHTML = `
                         <td>
-                            <select class="form-select" name="document_type[]" required>
-                                <option value="Document Type 1">Document Type 1</option>
-                                <option value="Document Type 2">Document Type 2</option>
+                             <select class="form-select" name="document_type[]" required>
+                                <option value="">Select Document</option>
+                                {% for comp_doc in comp_doc_data %}
+                                <option value="{{ comp_doc.base_value }}">{{ comp_doc.base_description }}</option>
+                                {% endfor %}
                             </select>
                         </td>
                         <td><input type="text" class="form-control" name="document_number[]" required></td>
@@ -474,21 +478,25 @@
                 </table>
                 <div class="col-md-12">
                     <div class="mb-3">
-                    <button type="button" class="btn btn-primary" onclick="add_document()"><i class="fas fa-plus"></i> Add Document</button>
+                    <button type="button" class="btn btn-primary" onclick="add_document_edit()"><i class="fas fa-plus"></i> Add Document</button>
                 </div>
                 </div>
                 <script>
-                    function add_document(doc = {}) {
+                    function add_document_edit(doc = {}) {
                         const table = document.getElementById("document_edit").getElementsByTagName('tbody')[0];
                         const newRow = table.insertRow();
                 
                         newRow.innerHTML = `
 
                             <td>
-                                <select class="form-select" name="document_type[]" required>
-                                    <option value="Document Type 1" ${doc.document_type === 'Document Type 1' ? 'selected' : ''}>Document Type 1</option>
-                                    <option value="Document Type 2" ${doc.document_type === 'Document Type 2' ? 'selected' : ''}>Document Type 2</option>
-                                </select>
+                            <select class="form-select" name="document_type[]" required>
+                                <option value="">Select Document</option>
+                                {% for comp_doc in comp_doc_data %}
+                                    <option value="{{ comp_doc.base_value }}" {% if comp_doc.base_value == doc.document_type %}selected{% endif %}>
+                                        {{ comp_doc.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
                             </td>
                             <td><input type="text" class="form-control" name="document_number[]" value="${doc.document_number || ''}"></td>
                             <td><input type="text" class="form-control" name="issued_by[]" value="${doc.issued_by || ''}"></td>
@@ -532,7 +540,7 @@
                 
                     function populate_documents(documents) {
                         for (const doc of documents) {
-                            add_document(doc);
+                            add_document_edit(doc);
                         }
                     }
                 </script>

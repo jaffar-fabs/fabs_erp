@@ -195,15 +195,16 @@
                 // If documents exist in the response
                 if (response.documents && response.documents.length > 0) {
                     response.documents.forEach(function (doc, index) {
+                        // <select class="form-select" name="document_type[]">
+                                    //     <option value="Document Type 1" ${doc.document_type === "Document Type 1" ? "selected" : ""}>Document Type 1</option>
+                                    //     <option value="Document Type 2" ${doc.document_type === "Document Type 2" ? "selected" : ""}>Document Type 2</option>
+                                    // </select>
                         const row = `
                             <tr>
                                 <input type="hidden" name="document_id[]" value="${ doc.document_id }">
                                 
                                 <td>
-                                    <select class="form-select" name="document_type[]">
-                                        <option value="Document Type 1" ${doc.document_type === "Document Type 1" ? "selected" : ""}>Document Type 1</option>
-                                        <option value="Document Type 2" ${doc.document_type === "Document Type 2" ? "selected" : ""}>Document Type 2</option>
-                                    </select>
+                                    <input type="text" class="form-control" name="document_type[]" value="${doc.document_type || ""}" readonly>
                                 </td>
                                 <td><input type="text" class="form-control" name="document_number[]" value="${doc.document_number || ""}"></td>
                                 <td><input type="text" class="form-control" name="issued_by[]" value="${doc.issued_by || ""}"></td>
@@ -232,7 +233,7 @@
                     });
                 } else {
                     // Add empty row if no documents
-                    add_document();
+                    add_document_edit();
                 }
 
             },

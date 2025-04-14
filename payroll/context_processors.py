@@ -247,3 +247,9 @@ def get_project_status(request):
         'project_status_data': project_status_data
         }
 
+def get_company_documents(request):
+    comp_code = get_comp_code(request)
+    company_documents_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'COMPANY_DOCUMENTS')
+    return {
+        'comp_doc_data': company_documents_data
+        }
