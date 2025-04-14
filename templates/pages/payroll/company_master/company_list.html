@@ -133,21 +133,16 @@
         event.preventDefault();
 
         var company_id = $(this).data("id");
-
-        // Open Offcanvas immediately to improve perceived speed
         var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
         offcanvasElement.show();
 
-        // Clear form fields to indicate loading state
         $("#company_id, #company_name, #company_code, #inception_date, #labour_ministry_id, #labour_bank_acc_no, #currency_code, #address_line1, #address_line2, #address_line_city, #address_line_state, #country_code, #telephone1, #telephone2, #fax_number, #mail_id, #social_media_id, #instance_id, #salary_roundoff, #po_box").val("");
 
         $("#image_preview").attr("src", "").hide();
         $("#is_Active").prop("checked", false);
 
-        // Clear document table rows except the first one
         $("#document_edit tbody tr").not(":first").remove();
 
-        // Reset all inputs in the first row
         $("#document_edit tbody tr:first select[name='document_type[]']").val("");
         $("#document_edit tbody tr:first input[name='document_number[]']").val("");
         $("#document_edit tbody tr:first input[name='issued_by[]']").val("");
@@ -189,7 +184,7 @@
 
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);
-                // Clear all document rows except the first
+                
                 $("#document_edit tbody").empty();
 
                 // If documents exist in the response
@@ -232,7 +227,6 @@
                         $("#document_edit tbody").append(row);
                     });
                 } else {
-                    // Add empty row if no documents
                     add_document_edit();
                 }
 
