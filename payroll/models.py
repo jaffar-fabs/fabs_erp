@@ -664,6 +664,26 @@ class CompanyMaster(models.Model):
 
     def __str__(self):
         return self.company_name
+    
+
+class CompanyDocument(models.Model):
+    company_id = models.BigAutoField(primary_key=True)
+    comp_code = models.CharField(max_length=50)  # Removed default value
+    document_type = models.CharField(max_length=50)
+    document_number = models.CharField(max_length=50)
+    issued_by = models.CharField(max_length=50, blank=True, null=True)
+    issued_date = models.DateField()
+    expiry_date = models.DateField()
+    status = models.CharField(max_length=50, blank=True, null=True)
+    remarks = models.CharField(max_length=500, blank=True, null=True)
+    document_file = models.FileField(upload_to=company_logo_upload_path)  # Document file
+    created_by = models.BigIntegerField(null=True, blank=True)  # Created by
+    created_on = models.DateTimeField(auto_now_add=True)  # Created on
+    modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
+    modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
+
+    def __str__(self):
+        return f"{self.document_type} ({self.company_id})"
 
 # ------------------------------------------------------------------------------------------------------------
 

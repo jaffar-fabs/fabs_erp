@@ -2016,6 +2016,17 @@ def add_company(request):
             is_active=request.POST.get("is_active") == "Active",
             created_by=1,
         )
+        CompanyDocument.objects.create(
+            comp_code=COMP_CODE,
+            document_type=request.POST.get("document_type[]"),
+            documnent_number=request.POST.get("document_number[]"),
+            document_file=request.FILES.get("document_file[]"),
+            issued_by=request.POST.get("issued_by[]"),
+            issued_date=request.POST.get("issued_date[]"),
+            expiry_date=request.POST.get("expiry_date[]"),
+            status =request.POST.get("status[]"),
+            remarks=request.POST.get("remarks[]")
+        )
         return redirect('company_list')
     
     return redirect('company_list')

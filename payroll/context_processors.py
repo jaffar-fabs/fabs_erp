@@ -204,6 +204,13 @@ def get_emirates(request):
         'emirates_list': emirates_list
         }
 
+def get_nationality(request):
+    comp_code = get_comp_code(request)
+    nationality_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'NATIONALITY')
+    return {
+        'nationality_data': nationality_data
+        }
+
 def get_work_location(request):
     comp_code = get_comp_code(request)
     work_location_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'WORK_LOCATION')
@@ -239,3 +246,4 @@ def get_project_status(request):
     return {
         'project_status_data': project_status_data
         }
+

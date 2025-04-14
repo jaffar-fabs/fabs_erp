@@ -209,6 +209,91 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
+                        <select name="nationality" class="form-select" required>
+                            <option value="">Select</option>
+                            {% for nation in nationality_data %}
+                            <option value="{{ nation.base_value }}" {% if employee.nationality == nation.base_value %}selected{% endif %}>
+                                {{ nation.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a Nationality</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                        <select name="designation" class="form-control" required>
+                            <option value="">Select</option>
+                            {% for desig in desig_data %}
+                            <option value="{{ desig.base_value }}" {% if employee.designation == desig.base_value %}selected{% endif %}>
+                                {{ desig.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please select a designation.</div>
+                    </div>                                    
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
+                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join|date:'Y-m-d' }}" required>
+                        <div class="invalid-feedback">Please provide a date of joining.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Date of Rejoin</label>
+                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin|date:'Y-m-d' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Qualification</label>
+                        <input type="text" name="qualification" class="form-control" value="{{ employee.qualification }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+    <div class="mb-3">
+        <label class="col-form-label">Marital Status</label>
+        <select name="emp_marital_status" class="form-select">
+            <option value="">Select</option>
+            {% for status in mar_status_data %}
+            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
+                {{ status.base_description }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Spouse Name</label>
+                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Father's Name</label>
+                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mother's Name</label>
+                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Religion</label>
+                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
+                    </div>
+                </div>               
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
                         <select name="emp_status" class="form-select" required>
                             <option value="">Select</option>
@@ -254,73 +339,11 @@
                         <label class="col-form-label">Release Reason</label>
                         <input type="text" name="release_reason" class="form-control" value="{{ employee.release_reason }}">
                     </div>
-                </div>
+                </div> 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Father's Name</label>
-                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Mother's Name</label>
-                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nationality</label>
-                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Religion</label>
-                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Qualification</label>
-                        <input type="text" name="qualification" class="form-control" value="{{ employee.qualification }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-    <div class="mb-3">
-        <label class="col-form-label">Marital Status</label>
-        <select name="emp_marital_status" class="form-select">
-            <option value="">Select</option>
-            {% for status in mar_status_data %}
-            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
-                {{ status.base_description }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Spouse's Name</label>
-                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
-                            <option value="">Select</option>
-                            {% for desig in desig_data %}
-                            <option value="{{ desig.base_value }}" {% if employee.designation == desig.base_value %}selected{% endif %}>
-                                {{ desig.base_description }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Department</label>
-                        <select name="department" class="form-control">
+                        <label class="col-form-label">Department <span class="text-danger">*</span></label>
+                        <select name="department" class="form-control" required>
                             <option value="">Select</option>
                             {% for dept in dept_data %}
                             <option value="{{ dept.base_value }}" {% if employee.department == dept.base_value %}selected{% endif %}>
@@ -328,19 +351,8 @@
                             </option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a department.</div>
                     </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Join</label>
-                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join|date:'Y-m-d' }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Rejoin</label>
-                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin|date:'Y-m-d' }}">
-                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -420,28 +432,33 @@
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="local_addr_line1" class="form-control" value="{{ employee.local_addr_line1 }}">
+                                            <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_addr_line1" class="form-control" value="{{ employee.local_addr_line1 }}" required>
+                                            <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
                                             <input type="text" name="local_addr_line2" class="form-control" value="{{ employee.local_addr_line2 }}">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="local_city" class="form-control" value="{{ employee.local_city }}">
+                                            <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_city" class="form-control" value="{{ employee.local_city }}" required>
+                                            <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="local_state" class="form-control" value="{{ employee.local_state }}">
+                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_state" class="form-control" value="{{ employee.local_state }}" required>
+                                            <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
+                                            <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}" required>
+                                            <div class="invalid-feedback">Please provide a country code.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
+                                            <label class="col-form-label">Phone Number <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}" required>
+                                            <div class="invalid-feedback">Please provide a phone number.</div>  
                                         </div>
                                     </div>
                                 </div>
@@ -504,8 +521,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project</label>
-                        <select name="prj_code" class="form-control">
+                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
+                        <select name="prj_code" class="form-control" required>
                             <option value="">Select</option>
                             {% for project in project_data %}
                             <option value="{{ project.prj_code }}" {% if employee.prj_code == project.prj_code %}selected{% endif %}>
@@ -513,6 +530,7 @@
                             </option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a project.</div>
                     </div>                                    
                 </div>
             </div>
@@ -1857,6 +1875,92 @@ function removeDependentRowEdit(button, index) {
                                         <div class="invalid-feedback">Please select a gender.</div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
+                                        <select name="nationality" class="form-select" required>
+                                            <option value="">Select</option>
+                                            {% for nation in nationality_data %}
+                                            <option value="{{ nation.base_value }}">{{ nation.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a Nationality</div>
+                                    </div>
+                                </div>
+                                <!-- Designation (Dropdown) -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Designation <span class="text-danger">*</span> </label>
+                                        <select name="designation" class="form-control" required>
+                                            <option value="">Select</option>
+                                            {% for statuses in desig_data %}
+                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a designation.</div>
+                                    </div>
+                                </div>
+                                <!-- Date of Join -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Join <span class="text-danger">*</span> </label>
+                                        <input type="date" name="date_of_join" class="form-control" required>
+                                        <div class="invalid-feedback">Please Select Date of Join</div>
+                                    </div>
+                                </div>
+
+                                <!-- Date of Rejoin -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" class="form-control">
+                                    </div>
+                                </div>
+                                <!-- Qualification before Marital Status -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Qualification</label>
+                                        <input type="text" name="qualification" class="form-control">
+                                    </div>
+                                </div>
+                                <!-- Marital Status moved after Qualification -->
+                                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Marital Status</label>
+                        <select name="emp_marital_status" class="form-select">
+                            <option value="">Select</option>
+                            {% for status in mar_status_data %}
+                            <option value="{{ status.base_value }}">
+                                {{ status.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Spouse Name</label>
+                                        <input type="text" name="spouse_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Father Name</label>
+                                        <input type="text" name="father_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Mother Name</label>
+                                        <input type="text" name="mother_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Religion</label>
+                                        <input type="text" name="religion" class="form-control">
+                                    </div>
+                                </div>        
                                 <!-- Status and Sub Status (Same Line) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -1898,98 +2002,19 @@ function removeDependentRowEdit(button, index) {
                                         <label class="col-form-label">Release Reason</label>
                                         <input type="text" name="release_reason" class="form-control">
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Father's Name</label>
-                                        <input type="text" name="father_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Mother's Name</label>
-                                        <input type="text" name="mother_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Nationality</label>
-                                        <input type="text" name="nationality" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Religion</label>
-                                        <input type="text" name="religion" class="form-control">
-                                    </div>
-                                </div>
-                                <!-- Qualification before Marital Status -->
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Qualification</label>
-                                        <input type="text" name="qualification" class="form-control">
-                                    </div>
-                                </div>
-                                <!-- Marital Status moved after Qualification -->
-                                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Marital Status</label>
-                        <select name="emp_marital_status" class="form-select">
-                            <option value="">Select</option>
-                            {% for status in mar_status_data %}
-                            <option value="{{ status.base_value }}">
-                                {{ status.base_description }}
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Spouse's Name</label>
-                                        <input type="text" name="spouse_name" class="form-control">
-                                    </div>
-                                </div>
-                                <!-- Designation (Dropdown) -->
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Designation</label>
-                                        <select name="designation" class="form-control">
-                                            <option value="">Select</option>
-                                            {% for statuses in desig_data %}
-                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
+                                </div>                        
 
                                 <!-- Department (Dropdown) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Department</label>
-                                        <select name="department" class="form-control">
+                                        <label class="col-form-label">Department <span class="text-danger">*</span> </label>
+                                        <select name="department" class="form-control" required>
                                             <option value="">Select</option>
                                             {% for statuses in dept_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
                                             {% endfor %}
                                         </select>
-                                    </div>
-                                </div>
-
-                                <!-- Date of Join -->
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Join</label>
-                                        <input type="date" name="date_of_join" class="form-control">
-                                    </div>
-                                </div>
-
-                                <!-- Date of Rejoin -->
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Rejoin</label>
-                                        <input type="date" name="date_of_rejoin" class="form-control">
+                                        <div class="invalid-feedback">Please select a department.</div>
                                     </div>
                                 </div>
 
@@ -2079,28 +2104,33 @@ function removeDependentRowEdit(button, index) {
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="local_addr_line1" class="form-control">
+                                            <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_addr_line1" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a local address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
                                             <input type="text" name="local_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="uae_city" class="form-control">
+                                            <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                            <input type="text" name="uae_city" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="uae_state" class="form-control">
+                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
+                                            <input type="text" name="uae_state" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control">
+                                            <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_country_code" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a country code.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="local_phone_no" class="form-control">
+                                            <label class="col-form-label">Phone Number <span class="text-danger">*</span></label>
+                                            <input type="text" name="local_phone_no" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a phone number.</div>
                                         </div>
                                     </div>
 
@@ -2166,13 +2196,14 @@ function removeDependentRowEdit(button, index) {
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project</label>
-                        <select name="prj_code" class="form-control">
+                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
+                        <select name="prj_code" class="form-control" required>
                             <option value="">Select</option>
                             {% for statuses in project_data %}
                                 <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a project.</div>
                     </div>
                 </div>
             </div>

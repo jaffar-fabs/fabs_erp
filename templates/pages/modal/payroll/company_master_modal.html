@@ -2,7 +2,7 @@
 
 
 <!-- Add New Project -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1200px !important;">
     <div class="offcanvas-header border-bottom">
         <h4>Add New Company</h4>
         <button type="button"
@@ -184,7 +184,78 @@
                     </div>
                 </div>
             </div>
-        
+            
+            <table class="table" id="document_add">
+                <thead>
+                    <tr>
+                        <th>Document Type</th>
+                        <th>Document Number</th>
+                        <th>Issued By</th>
+                        <th>Issued Date</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                        <th>File Upload</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="form-select" name="document_type[]" required>
+                                <option value="Document Type 1">Document Type 1</option>
+                                <option value="Document Type 2">Document Type 2</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control" name="document_number[]" required></td>
+                        <td><input type="text" class="form-control" name="issued_by[]"></td>
+                        <td><input type="date" class="form-control" name="issued_date[]"></td>
+                        <td><input type="date" class="form-control" name="expiry_date[]"></td>
+                        <td><input type="text" class="form-control" name="status[]"></td>
+                        <td><input type="text" class="form-control" name="remarks[]"></td>
+                        <td><input type="file" class="form-control" name="document_file[]"></td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="remove_document(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="add_document()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <script>
+                function add_document() {
+                    var table = document.getElementById("document_add").getElementsByTagName('tbody')[0];
+                    var newRow = table.insertRow(table.rows.length);
+                    newRow.innerHTML = `
+                        <td>
+                            <select class="form-select" name="document_type[]" required>
+                                <option value="Document Type 1">Document Type 1</option>
+                                <option value="Document Type 2">Document Type 2</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control" name="document_number[]" required></td>
+                        <td><input type="text" class="form-control" name="issued_by[]"></td>
+                        <td><input type="date" class="form-control" name="issued_date[]"></td>
+                        <td><input type="date" class="form-control" name="expiry_date[]"></td>
+                        <td><input type="text" class="form-control" name="status[]"></td>
+                        <td><input type="text" class="form-control" name="remarks[]"></td>
+                        <td><input type="file" class="form-control" name="document_file[]"></td>
+                        <td><button type="button" class="btn btn-danger" onclick="remove_document(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="add_document()">
+                                <i class="fas fa-plus"></i>
+                            </button></td>`;
+                }
+                function remove_document(button) {
+                    var row = button.parentNode.parentNode;
+                    row.parentNode.removeChild(row);
+                }
+            </script>
+
             <!-- Buttons -->
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
@@ -197,7 +268,7 @@
 
 
 <!-- Edit Project -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1200px !important;">
     <div class="offcanvas-header border-bottom">
         <h4>Edit Company Details</h4>
         <button type="button"
