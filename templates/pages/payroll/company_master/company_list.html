@@ -140,8 +140,24 @@
 
         // Clear form fields to indicate loading state
         $("#company_id, #company_name, #company_code, #inception_date, #labour_ministry_id, #labour_bank_acc_no, #currency_code, #address_line1, #address_line2, #address_line_city, #address_line_state, #country_code, #telephone1, #telephone2, #fax_number, #mail_id, #social_media_id, #instance_id, #salary_roundoff, #po_box").val("");
+
         $("#image_preview").attr("src", "").hide();
         $("#is_Active").prop("checked", false);
+
+        // Clear document table rows except the first one
+        $("#document_edit tbody tr").not(":first").remove();
+
+        // Reset all inputs in the first row
+        $("#document_edit tbody tr:first select[name='document_type[]']").val("");
+        $("#document_edit tbody tr:first input[name='document_number[]']").val("");
+        $("#document_edit tbody tr:first input[name='issued_by[]']").val("");
+        $("#document_edit tbody tr:first input[name='issued_date[]']").val("");
+        $("#document_edit tbody tr:first input[name='expiry_date[]']").val("");
+        $("#document_edit tbody tr:first input[name='status[]']").val("");
+        $("#document_edit tbody tr:first input[name='remarks[]']").val("");
+        $("#document_edit tbody tr:first input[name='document_file[]']").val("");
+        $("#document_edit tbody tr:first .file-preview").empty();
+
 
         $.ajax({
             url: "/payroll/edit_company/",
@@ -173,6 +189,52 @@
 
                 let isActive = response.is_active === true;
                 $("#is_Active").prop("checked", isActive);
+                // Clear all document rows except the first
+                $("#document_edit tbody").empty();
+
+                // If documents exist in the response
+                if (response.documents && response.documents.length > 0) {
+                    response.documents.forEach(function (doc, index) {
+                        const row = `
+                            <tr>
+                                <input type="hidden" name="document_id[]" value="${ doc.document_id }">
+                                
+                                <td>
+                                    <select class="form-select" name="document_type[]">
+                                        <option value="Document Type 1" ${doc.document_type === "Document Type 1" ? "selected" : ""}>Document Type 1</option>
+                                        <option value="Document Type 2" ${doc.document_type === "Document Type 2" ? "selected" : ""}>Document Type 2</option>
+                                    </select>
+                                </td>
+                                <td><input type="text" class="form-control" name="document_number[]" value="${doc.document_number || ""}"></td>
+                                <td><input type="text" class="form-control" name="issued_by[]" value="${doc.issued_by || ""}"></td>
+                                <td><input type="date" class="form-control" name="issued_date[]" value="${doc.issued_date || ""}"></td>
+                                <td><input type="date" class="form-control" name="expiry_date[]" value="${doc.expiry_date || ""}"></td>
+                                <td><input type="text" class="form-control" name="status[]" value="${doc.status || ""}"></td>
+                                <td><input type="text" class="form-control" name="remarks[]" value="${doc.remarks || ""}"></td>
+                                <td>
+                                    <input type="file" class="form-control" name="document_file[]">
+                                    ${doc.file_url ? `<div class="file-preview mt-1">
+                                        <a href="${window.location.origin + doc.file_url}" target="_blank">Preview</a> |
+                                        <a href="${window.location.origin + doc.file_url}" download>Download</a>
+                                    </div>` : ""}
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" onclick="remove_document(this)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="add_document()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        $("#document_edit tbody").append(row);
+                    });
+                } else {
+                    // Add empty row if no documents
+                    add_document();
+                }
+
             },
             error: function (xhr, status, error) {
                 console.error("Error:", xhr.responseText);

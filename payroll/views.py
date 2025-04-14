@@ -22,6 +22,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Sum, Count
 import pdb
+from itertools import zip_longest
 
 PAGINATION_SIZE = 6
 
@@ -309,7 +310,6 @@ def save_employee(request, employee_id=None):
         earn_deduct_codes = request.POST.getlist("entry_code[]")
         earn_deduct_amounts = request.POST.getlist("entry_amount[]")
         prorated_flags = request.POST.getlist("entry_proated_flag[]")
-        print(earn_deduct_types,earn_deduct_codes,earn_deduct_amounts,prorated_flags)
         # Delete existing entries for the employee
         EarnDeductMaster.objects.filter(
             comp_code=COMP_CODE,
@@ -370,7 +370,7 @@ def save_employee(request, employee_id=None):
         dependent_doc_files = request.FILES.getlist("dependent_doc_file[]")
 
         # Create new dependent entries
-        from itertools import zip_longest
+        
 
         for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip_longest(
                 dependent_relationships, dependent_doc_types, dependent_doc_numbers,
@@ -1956,7 +1956,10 @@ def company_master(request):
         current_url = f"{get_url}?"
 
     # Initialize the query
-    query = CompanyMaster.objects.filter(company_code=COMP_CODE)
+    if request.session.get('username') == "SYSTEM":
+        query = CompanyMaster.objects.all()
+    else:
+        query = CompanyMaster.objects.filter(company_code=COMP_CODE)
 
     # Apply search filter if a keyword is provided
     if keyword:
@@ -1993,7 +1996,7 @@ def add_company(request):
     set_comp_code(request)
     if request.method == "POST":
         CompanyMaster.objects.create(
-            company_code=COMP_CODE,
+            company_code=request.POST.get("company_code"),
             company_name=request.POST.get("company_name"),
             company_status=request.POST.get("company_status"),
             inception_date=request.POST.get("inception_date"),
@@ -2016,17 +2019,30 @@ def add_company(request):
             is_active=request.POST.get("is_active") == "Active",
             created_by=1,
         )
-        CompanyDocument.objects.create(
-            comp_code=COMP_CODE,
-            document_type=request.POST.get("document_type[]"),
-            documnent_number=request.POST.get("document_number[]"),
-            document_file=request.FILES.get("document_file[]"),
-            issued_by=request.POST.get("issued_by[]"),
-            issued_date=request.POST.get("issued_date[]"),
-            expiry_date=request.POST.get("expiry_date[]"),
-            status =request.POST.get("status[]"),
-            remarks=request.POST.get("remarks[]")
-        )
+
+        document_type = request.POST.getlist("document_type[]")
+        document_number = request.POST.getlist("document_number[]")
+        document_file = request.FILES.getlist("document_file[]")
+        issued_by = request.POST.getlist("issued_by[]")
+        issued_date = request.POST.getlist("issued_date[]")
+        expiry_date = request.POST.getlist("expiry_date[]")
+        status = request.POST.getlist("status[]")
+        remarks = request.POST.getlist("remarks[]")
+        print(document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks) 
+
+        for document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks in zip(
+            document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks):
+            CompanyDocument.objects.create(
+                company_code = request.POST.get("company_code"),
+                document_type=document_type,
+                document_number=document_number,
+                document_file=document_file,
+                issued_by=issued_by,
+                issued_date=issued_date,
+                expiry_date=expiry_date,
+                status=status,
+                remarks=remarks
+            )
         return redirect('company_list')
     
     return redirect('company_list')
@@ -2036,7 +2052,24 @@ def company_edit(request):
     if request.method == "GET":
         company_id = request.GET.get("company_id")
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(company_id), company_code=COMP_CODE)
+            company = get_object_or_404(CompanyMaster, company_id=int(company_id))
+            company_documents = CompanyDocument.objects.filter(company_code=company.company_code)
+
+            document_data = []
+
+            for doc in company_documents:
+                document_data.append({
+                    "document_id": doc.company_id,
+                    "document_type": doc.document_type,
+                    "document_number": doc.document_number,
+                    "issued_by": doc.issued_by,
+                    "issued_date": doc.issued_date,
+                    "expiry_date": doc.expiry_date,
+                    "status": doc.status,
+                    "remarks": doc.remarks,
+                    "file_url": f"{settings.MEDIA_URL}{doc.document_file}" if doc.document_file else ""
+                })
+
             return JsonResponse({
                 "company_id": company.company_id,
                 "company_code": company.company_code,
@@ -2060,7 +2093,8 @@ def company_edit(request):
                 "instance_id": company.instance_id,
                 "salary_roundoff": company.salary_roundoff,
                 "po_box": company.po_box,
-                "is_active": company.is_active
+                "is_active": company.is_active,
+                "documents": document_data
             })
         except Exception as e:
             print(f"Error in company_edit: {str(e)}")
@@ -2069,7 +2103,7 @@ def company_edit(request):
     if request.method == "POST":
         comp_id = request.POST.get('company_id')
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(comp_id), company_code=COMP_CODE)
+            company = get_object_or_404(CompanyMaster, company_id=int(comp_id))
             if 'image_url' in request.FILES:
                 image_file = request.FILES['image_url']
                 file_path = f'company_logos/{company.company_code}/{image_file.name}'
@@ -2098,6 +2132,58 @@ def company_edit(request):
             company.is_active = request.POST.get("is_active") == "Active"
 
             company.save()
+
+            # Document update logic
+            remove_ids = request.POST.getlist("remove_id[]")  
+            document_ids = request.POST.getlist("document_id[]")  
+            document_type = request.POST.getlist("document_type[]")
+            document_number = request.POST.getlist("document_number[]")
+            document_file = request.FILES.getlist("document_file[]")
+            issued_by = request.POST.getlist("issued_by[]")
+            issued_date = request.POST.getlist("issued_date[]")
+            expiry_date = request.POST.getlist("expiry_date[]")
+            status = request.POST.getlist("status[]")
+            remarks = request.POST.getlist("remarks[]")
+            print(remove_ids,document_ids, document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks)
+            for i in range(len(document_type)):
+                doc_id = document_ids[i] if i < len(document_ids) else None
+                file = document_file[i] if i < len(document_file) else None
+
+                if len(remove_ids) > 0 and remove_ids[i] != "":
+                    try:
+                        doc = CompanyDocument.objects.get(company_id=remove_ids[i], company_code=company.company_code)
+                        doc.delete()
+                    except CompanyDocument.DoesNotExist:
+                        print(f"Document with id {remove_ids[i]} not found.")
+
+                if doc_id and doc_id != "" and doc_id != "undefined":  # Update existing document
+                    try:
+                        doc = CompanyDocument.objects.get(company_id=doc_id, company_code=company.company_code)
+                        doc.document_type = document_type[i]
+                        doc.document_number = document_number[i]
+                        doc.issued_by = issued_by[i]
+                        doc.issued_date = issued_date[i]
+                        doc.expiry_date = expiry_date[i]
+                        doc.status = status[i]
+                        doc.remarks = remarks[i]
+                        if file:
+                            doc.document_file = file
+                        doc.save()
+                    except CompanyDocument.DoesNotExist:
+                        print(f"Document with id {doc_id} not found.")
+                else:  # New document
+                    CompanyDocument.objects.create(
+                        company_code=company.company_code,
+                        document_type=document_type[i],
+                        document_number=document_number[i],
+                        document_file=file,
+                        issued_by=issued_by[i],
+                        issued_date=issued_date[i],
+                        expiry_date=expiry_date[i],
+                        status=status[i],
+                        remarks=remarks[i]
+                    )
+
 
             return redirect('company_list')
 

@@ -668,7 +668,7 @@ class CompanyMaster(models.Model):
 
 class CompanyDocument(models.Model):
     company_id = models.BigAutoField(primary_key=True)
-    comp_code = models.CharField(max_length=50)  # Removed default value
+    company_code = models.CharField(max_length=50)  # Removed default value
     document_type = models.CharField(max_length=50)
     document_number = models.CharField(max_length=50)
     issued_by = models.CharField(max_length=50, blank=True, null=True)

@@ -452,7 +452,89 @@
                             {% if is_active %}checked{% endif %}>
                     </div>
                 </div>
+                <div id="remove_ids_container"></div>
 
+                <table class="table" id="document_edit">
+                    <thead>
+                        <tr>
+                            <th>Document Type</th>
+                            <th>Document Number</th>
+                            <th>Issued By</th>
+                            <th>Issued Date</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                            <th>File Upload</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Initial row can be left empty and populated dynamically if editing -->
+                    </tbody>
+                </table>
+                <div class="col-md-4 text-end">
+                    <button type="button" class="btn btn-primary" onclick="add_document()"><i class="fas fa-plus"></i> Add Document</button>
+                </div>
+                <script>
+                    function add_document(doc = {}) {
+                        const table = document.getElementById("document_edit").getElementsByTagName('tbody')[0];
+                        const newRow = table.insertRow();
+                
+                        newRow.innerHTML = `
+
+                            <td>
+                                <select class="form-select" name="document_type[]" required>
+                                    <option value="Document Type 1" ${doc.document_type === 'Document Type 1' ? 'selected' : ''}>Document Type 1</option>
+                                    <option value="Document Type 2" ${doc.document_type === 'Document Type 2' ? 'selected' : ''}>Document Type 2</option>
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control" name="document_number[]" value="${doc.document_number || ''}"></td>
+                            <td><input type="text" class="form-control" name="issued_by[]" value="${doc.issued_by || ''}"></td>
+                            <td><input type="date" class="form-control" name="issued_date[]" value="${doc.issued_date || ''}"></td>
+                            <td><input type="date" class="form-control" name="expiry_date[]" value="${doc.expiry_date || ''}"></td>
+                            <td><input type="text" class="form-control" name="status[]" value="${doc.status || ''}"></td>
+                            <td><input type="text" class="form-control" name="remarks[]" value="${doc.remarks || ''}"></td>
+                            <td>
+                                ${doc.file_url 
+                                    ? `<a href="${doc.file_url}" target="_blank">View</a><br>` 
+                                    : ''
+                                }
+                                <input type="file" class="form-control" name="document_file[]">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="remove_document(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>`;
+                    }
+                
+                    function remove_document(button) {
+                        const row = button.closest('tr');
+                        
+                        // Get the document ID from the hidden input in this row
+                        const documentId = row.querySelector('input[name="document_id[]"]')?.value;
+
+                        if (documentId) {
+                            // Create a hidden input to store the removed ID
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'remove_id[]';
+                            input.value = documentId;
+
+                            // Append it to the form or any container (like a hidden div)
+                            document.getElementById('remove_ids_container').appendChild(input);
+                        }
+                        row.remove();
+                    }
+
+                
+                    function populate_documents(documents) {
+                        for (const doc of documents) {
+                            add_document(doc);
+                        }
+                    }
+                </script>
+                                
             </div>
         
             <!-- Buttons -->
