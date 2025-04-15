@@ -253,3 +253,17 @@ def get_company_documents(request):
     return {
         'comp_doc_data': company_documents_data
         }
+
+def get_floor(request):
+    comp_code = get_comp_code(request)
+    floor_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'FLOOR')
+    return {
+        'floor_data': floor_data
+        }
+
+def get_room_type(request):
+    comp_code = get_comp_code(request)
+    room_type_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'ROOM_TYPE')
+    return {
+        'room_type_data': room_type_data
+        }

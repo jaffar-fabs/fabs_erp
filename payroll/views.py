@@ -3274,6 +3274,7 @@ def camp_master_edit(request):
             occupied = request.POST.getlist('occupied[]')
             available = request.POST.getlist('available[]')
             delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
+
             
             for cid, block, flr, typ, front, rooms, low, up, total, occ, avail, rmid in zip_longest(camp_detail_ids, block_name, floor, type, front_field, no_of_rooms,lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available,delete_camp_detail_ids):
                 if rmid:
@@ -3293,21 +3294,23 @@ def camp_master_edit(request):
                     camp_detail.occupied_beds = occ
                     camp_detail.available_beds = avail
                     camp_detail.save()
-                elif cid == '' or None:
-                    CampDetails.objects.create(
-                        comp_code=COMP_CODE,
-                        camp_code=camp_master.camp_code,
-                        block=block,
-                        floor=flr,
-                        type=typ,
-                        front_field=front,
-                        no_of_rooms=rooms,
-                        lower_bed=low,
-                        upper_bed=up,
-                        total_beds=total,
-                        occupied_beds=occ,
-                        available_beds=avail
-                    )
+                elif not cid:
+                        print("Creating new camp detail")
+                        print(COMP_CODE, camp_master.camp_code, block, flr, typ, front, rooms, low, up, total, occ, avail)
+                        CampDetails.objects.create(
+                            comp_code=COMP_CODE,
+                            camp_code=camp_master.camp_code,
+                            block=block,
+                            floor=flr,
+                            type=typ,
+                            front_field=front,
+                            no_of_rooms=rooms,
+                            lower_bed=low,
+                            upper_bed=up,
+                            total_beds=total,
+                            occupied_beds=occ,
+                            available_beds=avail
+                        )
 
 
             # Update Camp Cheque
@@ -3317,8 +3320,6 @@ def camp_master_edit(request):
             cheque_date = request.POST.getlist('cheque_date[]')
             cheque_amount = request.POST.getlist('cheque_amount[]')
             delete_cheque_detail_id = request.POST.getlist('delete_cheque_detail_id[]')
-
-            print(delete_cheque_detail_id)
 
             for cid, bank, no, date, amount, rmid in zip_longest(cheque_detail_ids, bank_name, cheque_no, cheque_date, cheque_amount, delete_cheque_detail_id):
                 print(cid, bank, no, date, amount, rmid)
@@ -3334,15 +3335,15 @@ def camp_master_edit(request):
                     camp_cheque.cheque_date = date
                     camp_cheque.cheque_amount = amount
                     camp_cheque.save()
-                elif cid == '' or None:
-                    CampCheque.objects.create(
-                        comp_code=COMP_CODE,
-                        camp_code=camp_master.camp_code,
-                        bank_name=bank,
-                        cheque_no=no,
-                        cheque_date=date,
-                        cheque_amount=amount
-                    )
+                elif not cid:
+                        CampCheque.objects.create(
+                            comp_code=COMP_CODE,
+                            camp_code=camp_master.camp_code,
+                            bank_name=bank,
+                            cheque_no=no,
+                            cheque_date=date,
+                            cheque_amount=amount
+                        )
 
             return redirect('camp_master')
         except CampMaster.DoesNotExist:

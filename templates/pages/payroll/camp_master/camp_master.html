@@ -140,7 +140,7 @@
                                     <td>
                                         <select name="type[]" class="form-select">
                                             <option value="">Select Type</option>
-                                            {% for type in type_data %}
+                                            {% for type in room_type_data %}
                                             <option value="{{ type.base_value }}" ${detail.type == "{{ type.base_value }}" ? "selected" : ""}>{{ type.base_description }}</option>
                                             {% endfor %}
                                         </select>

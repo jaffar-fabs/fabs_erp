@@ -97,6 +97,8 @@ TEMPLATES = [
                 'payroll.context_processors.get_pro_sub_location',
                 'payroll.context_processors.get_nationality',
                 'payroll.context_processors.get_company_documents',
+                'payroll.context_processors.get_floor',
+                'payroll.context_processors.get_room_type',
             ],
         },
     },
