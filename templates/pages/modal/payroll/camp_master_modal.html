@@ -408,40 +408,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for detail in camp_details %}
-                                        <tr>
-                                            <td><input class="form-control" name="block_name[]"
-                                                    value="{{ detail.block_name }}" type="text"></td>
-                                            <td><input class="form-control" name="floor[]" value="{{ detail.floor }}"
-                                                    type="text"></td>
-                                            <td><input class="form-control" name="type[]" value="{{ detail.type }}"
-                                                    type="text"></td>
-                                            <td><input class="form-control" name="front_field[]"
-                                                    value="{{ detail.front_field }}" type="text"></td>
-                                            <td><input class="form-control" name="no_of_rooms[]"
-                                                    value="{{ detail.no_of_rooms }}" type="text"></td>
-                                            <td><input class="form-control" name="lower_bed_level[]"
-                                                    value="{{ detail.lower_bed_level }}" type="text"></td>
-                                            <td><input class="form-control" name="upper_bed_level[]"
-                                                    value="{{ detail.upper_bed_level }}" type="text"></td>
-                                            <td><input class="form-control" name="total_no_of_beds[]"
-                                                    value="{{ detail.total_no_of_beds }}" type="text"></td>
-                                            <td><input class="form-control" name="occupied[]"
-                                                    value="{{ detail.occupied }}" type="text"></td>
-                                            <td><input class="form-control" name="available[]"
-                                                    value="{{ detail.available }}" type="text"></td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger"
-                                                    onclick="remove_detail_row_edit(this)">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-primary"
-                                                    onclick="add_detail_row_edit()">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
+                                        
                                     </tbody>
                                 </table>
                                 <div>
@@ -477,28 +444,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for cheque in camp_cheque_data %}
-                                        <tr>
-                                            <td><input class="form-control" name="bank_name[]"
-                                                    value="{{ cheque.bank_name }}" type="text"></td>
-                                            <td><input class="form-control" name="cheque_no[]"
-                                                    value="{{ cheque.cheque_no }}" type="text"></td>
-                                            <td><input class="form-control" name="cheque_date[]"
-                                                    value="{{ cheque.cheque_date }}" type="date"></td>
-                                            <td><input class="form-control" name="cheque_amount[]"
-                                                    value="{{ cheque.cheque_amount }}" type="text"></td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger"
-                                                    onclick="remove_cheque_row_edit(this)">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-primary"
-                                                    onclick="add_cheque_row_edit()">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
+                                        
                                     </tbody>
                                 </table>
                                 <div>
