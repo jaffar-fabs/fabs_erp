@@ -3353,4 +3353,8 @@ def camp_master_edit(request):
             return JsonResponse({"error": str(e)}, status=500)
     return redirect('camp_master')
 
+def check_camp_code(request):
+    camp_code = request.GET.get('camp_code', None)
+    exists = CampMaster.objects.filter(camp_code=camp_code).exists()
+    return JsonResponse({'exists': exists})
 

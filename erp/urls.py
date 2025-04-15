@@ -143,6 +143,7 @@ urlpatterns = [
     path('camp_master/', views.camp_list, name='camp_master'),
     path('camp_master/create/', views.create_camp, name='create_camp'),
     path('camp_master_edit/', views.camp_master_edit, name='camp_master_edit'),
+    path('check-camp-code/', views.check_camp_code, name='check_camp_code'),
 ]
 
 
