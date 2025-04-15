@@ -173,6 +173,39 @@
                         </div>
                     </div>
                     <script>
+                        function calculateTotalBeds(row) {
+                            const noOfRooms = parseInt(row.querySelector('[name="no_of_rooms[]"]').value) || 0;
+                            const lowerBeds = parseInt(row.querySelector('[name="lower_bed_level[]"]').value) || 0;
+                            const upperBeds = parseInt(row.querySelector('[name="upper_bed_level[]"]').value) || 0;
+                    
+                            const totalBedsField = row.querySelector('[name="total_no_of_beds[]"]');
+                            totalBedsField.value = noOfRooms * (lowerBeds + upperBeds);
+                        }
+
+                        function calculedAvailable(row){
+                            const occupied = parseInt(row.querySelector('[name="occupied[]"]').value) || 0;
+                            const totalBeds = parseInt(row.querySelector('[name="total_no_of_beds[]"]').value) || 0;
+                            
+                            const availableField = row.querySelector('[name="available[]"]');
+                            availableField.value = totalBeds - occupied;
+                        }
+                    
+                        // Add event listeners to input fields
+                        document.addEventListener('input', function (e) {
+                            const target = e.target;
+                            const row = target.closest('tr');
+                    
+                            if (row && (target.name === 'no_of_rooms[]' || target.name === 'lower_bed_level[]' || target.name === 'upper_bed_level[]')) {
+                                calculateTotalBeds(row);
+                            }
+
+                            if (row && (target.name === 'occupied[]')) {
+                                calculedAvailable(row);
+                            }
+                        });
+                    </script>
+                    
+                    <script>
                         function add_detail_row() {
                             var table = document.getElementById("camp_details_add").getElementsByTagName('tbody')[0];
                             var newRow = table.insertRow(table.rows.length);
