@@ -8,9 +8,64 @@ def employee_document_path(instance, filename):
     # Construct the path using the employee's code
     return os.path.join('employee_documents', instance.emp_code, filename)
 
+def camp_document_path(instance, filename):
+    # Construct the path using the camp's code
+    return os.path.join('camp_documents', instance.camp_code, filename)
+
 def company_logo_upload_path(instance, filename):
     safe_code = str(instance.company_code).replace(" ", "_").replace("/", "_")
     return os.path.join('company_logos', safe_code, filename)
+# -------------------------------------------------------------------------------
+#Camp Master
+
+class CampMaster(models.Model):
+    comp_code = models.CharField(max_length=15)  # Removed default value
+    camp_id = models.BigAutoField(primary_key=True)
+    camp_code = models.CharField(max_length=50)
+    camp_name = models.CharField(max_length=50)
+    camp_agent = models.CharField(max_length=50, null=True, blank=True)
+    upload_document = models.FileField(upload_to=camp_document_path, blank=True, null=True)
+    ejari_start_date = models.DateField(null=True, blank=True)
+    ejari_end_date = models.DateField(null=True, blank=True)
+    rental_contract_start_date = models.DateField(null=True, blank=True)
+    rental_contract_end_date = models.DateField(null=True, blank=True)
+    rental_agreement_start_date = models.DateField(null=True, blank=True)
+    rental_agreement_end_date = models.DateField(null=True, blank=True)
+    camp_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    cheque_details = models.CharField(max_length=50, null=True, blank=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+
+class CampDetails(models.Model):
+    comp_code = models.CharField(max_length=15) 
+    camp_details_id = models.BigAutoField(primary_key=True)
+    camp_code = models.CharField(max_length=50)
+    block = models.CharField(max_length=50, null=True, blank=True)
+    floor = models.CharField(max_length=50, null=True, blank=True)
+    type = models.CharField(max_length=50, null=True, blank=True)
+    front_field = models.CharField(max_length=50, null=True, blank=True)
+    no_of_rooms = models.IntegerField(null=True, blank=True)
+    lower_bed = models.IntegerField(null=True, blank=True)
+    upper_bed = models.IntegerField(null=True, blank=True)
+    total_beds = models.IntegerField(null=True, blank=True)
+    occupied_beds = models.IntegerField(null=True, blank=True)
+    available_beds = models.IntegerField(null=True, blank=True)
+
+
+class CampCheque(models.Model):
+    comp_code = models.CharField(max_length=15)
+    camp_cheque_id = models.BigAutoField(primary_key=True)
+    camp_code = models.CharField(max_length=50)
+    bank_name = models.CharField(max_length=50, null=True, blank=True)
+    cheque_no = models.CharField(max_length=50, null=True, blank=True)
+    cheque_date = models.DateField(null=True, blank=True)
+    cheque_amount = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+
+
 
 # -------------------------------------------------------------------------------
 # Leave Master

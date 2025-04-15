@@ -2144,7 +2144,7 @@ def company_edit(request):
             expiry_date = request.POST.getlist("expiry_date[]")
             status = request.POST.getlist("status[]")
             remarks = request.POST.getlist("remarks[]")
-            print(remove_ids,document_ids, document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks)
+            
             for i in range(len(document_type)):
                 doc_id = document_ids[i] if i < len(document_ids) else None
                 file = document_file[i] if i < len(document_file) else None
@@ -3089,9 +3089,267 @@ def delete_adhoc_earn_deduct(request, emp_code):
         record = get_object_or_404(PayrollEarnDeduct, emp_code=emp_code)
         record.delete()
         return redirect('adhoc_earn_deduct_list')
+    
+
+def camp_list(request):
+    set_comp_code(request)
+    camps = CampMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
+    return render(request, 'pages/payroll/camp_master/camp_master.html', {'camps': camps})
+
+def create_camp(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        comp_code =COMP_CODE
+        camp_code = request.POST.get('camp_code')
+        camp_name = request.POST.get('camp_name')
+        camp_agent = request.POST.get('camp_agent')
+        upload_document = request.FILES.get('camp_doc')
+        ejari_start_date = request.POST.get('ejari_start_date')
+        ejari_end_date = request.POST.get('ejari_end_date')
+        rental_contract_start_date = request.POST.get('rental_contract_start_date')
+        rental_contract_end_date = request.POST.get('rental_contract_end_date')
+        rental_agreement_start_date = request.POST.get('rental_agreement_start_date')
+        rental_agreement_end_date = request.POST.get('rental_agreement_end_date')
+        camp_value = request.POST.get('camp_value')
+        cheque_details = request.POST.get('cheque_details')
+
+        CampMaster.objects.create(
+            comp_code=comp_code,
+            camp_code=camp_code,
+            camp_name=camp_name,
+            camp_agent=camp_agent,
+            upload_document=upload_document,
+            ejari_start_date=ejari_start_date,
+            ejari_end_date=ejari_end_date,
+            rental_contract_start_date=rental_contract_start_date,
+            rental_contract_end_date=rental_contract_end_date,
+            rental_agreement_start_date=rental_agreement_start_date,
+            rental_agreement_end_date=rental_agreement_end_date,
+            camp_value=camp_value,
+            cheque_details=cheque_details,
+            created_by = 1,
+            is_active=True
+        )
+
+        #Camp Details
+
+        block_name = request.POST.getlist('block_name[]')
+        floor = request.POST.getlist('floor[]')
+        type = request.POST.getlist('type[]')
+        front_field = request.POST.getlist('front_field[]')
+        no_of_rooms = request.POST.getlist('no_of_rooms[]')
+        lower_bed_level = request.POST.getlist('lower_bed_level[]')
+        upper_bed_level = request.POST.getlist('upper_bed_level[]')
+        total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
+        occupied = request.POST.getlist('occupied[]')
+        available = request.POST.getlist('available[]')
+
+        for i in range(len(block_name)):
+            CampDetails.objects.create(
+                comp_code=comp_code,
+                camp_code=camp_code,
+                block=block_name[i],
+                floor=floor[i],
+                type=type[i],
+                front_field=front_field[i],
+                no_of_rooms=no_of_rooms[i],
+                lower_bed=lower_bed_level[i],
+                upper_bed=upper_bed_level[i],
+                total_beds=total_no_of_beds[i],
+                occupied_beds=occupied[i],
+                available_beds=available[i]
+            )
+
+        #cheque Details
+
+        bank_name = request.POST.getlist('bank_name[]')
+        cheque_no = request.POST.getlist('cheque_no[]')
+        cheque_date = request.POST.getlist('cheque_date[]')
+        cheque_amount = request.POST.getlist('cheque_amount[]')
+
+        for i in range(len(bank_name)):
+            CampCheque.objects.create(
+                comp_code=comp_code,
+                camp_code=camp_code,
+                bank_name=bank_name[i],
+                cheque_no=cheque_no[i],
+                cheque_date=cheque_date[i],
+                cheque_amount=cheque_amount[i]
+            )
+
+        return redirect('camp_master')
+    return render(request, 'pages/payroll/camp_master/camp_master.html')
+
+@csrf_exempt
+def camp_master_edit(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        camp_id = request.GET.get('camp_id')
+        try:
+            camp_master = CampMaster.objects.get(camp_id=camp_id, comp_code = COMP_CODE)
+            camp_details = CampDetails.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
+            camp_cheque = CampCheque.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
+            print(camp_master)
+            
+            camp_details_data = []
+
+            for details in camp_details:
+                camp_details_data.append({
+                    'camp_details_id': details.camp_details_id,
+                    'block_name': details.block,
+                    'floor': details.floor,
+                    'type': details.type,
+                    'front_field': details.front_field,
+                    'no_of_rooms': details.no_of_rooms,
+                    'lower_bed_level': details.lower_bed,
+                    'upper_bed_level': details.upper_bed,
+                    'total_no_of_beds': details.total_beds,
+                    'occupied': details.occupied_beds,
+                    'available': details.available_beds
+                })
+
+            camp_cheque_data = []
+            for cheque in camp_cheque:
+                camp_cheque_data.append({
+                    'camp_cheque_id': cheque.camp_cheque_id,
+                    'bank_name': cheque.bank_name,
+                    'cheque_no': cheque.cheque_no,
+                    'cheque_date': cheque.cheque_date,
+                    'cheque_amount': cheque.cheque_amount
+                })
+            
+            return JsonResponse({
+                "camp_id" : camp_master.camp_id,
+                "camp_code" : camp_master.camp_code,
+                "camp_name" : camp_master.camp_name,
+                "camp_agent" : camp_master.camp_agent,
+                "upload_document" : camp_master.upload_document.url if camp_master.upload_document else None,
+                "ejari_start_date" : camp_master.ejari_start_date,
+                "ejari_end_date" : camp_master.ejari_end_date,
+                "rental_contract_start_date" : camp_master.rental_contract_start_date,
+                "rental_contract_end_date" : camp_master.rental_contract_end_date,
+                "rental_agreement_start_date" : camp_master.rental_agreement_start_date,
+                "rental_agreement_end_date" : camp_master.rental_agreement_end_date,
+                "camp_value" : camp_master.camp_value,
+                "cheque_details" : camp_master.cheque_details,
+                "camp_details": camp_details_data,
+                "camp_cheque": camp_cheque_data
+            })
+        except CampMaster.DoesNotExist:
+            return JsonResponse({"error": "Camp not found"}, status=404)
+        except Exception as e:
+            print(f"Error fetching camp details: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=500)
+        
+    if request.method == "POST":
+        camp_id = request.POST.get('camp_id')
+        try:
+            camp_master = CampMaster.objects.get(camp_id=camp_id)
+
+            camp_master.camp_code = request.POST.get('camp_code')
+            camp_master.camp_name = request.POST.get('camp_name')
+            camp_master.camp_agent = request.POST.get('camp_agent')
+            camp_master.upload_document = request.FILES.get('camp_doc')
+            camp_master.ejari_start_date = request.POST.get('ejari_start_date') or None
+            camp_master.ejari_end_date = request.POST.get('ejari_end_date') or None
+            camp_master.rental_contract_start_date = request.POST.get('rental_contract_start_date') or None
+            camp_master.rental_contract_end_date = request.POST.get('rental_contract_end_date') or None
+            camp_master.rental_agreement_start_date = request.POST.get('rental_agreement_start_date') or None
+            camp_master.rental_agreement_end_date = request.POST.get('rental_agreement_end_date') or None
+            camp_master.camp_value = request.POST.get('camp_value')
+            camp_master.cheque_details = request.POST.get('cheque_details')
+            camp_master.modified_by = 1
+            camp_master.save()
+
+            # Update Camp Details
+            camp_detail_ids = request.POST.getlist('camp_detail_id[]')
+            block_name = request.POST.getlist('block_name[]')
+            floor = request.POST.getlist('floor[]')
+            type = request.POST.getlist('type[]')
+            front_field = request.POST.getlist('front_field[]')
+            no_of_rooms = request.POST.getlist('no_of_rooms[]')
+            lower_bed_level = request.POST.getlist('lower_bed_level[]')
+            upper_bed_level = request.POST.getlist('upper_bed_level[]')
+            total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
+            occupied = request.POST.getlist('occupied[]')
+            available = request.POST.getlist('available[]')
+            delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
+            
+            for cid, block, flr, typ, front, rooms, low, up, total, occ, avail, rmid in zip_longest(camp_detail_ids, block_name, floor, type, front_field, no_of_rooms,lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available,delete_camp_detail_ids):
+                if rmid:
+                    camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
+                    camp_detail.delete()
+
+                if cid:
+                    camp_detail = CampDetails.objects.get(camp_details_id=cid)
+                    camp_detail.block = block
+                    camp_detail.floor = flr
+                    camp_detail.type = typ
+                    camp_detail.front_field = front
+                    camp_detail.no_of_rooms = rooms
+                    camp_detail.lower_bed = low
+                    camp_detail.upper_bed = up
+                    camp_detail.total_beds = total
+                    camp_detail.occupied_beds = occ
+                    camp_detail.available_beds = avail
+                    camp_detail.save()
+                elif cid == '' or None:
+                    CampDetails.objects.create(
+                        comp_code=COMP_CODE,
+                        camp_code=camp_master.camp_code,
+                        block=block,
+                        floor=flr,
+                        type=typ,
+                        front_field=front,
+                        no_of_rooms=rooms,
+                        lower_bed=low,
+                        upper_bed=up,
+                        total_beds=total,
+                        occupied_beds=occ,
+                        available_beds=avail
+                    )
 
 
+            # Update Camp Cheque
+            cheque_detail_ids = request.POST.getlist('cheque_detail_id[]')
+            bank_name = request.POST.getlist('bank_name[]')
+            cheque_no = request.POST.getlist('cheque_no[]')
+            cheque_date = request.POST.getlist('cheque_date[]')
+            cheque_amount = request.POST.getlist('cheque_amount[]')
+            delete_cheque_detail_id = request.POST.getlist('delete_cheque_detail_id[]')
 
+            print(delete_cheque_detail_id)
 
+            for cid, bank, no, date, amount, rmid in zip_longest(cheque_detail_ids, bank_name, cheque_no, cheque_date, cheque_amount, delete_cheque_detail_id):
+                print(cid, bank, no, date, amount, rmid)
+
+                if rmid:
+                    cheque = CampCheque.objects.filter(camp_cheque_id=rmid)
+                    cheque.delete()
+                
+                if cid:
+                    camp_cheque = CampCheque.objects.get(camp_cheque_id=cid)
+                    camp_cheque.bank_name = bank
+                    camp_cheque.cheque_no = no
+                    camp_cheque.cheque_date = date
+                    camp_cheque.cheque_amount = amount
+                    camp_cheque.save()
+                elif cid == '' or None:
+                    CampCheque.objects.create(
+                        comp_code=COMP_CODE,
+                        camp_code=camp_master.camp_code,
+                        bank_name=bank,
+                        cheque_no=no,
+                        cheque_date=date,
+                        cheque_amount=amount
+                    )
+
+            return redirect('camp_master')
+        except CampMaster.DoesNotExist:
+            return JsonResponse({"error": "Camp not found"}, status=404)
+        except Exception as e:
+            print(f"Error updating camp details: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=500)
+    return redirect('camp_master')
 
 

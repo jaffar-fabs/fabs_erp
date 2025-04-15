@@ -138,6 +138,11 @@ urlpatterns = [
     path('adhoc-earn-deduct/create/', views.create_adhoc_earn_deduct, name='create_adhoc_earn_deduct'),
     path('adhoc-earn-deduct/update/<str:emp_code>/', views.update_adhoc_earn_deduct, name='update_adhoc_earn_deduct'),
     path('adhoc-earn-deduct/delete/<str:emp_code>/', views.delete_adhoc_earn_deduct, name='delete_adhoc_earn_deduct'),
+
+    # Camp Master
+    path('camp_master/', views.camp_list, name='camp_master'),
+    path('camp_master/create/', views.create_camp, name='create_camp'),
+    path('camp_master_edit/', views.camp_master_edit, name='camp_master_edit'),
 ]
 
 

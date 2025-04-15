@@ -1,0 +1,588 @@
+{% load static %}
+
+<!-- Add Camp -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1400px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Camp</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'create_camp' %}" method="POST" id="campForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Code <span class="text-danger">*</span></label>
+                        <input class="form-control" name="camp_code" type="text" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Name <span class="text-danger">*</span></label>
+                        <input class="form-control" name="camp_name" type="text" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Agent <span class="text-danger">*</span></label>
+                        <select class="form-select" name="camp_agent" required>
+                            <option value="">Select Camp Agent</option>
+                            {% for type in agent_data %}
+                            <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                            <option value="A1">Agent 1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Upload Document</label>
+                        <input class="form-control" name="camp_doc" type="file" multiple>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Ejari Start Date</label>
+                        <input class="form-control" name="ejari_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Ejari End Date</label>
+                        <input class="form-control" name="ejari_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Contract Start Date</label>
+                        <input class="form-control" name="rental_contratc_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Contract End Date</label>
+                        <input class="form-control" name="rental_contratc_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Agreement Start Date</label>
+                        <input class="form-control" name="rental_agreement_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Agreement End Date</label>
+                        <input class="form-control" name="rental_agreement_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Value</label>
+                        <input class="form-control" name="camp_value" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Cheque Details</label>
+                        <select class="form-select" name="cheque_details" >
+                            <option value="">Select Cheque Details</option>
+                            {% for cheque in cheque_data %}
+                            <option value="{{ cheque.base_value }}">{{ cheque.base_description }}</option>
+                            {% endfor %}
+                            <option value="C1">Cheque 1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="accordion" id="campAccordion">
+                    <!-- Camp Details Accordion -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCampDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseCampDetails" aria-expanded="false"
+                                aria-controls="collapseCampDetails">
+                                Camp Details
+                            </button>
+                        </h2>
+                        <div id="collapseCampDetails" class="accordion-collapse collapse"
+                            aria-labelledby="headingCampDetails" data-bs-parent="#campAccordion">
+                            <div class="accordion-body">
+                                <table class="table" id="camp_details_add">
+                                    <thead>
+                                        <tr>
+                                            <th>Block Name</th>
+                                            <th>Floor</th>
+                                            <th>Type</th>
+                                            <th>Front Field</th>
+                                            <th>No Of Rooms</th>
+                                            <th>Lower Bed Level</th>
+                                            <th>Upper Bed Level</th>
+                                            <th>Total No Of Beds</th>
+                                            <th>Occupied</th>
+                                            <th>Available</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input class="form-control" name="block_name[]" type="text"></td>
+                                            <td>
+                                                <select name="floor[]" class="form-select">
+                                                    <option value="">Select Floor</option>
+                                                    {% for floor in floor_data %}
+                                                    <option value="{{ floor.base_value }}">{{ floor.base_description }}
+                                                    </option>
+                                                    {% endfor %}
+                                                    <option value="Gorund">Ground</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="type[]" class="form-select">
+                                                    <option value="">Select Type</option>
+                                                    {% for type in type_data %}
+                                                    <option value="{{ type.base_value }}">{{ type.base_description }}
+                                                    </option>
+                                                    {% endfor %}
+                                                    <option value="Acc">Accomodation</option>
+                                                </select>
+                                            </td>
+                                            <td><input class="form-control" name="front_field[]" type="text"></td>
+                                            <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                                            <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
+                                            <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
+                                            <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>
+                                            <td><input class="form-control" name="occupied[]" type="text"></td>
+                                            <td><input class="form-control" name="available[]" type="text"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="remove_detail_row(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="add_detail_row()">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        function add_detail_row() {
+                            var table = document.getElementById("camp_details_add").getElementsByTagName('tbody')[0];
+                            var newRow = table.insertRow(table.rows.length);
+                            newRow.innerHTML = `<td><input class="form-control" name="block_name" type="text"></td>
+                                        <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
+                                        <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
+                                        <td><input class="form-control" name="front_field[]" type="text"></td>
+                                        <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                                        <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
+                                        <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
+                                        <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>
+                                        <td><input class="form-control" name="occupied[]" type="text"></td>
+                                        <td><input class="form-control" name="available[]" type="text"></td>
+                                        <td>
+                                            <button type='button' class='btn btn-danger' onclick='remove_detail_row(this)'><i class='fas fa-times'></i></button>
+                                            <button type='button' class='btn btn-primary' onclick='add_detail_row()'><i class='fas fa-plus'></i></button>    
+                                        </td>`;
+                        }
+                        function remove_detail_row(button) {
+                            var row = button.parentNode.parentNode;
+                            row.parentNode.removeChild(row);
+                        }
+                    </script>
+                    <!-- Cheque Details Accordion -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingChequeDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseChequeDetails" aria-expanded="false"
+                                aria-controls="collapseChequeDetails">
+                                Cheque Details
+                            </button>
+                        </h2>
+                        <div id="collapseChequeDetails" class="accordion-collapse collapse"
+                            aria-labelledby="headingChequeDetails" data-bs-parent="#campAccordion">
+                            <div class="accordion-body">
+                                <table class="table" id="cheque_add">
+                                    <thead>
+                                        <tr>
+                                            <th>Bank Name</th>
+                                            <th>Cheque No</th>
+                                            <th>Cheque Date</th>
+                                            <th>Cheque Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <select name="bank_name[]" class="form-select">
+                                                    <option value="">Select Bank</option>
+                                                    {% for bank in bank_data %}
+                                                    <option value="{{ bank.base_value }}">{{ bank.base_description }}
+                                                    </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td><input class="form-control" name="cheque_no[]" type="text"></td>
+                                            <td><input class="form-control" name="cheque_date[]" type="date"></td>
+                                            <td><input class="form-control" name="cheque_amount[]" type="text"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="remove_cheque_row(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="add_cheque_row()">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    function add_cheque_row() {
+                        var table = document.getElementById("cheque_add").getElementsByTagName('tbody')[0];
+                        var newRow = table.insertRow(table.rows.length);
+                        newRow.innerHTML = `<td><select name="bank_name[]" class="form-select"><option value="">Select Bank</option>{% for bank in bank_data %}<option value="{{ bank.base_value }}">{{ bank.base_description }}</option>{% endfor %}</select></td>
+                                        <td><input class="form-control" name="cheque_no[]" type="text"></td>
+                                        <td><input class="form-control" name="cheque_date[]" type="date"></td>
+                                        <td><input class="form-control" name="cheque_amount[]" type="text"></td>
+                                        <td>
+                                            <button type='button' class='btn btn-danger' onclick='remove_cheque_row(this)'><i class='fas fa-times'></i></button>
+                                            <button type='button' class='btn btn-primary' onclick='add_cheque_row()'><i class='fas fa-plus'></i></button>
+                                        </td>`;
+                    }
+                    function remove_cheque_row(button) {
+                        var row = button.parentNode.parentNode;
+                        row.parentNode.removeChild(row);
+                    }
+                </script>
+            </div>
+    </div>
+
+
+
+    <div class="d-flex align-items-center justify-content-end mt-4">
+        <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+    </form>
+</div>
+
+<!-- Edit Camp -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1400px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Camp</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'camp_master_edit' %}" method="POST" id="campForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <input type="hidden" name="camp_id" id="camp_id">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Code <span class="text-danger">*</span></label>
+                        <input class="form-control" id="camp_code" name="camp_code" type="text" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Name <span class="text-danger">*</span></label>
+                        <input class="form-control" id="camp_name" name="camp_name" type="text" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Agent <span class="text-danger">*</span></label>
+                        <select class="form-select" id="camp_agent" name="camp_agent" required>
+                            <option value="">Select Camp Agent</option>
+                            {% for type in agent_data %}
+                            <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                            <option value="A1">Agent 1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Upload Document</label>
+                        <input class="form-control" id="camp_doc" name="camp_doc" type="file" multiple>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Ejari Start Date</label>
+                        <input class="form-control" id="ejari_start_date" name="ejari_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Ejari End Date</label>
+                        <input class="form-control" id="ejari_end_date" name="ejari_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Contract Start Date</label>
+                        <input class="form-control" id="rental_contract_start_date" name="rental_contract_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Contract End Date</label>
+                        <input class="form-control" id="rental_contract_end_date" name="rental_contract_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Agreement Start Date</label>
+                        <input class="form-control" id="rental_agreement_start_date" name="rental_agreement_start_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Rental Agreement End Date</label>
+                        <input class="form-control" id="rental_agreement_end_date" name="rental_agreement_end_date" type="date">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp Value</label>
+                        <input class="form-control" id="camp_value" name="camp_value" type="text">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Cheque Details</label>
+                        <select class="form-select" name="cheque_details" id="cheque_details">
+                            <option value="">Select Cheque Details</option>
+                            {% for cheque in cheque_data %}
+                            <option value="{{ cheque.base_value }}">{{ cheque.base_description }}</option>
+                            {% endfor %}
+                            <option value="C1">Cheque 1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="accordion" id="campAccordion">
+                    <!-- Camp Details Accordion -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingCampDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseCampDetails" aria-expanded="false"
+                                aria-controls="collapseCampDetails">
+                                Camp Details
+                            </button>
+                        </h2>
+                        <div id="collapseCampDetails" class="accordion-collapse collapse"
+                            aria-labelledby="headingCampDetails" data-bs-parent="#campAccordion">
+                            <div class="accordion-body">
+                                <table class="table" id="camp_details_edit">
+                                    <thead>
+                                        <tr>
+                                            <th>Block Name</th>
+                                            <th>Floor</th>
+                                            <th>Type</th>
+                                            <th>Front Field</th>
+                                            <th>No Of Rooms</th>
+                                            <th>Lower Bed Level</th>
+                                            <th>Upper Bed Level</th>
+                                            <th>Total No Of Beds</th>
+                                            <th>Occupied</th>
+                                            <th>Available</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for detail in camp_details %}
+                                        <tr>
+                                            <td><input class="form-control" name="block_name[]"
+                                                    value="{{ detail.block_name }}" type="text"></td>
+                                            <td><input class="form-control" name="floor[]" value="{{ detail.floor }}"
+                                                    type="text"></td>
+                                            <td><input class="form-control" name="type[]" value="{{ detail.type }}"
+                                                    type="text"></td>
+                                            <td><input class="form-control" name="front_field[]"
+                                                    value="{{ detail.front_field }}" type="text"></td>
+                                            <td><input class="form-control" name="no_of_rooms[]"
+                                                    value="{{ detail.no_of_rooms }}" type="text"></td>
+                                            <td><input class="form-control" name="lower_bed_level[]"
+                                                    value="{{ detail.lower_bed_level }}" type="text"></td>
+                                            <td><input class="form-control" name="upper_bed_level[]"
+                                                    value="{{ detail.upper_bed_level }}" type="text"></td>
+                                            <td><input class="form-control" name="total_no_of_beds[]"
+                                                    value="{{ detail.total_no_of_beds }}" type="text"></td>
+                                            <td><input class="form-control" name="occupied[]"
+                                                    value="{{ detail.occupied }}" type="text"></td>
+                                            <td><input class="form-control" name="available[]"
+                                                    value="{{ detail.available }}" type="text"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="remove_detail_row_edit(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="add_detail_row_edit()">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="add_detail_row_edit()">
+                                        <i class="fas fa-plus"></i> Add Detail
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Cheque Details Accordion -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingChequeDetails">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseChequeDetails" aria-expanded="false"
+                                aria-controls="collapseChequeDetails">
+                                Cheque Details
+                            </button>
+                        </h2>
+                        <div id="collapseChequeDetails" class="accordion-collapse collapse"
+                            aria-labelledby="headingChequeDetails" data-bs-parent="#campAccordion">
+                            <div class="accordion-body">
+                                <div id="remove_cheque_row_edit"></div>
+                                <table class="table" id="cheque_edit">
+                                    <thead>
+                                        <tr>
+                                            <th>Bank Name</th>
+                                            <th>Cheque No</th>
+                                            <th>Cheque Date</th>
+                                            <th>Cheque Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for cheque in camp_cheque_data %}
+                                        <tr>
+                                            <td><input class="form-control" name="bank_name[]"
+                                                    value="{{ cheque.bank_name }}" type="text"></td>
+                                            <td><input class="form-control" name="cheque_no[]"
+                                                    value="{{ cheque.cheque_no }}" type="text"></td>
+                                            <td><input class="form-control" name="cheque_date[]"
+                                                    value="{{ cheque.cheque_date }}" type="date"></td>
+                                            <td><input class="form-control" name="cheque_amount[]"
+                                                    value="{{ cheque.cheque_amount }}" type="text"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="remove_cheque_row_edit(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="add_cheque_row_edit()">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="add_cheque_row_edit()">
+                                        <i class="fas fa-plus"></i> Add Cheque
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-end mt-4">
+                    <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+        </form>
+        <script>
+            function add_cheque_row_edit() {
+                var table = document.getElementById("cheque_edit").getElementsByTagName('tbody')[0];
+                var newRow = table.insertRow(table.rows.length);
+                newRow.innerHTML = `<td><select name="bank_name[]" class="form-select"><option value="">Select Bank</option>{% for bank in bank_data %}<option value="{{ bank.base_value }}">{{ bank.base_description }}</option>{% endfor %}</select></td>
+                                <td><input class="form-control" name="cheque_no[]" type="text"></td>
+                                <td><input class="form-control" name="cheque_date[]" type="date"></td>
+                                <td><input class="form-control" name="cheque_amount[]" type="text"></td>
+                                <td>
+                                    <button type='button' class='btn btn-danger' onclick='remove_cheque_row_edit(this)'><i class='fas fa-times'></i></button>
+                                    <button type='button' class='btn btn-primary' onclick='add_cheque_row_edit()'><i class='fas fa-plus'></i></button>
+                                </td>`;
+            }
+            function remove_cheque_row_edit(button) {
+                    const row = button.closest('tr')
+                    
+                    // Find the cheque_detail_id input in this row
+                    const idInput = row.querySelector('input[name="cheque_detail_id[]"]')?.value;
+                    
+                    if (idInput) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'delete_cheque_detail_id[]';
+                        input.value = idInput; // Set the value to the id of the row to be deleted
+
+                        // Remove the row from the table
+                    document.getElementById('remove_cheque_row_edit').appendChild(input);
+                    }
+                    row.parentNode.removeChild(row);
+                }
+        </script>
+        <script>
+            function add_detail_row_edit() {
+                var table = document.getElementById("camp_details_edit").getElementsByTagName('tbody')[0];
+                var newRow = table.insertRow(table.rows.length);
+                newRow.innerHTML = `<td><input class="form-control" name="block_name[]" type="text"></td>
+                            <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
+                            <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
+                            <td><input class="form-control" name="front_field[]" type="text"></td>
+                            <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                            <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
+                            <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
+                            <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>
+                            <td><input class="form-control" name="occupied[]" type="text"></td>
+                            <td><input class="form-control" name="available[]" type="text"></td>
+                            <td>
+                                <button type='button' class='btn btn-danger' onclick='remove_detail_row_edit(this)'><i class='fas fa-times'></i></button>
+                                <button type='button' class='btn btn-primary' onclick='add_detail_row_edit()'><i class='fas fa-plus'></i></button>    
+                            </td>`;
+            }
+            function remove_detail_row_edit(button) {
+                const row = button.closest('tr')
+
+                // Find the camp_detail_id input in this row
+                const idInput = row.querySelector('input[name="camp_detail_id[]"]')?.value;
+                if (idInput) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'delete_camp_detail_id[]';
+                    input.value = idInput; // Set the value to the id of the row to be deleted
+
+                    // Remove the row from the table
+                    document.getElementById('remove_cheque_row_edit').appendChild(input);
+                }
+                row.parentNode.removeChild(row);
+            }
+        </script>
+    </div>
+</div>

@@ -1,0 +1,226 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Camps" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Camps" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvas_add"><i
+                                            class="ti ti-square-rounded-plus me-2"></i>Add New Camp</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Camp Code</th>
+                                        <th>Camp Name</th>
+                                        <th>Agent</th>                                        
+                                        <th>Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for camp in camps %}
+                                    <tr>
+                                        <td>{{ camp.camp_code }}</td>
+                                        <td>{{ camp.camp_name }}</td>
+                                        <td>{{ camp.camp_agent }}</td>
+                                        <td>
+                                            {% if camp.is_active == True %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-camp-btn" href="#"
+                                                        data-id="{{ camp.camp_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_camp"
+                                                        data-camp-id="{{ camp.camp_id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Edit Camp Functionality
+        $(".edit-camp-btn").on("click", function(event) {
+            event.preventDefault();
+            var campId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+            
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+            $("#camp_details_edit tbody").empty();
+            $("#cheque_edit tbody").empty();
+
+            $.ajax({
+                url: "/camp_master_edit/",
+                type: "GET",
+                data: { 'camp_id': campId },
+                success: function(response) {
+                    // Set basic camp information
+                    $("#camp_id").val(response.camp_id);
+                    $("#camp_code").val(response.camp_code);
+                    $("#camp_name").val(response.camp_name);
+                    $("#camp_agent").val(response.camp_agent);
+                    $("#ejari_start_date").val(response.ejari_start_date);
+                    $("#ejari_end_date").val(response.ejari_end_date);
+                    $("#rental_contract_start_date").val(response.rental_contract_start_date);
+                    $("#rental_contract_end_date").val(response.rental_contract_end_date);
+                    $("#rental_agreement_start_date").val(response.rental_agreement_start_date);
+                    $("#rental_agreement_end_date").val(response.rental_agreement_end_date);
+                    $("#camp_value").val(response.camp_value);
+                    $("#cheque_details").val(response.cheque_details);
+
+                    // Clear existing rows and add camp details
+                    $("#camp_details_edit tbody").empty();
+                    if (response.camp_details && response.camp_details.length > 0) {
+                        response.camp_details.forEach(function(detail) {
+                            const detailRow = `
+                                <tr>
+                                    <input type="hidden" name="camp_detail_id[]" value="${detail.camp_details_id || ''}">
+                                    <td><input class="form-control" name="block_name[]" value="${detail.block_name || ''}" type="text"></td>
+                                    <td>
+                                        <select name="floor[]" class="form-select">
+                                            <option value="">Select Floor</option>
+                                            {% for floor in floor_data %}
+                                            <option value="{{ floor.base_value }}" ${detail.floor == "{{ floor.base_value }}" ? "selected" : ""}>{{ floor.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="type[]" class="form-select">
+                                            <option value="">Select Type</option>
+                                            {% for type in type_data %}
+                                            <option value="{{ type.base_value }}" ${detail.type == "{{ type.base_value }}" ? "selected" : ""}>{{ type.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td><input class="form-control" name="front_field[]" value="${detail.front_field || ''}" type="text"></td>
+                                    <td><input class="form-control" name="no_of_rooms[]" value="${detail.no_of_rooms || ''}" type="text"></td>
+                                    <td><input class="form-control" name="lower_bed_level[]" value="${detail.lower_bed_level || ''}" type="text"></td>
+                                    <td><input class="form-control" name="upper_bed_level[]" value="${detail.upper_bed_level || ''}" type="text"></td>
+                                    <td><input class="form-control" name="total_no_of_beds[]" value="${detail.total_no_of_beds || ''}" type="text"></td>
+                                    <td><input class="form-control" name="occupied[]" value="${detail.occupied || ''}" type="text"></td>
+                                    <td><input class="form-control" name="available[]" value="${detail.available || ''}" type="text"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="remove_detail_row_edit(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" onclick="add_detail_row_edit()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            $("#camp_details_edit tbody").append(detailRow);
+                        });
+                    } else {
+                        add_detail_row_edit();
+                    }
+
+                    // Clear existing rows and add cheque details
+                    $("#cheque_edit tbody").empty();
+                    if (response.camp_cheque && response.camp_cheque.length > 0) {
+                        response.camp_cheque.forEach(function(cheque) {
+                            const chequeRow = `
+                                <tr>
+                                    <input type="hidden" name="cheque_detail_id[]" value="${cheque.camp_cheque_id || ''}">
+                                    <td>
+                                        <select name="bank_name[]" class="form-select">
+                                            <option value="">Select Bank</option>
+                                            {% for bank in bank_data %}
+                                            <option value="{{ bank.base_value }}" ${cheque.bank_name == "{{ bank.base_value }}" ? "selected" : ""}>{{ bank.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td><input class="form-control" name="cheque_no[]" value="${cheque.cheque_no || ''}" type="text"></td>
+                                    <td><input class="form-control" name="cheque_date[]" value="${cheque.cheque_date || ''}" type="date"></td>
+                                    <td><input class="form-control" name="cheque_amount[]" value="${cheque.cheque_amount || ''}" type="text"></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="remove_cheque_row_edit(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" onclick="add_cheque_row_edit()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            $("#cheque_edit tbody").append(chequeRow);
+                        });
+                    } else {
+                        add_cheque_row_edit();
+                    }
+
+                    // Update form action for edit
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading camp details. Please try again.");
+                }
+            });
+        });
+
+        // Delete functionality
+        $(".delete-btn").on("click", function() {
+            let campId = $(this).data("camp-id");
+            $("#delete_camp_id").val(campId);
+        });
+    });
+</script>
+
+{% block camp_modal %}
+{% include "pages/modal/payroll/camp_master_modal.html" %}
+{% endblock %}
+{% endblock content %}
