@@ -237,11 +237,13 @@ def save_employee(request, employee_id=None):
         employee.allowance = request.POST.get("allowance") or None
         employee.grade_code = request.POST.get("grade_code")
         employee.prj_code = request.POST.get("prj_code")
+        employee.sub_location = request.POST.get("sub_location")
         employee.designation = request.POST.get("designation")
         employee.department = request.POST.get("department")
         employee.date_of_join = request.POST.get("date_of_join") or None
         employee.date_of_rejoin = request.POST.get("date_of_rejoin") or None
         employee.depend_count = request.POST.get("depend_count") or None
+        employee.staff_category = request.POST.get("staff_category")
         employee.child_count = request.POST.get("child_count") or None
         employee.employee_bank = request.POST.get("employee_bank")
         employee.bank_branch = request.POST.get("bank_branch")
@@ -269,6 +271,8 @@ def save_employee(request, employee_id=None):
         employee.emirates_no = request.POST.get("emirates_no")
         employee.visa_issued = request.POST.get("visa_issued") or None
         employee.visa_expiry = request.POST.get("visa_expiry") or None
+        employee.visa_designation = request.POST.get("visa_designation")
+        employee.visa_issued_emirate = request.POST.get("visa_issued_emirate")
         employee.emirate_issued = request.POST.get("emirate_issued") or None
         employee.emirate_expiry = request.POST.get("emirate_expiry") or None
         employee.uid_number = request.POST.get("uid_number")
@@ -984,6 +988,9 @@ def project(request):
         prj_city = request.POST.getlist('prj_city')  # Get list of selected cities
         prj_city_str = ':'.join(prj_city)  # Convert list to colon-separated string
 
+        pro_sub_location = request.POST.getlist('pro_sub_location')  # Get list of selected sub-locations
+        prj_sub_location_str = ':'.join(pro_sub_location)  # Convert list to colon-separated string
+
         if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
             project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
 
@@ -1000,7 +1007,7 @@ def project(request):
             project.comp_code = request.POST.get("comp_code", project.comp_code)
             project.service_type = request.POST.get("service_type", project.service_type)
             project.service_category = request.POST.get("service_category", project.service_category)
-            project.pro_sub_location = request.POST.get("pro_sub_location", project.pro_sub_location)
+            project.pro_sub_location = prj_sub_location_str
             project.op_head = request.POST.get("op_head", project.op_head)
             project.manager = request.POST.get("manager", project.manager)
             project.commercial_manager = request.POST.get("commercial_manager", project.commercial_manager)
@@ -1069,6 +1076,14 @@ def delete_project(request):
             project.is_active = False  
             project.save()
     return redirect("project")
+
+def get_project_locations(request):
+    project_code = request.GET.get('project_code')
+    if project_code:
+        # Fetch locations for the selected project
+        locations = projectMaster.objects.filter(project_code=project_code).values('code', 'name')  # Adjust fields as needed
+        return JsonResponse({'success': True, 'locations': list(locations)})
+    return JsonResponse({'success': False, 'message': 'Invalid project code.'})
 
 # Holiday Master -------------------------
 

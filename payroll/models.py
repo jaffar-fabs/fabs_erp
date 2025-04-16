@@ -206,10 +206,12 @@ class Employee(models.Model):
     allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Allowance
     grade_code = models.CharField(max_length=150, blank=True, null=True)  # Grade code
     prj_code = models.CharField(max_length=50, blank=True, null=True)
+    sub_location = models.CharField(max_length=50, blank=True, null=True)  # Sub-location
     designation = models.CharField(max_length=50, blank=True, null=True)  # Designation
     department = models.CharField(max_length=50, blank=True, null=True)  # Department
     date_of_join = models.DateField(blank=True, null=True)  # Date of joining
     date_of_rejoin = models.DateField(blank=True, null=True)  # Date of rejoining
+    staff_category = models.CharField(max_length=50, blank=True, null=True)  # Staff category
     depend_count = models.IntegerField(blank=True, null=True)  # Dependent count
     child_count = models.IntegerField(blank=True, null=True)  # Child count
 
@@ -232,6 +234,8 @@ class Employee(models.Model):
     visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
+    visa_designation = models.CharField(max_length=50, blank=True, null=True)  # Visa designation
+    visa_issued_emirate = models.CharField(max_length=50, blank=True, null=True)  # Visa issued emirate
     iloe_no = models.CharField(max_length=50, blank=True, null=True)  # ILOE number
     iloe_expiry = models.DateField(blank=True, null=True)  # ILOE expiry date
     iloe_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # ILOE document upload

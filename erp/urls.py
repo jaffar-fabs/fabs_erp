@@ -79,6 +79,7 @@ urlpatterns = [
     path('payroll/projects/', projects.project, name='project'),
     path("delete_project/", projects.delete_project, name="delete_project"),
     path('check-project-code/', projects.check_project_code, name='check_project_code'),
+    path('get_project_locations/', views.get_project_locations, name='get_project_locations'),
 
     path('payroll/code_master_list/', payroll_views.CodeMasterList.as_view(), name='code_master_list'),
     path('payroll/grade_master/', GradeMasterList.as_view(), name='grade_master'), 
