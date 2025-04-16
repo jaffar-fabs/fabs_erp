@@ -3103,7 +3103,6 @@ def create_camp(request):
         camp_code = request.POST.get('camp_code')
         camp_name = request.POST.get('camp_name')
         camp_agent = request.POST.get('camp_agent')
-        upload_document = request.FILES.get('camp_doc')
         
         # Convert empty date fields to None
         ejari_start_date = request.POST.get('ejari_start_date') or None
@@ -3116,13 +3115,23 @@ def create_camp(request):
         camp_value = request.POST.get('camp_value') or 0
         cheque_details = request.POST.get('cheque_details')
 
+        upload_document = request.FILES.getlist('camp_doc[]')
+
+        if upload_document:
+            for file in upload_document:
+                CampDocuments.objects.create(
+                    comp_code=comp_code,
+                    camp_code=camp_code,
+                    document_name=file.name,
+                    document_file=file
+                )
+
         # Create CampMaster entry
         CampMaster.objects.create(
             comp_code=comp_code,
             camp_code=camp_code,
             camp_name=camp_name,
             camp_agent=camp_agent,
-            upload_document=upload_document,
             ejari_start_date=ejari_start_date,
             ejari_end_date=ejari_end_date,
             rental_contract_start_date=rental_contract_start_date,
@@ -3251,7 +3260,6 @@ def camp_master_edit(request):
             camp_master.camp_code = request.POST.get('camp_code')
             camp_master.camp_name = request.POST.get('camp_name')
             camp_master.camp_agent = request.POST.get('camp_agent')
-            camp_master.upload_document = request.FILES.get('camp_doc')
             camp_master.ejari_start_date = request.POST.get('ejari_start_date') or None
             camp_master.ejari_end_date = request.POST.get('ejari_end_date') or None
             camp_master.rental_contract_start_date = request.POST.get('rental_contract_start_date') or None
@@ -3261,8 +3269,20 @@ def camp_master_edit(request):
             camp_master.camp_value = request.POST.get('camp_value')
             camp_master.cheque_details = request.POST.get('cheque_details')
             camp_master.modified_by = 1
-            print(len(request.FILES.getlist('camp_doc')))
             camp_master.save()
+
+            upload_document = request.FILES.getlist('camp_doc[]')
+
+            if upload_document:
+                for file in upload_document:
+                    CampDocuments.objects.create(
+                        comp_code=camp_master.comp_code,
+                        camp_code=camp_master.camp_code,
+                        document_name=file.name,
+                        document_file=file
+                    )
+
+            
 
             # Update Camp Details
             camp_detail_ids = request.POST.getlist('camp_detail_id[]')

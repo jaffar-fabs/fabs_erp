@@ -55,6 +55,13 @@ class CampDetails(models.Model):
     occupied_beds = models.IntegerField(null=True, blank=True)
     available_beds = models.IntegerField(null=True, blank=True)
 
+class CampDocuments(models.Model):
+    comp_code = models.CharField(max_length=15)
+    camp_document_id = models.BigAutoField(primary_key=True)
+    camp_code = models.CharField(max_length=50)
+    document_name = models.CharField(max_length=50)
+    document_file = models.FileField(upload_to=camp_document_path, blank=True, null=True)
+
 
 class CampCheque(models.Model):
     comp_code = models.CharField(max_length=15)
