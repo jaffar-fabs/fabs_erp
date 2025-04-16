@@ -3093,8 +3093,51 @@ def delete_adhoc_earn_deduct(request, emp_code):
 
 def camp_list(request):
     set_comp_code(request)
-    camps = CampMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
-    return render(request, 'pages/payroll/camp_master/camp_master.html', {'camps': camps})
+    
+    # Get search keyword
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    
+    # Get the current URL for pagination links
+    get_url = request.get_full_path()
+    
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+    
+    # Initialize the query
+    camps_query = CampMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
+    
+    # Apply search filter if keyword is provided
+    if keyword:
+        camps_query = camps_query.filter(
+            Q(camp_code__icontains=keyword) |
+            Q(camp_name__icontains=keyword) |
+            Q(camp_agent__icontains=keyword)
+        )
+    
+    # Apply pagination
+    paginator = Paginator(camps_query.order_by('camp_code'), PAGINATION_SIZE)  # Adjust PAGINATION_SIZE as needed
+    
+    try:
+        camps = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        camps = paginator.page(1)
+    except EmptyPage:
+        camps = paginator.page(paginator.num_pages)
+    
+    context = {
+        'camps': camps,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': camps_query.count()
+    }
+    
+    return render(request, 'pages/payroll/camp_master/camp_master.html', context)
 
 def create_camp(request):
     set_comp_code(request)
