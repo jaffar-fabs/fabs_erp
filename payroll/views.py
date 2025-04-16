@@ -3448,115 +3448,54 @@ def camp_allocation(request):
     })
 
 
-from django.db import transaction
-
 @csrf_exempt
-@transaction.atomic
 def save_camp_allocations(request):
     try:
-        # Get company code from session
-        comp_code = request.session.get('comp_code', None)
-        if not comp_code:
-            return JsonResponse({'success': False, 'message': 'Company code not set'}, status=400)
+        set_comp_code(request)
+        comp_code = COMP_CODE
         
-        # Get raw POST data
-        data = request.POST
-        
-        # Process each row of data
-        employee_codes = data.getlist('employee_code[]')
-        action_types = data.getlist('action_type[]')
-        current_camps = data.getlist('current_camp[]')
-        current_rooms = data.getlist('current_room[]')
-        new_camps = data.getlist('new_camp[]')
-        new_rooms = data.getlist('new_room[]')
-        bed_numbers = data.getlist('bed_no[]')
-        effective_dates = data.getlist('effective_date[]')
-        reasons = data.getlist('reason[]')
-        approvals = data.getlist('approval[]')
-        
-        print("Raw data received:")
-        print(f"Employee codes: {employee_codes}")
-        print(f"Action types: {action_types}")
-        print(f"Current camps: {current_camps}")
-        print(f"Current rooms: {current_rooms}")
-        print(f"New camps: {new_camps}")
-        print(f"New rooms: {new_rooms}")
+        # Parse the JSON data
+        data = json.loads(request.POST.get('data', '[]'))
         
         saved_count = 0
         
-        print(len(employee_codes))
-        # Process each transaction by index to ensure alignment
-        for i in range(len(employee_codes)):
-            print(new_camps)
-            emp_code = employee_codes[i]
-            action_type = action_types[i] if i < len(action_types) else ''
-            current_camp = current_camps[i] if i < len(current_camps) else ''
-            current_room = current_rooms[i] if i < len(current_rooms) else ''
-            new_camp = new_camps[i] if i < len(new_camps) else ''
-            new_room = new_rooms[i] if i < len(new_rooms) else ''
-            bed_number = bed_numbers[i] if i < len(bed_numbers) else ''
-            effective_date = effective_dates[i] if i < len(effective_dates) else None
-            reason = reasons[i] if i < len(reasons) else ''
-            approval = approvals[i] if i < len(approvals) else 'Pending'
-            
-            # Skip empty rows (where employee code is empty)
-            if not emp_code:
+        for item in data:
+            # Skip rows with missing required fields
+            if not item.get('employee_code') or not item.get('action_type'):
                 continue
                 
-            # Validate required fields
-            if not action_type or not current_camp or not current_room:
-                continue
-                
-            # Convert empty strings to None for optional fields
-            new_camp = new_camp if new_camp else None
-            new_room = new_room if new_room else None
-            bed_number = bed_number if bed_number else None
-            reason = reason if reason else None
+            # Prepare data for update_or_create
+            defaults = {
+                'action_type': item.get('action_type'),
+                'current_camp_id': item.get('current_camp'),
+                'current_room_no': item.get('current_room'),
+                'new_camp_id': item.get('new_camp'),
+                'new_room_no': item.get('new_room'),
+                'bed_number': item.get('bed_no'),
+                'effective_date': item.get('effective_date') or None,
+                'reason': item.get('reason'),
+                'approval_operation': item.get('approval', 'Pending'),
+                'comp_code': comp_code
+            }
             
-            # Convert date string to date object
-            effective_date_obj = None
-            if effective_date:
-                try:
-                    effective_date_obj = datetime.strptime(effective_date, '%Y-%m-%d').date()
-                except (ValueError, TypeError):
-                    effective_date_obj = None
+            # Remove None values
+            defaults = {k: v for k, v in defaults.items() if v is not None}
             
-            print(f"\nProcessing row {i}:")
-            print(f"Employee: {emp_code}")
-            print(f"Action: {action_type}")
-            print(f"Current Camp: {current_camp}")
-            print(f"Current Room: {current_room}")
-            print(f"New Camp: {new_camp}")
-            print(f"New Room: {new_room}")
-            
-            # Create or update allocation record
+            # Update or create the record
             allocation, created = CampAllocation.objects.update_or_create(
-                emp_code=emp_code,
+                emp_code=item['employee_code'],
                 comp_code=comp_code,
-                defaults={
-                    'action_type': action_type,
-                    'current_camp_id': current_camp,
-                    'current_room_no': current_room,
-                    'new_camp_id': new_camp,
-                    'new_room_no': new_room,
-                    'bed_number': bed_number,
-                    'effective_date': effective_date_obj,
-                    'reason': reason,
-                    'approval_operation': approval,
-                }
+                defaults=defaults
             )
             saved_count += 1
-            print(f"Saved record for {emp_code} - {'Created' if created else 'Updated'}")
-        
+            
         return JsonResponse({
             'success': True,
             'message': f'Successfully saved {saved_count} allocations',
-            'redirect': '/camp_allocation/'  # Adjust as needed
+            'redirect': '/camp_allocation/'
         })
         
     except Exception as e:
-        import traceback
-        traceback.print_exc()
         return JsonResponse({
             'success': False,
             'message': str(e)

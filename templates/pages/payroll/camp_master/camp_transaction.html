@@ -122,6 +122,7 @@
                                         <!-- Existing data rows -->
                                         {% for item in camp_allocations %}
                                         <tr>
+                                            <input type="hidden" name="id[]" value="{{ item.camp_allocation_id }}">
                                             <td>
                                                 <select class="form-select employee-code" name="employee_code[]" required>
                                                     <option value="">Select Employee</option>
@@ -285,28 +286,55 @@ $(document).ready(function () {
     });
 
     // Form submission
-    $('#allocation-form').on('submit', function (e) {
-        e.preventDefault();
-        $.ajax({
-            url: '{% url "save_camp_allocations" %}',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function (response) {
-                if (response.success) {
-                    alert('Data saved successfully!');
-                    if (response.redirect) {
-                        window.location.href = response.redirect;
-                    }
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function (xhr) {
-                alert('An error occurred while saving data.');
-                console.error(xhr.responseText);
-            }
+$('#allocation-form').on('submit', function (e) {
+    e.preventDefault();
+    
+    // Enable all disabled fields before submission to ensure they're included
+    $(this).find('[disabled]').prop('disabled', false);
+    
+    // Collect data in a more structured way
+    var formData = [];
+    $('#transaction-body tr').each(function() {
+        var row = $(this);
+        formData.push({
+            employee_code: row.find('.employee-code').val(),
+            action_type: row.find('.action-type').val(),
+            current_camp: row.find('.current-camp').val(),
+            current_room: row.find('.current-room').val(),
+            new_camp: row.find('.new-camp').val(),
+            new_room: row.find('.new-room').val(),
+            bed_no: row.find('.bed-no').val(),
+            effective_date: row.find('.effective-date').val(),
+            reason: row.find('.reason').val(),
+            approval: row.find('.approval').val(),
+            // Include any hidden ID field if you have one
+            id: row.find('[name="id[]"]').val() 
         });
     });
+    
+    $.ajax({
+        url: '{% url "save_camp_allocations" %}',
+        type: 'POST',
+        data: {
+            'data': JSON.stringify(formData),
+            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function (response) {
+            if (response.success) {
+                alert('Data saved successfully!');
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }
+            } else {
+                alert('Error: ' + response.message);
+            }
+        },
+        error: function (xhr) {
+            alert('An error occurred while saving data.');
+            console.error(xhr.responseText);
+        }
+    });
+});
 });
 </script>
 
