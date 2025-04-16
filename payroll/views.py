@@ -3332,7 +3332,7 @@ def camp_master_edit(request):
                     camp_cheque = CampCheque.objects.get(camp_cheque_id=cid)
                     camp_cheque.bank_name = bank
                     camp_cheque.cheque_no = no
-                    camp_cheque.cheque_date = date or None
+                    camp_cheque.cheque_date = date
                     camp_cheque.cheque_amount = amount
                     camp_cheque.save()
                 elif not cid:
