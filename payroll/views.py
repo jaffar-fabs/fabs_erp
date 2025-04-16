@@ -23,6 +23,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Sum, Count
 import pdb
 from itertools import zip_longest
+from django.db import connection
 
 PAGINATION_SIZE = 6
 
@@ -3142,11 +3143,24 @@ def camp_list(request):
 def create_camp(request):
     set_comp_code(request)
     if request.method == 'POST':
+        
+        
         comp_code = COMP_CODE
         camp_code = request.POST.get('camp_code')
         camp_name = request.POST.get('camp_name')
         camp_agent = request.POST.get('camp_agent')
+        test = 1
         
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT get_seed_no(%s);", [test])
+                result = cursor.fetchone()
+                camp_code = result[0] if result else None
+                print(camp_code)
+        except Exception as e:
+            error = str(e)
+            return JsonResponse({"error": str(e)}, status=500)
+
         # Convert empty date fields to None
         ejari_start_date = request.POST.get('ejari_start_date') or None
         ejari_end_date = request.POST.get('ejari_end_date') or None
