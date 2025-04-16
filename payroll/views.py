@@ -3332,7 +3332,7 @@ def camp_master_edit(request):
                     camp_cheque = CampCheque.objects.get(camp_cheque_id=cid)
                     camp_cheque.bank_name = bank
                     camp_cheque.cheque_no = no
-                    camp_cheque.cheque_date = date
+                    camp_cheque.cheque_date = date or None
                     camp_cheque.cheque_amount = amount
                     camp_cheque.save()
                 elif not cid:
@@ -3358,3 +3358,164 @@ def check_camp_code(request):
     exists = CampMaster.objects.filter(camp_code=camp_code).exists()
     return JsonResponse({'exists': exists})
 
+
+def camp_allocation(request):
+    set_comp_code(request)
+
+    # Get search keyword
+    keyword = request.GET.get('keyword', '').strip()
+
+    # Get page number for pagination
+    page_number = request.GET.get('page', 1)
+
+    # Filter camp allocations
+    camp_allocations_query = CampAllocation.objects.filter(comp_code=COMP_CODE)
+    if keyword:
+        camp_allocations_query = camp_allocations_query.filter(
+            Q(emp_code__icontains=keyword) |
+            Q(current_camp_id__icontains=keyword) |
+            Q(new_camp_id__icontains=keyword) |
+            Q(reason__icontains=keyword)
+        )
+
+    # Paginate the results
+    paginator = Paginator(camp_allocations_query.order_by('-camp_allocation_id'), 5)
+    try:
+        camp_allocations = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        camp_allocations = paginator.page(1)
+    except EmptyPage:
+        camp_allocations = paginator.page(paginator.num_pages)
+
+    # Build base URL for pagination
+    params = request.GET.copy()
+    if 'page' in params:
+        del params['page']
+    base_url = request.path + '?' + params.urlencode()
+
+    # Fetch camps and employees
+    camps = CampMaster.objects.filter(comp_code=COMP_CODE)
+    employees = Employee.objects.filter(comp_code=COMP_CODE).values('emp_code', 'emp_name')
+
+    return render(request, 'pages/payroll/camp_master/camp_transaction.html', {
+        'camp_allocations': camp_allocations,
+        'camps': camps,
+        'employees': employees,
+        'keyword': keyword,
+        'base_url': base_url,  # Updated this line
+    })
+
+
+from django.db import transaction
+
+@csrf_exempt
+@transaction.atomic
+def save_camp_allocations(request):
+    try:
+        # Get company code from session
+        comp_code = request.session.get('comp_code', None)
+        if not comp_code:
+            return JsonResponse({'success': False, 'message': 'Company code not set'}, status=400)
+        
+        # Get raw POST data
+        data = request.POST
+        
+        # Process each row of data
+        employee_codes = data.getlist('employee_code[]')
+        action_types = data.getlist('action_type[]')
+        current_camps = data.getlist('current_camp[]')
+        current_rooms = data.getlist('current_room[]')
+        new_camps = data.getlist('new_camp[]')
+        new_rooms = data.getlist('new_room[]')
+        bed_numbers = data.getlist('bed_no[]')
+        effective_dates = data.getlist('effective_date[]')
+        reasons = data.getlist('reason[]')
+        approvals = data.getlist('approval[]')
+        
+        print("Raw data received:")
+        print(f"Employee codes: {employee_codes}")
+        print(f"Action types: {action_types}")
+        print(f"Current camps: {current_camps}")
+        print(f"Current rooms: {current_rooms}")
+        print(f"New camps: {new_camps}")
+        print(f"New rooms: {new_rooms}")
+        
+        saved_count = 0
+        
+        print(len(employee_codes))
+        # Process each transaction by index to ensure alignment
+        for i in range(len(employee_codes)):
+            print(new_camps)
+            emp_code = employee_codes[i]
+            action_type = action_types[i] if i < len(action_types) else ''
+            current_camp = current_camps[i] if i < len(current_camps) else ''
+            current_room = current_rooms[i] if i < len(current_rooms) else ''
+            new_camp = new_camps[i] if i < len(new_camps) else ''
+            new_room = new_rooms[i] if i < len(new_rooms) else ''
+            bed_number = bed_numbers[i] if i < len(bed_numbers) else ''
+            effective_date = effective_dates[i] if i < len(effective_dates) else None
+            reason = reasons[i] if i < len(reasons) else ''
+            approval = approvals[i] if i < len(approvals) else 'Pending'
+            
+            # Skip empty rows (where employee code is empty)
+            if not emp_code:
+                continue
+                
+            # Validate required fields
+            if not action_type or not current_camp or not current_room:
+                continue
+                
+            # Convert empty strings to None for optional fields
+            new_camp = new_camp if new_camp else None
+            new_room = new_room if new_room else None
+            bed_number = bed_number if bed_number else None
+            reason = reason if reason else None
+            
+            # Convert date string to date object
+            effective_date_obj = None
+            if effective_date:
+                try:
+                    effective_date_obj = datetime.strptime(effective_date, '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    effective_date_obj = None
+            
+            print(f"\nProcessing row {i}:")
+            print(f"Employee: {emp_code}")
+            print(f"Action: {action_type}")
+            print(f"Current Camp: {current_camp}")
+            print(f"Current Room: {current_room}")
+            print(f"New Camp: {new_camp}")
+            print(f"New Room: {new_room}")
+            
+            # Create or update allocation record
+            allocation, created = CampAllocation.objects.update_or_create(
+                emp_code=emp_code,
+                comp_code=comp_code,
+                defaults={
+                    'action_type': action_type,
+                    'current_camp_id': current_camp,
+                    'current_room_no': current_room,
+                    'new_camp_id': new_camp,
+                    'new_room_no': new_room,
+                    'bed_number': bed_number,
+                    'effective_date': effective_date_obj,
+                    'reason': reason,
+                    'approval_operation': approval,
+                }
+            )
+            saved_count += 1
+            print(f"Saved record for {emp_code} - {'Created' if created else 'Updated'}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Successfully saved {saved_count} allocations',
+            'redirect': '/camp_allocation/'  # Adjust as needed
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)

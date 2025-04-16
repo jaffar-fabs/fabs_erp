@@ -66,6 +66,19 @@ class CampCheque(models.Model):
     cheque_amount = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
 
 
+class CampAllocation(models.Model):
+    comp_code = models.CharField(max_length=15)
+    camp_allocation_id = models.BigAutoField(primary_key=True)
+    emp_code = models.CharField(max_length=50)
+    action_type = models.CharField(max_length=50, null=True, blank=True)
+    current_camp_id = models.CharField(max_length=50, null=True, blank=True)
+    current_room_no = models.CharField(max_length=50, null=True, blank=True)
+    new_camp_id = models.CharField(max_length=50, null=True, blank=True)
+    new_room_no = models.CharField(max_length=50, null=True, blank=True)
+    bed_number = models.CharField(max_length=50, null=True, blank=True)
+    effective_date = models.DateField(null=True, blank=True)
+    reason = models.CharField(max_length=50, null=True, blank=True)
+    approval_operation = models.CharField(max_length=50, null=True, blank=True)
 
 # -------------------------------------------------------------------------------
 # Leave Master
