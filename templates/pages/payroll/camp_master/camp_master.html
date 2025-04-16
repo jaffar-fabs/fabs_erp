@@ -121,6 +121,13 @@
                     $("#camp_value").val(response.camp_value);
                     $("#cheque_details").val(response.cheque_details);
 
+                    const campCode = $("#camp_code").val(); // Get the camp_code from the input field
+                    if (campCode) {
+                        loadCampFiles(campCode); // Call the function to load files
+                    } else {
+                        console.error("Camp Code is missing.");
+                    }
+
                     // Clear existing rows and add camp details
                     $("#camp_details_edit tbody").empty();
                     if (response.camp_details && response.camp_details.length > 0) {

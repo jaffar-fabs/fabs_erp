@@ -3332,7 +3332,7 @@ def camp_master_edit(request):
                     camp_cheque = CampCheque.objects.get(camp_cheque_id=cid)
                     camp_cheque.bank_name = bank
                     camp_cheque.cheque_no = no
-                    camp_cheque.cheque_date = date
+                    camp_cheque.cheque_date = date or None
                     camp_cheque.cheque_amount = amount
                     camp_cheque.save()
                 elif not cid:
@@ -3358,6 +3358,27 @@ def check_camp_code(request):
     exists = CampMaster.objects.filter(camp_code=camp_code).exists()
     return JsonResponse({'exists': exists})
 
+def get_camp_files(request, camp_code):
+    try:
+        # Define the folder path
+        folder_path = os.path.join(settings.MEDIA_ROOT, 'camp_documents', camp_code)
+        
+        # Check if the folder exists
+        if not os.path.exists(folder_path):
+            return JsonResponse({'success': False, 'message': 'No files found for this camp code.'})
+        
+        # List all files in the folder
+        files = os.listdir(folder_path)
+        file_list = [
+            {
+                'file_name': file,
+                'file_url': os.path.join(settings.MEDIA_URL, 'camp_documents', camp_code, file)
+            }
+            for file in files
+        ]
+        return JsonResponse({'success': True, 'files': file_list})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 def camp_allocation(request):
     set_comp_code(request)

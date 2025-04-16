@@ -144,6 +144,7 @@ urlpatterns = [
     path('camp_master/create/', views.create_camp, name='create_camp'),
     path('camp_master_edit/', views.camp_master_edit, name='camp_master_edit'),
     path('check-camp-code/', views.check_camp_code, name='check_camp_code'),
+    path('get_camp_files/<str:camp_code>/', views.get_camp_files, name='get_camp_files'),
     path('camp_allocation/', views.camp_allocation, name='camp_allocation'),
     path('save_camp_allocations/', views.save_camp_allocations, name='save_camp_allocations'),
 ]
