@@ -33,7 +33,7 @@ class CampMaster(models.Model):
     rental_agreement_end_date = models.DateField(null=True, blank=True)
     camp_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
     cheque_details = models.CharField(max_length=50, null=True, blank=True)
-    created_by = models.BigIntegerField()
+    created_by = models.BigIntegerField( null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)

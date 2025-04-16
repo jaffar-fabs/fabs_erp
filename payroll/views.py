@@ -3099,20 +3099,24 @@ def camp_list(request):
 def create_camp(request):
     set_comp_code(request)
     if request.method == 'POST':
-        comp_code =COMP_CODE
+        comp_code = COMP_CODE
         camp_code = request.POST.get('camp_code')
         camp_name = request.POST.get('camp_name')
         camp_agent = request.POST.get('camp_agent')
         upload_document = request.FILES.get('camp_doc')
-        ejari_start_date = request.POST.get('ejari_start_date')
-        ejari_end_date = request.POST.get('ejari_end_date')
-        rental_contract_start_date = request.POST.get('rental_contract_start_date')
-        rental_contract_end_date = request.POST.get('rental_contract_end_date')
-        rental_agreement_start_date = request.POST.get('rental_agreement_start_date')
-        rental_agreement_end_date = request.POST.get('rental_agreement_end_date')
-        camp_value = request.POST.get('camp_value')
+        
+        # Convert empty date fields to None
+        ejari_start_date = request.POST.get('ejari_start_date') or None
+        ejari_end_date = request.POST.get('ejari_end_date') or None
+        rental_contract_start_date = request.POST.get('rental_contract_start_date') or None
+        rental_contract_end_date = request.POST.get('rental_contract_end_date') or None
+        rental_agreement_start_date = request.POST.get('rental_agreement_start_date') or None
+        rental_agreement_end_date = request.POST.get('rental_agreement_end_date') or None
+        
+        camp_value = request.POST.get('camp_value') or 0
         cheque_details = request.POST.get('cheque_details')
 
+        # Create CampMaster entry
         CampMaster.objects.create(
             comp_code=comp_code,
             camp_code=camp_code,
@@ -3127,12 +3131,11 @@ def create_camp(request):
             rental_agreement_end_date=rental_agreement_end_date,
             camp_value=camp_value,
             cheque_details=cheque_details,
-            created_by = 1,
+            created_by=1,
             is_active=True
         )
 
-        #Camp Details
-
+        # Camp Details
         block_name = request.POST.getlist('block_name[]')
         floor = request.POST.getlist('floor[]')
         type = request.POST.getlist('type[]')
@@ -3152,16 +3155,15 @@ def create_camp(request):
                 floor=floor[i],
                 type=type[i],
                 front_field=front_field[i],
-                no_of_rooms=no_of_rooms[i],
-                lower_bed=lower_bed_level[i],
-                upper_bed=upper_bed_level[i],
-                total_beds=total_no_of_beds[i],
-                occupied_beds=occupied[i],
-                available_beds=available[i]
+                no_of_rooms=no_of_rooms[i] or 0,
+                lower_bed=lower_bed_level[i] or 0,
+                upper_bed=upper_bed_level[i] or 0,
+                total_beds=total_no_of_beds[i] or 0,
+                occupied_beds=occupied[i] or 0,
+                available_beds=available[i] or 0,
             )
 
-        #cheque Details
-
+        # Cheque Details
         bank_name = request.POST.getlist('bank_name[]')
         cheque_no = request.POST.getlist('cheque_no[]')
         cheque_date = request.POST.getlist('cheque_date[]')
@@ -3172,9 +3174,9 @@ def create_camp(request):
                 comp_code=comp_code,
                 camp_code=camp_code,
                 bank_name=bank_name[i],
-                cheque_no=cheque_no[i],
-                cheque_date=cheque_date[i],
-                cheque_amount=cheque_amount[i]
+                cheque_no=cheque_no[i] or None,  # Convert empty string to None
+                cheque_date=cheque_date[i] or None,  # Convert empty string to None
+                cheque_amount=cheque_amount[i] or 0,  # Default to 0 if empty
             )
 
         return redirect('camp_master')
@@ -3259,6 +3261,7 @@ def camp_master_edit(request):
             camp_master.camp_value = request.POST.get('camp_value')
             camp_master.cheque_details = request.POST.get('cheque_details')
             camp_master.modified_by = 1
+            print(len(request.FILES.getlist('camp_doc')))
             camp_master.save()
 
             # Update Camp Details
@@ -3287,16 +3290,14 @@ def camp_master_edit(request):
                     camp_detail.floor = flr
                     camp_detail.type = typ
                     camp_detail.front_field = front
-                    camp_detail.no_of_rooms = rooms
-                    camp_detail.lower_bed = low
-                    camp_detail.upper_bed = up
-                    camp_detail.total_beds = total
-                    camp_detail.occupied_beds = occ
-                    camp_detail.available_beds = avail
+                    camp_detail.no_of_rooms = rooms or 0
+                    camp_detail.lower_bed = low or 0
+                    camp_detail.upper_bed = up or 0
+                    camp_detail.total_beds = total or 0
+                    camp_detail.occupied_beds = occ or 0
+                    camp_detail.available_beds = avail or 0
                     camp_detail.save()
                 elif not cid:
-                        print("Creating new camp detail")
-                        print(COMP_CODE, camp_master.camp_code, block, flr, typ, front, rooms, low, up, total, occ, avail)
                         CampDetails.objects.create(
                             comp_code=COMP_CODE,
                             camp_code=camp_master.camp_code,
