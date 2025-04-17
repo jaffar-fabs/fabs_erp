@@ -1888,9 +1888,8 @@ function removeDependentRowEdit(button, index) {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                                        <input type="text" id="emp_code" name="emp_code" class="form-control" required>
-                                        <div class="invalid-feedback">Please provide an employee code.</div>
+                                        <label class="col-form-label">Employee Code </label>
+                                        <input type="text" id="emp_code" name="emp_code" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -2013,7 +2012,7 @@ function removeDependentRowEdit(button, index) {
                                     </div>
                                 </div>        
                                 <!-- Status and Sub Status (Same Line) -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
                                         <select name="emp_status" class="form-select" required>
@@ -2035,7 +2034,7 @@ function removeDependentRowEdit(button, index) {
                                             {% endfor %}
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- passport Release and Reason (Next Line) -->
                                 <div class="col-md-6">
@@ -2365,7 +2364,6 @@ function removeDependentRowEdit(button, index) {
             </div>
         </div>
     </div>
-            </div>
 
 <script>
     document.getElementById('addEntry_add').addEventListener('click', function() {
@@ -3209,7 +3207,7 @@ function removeLicenseRow_add(button) {
 </script>
 
 
-            </div>
+            
 
             <div class="d-flex align-items-center justify-content-end mt-4">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
@@ -3465,4 +3463,74 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
     };
 });
 </script>
+
+<script>
+    document.getElementById('addEmployeeForm').onsubmit = function (event) {
+        event.preventDefault(); // Prevent the default form submission
+    
+        const form = this;
+        const formData = new FormData(form);
+    
+        // Submit the form via fetch
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display success message
+                alert('Employee created successfully!');
+                
+                // Optionally, reset the form
+                form.reset();
+    
+                // Close the offcanvas (if applicable)
+                const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvas_add'));
+                if (offcanvas) offcanvas.hide();
+            } else {
+                // Handle errors
+                alert(`Error creating employee: ${data.error || 'Please try again.'}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    };
+    </script>
+    <script>
+        document.getElementById('addEmployeeForm').onsubmit = function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const form = this;
+    const formData = new FormData(form);
+
+    // Submit the form via fetch
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload the page on success
+            location.reload();
+        } else {
+            // Handle errors
+            alert(`Error creating employee: ${data.error || 'Please try again.'}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+};
+    </script>
 {% endblock %}

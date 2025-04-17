@@ -510,7 +510,7 @@ class SeedModel(models.Model):
     seed_code = models.CharField(max_length=50)
     seed_group = models.CharField(max_length=50)
     seed_type = models.CharField(max_length=50)
-    seed_prefix = models.CharField(max_length=50)
+    seed_prefix = models.CharField(max_length=50, null=True, blank=True)
     seed_length = models.BigIntegerField()
     seed_start_num = models.BigIntegerField()
     seed_next_num = models.BigIntegerField()

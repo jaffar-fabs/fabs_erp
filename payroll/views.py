@@ -195,6 +195,14 @@ def save_employee(request, employee_id=None):
             employee.modified_by = 1  # Replace with actual user ID if available
             employee.modified_on = now()
         else:
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'EMP'])
+                    result = cursor.fetchone()
+                    emp_code = result[0] if result else None
+                    print(emp_code)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
             employee = Employee()
             employee.created_by = 1  # Replace with actual user ID if available
             employee.created_on = now()
