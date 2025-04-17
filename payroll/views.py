@@ -3285,7 +3285,6 @@ def camp_master_edit(request):
             camp_master = CampMaster.objects.get(camp_id=camp_id, comp_code = COMP_CODE)
             camp_details = CampDetails.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
             camp_cheque = CampCheque.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
-            print(camp_master)
             
             camp_details_data = []
 
@@ -3611,6 +3610,182 @@ def check_employee_allocation(request):
         return JsonResponse({'allocated': is_allocated})
     return JsonResponse({'error': 'Invalid employee code'}, status=400)
 
+def party_master_list(request):
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+
+    # Filter parties based on keyword
+    parties_query = PartyMaster.objects.all()
+    if keyword:
+        parties_query = parties_query.filter(customer_name__icontains=keyword)
+
+    # Paginate the results
+    paginator = Paginator(parties_query.order_by('-party_id'), PAGINATION_SIZE)
+    try:
+        parties = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        parties = paginator.page(1)
+    except EmptyPage:
+        parties = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/payroll/party_master/party_master.html', {
+        'parties': parties,
+        'keyword': keyword,
+    })
+
+
+def create_party(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        comp_code = COMP_CODE
+        customer_code = request.POST.get('customer_code')
+        customer_name = request.POST.get('customer_name')
+        trade_license = request.POST.get('trade_license')
+        physical_address = request.POST.get('physical_address')
+        po_box = request.POST.get('po_box')
+        emirates = ':'.join(request.POST.getlist('emirates'))
+        country = request.POST.get('country')
+        telephone = request.POST.get('telephone')
+        email = request.POST.get('email')
+        contact_person = request.POST.get('contact_person')
+        contact_person_phone = request.POST.get('contact_person_phone')
+        contact_person_email = request.POST.get('contact_person_email')
+        tax_treatment = request.POST.get('tax_treatment')
+        vat_no = request.POST.get('vat_no')
+        currency = request.POST.get('currency')
+        payment_terms = request.POST.get('payment_terms')
+        status = request.POST.get('status')
+        upload_document = request.FILES.getlist('file_upload[]')
+
+        if upload_document:
+            for file in upload_document:
+                print(file.name)
+                PartyDocuments.objects.create(
+                    comp_code=comp_code,
+                    customer_code=customer_code,
+                    document_name=file.name,
+                    document_file=file
+                )
+
+
+        PartyMaster.objects.create(
+            customer_code=customer_code,
+            customer_name=customer_name,
+            trade_license=trade_license,
+            physical_address=physical_address,
+            po_box=po_box,
+            emirates=emirates,
+            country=country,
+            telephone=telephone,
+            email=email,
+            contact_person=contact_person,
+            contact_person_phone=contact_person_phone,
+            contact_person_email=contact_person_email,
+            tax_treatment=tax_treatment,
+            vat_no=vat_no,
+            currency=currency,
+            payment_terms=payment_terms,
+            status=status,
+        )
+        return redirect('party_master_list')
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
+@csrf_exempt
+def party_master_edit(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        party_id = request.GET.get('party_id')
+
+        try:
+            party = PartyMaster.objects.get(party_id=party_id)
+            documents = PartyDocuments.objects.filter(customer_code=party.customer_code)
+
+            # Prepare the response data
+            document_data = [
+                {
+                    'document_name': doc.document_name,
+                    'document_url': doc.document_file.url,  # Ensure MEDIA_URL is configured
+                }
+                for doc in documents
+            ]
+
+            return JsonResponse({
+                'party_id': party.party_id,
+                'customer_code': party.customer_code,
+                'customer_name': party.customer_name,
+                'trade_license': party.trade_license,
+                'physical_address': party.physical_address,
+                'po_box': party.po_box,
+                'emirates': party.emirates,
+                'country': party.country,
+                'telephone': party.telephone,
+                'email': party.email,
+                'contact_person': party.contact_person,
+                'contact_person_phone': party.contact_person_phone,
+                'contact_person_email': party.contact_person_email,
+                'tax_treatment': party.tax_treatment,
+                'vat_no': party.vat_no,
+                'currency': party.currency,
+                'payment_terms': party.payment_terms,
+                'status': party.status,
+                'documents': document_data,  # Include document data
+            })
+        except PartyMaster.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Party not found.'}, status=404)
+        
+    if request.method == 'POST':
+        party_id = request.POST.get('party_id')
+
+        try:
+            party = PartyMaster.objects.get(party_id=party_id)
+            party.customer_code = request.POST.get('customer_code')
+            party.customer_name = request.POST.get('customer_name')
+            party.trade_license = request.POST.get('trade_license')
+            party.physical_address = request.POST.get('physical_address')
+            party.po_box = request.POST.get('po_box')
+            party.emirates = ':'.join(request.POST.getlist('emirates'))
+            party.country = request.POST.get('country')
+            party.telephone = request.POST.get('telephone')
+            party.email = request.POST.get('email')
+            party.contact_person = request.POST.get('contact_person')
+            party.contact_person_phone = request.POST.get('contact_person_phone')
+            party.contact_person_email = request.POST.get('contact_person_email')
+            party.tax_treatment = request.POST.get('tax_treatment')
+            party.vat_no = request.POST.get('vat_no')
+            party.currency = request.POST.get('currency')
+            party.payment_terms = request.POST.get('payment_terms')
+            party.status = request.POST.get('status')
+            party.modified_by = request.user.id if request.user.is_authenticated else 1
+            upload_document = request.FILES.getlist('file_upload[]')
+
+            if upload_document:
+                for file in upload_document:
+                    print(file.name)
+                    PartyDocuments.objects.create(
+                        comp_code=COMP_CODE,
+                        customer_code=party.customer_code,
+                        document_name=file.name,
+                        document_file=file
+                    )
+            party.save()
+
+            return redirect('party_master_list')
+        except PartyMaster.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Party not found.'}, status=404)
+        except Exception as e:
+            print(f"Error updating party: {str(e)}")
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    
+    return redirect('party_master_list')
+
+def delete_party(request, party_id):
+    if request.method == 'POST':
+        party = get_object_or_404(PartyMaster, party_id=party_id)
+        party.delete()
+        return JsonResponse({'success': True, 'message': 'Party deleted successfully.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
+
 def salary_register_single_line(request):
     set_comp_code(request)  # Ensure the company code is set
     return render(request, 'pages/modal/reports/salary_register_single.html')
@@ -3666,3 +3841,5 @@ def submit_salary_register(request):
             return JsonResponse({'success': False, 'message': f'Error connecting to JasperReports server: {str(e)}'}, status=500)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
+
+

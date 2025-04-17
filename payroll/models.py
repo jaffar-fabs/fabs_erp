@@ -15,11 +15,50 @@ def camp_document_path(instance, filename):
 def company_logo_upload_path(instance, filename):
     safe_code = str(instance.company_code).replace(" ", "_").replace("/", "_")
     return os.path.join('company_logos', safe_code, filename)
+
+def party_documents_path(instance, filename):
+    # Construct the path using the party's customer code
+    return os.path.join('party_documents', instance.customer_code, filename)
+
+# -------------------------------------------------------------------------------
+# Party Master
+class PartyMaster(models.Model):
+    comp_code = models.CharField(max_length=15, null=True)  # Removed default value
+    party_id = models.BigAutoField(primary_key=True)
+    customer_code = models.CharField(max_length=50, unique=True) 
+    customer_name = models.CharField(max_length=50)
+    trade_license = models.CharField(max_length=50, null=True, blank=True)
+    physical_address = models.CharField(max_length=100, null=True, blank=True)
+    po_box = models.CharField(max_length=50, null=True, blank=True)
+    emirates = models.CharField(max_length=50, null=True, blank=True)
+    country = models.CharField(max_length=50, null=True, blank=True)
+    telephone = models.CharField(max_length=50, null=True, blank=True)
+    email = models.EmailField(max_length=50, null=True, blank=True)
+    contact_person = models.CharField(max_length=50, null=True, blank=True)
+    contact_person_phone = models.CharField(max_length=50, null=True, blank=True)
+    contact_person_email = models.EmailField(max_length=50, null=True, blank=True)
+    tax_treatment = models.CharField(max_length=50, null=True, blank=True)
+    vat_no = models.CharField(max_length=50, null=True, blank=True)
+    currency = models.CharField(max_length=50, null=True, blank=True)
+    payment_terms = models.CharField(max_length=50, null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    created_by = models.BigIntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+class PartyDocuments (models.Model):
+    comp_code = models.CharField(max_length=15, null=True)  # Removed default value
+    party_document_id = models.BigAutoField(primary_key=True)
+    customer_code = models.CharField(max_length=50)
+    document_name = models.CharField(max_length=50)
+    document_file = models.FileField(upload_to=party_documents_path, blank=True, null=True)
+
 # -------------------------------------------------------------------------------
 #Camp Master
 
 class CampMaster(models.Model):
-    comp_code = models.CharField(max_length=15)  # Removed default value
+    comp_code = models.CharField(max_length=15)
     camp_id = models.BigAutoField(primary_key=True)
     camp_code = models.CharField(max_length=50)
     camp_name = models.CharField(max_length=50)

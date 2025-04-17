@@ -99,6 +99,7 @@ TEMPLATES = [
                 'payroll.context_processors.get_company_documents',
                 'payroll.context_processors.get_floor',
                 'payroll.context_processors.get_room_type',
+                'payroll.context_processors.get_currency',
             ],
         },
     },

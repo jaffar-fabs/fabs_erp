@@ -151,6 +151,12 @@ urlpatterns = [
     path('fetch-room-numbers/', views.fetch_room_numbers, name='fetch_room_numbers'),
     path('check-employee-allocation/', views.check_employee_allocation, name='check_employee_allocation'),
 
+    #party master
+    path('party-master/', views.party_master_list, name='party_master_list'),
+    path('create-party/', views.create_party, name='create_party'),
+    path('party_master_edit/', views.party_master_edit, name='party_master_edit'),
+    path('delete-party/<int:party_id>/', views.delete_party, name='delete_party'),
+
 
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),

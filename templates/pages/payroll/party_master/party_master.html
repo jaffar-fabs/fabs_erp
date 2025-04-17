@@ -1,0 +1,186 @@
+{% extends "partials/base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Party Master" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get" id="searchForm">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Parties" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Party
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Customer Code</th>
+                                        <th>Customer Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Telephone</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for party in parties %}
+                                    <tr>
+                                        <td>{{ party.customer_code }}</td>
+                                        <td>{{ party.customer_name }}</td>
+                                        <td>{{ party.contact_person }}</td>
+                                        <td>{{ party.telephone }}</td>
+                                        <td>
+                                            {% if party.status == "Active" %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-party-btn" href="#" data-id="{{ party.party_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_party" data-party-id="{{ party.party_id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing {{ parties.start_index }} to {{ parties.end_index }} of {{ parties.paginator.count }} entries
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    {% if parties.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ parties.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in parties.paginator.page_range %}
+                                    <li class="page-item {% if parties.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if parties.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ parties.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Edit Party Functionality
+        $(".edit-party-btn").on("click", function (event) {
+            event.preventDefault();
+            var partyId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+
+            $.ajax({
+                url: "/party_master_edit/",
+                type: "GET",
+                data: { 'party_id': partyId },
+                success: function (response) {
+                    // Populate the edit form with the response data
+                    $("#party_id").val(response.party_id);
+                    $("#customer_code").val(response.customer_code);
+                    $("#customer_name").val(response.customer_name);
+                    $("#trade_license").val(response.trade_license);
+                    $("#physical_address").val(response.physical_address);
+                    $("#po_box").val(response.po_box);
+                    $("#telephone").val(response.telephone);
+                    $("#email").val(response.email);
+                    $("#contact_person").val(response.contact_person);
+                    $("#contact_person_phone").val(response.contact_person_phone);
+                    $("#contact_person_email").val(response.contact_person_email);
+                    $("#vat_no").val(response.vat_no);
+
+                    // Set dropdown values
+                    $("#emirates").val(response.emirates).change();
+                    $("#country").val(response.country).change();
+                    $("#tax_treatment").val(response.tax_treatment).change();
+                    $("#currency").val(response.currency).change();
+                    $("#payment_terms").val(response.payment_terms).change();
+                    $("#status").val(response.status).change();
+                // Populate the files table
+                if (response.documents && response.documents.length > 0) {
+                        response.documents.forEach(function (doc) {
+                            $("#party-files-body").append(`
+                                <tr>
+                                    <td>${doc.document_name}</td>
+                                    <td><a href="${doc.document_url}" target="_blank">Preview</a></td>
+                                    <td><a href="${doc.document_url}" download>Download</a></td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        $("#camp-files-body").append(`
+                            <tr>
+                                <td colspan="3">No files available.</td>
+                            </tr>
+                        `);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading party details. Please try again.");
+                }
+            });
+        });
+    });
+</script>
+
+{% block party_modal %}
+{% include "pages/modal/payroll/party_master_modal.html" %}
+{% endblock %}
+{% endblock content %}

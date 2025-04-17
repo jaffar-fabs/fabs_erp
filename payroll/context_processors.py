@@ -12,6 +12,13 @@ def get_comp_code(request):
     PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
     return request.session.get('comp_code')
 
+def get_currency(request):
+    comp_code = get_comp_code(request)
+    currency_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='CURRENCY')
+    return {
+        'currency_data': currency_data
+    }
+
 def gender_data(request):
     comp_code = get_comp_code(request)
     set_comp_code(request)
