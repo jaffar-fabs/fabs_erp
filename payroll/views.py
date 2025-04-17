@@ -3638,7 +3638,17 @@ def create_party(request):
     set_comp_code(request)
     if request.method == 'POST':
         comp_code = COMP_CODE
-        customer_code = request.POST.get('customer_code')
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'PARTY'])
+                result = cursor.fetchone()
+                customer_code = result[0] if result else None
+                print(customer_code)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+        # customer_code = request.POST.get('customer_code')
         customer_name = request.POST.get('customer_name')
         trade_license = request.POST.get('trade_license')
         physical_address = request.POST.get('physical_address')
