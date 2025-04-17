@@ -148,6 +148,14 @@ urlpatterns = [
     path('get_camp_files/<str:camp_code>/', views.get_camp_files, name='get_camp_files'),
     path('camp_allocation/', views.camp_allocation, name='camp_allocation'),
     path('save_camp_allocations/', views.save_camp_allocations, name='save_camp_allocations'),
+    path('fetch-room-numbers/', views.fetch_room_numbers, name='fetch_room_numbers'),
+    path('check-employee-allocation/', views.check_employee_allocation, name='check_employee_allocation'),
+
+
+    #reports
+    path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),
+    path('submit_salary_register/', views.submit_salary_register, name='submit_salary_register'),
+
 ]
 
 

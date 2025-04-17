@@ -94,7 +94,9 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control new-room" name="new_room[]" disabled>
+                                                <select class="form-select new-room" name="new_room[]" disabled>
+                                                    <option value="">Select Room</option>
+                                                </select>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control bed-no" name="bed_no[]" disabled>
@@ -124,7 +126,7 @@
                                         <tr>
                                             <input type="hidden" name="id[]" value="{{ item.camp_allocation_id }}">
                                             <td>
-                                                <select class="form-select employee-code" name="employee_code[]" required>
+                                                <select class="form-select employee-code" name="employee_code[]" required disabled>
                                                     <option value="">Select Employee</option>
                                                     {% for emp in employee_data %}
                                                     <option value="{{ emp.emp_code }}" {% if item.emp_code == emp.emp_code %}selected{% endif %}>{{ emp.emp_code }} - {{ emp.emp_name }}</option>
@@ -159,7 +161,9 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="text" class="form-control new-room" name="new_room[]" value="{{ item.new_room_no }}" disabled>
+                                                <select class="form-select new-room" name="new_room[]" data-selected-room="{{ item.new_room_no }}" disabled>
+                                                    <option value="">Select Room</option>
+                                                </select>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control bed-no" name="bed_no[]" value="{{ item.bed_number }}" disabled>
@@ -256,13 +260,19 @@ $(document).ready(function () {
     });
 
     // Enable/Disable fields based on Action Type
+    $(document).ready(function () {
+    // Function to toggle fields based on Action Type
     function toggleFieldsBasedOnActionType(row, actionType) {
-        if (actionType === "Transfer" || actionType === "Termination") {
-            // Enable all fields
-            row.find('.new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', false);
+        if (actionType === "New Allocation") {
+            // Enable fields for New Allocation
+            row.find('.new-camp, .new-room, .bed-no, .effective-date').prop('disabled', false);
+            row.find('.current-camp, .current-room, .reason, .approval').prop('disabled', true);
+        } else if (actionType === "Transfer") {
+            // Enable all fields for Transfer
+            row.find('.current-camp, .current-room, .new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', false);
         } else {
-            // Disable all fields except mandatory ones
-            row.find('.new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', true);
+            // Disable all fields for other cases
+            row.find('.current-camp, .current-room, .new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', true);
         }
     }
 
@@ -279,6 +289,7 @@ $(document).ready(function () {
         var actionType = row.find('.action-type').val();
         toggleFieldsBasedOnActionType(row, actionType);
     });
+});
 
     // Save all data
     $('#save-all-btn').click(function () {
@@ -337,7 +348,108 @@ $('#allocation-form').on('submit', function (e) {
 });
 });
 </script>
+<script>
+    $(document).ready(function () {
+        // Function to populate the New Room dropdown for a given row
+        function populateNewRoomDropdown(row, campCode, selectedRoom) {
+            var roomDropdown = row.find('.new-room');
+            if (campCode) {
+                // Fetch room numbers via AJAX
+                $.ajax({
+                    url: '{% url "fetch_room_numbers" %}', // Replace with the correct URL name
+                    type: 'GET',
+                    data: { camp_code: campCode },
+                    success: function (response) {
+                        if (response.success) {
+                            // Populate the New Room dropdown
+                            roomDropdown.empty();
+                            roomDropdown.append('<option value="">Select Room</option>');
+                            response.rooms.forEach(function (room) {
+                                roomDropdown.append('<option value="' + room + '"' + (room === selectedRoom ? ' selected' : '') + '>' + room + '</option>');
+                            });
+                            roomDropdown.prop('disabled', false);
+                        } else {
+                            alert(response.message || 'Failed to fetch room numbers.');
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while fetching room numbers.');
+                    }
+                });
+            } else {
+                // Clear and disable the New Room dropdown if no camp is selected
+                roomDropdown.empty();
+                roomDropdown.append('<option value="">Select Room</option>');
+                roomDropdown.prop('disabled', true);
+            }
+        }
 
+        // Populate New Room dropdown for existing rows on page load
+        $('#transaction-body tr').each(function () {
+            var row = $(this);
+            var campCode = row.find('.new-camp').val();
+            var selectedRoom = row.find('.new-room').data('selected-room'); // Use a data attribute for the selected room
+            if (campCode) {
+                populateNewRoomDropdown(row, campCode, selectedRoom);
+            }
+        });
+
+        // Handle change event for New Camp dropdown
+        $(document).on('change', '.new-camp', function () {
+            var campCode = $(this).val();
+            var row = $(this).closest('tr');
+            populateNewRoomDropdown(row, campCode, null);
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+    // Function to check if the employee is already allocated
+    function checkEmployeeAllocation(employeeCode, currentRow) {
+        var isDuplicate = false;
+
+        // Loop through all rows to check for duplicate employee allocation
+        $('#transaction-body tr').each(function () {
+            var row = $(this);
+            if (row.is(currentRow)) {
+                // Skip the current row being edited
+                return;
+            }
+
+            var existingEmployeeCode = row.find('.employee-code').val();
+            if (existingEmployeeCode === employeeCode) {
+                isDuplicate = true;
+                return false; // Break the loop
+            }
+        });
+
+        return isDuplicate;
+    }
+
+    $(document).on('change', '.employee-code', function () {
+    var employeeCode = $(this).val();
+    var currentRow = $(this).closest('tr');
+
+    if (employeeCode) {
+        // Check if the employee is already allocated via AJAX
+        $.ajax({
+            url: '{% url "check_employee_allocation" %}',
+            type: 'GET',
+            data: { employee_code: employeeCode },
+            success: function (response) {
+                if (response.allocated) {
+                    alert('The selected employee is already allocated to a camp.');
+                    currentRow.find('.employee-code').val(''); // Reset the dropdown
+                }
+            },
+            error: function () {
+                alert('An error occurred while checking employee allocation.');
+            }
+        });
+    }
+});
+});
+</script>
 <style>
     #transaction-table th {
         white-space: nowrap;

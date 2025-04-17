@@ -24,6 +24,8 @@ from django.db.models import Q, Sum, Count
 import pdb
 from itertools import zip_longest
 from django.db import connection
+import urllib.parse
+import urllib.request
 
 PAGINATION_SIZE = 6
 
@@ -3169,19 +3171,16 @@ def create_camp(request):
         
         
         comp_code = COMP_CODE
-        camp_code = request.POST.get('camp_code')
+        # camp_code = request.POST.get('camp_code')
         camp_name = request.POST.get('camp_name')
         camp_agent = request.POST.get('camp_agent')
-        test = 1
-        
         try:
             with connection.cursor() as cursor:
-                cursor.execute("SELECT get_seed_no(%s);", [test])
+                cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'CAMP'])
                 result = cursor.fetchone()
                 camp_code = result[0] if result else None
                 print(camp_code)
         except Exception as e:
-            error = str(e)
             return JsonResponse({"error": str(e)}, status=500)
 
         # Convert empty date fields to None
@@ -3597,3 +3596,73 @@ def save_camp_allocations(request):
             'success': False,
             'message': str(e)
         }, status=500)
+    
+def fetch_room_numbers(request):
+    camp_code = request.GET.get('camp_code')
+    if camp_code:
+        rooms = CampDetails.objects.filter(camp_code=camp_code).values_list('room_no', flat=True)
+        return JsonResponse({'success': True, 'rooms': list(rooms)})
+    return JsonResponse({'success': False, 'message': 'Invalid camp code.'}, status=400)
+
+def check_employee_allocation(request):
+    employee_code = request.GET.get('employee_code')
+    if employee_code:
+        is_allocated = CampAllocation.objects.filter(emp_code=employee_code).exists()
+        return JsonResponse({'allocated': is_allocated})
+    return JsonResponse({'error': 'Invalid employee code'}, status=400)
+
+def salary_register_single_line(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/salary_register_single.html')
+
+def submit_salary_register(request):
+    if request.method == 'POST':
+        # Get form data
+        employee_id = request.POST.get('employee_id')
+        month = request.POST.get('month')
+
+        # Validate input
+        if not employee_id or not month:
+            return JsonResponse({'success': False, 'message': 'Employee ID and Month are required.'}, status=400)
+
+        # JasperReports server details
+        jasper_url = 'http://<jasper-server-url>/jasperserver/rest_v2/reports/<report-path>'
+        username = '<jasper-username>'
+        password = '<jasper-password>'
+
+        # Report parameters
+        params = {
+            'employee_id': employee_id,
+            'month': month,
+            'output': 'pdf'  # Specify the output format (e.g., pdf, xls, etc.)
+        }
+
+        # Encode parameters
+        query_string = urllib.parse.urlencode(params)
+        full_url = f"{jasper_url}?{query_string}"
+
+        try:
+            # Create a password manager for basic authentication
+            password_mgr = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+            password_mgr.add_password(None, jasper_url, username, password)
+            handler = urllib.request.HTTPBasicAuthHandler(password_mgr)
+            opener = urllib.request.build_opener(handler)
+            urllib.request.install_opener(opener)
+
+            # Send the request
+            with urllib.request.urlopen(full_url) as response:
+                if response.status == 200:
+                    # Return the report as a downloadable file
+                    response_content = response.read()
+                    response_headers = {
+                        'Content-Type': 'application/pdf',
+                        'Content-Disposition': f'attachment; filename="Salary_Register_{employee_id}_{month}.pdf"'
+                    }
+                    return HttpResponse(response_content, headers=response_headers)
+                else:
+                    return JsonResponse({'success': False, 'message': 'Failed to generate report. Please try again.'}, status=response.status)
+
+        except urllib.error.URLError as e:
+            return JsonResponse({'success': False, 'message': f'Error connecting to JasperReports server: {str(e)}'}, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
