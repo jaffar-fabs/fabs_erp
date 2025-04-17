@@ -163,42 +163,46 @@
                     if (response.camp_details && response.camp_details.length > 0) {
                         response.camp_details.forEach(function(detail) {
                             const detailRow = `
-                                <tr>
-                                    <input type="hidden" name="camp_detail_id[]" value="${detail.camp_details_id || ''}">
-                                    <td><input class="form-control" name="block_name[]" value="${detail.block_name || ''}" type="text"></td>
-                                    <td>
-                                        <select name="floor[]" class="form-select">
-                                            <option value="">Select Floor</option>
-                                            {% for floor in floor_data %}
-                                            <option value="{{ floor.base_value }}" ${detail.floor == "{{ floor.base_value }}" ? "selected" : ""}>{{ floor.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="type[]" class="form-select">
-                                            <option value="">Select Type</option>
-                                            {% for type in room_type_data %}
-                                            <option value="{{ type.base_value }}" ${detail.type == "{{ type.base_value }}" ? "selected" : ""}>{{ type.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                                    <td><input class="form-control" name="front_field[]" value="${detail.front_field || ''}" type="text"></td>
-                                    <td><input class="form-control" name="no_of_rooms[]" value="${detail.no_of_rooms || ''}" type="text"></td>
-                                    <td><input class="form-control" name="lower_bed_level[]" value="${detail.lower_bed_level || ''}" type="text"></td>
-                                    <td><input class="form-control" name="upper_bed_level[]" value="${detail.upper_bed_level || ''}" type="text"></td>
-                                    <td><input class="form-control" name="total_no_of_beds[]" value="${detail.total_no_of_beds || ''}" type="text"></td>
-                                    <td><input class="form-control" name="occupied[]" value="${detail.occupied || ''}" type="text"></td>
-                                    <td><input class="form-control" name="available[]" value="${detail.available || ''}" type="text"></td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger" onclick="remove_detail_row_edit(this)">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-primary" onclick="add_detail_row_edit()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
+                                            <tr>
+                                                <input type="hidden" name="camp_detail_id[]" value="${detail.camp_details_id || ''}">
+                                                <td><input class="form-control" name="block_name[]" value="${detail.block || ''}" type="text"></td>
+                                                <td>
+                                                    <select name="floor[]" class="form-select">
+                                                        <option value="">Select Floor</option>
+                                                        {% for floor in floor_data %}
+                                                        <option value="{{ floor.base_value }}" ${detail.floor == "{{ floor.base_value }}" ? "selected" : ""}>{{ floor.base_description }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select name="type[]" class="form-select">
+                                                        <option value="">Select Type</option>
+                                                        {% for type in room_type_data %}
+                                                        <option value="{{ type.base_value }}" ${detail.type == "{{ type.base_value }}" ? "selected" : ""}>{{ type.base_description }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </td>
+                                                <td><input class="form-control" name="room_no[]" value="${detail.room_no || ''}" type="text"></td>
+                                                <td><input class="form-control" name="as_per_mohre[]" value="${detail.as_per_mohre || ''}" type="text"></td>
+                                                <td><input class="form-control" name="allocated[]" value="${detail.allocated || ''}" type="text"></td>
+                                                <td><input class="form-control" name="as_per_rental[]" value="${detail.as_per_rental || ''}" type="text"></td>
+                                                <td><input class="form-control" name="allocation_building[]" value="${detail.allocation_building || ''}" type="text"></td>
+                                                <td><input class="form-control" name="lower_bed_level[]" value="${detail.lower_bed || ''}" type="text"></td>
+                                                <td><input class="form-control" name="upper_bed_level[]" value="${detail.upper_bed || ''}" type="text"></td>
+                                                <td><input class="form-control" name="total_no_of_beds[]" value="${detail.total_beds || ''}" type="text"></td>
+                                                <td><input class="form-control" name="occupied[]" value="${detail.occupied || ''}" type="text"></td>
+                                                <td><input class="form-control" name="available[]" value="${detail.available || ''}" type="text"></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-danger" onclick="remove_detail_row_edit(this)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" onclick="add_detail_row_edit()">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `;
+
                             $("#camp_details_edit tbody").append(detailRow);
                         });
                     } else {

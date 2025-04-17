@@ -118,8 +118,12 @@
                                             <th>Block Name</th>
                                             <th>Floor</th>
                                             <th>Type</th>
-                                            <th>Front Field</th>
-                                            <th>No Of Rooms</th>
+                                            <!-- <th>Front Field</th> -->
+                                            <th>Room No</th>
+                                            <th>As per Mohre</th>
+                                            <th>Allocated</th>
+                                            <th>As per Rental</th>
+                                            <th>Allocation Building</th>
                                             <th>Lower Bed Level</th>
                                             <th>Upper Bed Level</th>
                                             <th>Total No Of Beds</th>
@@ -135,8 +139,7 @@
                                                 <select name="floor[]" class="form-select">
                                                     <option value="">Select Floor</option>
                                                     {% for floor in floor_data %}
-                                                    <option value="{{ floor.base_value }}">{{ floor.base_description }}
-                                                    </option>
+                                                    <option value="{{ floor.base_value }}">{{ floor.base_description }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </td>
@@ -144,32 +147,32 @@
                                                 <select name="type[]" class="form-select">
                                                     <option value="">Select Type</option>
                                                     {% for type in room_type_data %}
-                                                    <option value="{{ type.base_value }}">{{ type.base_description }}
-                                                    </option>
+                                                    <option value="{{ type.base_value }}">{{ type.base_description }}</option>
                                                     {% endfor %}
-                                                    
                                                 </select>
                                             </td>
-                                            <td><input class="form-control" name="front_field[]" type="text"></td>
-                                            <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                                            <!-- <td><input class="form-control" name="front_field[]" type="text"></td> -->
+                                            <td><input class="form-control" name="room_no[]" type="text"></td>
+                                            <td><input class="form-control" name="as_per_mohre[]" type="text"></td>
+                                            <td><input class="form-control" name="allocated[]" type="text"></td>
+                                            <td><input class="form-control" name="as_per_rental[]" type="text"></td>
+                                            <td><input class="form-control" name="allocation_building[]" type="text"></td>
                                             <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
                                             <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
                                             <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>
                                             <td><input class="form-control" name="occupied[]" type="text"></td>
                                             <td><input class="form-control" name="available[]" type="text"></td>
                                             <td>
-                                                <button type="button" class="btn btn-danger"
-                                                    onclick="remove_detail_row(this)">
+                                                <button type="button" class="btn btn-danger" onclick="remove_detail_row(this)">
                                                     <i class="fas fa-times"></i>
                                                 </button>
-                                                <button type="button" class="btn btn-primary"
-                                                    onclick="add_detail_row()">
+                                                <button type="button" class="btn btn-primary" onclick="add_detail_row()">
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                             </td>
                                         </tr>
                                     </tbody>
-                                </table>
+                                </table>                                
                             </div>
                         </div>
                     </div>
@@ -201,12 +204,11 @@
                     </script>
                     <script>
                         function calculateTotalBeds(row) {
-                            const noOfRooms = parseInt(row.querySelector('[name="no_of_rooms[]"]').value) || 0;
                             const lowerBeds = parseInt(row.querySelector('[name="lower_bed_level[]"]').value) || 0;
                             const upperBeds = parseInt(row.querySelector('[name="upper_bed_level[]"]').value) || 0;
                     
                             const totalBedsField = row.querySelector('[name="total_no_of_beds[]"]');
-                            totalBedsField.value = noOfRooms * (lowerBeds + upperBeds);
+                            totalBedsField.value = lowerBeds + upperBeds;
                         }
 
                         function calculedAvailable(row){
@@ -222,7 +224,7 @@
                             const target = e.target;
                             const row = target.closest('tr');
                     
-                            if (row && (target.name === 'no_of_rooms[]' || target.name === 'lower_bed_level[]' || target.name === 'upper_bed_level[]')) {
+                            if (row && (target.name === 'lower_bed_level[]' || target.name === 'upper_bed_level[]')) {
                                 calculateTotalBeds(row);
                             }
 
@@ -239,8 +241,11 @@
                             newRow.innerHTML = `<td><input class="form-control" name="block_name" type="text"></td>
                                         <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
                                         <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
-                                        <td><input class="form-control" name="front_field[]" type="text"></td>
-                                        <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                                        <td><input class="form-control" name="room_no[]" type="text"></td>
+                                        <td><input class="form-control" name="as_per_mohre[]" type="text"></td>
+                                        <td><input class="form-control" name="allocated[]" type="text"></td>
+                                        <td><input class="form-control" name="as_per_rental[]" type="text"></td>
+                                        <td><input class="form-control" name="allocation_building[]" type="text"></td>
                                         <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
                                         <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
                                         <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>
@@ -457,8 +462,12 @@
                                             <th>Block Name</th>
                                             <th>Floor</th>
                                             <th>Type</th>
-                                            <th>Front Field</th>
-                                            <th>No Of Rooms</th>
+                                            <!-- <th>Front Field</th> -->
+                                            <th>Room No</th>
+                                            <th>As per Mohre</th>
+                                            <th>Allocated</th>
+                                            <th>As per Rental</th>
+                                            <th>Allocation Building</th>
                                             <th>Lower Bed Level</th>
                                             <th>Upper Bed Level</th>
                                             <th>Total No Of Beds</th>
@@ -585,8 +594,11 @@
                 newRow.innerHTML = `<td><input class="form-control" name="block_name[]" type="text"></td>
                             <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
                             <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
-                            <td><input class="form-control" name="front_field[]" type="text"></td>
-                            <td><input class="form-control" name="no_of_rooms[]" type="text"></td>
+                            <td><input class="form-control" name="room_no[]" type="text"></td>
+                            <td><input class="form-control" name="as_per_mohre[]" type="text"></td>
+                            <td><input class="form-control" name="allocated[]" type="text"></td>
+                            <td><input class="form-control" name="as_per_rental[]" type="text"></td>
+                            <td><input class="form-control" name="allocation_building[]" type="text"></td>
                             <td><input class="form-control" name="lower_bed_level[]" type="text"></td>
                             <td><input class="form-control" name="upper_bed_level[]" type="text"></td>
                             <td><input class="form-control" name="total_no_of_beds[]" type="text"></td>

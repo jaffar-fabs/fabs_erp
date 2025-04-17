@@ -47,13 +47,19 @@ class CampDetails(models.Model):
     block = models.CharField(max_length=50, null=True, blank=True)
     floor = models.CharField(max_length=50, null=True, blank=True)
     type = models.CharField(max_length=50, null=True, blank=True)
-    front_field = models.CharField(max_length=50, null=True, blank=True)
-    no_of_rooms = models.IntegerField(null=True, blank=True)
+    
+    room_no = models.IntegerField(null=True, blank=True)  # renamed from no_of_rooms
+    as_per_mohre = models.IntegerField(null=True, blank=True)
+    allocated = models.IntegerField(null=True, blank=True)
+    as_per_rental = models.IntegerField(null=True, blank=True)
+    allocation_building = models.CharField(max_length=100, null=True, blank=True)
+    
     lower_bed = models.IntegerField(null=True, blank=True)
     upper_bed = models.IntegerField(null=True, blank=True)
     total_beds = models.IntegerField(null=True, blank=True)
     occupied_beds = models.IntegerField(null=True, blank=True)
     available_beds = models.IntegerField(null=True, blank=True)
+
 
 class CampDocuments(models.Model):
     comp_code = models.CharField(max_length=15)

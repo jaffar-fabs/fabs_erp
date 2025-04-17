@@ -3227,9 +3227,12 @@ def create_camp(request):
         # Camp Details
         block_name = request.POST.getlist('block_name[]')
         floor = request.POST.getlist('floor[]')
-        type = request.POST.getlist('type[]')
-        front_field = request.POST.getlist('front_field[]')
-        no_of_rooms = request.POST.getlist('no_of_rooms[]')
+        room_type = request.POST.getlist('type[]')
+        room_no = request.POST.getlist('room_no[]')
+        as_per_mohre = request.POST.getlist('as_per_mohre[]')
+        allocated = request.POST.getlist('allocated[]')
+        as_per_rental = request.POST.getlist('as_per_rental[]')
+        allocation_building = request.POST.getlist('allocation_building[]')
         lower_bed_level = request.POST.getlist('lower_bed_level[]')
         upper_bed_level = request.POST.getlist('upper_bed_level[]')
         total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
@@ -3242,9 +3245,12 @@ def create_camp(request):
                 camp_code=camp_code,
                 block=block_name[i],
                 floor=floor[i],
-                type=type[i],
-                front_field=front_field[i],
-                no_of_rooms=no_of_rooms[i] or 0,
+                type=room_type[i],
+                room_no=room_no[i] or 0,
+                as_per_mohre=as_per_mohre[i] or 0,
+                allocated=allocated[i] or 0,
+                as_per_rental=as_per_rental[i] or 0,
+                allocation_building=allocation_building[i],
                 lower_bed=lower_bed_level[i] or 0,
                 upper_bed=upper_bed_level[i] or 0,
                 total_beds=total_no_of_beds[i] or 0,
@@ -3287,14 +3293,17 @@ def camp_master_edit(request):
             for details in camp_details:
                 camp_details_data.append({
                     'camp_details_id': details.camp_details_id,
-                    'block_name': details.block,
+                    'block': details.block,
                     'floor': details.floor,
                     'type': details.type,
-                    'front_field': details.front_field,
-                    'no_of_rooms': details.no_of_rooms,
-                    'lower_bed_level': details.lower_bed,
-                    'upper_bed_level': details.upper_bed,
-                    'total_no_of_beds': details.total_beds,
+                    'room_no': details.room_no,
+                    'as_per_mohre': details.as_per_mohre,
+                    'allocated': details.allocated,
+                    'as_per_rental': details.as_per_rental,
+                    'allocation_building': details.allocation_building,
+                    'lower_bed': details.lower_bed,
+                    'upper_bed': details.upper_bed,
+                    'total_beds': details.total_beds,
                     'occupied': details.occupied_beds,
                     'available': details.available_beds
                 })
@@ -3369,8 +3378,11 @@ def camp_master_edit(request):
             block_name = request.POST.getlist('block_name[]')
             floor = request.POST.getlist('floor[]')
             type = request.POST.getlist('type[]')
-            front_field = request.POST.getlist('front_field[]')
-            no_of_rooms = request.POST.getlist('no_of_rooms[]')
+            room_no = request.POST.getlist('room_no[]')
+            as_per_mohre = request.POST.getlist('as_per_mohre[]')
+            allocated = request.POST.getlist('allocated[]')
+            as_per_rental = request.POST.getlist('as_per_rental[]')
+            allocation_building = request.POST.getlist('allocation_building[]')
             lower_bed_level = request.POST.getlist('lower_bed_level[]')
             upper_bed_level = request.POST.getlist('upper_bed_level[]')
             total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
@@ -3379,7 +3391,7 @@ def camp_master_edit(request):
             delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
 
             
-            for cid, block, flr, typ, front, rooms, low, up, total, occ, avail, rmid in zip_longest(camp_detail_ids, block_name, floor, type, front_field, no_of_rooms,lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available,delete_camp_detail_ids):
+            for cid, block, flr, typ, rooms,apm,alloc,apr, ab, low, up, total, occ, avail, rmid in zip_longest(camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,allocation_building,lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available,delete_camp_detail_ids):
                 if rmid:
                     camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
                     camp_detail.delete()
@@ -3389,8 +3401,11 @@ def camp_master_edit(request):
                     camp_detail.block = block
                     camp_detail.floor = flr
                     camp_detail.type = typ
-                    camp_detail.front_field = front
-                    camp_detail.no_of_rooms = rooms or 0
+                    camp_detail.room_no = rooms or 0
+                    camp_detail.as_per_mohre = apm or 0
+                    camp_detail.allocated = alloc or 0
+                    camp_detail.as_per_rental = apr or 0
+                    camp_detail.allocation_building = ab
                     camp_detail.lower_bed = low or 0
                     camp_detail.upper_bed = up or 0
                     camp_detail.total_beds = total or 0
@@ -3404,8 +3419,10 @@ def camp_master_edit(request):
                             block=block,
                             floor=flr,
                             type=typ,
-                            front_field=front,
-                            no_of_rooms=rooms,
+                            room_no=rooms,
+                            as_per_mohre=apm,
+                            allocated=alloc,
+                            as_per_rental=apr,
                             lower_bed=low,
                             upper_bed=up,
                             total_beds=total,
