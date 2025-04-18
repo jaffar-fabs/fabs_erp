@@ -38,7 +38,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Employee Code </label>
-                                        <input type="text" id="emp_code" name="emp_code" class="form-control" readonly>
+                                        <input type="text" name="emp_code" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -1507,11 +1507,7 @@ function removeLicenseRow_add(button) {
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
         <h4>Edit Employee</h4>
-        <button type="button"
-            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
-            data-bs-dismiss="offcanvas" aria-label="Close">
-            <i class="ti ti-x"></i>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
         <form id="editEmployeeForm" method="post" action="" enctype="multipart/form-data" class="needs-validation" novalidate>

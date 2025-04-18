@@ -160,23 +160,32 @@ from django.http import JsonResponse
 from django.core import serializers
 import json
 
-def get_employee_details(request, employee_id):
+def get_employee_details(request):
     set_comp_code(request)
     
+    # Get employee_id from GET parameters
+    employee_id = request.GET.get('employee_id')
+    if not employee_id:
+        return JsonResponse({'success': False, 'error': 'Employee ID is required'}, status=400)
+
     try:
         # Fetch the employee details
         employee = Employee.objects.get(employee_id=employee_id, comp_code=COMP_CODE)
         
+        # Helper function to safely format dates
+        def format_date(date_obj):
+            return date_obj.strftime('%Y-%m-%d') if date_obj else None
+
         # Serialize the employee data
         employee_data = {
             'emp_code': employee.emp_code,
             'emp_name': employee.emp_name,
             'surname': employee.surname,
-            'dob': employee.dob,
+            'dob': format_date(employee.dob),
             'emp_sex': employee.emp_sex,
             'nationality': employee.nationality,
             'designation': employee.designation,
-            'date_of_join': employee.date_of_join,
+            'date_of_join': format_date(employee.date_of_join),
             'qualification': employee.qualification,
             'emp_status': employee.emp_status,
             'emp_sub_status': employee.emp_sub_status,
@@ -185,8 +194,8 @@ def get_employee_details(request, employee_id):
             'mother_name': employee.mother_name,
             'religion': employee.religion,
             'emp_marital_status': employee.emp_marital_status,
-            'basic_pay': employee.basic_pay,
-            'allowance': employee.allowance,
+            'basic_pay': str(employee.basic_pay) if employee.basic_pay else None,  # Convert Decimal to string
+            'allowance': str(employee.allowance) if employee.allowance else None,
             'department': employee.department,
             'process_cycle': employee.process_cycle,
             'local_addr_line1': employee.local_addr_line1,
@@ -202,51 +211,84 @@ def get_employee_details(request, employee_id):
             'res_country_code': employee.res_country_code,
             'res_phone_no': employee.res_phone_no,
             'visa_no': employee.visa_no,
-            'visa_expiry': employee.visa_expiry,
+            'visa_expiry': format_date(employee.visa_expiry),
             'emirates_no': employee.emirates_no,
-            'emirate_expiry': employee.emirate_expiry.strftime('%Y-%m-%d') if employee.emirate_expiry else None,
+            'emirate_expiry': format_date(employee.emirate_expiry),
             'passport_details': employee.passport_details,
-            'passport_expiry': employee.passport_expiry_date,
+            'passport_expiry': format_date(employee.passport_expiry_date),
         }
 
-        # Fetch and serialize related data
-        earn_deducts = list(EarnDeductMaster.objects.filter(
-            comp_code=COMP_CODE, 
-            employee_code=employee.emp_code
-        ).values(
-            'earn_type', 'earn_deduct_code', 'earn_deduct_amt', 'prorated_flag'
-        ))
+        # Fetch and serialize related data with error handling
+        try:
+            earn_deducts = list(EarnDeductMaster.objects.filter(
+                comp_code=COMP_CODE, 
+                employee_code=employee.emp_code
+            ).values(
+                'earn_type', 'earn_deduct_code', 'earn_deduct_amt', 'prorated_flag'
+            ))
+            # Convert Decimal to string for JSON serialization
+            for item in earn_deducts:
+                item['earn_deduct_amt'] = str(item['earn_deduct_amt']) if item['earn_deduct_amt'] is not None else None
+        except Exception as e:
+            earn_deducts = []
+            print(f"Error fetching earn_deducts: {str(e)}")
 
-        documents = list(EmployeeDocument.objects.filter(
-            emp_code=employee.emp_code, 
-            relationship__isnull=True, 
-            document_number__isnull=True
-        ).values(
-            'document_type', 'document_file'
-        ))
+        try:
+            documents = list(EmployeeDocument.objects.filter(
+                emp_code=employee.emp_code, 
+                relationship__isnull=True, 
+                document_number__isnull=True
+            ).values(
+                'document_type', 'document_file'
+            ))
+        except Exception as e:
+            documents = []
+            print(f"Error fetching documents: {str(e)}")
 
-        dependents = list(EmployeeDocument.objects.filter(
-            emp_code=employee.emp_code, 
-            relationship__isnull=False
-        ).values(
-            'relationship', 'document_type', 'document_number', 
-            'issued_date', 'expiry_date', 'document_file'
-        ))
+        try:
+            dependents = list(EmployeeDocument.objects.filter(
+                emp_code=employee.emp_code, 
+                relationship__isnull=False
+            ).values(
+                'relationship', 'document_type', 'document_number', 
+                'issued_date', 'expiry_date', 'document_file'
+            ))
+            # Format dates for dependents
+            for dep in dependents:
+                dep['issued_date'] = format_date(dep['issued_date'])
+                dep['expiry_date'] = format_date(dep['expiry_date'])
+        except Exception as e:
+            dependents = []
+            print(f"Error fetching dependents: {str(e)}")
 
-        license_and_passes = list(EmployeeDocument.objects.filter(
-            emp_code=employee.emp_code, 
-            relationship__isnull=True, 
-            issued_date__isnull=True
-        ).values(
-            'document_type', 'document_number', 'expiry_date', 'document_file'
-        ))
+        try:
+            license_and_passes = list(EmployeeDocument.objects.filter(
+                emp_code=employee.emp_code, 
+                relationship__isnull=True, 
+                issued_date__isnull=True
+            ).values(
+                'document_type', 'document_number', 'expiry_date', 'document_file'
+            ))
+            # Format dates for licenses
+            for lic in license_and_passes:
+                lic['expiry_date'] = format_date(lic['expiry_date'])
+        except Exception as e:
+            license_and_passes = []
+            print(f"Error fetching license_and_passes: {str(e)}")
 
-        recruitment_details = list(EmployeeRecruitmentDetails.objects.filter(
-            emp_code=employee.emp_code
-        ).values(
-            'agent_or_reference', 'location', 'change_status', 
-            'recruitment_from', 'date'
-        ))
+        try:
+            recruitment_details = list(EmployeeRecruitmentDetails.objects.filter(
+                emp_code=employee.emp_code
+            ).values(
+                'agent_or_reference', 'location', 'change_status', 
+                'recruitment_from', 'date'
+            ))
+            # Format dates for recruitment details
+            for rec in recruitment_details:
+                rec['date'] = format_date(rec['date'])
+        except Exception as e:
+            recruitment_details = []
+            print(f"Error fetching recruitment_details: {str(e)}")
 
         response_data = {
             'success': True,
@@ -267,6 +309,7 @@ def get_employee_details(request, employee_id):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
+        
 def save_employee(request, employee_id=None):
     set_comp_code(request)
     if request.method == "POST":
