@@ -37,9 +37,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                                        <input type="text" id="emp_code" name="emp_code" class="form-control" required>
-                                        <div class="invalid-feedback">Please provide an employee code.</div>
+                                        <label class="col-form-label">Employee Code </label>
+                                        <input type="text" id="emp_code" name="emp_code" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -75,71 +74,45 @@
                                         <div class="invalid-feedback">Please select a gender.</div>
                                     </div>
                                 </div>
-                                <!-- Status and Sub Status (Same Line) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                                        <select name="emp_status" class="form-select" required>
+                                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
+                                        <select name="nationality" class="form-select" required>
                                             <option value="">Select</option>
-                                            {% for statuses in status_data %}
+                                            {% for nation in nationality_data %}
+                                            <option value="{{ nation.base_value }}">{{ nation.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a Nationality</div>
+                                    </div>
+                                </div>
+                                <!-- Designation (Dropdown) -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Designation <span class="text-danger">*</span> </label>
+                                        <select name="designation" class="form-control" required>
+                                            <option value="">Select</option>
+                                            {% for statuses in desig_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
                                             {% endfor %}
                                         </select>
-                                        <div class="invalid-feedback">Please select a status.</div>
+                                        <div class="invalid-feedback">Please select a designation.</div>
                                     </div>
                                 </div>
+                                <!-- Date of Join -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Sub Status</label>
-                                        <select name="emp_sub_status" class="form-select">
-                                            <option value="">Select</option>
-                                            {% for sub in sub_status_data %}
-                                                <option value="{{ sub.base_value }}">{{ sub.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        <label class="col-form-label">Date of Join <span class="text-danger">*</span> </label>
+                                        <input type="date" name="date_of_join" class="form-control" required>
+                                        <div class="invalid-feedback">Please Select Date of Join</div>
                                     </div>
                                 </div>
 
-                                <!-- passport Release and Reason (Next Line) -->
+                                <!-- Date of Rejoin -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">passport Release</label>
-                                        <select name="passport_release" class="form-select">
-                                            <option value="">Select</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Release Reason</label>
-                                        <input type="text" name="release_reason" class="form-control">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Father's Name</label>
-                                        <input type="text" name="father_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Mother's Name</label>
-                                        <input type="text" name="mother_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Nationality</label>
-                                        <input type="text" name="nationality" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Religion</label>
-                                        <input type="text" name="religion" class="form-control">
+                                        <label class="col-form-label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" class="form-control">
                                     </div>
                                 </div>
                                 <!-- Qualification before Marital Status -->
@@ -165,67 +138,142 @@
                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Spouse's Name</label>
+                                        <label class="col-form-label">Spouse Name</label>
                                         <input type="text" name="spouse_name" class="form-control">
                                     </div>
                                 </div>
-                                <!-- Designation (Dropdown) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Designation</label>
-                                        <select name="designation" class="form-control">
+                                        <label class="col-form-label">Father Name</label>
+                                        <input type="text" name="father_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Mother Name</label>
+                                        <input type="text" name="mother_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Religion</label>
+                                        <input type="text" name="religion" class="form-control">
+                                    </div>
+                                </div>        
+                                <!-- Status and Sub Status (Same Line) -->
+                                <!-- <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
+                                        <select name="emp_status" class="form-select" required>
                                             <option value="">Select</option>
-                                            {% for statuses in desig_data %}
+                                            {% for statuses in status_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
                                             {% endfor %}
                                         </select>
+                                        <div class="invalid-feedback">Please select a status.</div>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Sub Status</label>
+                                        <select name="emp_sub_status" class="form-select">
+                                            <option value="">Select</option>
+                                            {% for sub in sub_status_data %}
+                                                <option value="{{ sub.base_value }}">{{ sub.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div> -->
+
+                                <!-- passport Release and Reason (Next Line) -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Control</label>
+                                        <select name="passport_release" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Release Reason</label>
+                                        <input type="text" name="release_reason" class="form-control">
+                                    </div>
+                                </div>                        
 
                                 <!-- Department (Dropdown) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Department</label>
-                                        <select name="department" class="form-control">
+                                        <label class="col-form-label">Department <span class="text-danger">*</span> </label>
+                                        <select name="department" class="form-control" required>
                                             <option value="">Select</option>
                                             {% for statuses in dept_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
                                             {% endfor %}
                                         </select>
+                                        <div class="invalid-feedback">Please select a department.</div>
                                     </div>
                                 </div>
 
-                                <!-- Date of Join -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Date of Join</label>
-                                        <input type="date" name="date_of_join" class="form-control">
+                                        <label class="col-form-label">Category</label>
+                                        <select name="staff_category" class="form-select" id="categorySelect">
+                                            <option value="">Select</option>
+                                            <option value="staff">Staff</option>
+                                            <option value="field-staff">Field Staff</option>
+                                            <option value="management">Management</option>
+                                        </select>
                                     </div>
                                 </div>
-
-                                <!-- Date of Rejoin -->
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Rejoin</label>
-                                        <input type="date" name="date_of_rejoin" class="form-control">
-                                    </div>
-                                </div>
-
+                                
                                 <!-- Dependent Count -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Dependent Count</label>
-                                        <input type="number" name="depend_count" class="form-control">
+                                        <input type="number" name="depend_count" class="form-control" id="dependCount">
                                     </div>
                                 </div>
-
+                                
                                 <!-- Child Count -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Child Count</label>
-                                        <input type="number" name="child_count" class="form-control">
+                                        <input type="number" name="child_count" class="form-control" id="childCount">
                                     </div>
                                 </div>
+                                
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const categorySelect = document.getElementById('categorySelect');
+                                    const dependCount = document.getElementById('dependCount');
+                                    const childCount = document.getElementById('childCount');
+                                
+                                    categorySelect.addEventListener('change', function() {
+                                        if (this.value === 'field-staff') {
+                                            // Disable both fields for field-staff
+                                            dependCount.disabled = true;
+                                            childCount.disabled = true;
+                                            
+                                            // Clear any existing values
+                                            dependCount.value = '';
+                                            childCount.value = '';
+                                        } else {
+                                            // Enable fields for other categories
+                                            dependCount.disabled = false;
+                                            childCount.disabled = false;
+                                        }
+                                    });
+                                
+                                    // Initialize state on page load
+                                    if (categorySelect.value === 'field-staff') {
+                                        dependCount.disabled = true;
+                                        childCount.disabled = true;
+                                    }
+                                });
+                                </script>
 
                                 <!-- <div class="col-md-6">
                                     <div class="mb-3">
@@ -268,20 +316,23 @@
                                     <div class="col-md-6">
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="res_addr_line1" class="form-control">
+                                            <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_addr_line1" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
                                             <input type="text" name="res_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="res_city" class="form-control">
+                                            <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_city" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="res_state" class="form-control">
+                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_state" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code</label>
@@ -305,19 +356,22 @@
                                             <input type="text" name="local_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="uae_city" class="form-control">
+                                            <label class="col-form-label">City </label>
+                                            <input type="text" name="uae_city" class="form-control" >
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="uae_state" class="form-control">
+                                            <label class="col-form-label">State </label>
+                                            <input type="text" name="uae_state" class="form-control" >
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control">
+                                            <label class="col-form-label">Country Code </label>
+                                            <input type="text" name="local_country_code" class="form-control" >
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
+                                            <label class="col-form-label">Phone Number </label>
                                             <input type="text" name="local_phone_no" class="form-control">
                                         </div>
                                     </div>
@@ -384,15 +438,31 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project</label>
-                        <select name="prj_code" class="form-control">
+                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
+                        <select name="prj_code" id="projectDropdown" class="form-control" required>
                             <option value="">Select</option>
                             {% for statuses in project_data %}
                                 <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a project.</div>
                     </div>
                 </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Sub Location</label>
+                        <select name="sub_location" id="locationDropdown" class="form-control">
+                            <option value="">Select</option>
+                            {% for statuses in pro_sub_location_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
             </div>
 
             <!-- Multi Entry Section -->
@@ -442,7 +512,6 @@
             </div>
         </div>
     </div>
-            </div>
 
 <script>
     document.getElementById('addEntry_add').addEventListener('click', function() {
@@ -777,6 +846,25 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Visa Issued Emirate</label>
+                        <select name="visa_issued_emirate" class="form-select">
+                            <option value="">Select Emirate</option>
+                            {% for emirate in emirates_list %}
+                            <option value="{{ emirate.base_value }}">
+                                {{ emirate.base_description }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Designation</label>
+                        <input type="text" name="visa_designation" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Emirates Id</label>
                         <input type="text" name="emirates_no" class="form-control" placeholder="Enter Emirates Id">
                     </div>
@@ -1026,7 +1114,6 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                                 {% for relative in relatives_data %}
                                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
                                 {% endfor %}
-                                <option value="Father">Father</option>
                             </select>
                         </td>
                         <td>
@@ -1034,10 +1121,6 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                                 {% for document in other_documents_data %}
                                     <option value="{{ document.base_value }}">{{ document.base_description }}</option>
                                 {% endfor %}
-                                <option value="visa">Visa Copy</option>
-                                <option value="emirates_id">Emirates ID</option>
-                                <option value="passport">Passport</option>
-                                <option value="birth_certificate">Birth Certificate</option>
                             </select>
                         </td>
                         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
@@ -1068,16 +1151,14 @@ function addDependentRow_add() {
             <select class="form-select" name="dependent_relationship[]">
                 {% for relative in relatives_data %}
                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
-                    <option value="Father">Father</option>
                 {% endfor %}
             </select>
         </td>
         <td>
             <select class="form-select" name="dependent_doc_type[]">
-                <option value="visa">Visa Copy</option>
-                <option value="emirates_id">Emirates ID</option>
-                <option value="passport">Passport</option>
-                <option value="birth_certificate">Birth Certificate</option>
+                {% for document in other_documents_data %}
+                    <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                {% endfor %}
             </select>
         </td>
         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
@@ -1158,15 +1239,15 @@ function removeDependentRow_add(button) {
                         <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
                         <td>
                             <select class="form-select" name="work_location[]">
-                                {% for location in work_locations %}
-                                    <option value="{{ location.value }}">{{ location.label }}</option>
+                                {% for location in work_location_data %}
+                                    <option value="{{ location.base_value }}">{{ location.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
                         <td>
                             <select class="form-select" name="emirate_issued[]">
                                 {% for emirate in emirates_list %}
-                                    <option value="{{ emirate.value }}">{{ emirate.label }}</option>
+                                    <option value="{{ emirate.base_value }}">{{ emirate.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
@@ -1223,7 +1304,7 @@ function addLicenseRow_add() {
         <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
         <td>
             <select class="form-select" name="work_location[]">
-                {% for location in work_locations %}
+                {% for location in work_location_data %}
                     <option value="{{ location.value }}">{{ location.label }}</option>
                 {% endfor %}
             </select>
@@ -1274,7 +1355,144 @@ function removeLicenseRow_add(button) {
 </script>
 
 
-            </div>
+<!-- Recruitment Information -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingRecruitmentInfo_add">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRecruitmentInfo_add" aria-expanded="false" aria-controls="collapseRecruitmentInfo_add">
+            Recruitment Information
+        </button>
+    </h2>
+    <div id="collapseRecruitmentInfo_add" class="accordion-collapse collapse" aria-labelledby="headingRecruitmentInfo_add"
+        data-bs-parent="#employeeAccordion_add">
+        <div class="accordion-body">
+            <table class="table" id="recruitmentInfoTable_add">
+                <thead>
+                    <tr>
+                        <th>Agent Name</th>
+                        <th>Location</th>
+                        <th>Change Status</th>
+                        <th>Recruitment From</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="form-select" name="agent_name[]">
+                                <option value="">Select Agent</option>
+                                {% for agent in agent_data %}
+                                <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="location[]">
+                                <option value="">Select Location</option>
+                                {% for location in location_data %}
+                                <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="change_status[]">
+                                <option value="">Select</option>
+                                <option value="inside">Inside</option>
+                                <option value="outside">Outside</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+                        </td>
+                        <td>
+                            <input type="date" name="recruitment_date[]" class="form-control">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addRecruitmentRow_add() {
+        const table = document.getElementById('recruitmentInfoTable_add').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <td>
+                <select class="form-select" name="agent_name[]">
+                    <option value="">Select Agent</option>
+                    {% for agent in agent_data %}
+                    <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select class="form-select" name="location[]">
+                    <option value="">Select Location</option>
+                    {% for location in location_data %}
+                    <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select class="form-select" name="change_status[]">
+                    <option value="">Select</option>
+                    <option value="inside">Inside</option>
+                    <option value="outside">Outside</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+            </td>
+            <td>
+                <input type="date" name="recruitment_date[]" class="form-control">
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        `;
+    }
+
+    function removeRecruitmentRow_add(button) {
+        const row = button.closest('tr');
+        const tableBody = row.parentNode;
+
+        // Ensure at least one row remains
+        if (tableBody.rows.length > 1) {
+            row.remove();
+        } else {
+            // Show warning message
+            const message = document.createElement('div');
+            message.className = 'alert alert-warning mt-3';
+            message.innerText = "At least one row must remain.";
+            
+            // Insert after table
+            const table = document.getElementById('recruitmentInfoTable_add');
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
+    }
+</script>
+
+
+            
 
             <div class="d-flex align-items-center justify-content-end mt-4">
                 <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
@@ -1296,39 +1514,35 @@ function removeLicenseRow_add(button) {
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="editEmployeeForm_{{ employee.employee_id }}" method="post" action="" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="editEmployeeForm" method="post" action="" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
-            <div class="accordion" id="employeeAccordion_{{ employee.employee_id }}" style="width: 1350px;">
+            <div class="accordion" id="employeeAccordion" style="width: 1350px;">
 
                 <!-- Personal Details -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingPersonalDetails_{{ employee.employee_id }}">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails_{{ employee.employee_id }}" aria-expanded="true" aria-controls="collapsePersonalDetails_{{ employee.employee_id }}">
+                    <h2 class="accordion-header" id="headingPersonalDetails">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
                             Employee Details
                         </button>
                     </h2>
-                    <div id="collapsePersonalDetails_{{ employee.employee_id }}" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+                    <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6">
                     <div class="mb-3">
-                        {% if employee.profile_picture %}
-                            <div class="mt-2">
-                                <strong>Current Picture:</strong>
-                                <a href="{{ employee.profile_picture.url }}" target="_blank" download="{{ employee.profile_picture.name }}">
-                                    Download
-                                </a>
-                            </div>
-                            
-                            <div class="mt-2">
-                                <strong>Preview:</strong>
-                                <img src="{{ employee.profile_picture.url }}" alt="Profile Picture Preview" style="max-width: 100px; height: 100px; border: 1px solid #ccc; margin-top: 10px;"                              >
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No profile picture uploaded.</div>
-                        {% endif %}
+                        <div class="mt-2">
+                            <strong>Current Picture:</strong>
+                            <a href="" target="_blank" download="">
+                                Download
+                            </a>
+                        </div>
+                        
+                        <div class="mt-2">
+                            <strong>Preview:</strong>
+                            <img src="" alt="Profile Picture Preview" style="max-width: 100px; height: 100px; border: 1px solid #ccc; margin-top: 10px;">
+                        </div>
                         <label class="col-form-label">Profile Picture</label>
                         <input type="file" name="profile_picture" class="form-control" accept="image/*">
                     </div>
@@ -1336,28 +1550,28 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_code" class="form-control" required value="{{ employee.emp_code }}" readonly>
+                        <input type="text" name="emp_code" class="form-control" required readonly>
                         <div class="invalid-feedback">Please provide an employee code.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_name_passport" class="form-control" required value="{{ employee.emp_name }}">
+                        <input type="text" name="emp_name_passport" class="form-control" required>
                         <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                        <input type="text" name="surname" class="form-control" required value="{{ employee.surname }}">
+                        <input type="text" name="surname" class="form-control" required>
                         <div class="invalid-feedback">Please provide a surname.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                        <input type="date" name="dob" class="form-control" required value="{{ employee.dob|date:'Y-m-d' }}">
+                        <input type="date" name="dob" class="form-control" required>
                         <div class="invalid-feedback">Please provide a date of birth.</div>
                     </div>
                 </div>
@@ -1366,25 +1580,85 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Gender <span class="text-danger">*</span></label>
                         <select name="emp_sex" class="form-select" required>
                             <option value="">Select</option>
-                            {% for gender in gender_data %}
-                            <option value="{{ gender.base_value }}" {% if employee.emp_sex == gender.base_value %}selected{% endif %}>
-                                {{ gender.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a gender.</div>
                     </div>                    
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
+                        <select name="nationality" class="form-select" required>
+                            <option value="">Select</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a Nationality</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                        <select name="designation" class="form-control" required>
+                            <option value="">Select</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a designation.</div>
+                    </div>                                    
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
+                        <input type="date" name="date_of_join" class="form-control" required>
+                        <div class="invalid-feedback">Please provide a date of joining.</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Date of Rejoin</label>
+                        <input type="date" name="date_of_rejoin" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Qualification</label>
+                        <input type="text" name="qualification" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+    <div class="mb-3">
+        <label class="col-form-label">Marital Status</label>
+        <select name="emp_marital_status" class="form-select">
+            <option value="">Select</option>
+        </select>
+    </div>
+</div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Spouse Name</label>
+                        <input type="text" name="spouse_name" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Father's Name</label>
+                        <input type="text" name="father_name" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Mother's Name</label>
+                        <input type="text" name="mother_name" class="form-control">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Religion</label>
+                        <input type="text" name="religion" class="form-control">
+                    </div>
+                </div>               
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
                         <select name="emp_status" class="form-select" required>
                             <option value="">Select</option>
-                            {% for status in status_data %}
-                            <option value="{{ status.base_value }}" {% if employee.emp_status == status.base_value %}selected{% endif %}>
-                                {{ status.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a status.</div>
                     </div>
@@ -1396,11 +1670,6 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Sub Status</label>
                         <select name="emp_sub_status" class="form-select">
                             <option value="">Select</option>
-                            {% for sub_status in sub_status_data %}
-                            <option value="{{ sub_status.base_value }}" {% if employee.emp_sub_status == sub_status.base_value %}selected{% endif %}>
-                                {{ sub_status.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -1408,11 +1677,11 @@ function removeLicenseRow_add(button) {
                 <!-- passport Release and Reason (Next line) -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">passport Release</label>
+                        <label class="col-form-label">Passport Control</label>
                         <select name="passport_release" class="form-select">
                             <option value="">Select</option>
-                            <option value="Yes" {% if employee.passport_release == 'Yes' %}selected{% endif %}>Yes</option>
-                            <option value="No" {% if employee.passport_release == 'No' %}selected{% endif %}>No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
                         </select>
                     </div>
                 </div>
@@ -1420,126 +1689,45 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Release Reason</label>
-                        <input type="text" name="release_reason" class="form-control" value="{{ employee.release_reason }}">
+                        <input type="text" name="release_reason" class="form-control">
                     </div>
-                </div>
+                </div> 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Father's Name</label>
-                        <input type="text" name="father_name" class="form-control" value="{{ employee.father_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Mother's Name</label>
-                        <input type="text" name="mother_name" class="form-control" value="{{ employee.mother_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nationality</label>
-                        <input type="text" name="nationality" class="form-control" value="{{ employee.nationality }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Religion</label>
-                        <input type="text" name="religion" class="form-control" value="{{ employee.religion }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Qualification</label>
-                        <input type="text" name="qualification" class="form-control" value="{{ employee.qualification }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-    <div class="mb-3">
-        <label class="col-form-label">Marital Status</label>
-        <select name="emp_marital_status" class="form-select">
-            <option value="">Select</option>
-            {% for status in mar_status_data %}
-            <option value="{{ status.base_value }}" {% if employee.emp_marital_status == status.base_value %}selected{% endif %}>
-                {{ status.base_description }}
-            </option>
-            {% endfor %}
-        </select>
-    </div>
-</div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Spouse's Name</label>
-                        <input type="text" name="spouse_name" class="form-control" value="{{ employee.spouse_name }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
+                        <label class="col-form-label">Department <span class="text-danger">*</span></label>
+                        <select name="department" class="form-control" required>
                             <option value="">Select</option>
-                            {% for desig in desig_data %}
-                            <option value="{{ desig.base_value }}" {% if employee.designation == desig.base_value %}selected{% endif %}>
-                                {{ desig.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a department.</div>
                     </div>                                    
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Department</label>
-                        <select name="department" class="form-control">
+                        <label class="col-form-label">Category</label>
+                        <select name="staff_category" class="form-select" id="categorySelect">
                             <option value="">Select</option>
-                            {% for dept in dept_data %}
-                            <option value="{{ dept.base_value }}" {% if employee.department == dept.base_value %}selected{% endif %}>
-                                {{ dept.base_description }}
-                            </option>
-                            {% endfor %}
+                            <option value="staff">Staff</option>
+                            <option value="field-staff">Field Staff</option>
+                            <option value="management">Management</option>
                         </select>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Join</label>
-                        <input type="date" name="date_of_join" class="form-control" value="{{ employee.date_of_join|date:'Y-m-d' }}">
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Rejoin</label>
-                        <input type="date" name="date_of_rejoin" class="form-control" value="{{ employee.date_of_rejoin|date:'Y-m-d' }}">
-                    </div>
-                </div>
+                
+                <!-- Dependent Count -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Dependent Count</label>
-                        <input type="number" name="depend_count" class="form-control" value="{{ employee.depend_count }}">
+                        <input type="number" name="depend_count" class="form-control" id="dependCount">
                     </div>
                 </div>
+                
+                <!-- Child Count -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Child Count</label>
-                        <input type="number" name="child_count" class="form-control" value="{{ employee.child_count }}">
+                        <input type="number" name="child_count" class="form-control" id="childCount">
                     </div>
                 </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Height (cm)</label>
-                        <input type="number" name="height" class="form-control" value="{{ employee.height }}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Weight (kg)</label>
-                        <input type="number" name="weight" class="form-control" value="{{ employee.weight }}">
-                    </div>
-                </div> -->
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Family Status</label>
-                        <input type="text" name="family_status" class="form-control" value="{{ employee.family_status }}">
-                    </div>
-                </div> -->
                             </div>
                         </div>
                     </div>
@@ -1547,40 +1735,43 @@ function removeLicenseRow_add(button) {
 
                 <!-- Contact Information -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingContactInfo_{{ employee.employee_id }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactInfo_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapseContactInfo_{{ employee.employee_id }}">
+                    <h2 class="accordion-header" id="headingContactInfo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactInfo" aria-expanded="false" aria-controls="collapseContactInfo">
                             Contact Information
                         </button>
                     </h2>
-                    <div id="collapseContactInfo_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingContactInfo_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+                    <div id="collapseContactInfo" class="accordion-collapse collapse" aria-labelledby="headingContactInfo" data-bs-parent="#employeeAccordion">
                         <div class="accordion-body">
                             <div class="shadow p-4 rounded bg-light">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="res_addr_line1" class="form-control" value="{{ employee.res_addr_line1 }}">
+                                            <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_addr_line1" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="res_addr_line2" class="form-control" value="{{ employee.res_addr_line2 }}">
+                                            <input type="text" name="res_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="res_city" class="form-control" value="{{ employee.res_city }}">
+                                            <label class="col-form-label">City <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_city" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="res_state" class="form-control" value="{{ employee.res_state }}">
+                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
+                                            <input type="text" name="res_state" class="form-control" required>
+                                            <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control" value="{{ employee.res_country_code }}">
+                                            <input type="text" name="res_country_code" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control" value="{{ employee.res_phone_no }}">
+                                            <input type="text" name="res_phone_no" class="form-control">
                                         </div>
                                     </div>
 
@@ -1588,28 +1779,33 @@ function removeLicenseRow_add(button) {
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="local_addr_line1" class="form-control" value="{{ employee.local_addr_line1 }}">
+                                            <label class="col-form-label">Address Line 1 </label>
+                                            <input type="text" name="local_addr_line1" class="form-control">
+                                            
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="local_addr_line2" class="form-control" value="{{ employee.local_addr_line2 }}">
+                                            <input type="text" name="local_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">City</label>
-                                            <input type="text" name="local_city" class="form-control" value="{{ employee.local_city }}">
+                                            <label class="col-form-label">City </label>
+                                            <input type="text" name="local_city" class="form-control">
+                                        
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">State</label>
-                                            <input type="text" name="local_state" class="form-control" value="{{ employee.local_state }}">
+                                            <label class="col-form-label">State </label>
+                                            <input type="text" name="local_state" class="form-control">
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="local_country_code" class="form-control" value="{{ employee.local_country_code }}">
+                                            <label class="col-form-label">Country Code </label>
+                                            <input type="text" name="local_country_code" class="form-control">
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="local_phone_no" class="form-control" value="{{ employee.local_phone_no }}">
+                                            <label class="col-form-label">Phone Number </label>
+                                            <input type="text" name="local_phone_no" class="form-control">
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -1620,14 +1816,14 @@ function removeLicenseRow_add(button) {
 
                 <!-- Payment Details -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingPaymentDetails_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingPaymentDetails">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-            data-bs-target="#collapsePaymentDetails_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapsePaymentDetails_{{ employee.employee_id }}">
+            data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
             Salary Details
         </button>
     </h2>
-    <div id="collapsePaymentDetails_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails_{{ employee.employee_id }}"
-        data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails"
+        data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
@@ -1635,58 +1831,46 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Process Cycle</label>
                         <select name="process_cycle" class="form-control">
                             <option value="">Select</option>
-                            {% for paycycle in paycycle_data %}
-                            <option value="{{ paycycle.base_value }}" {% if employee.process_cycle == paycycle.base_value %}selected{% endif %}>
-                                {{ paycycle.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                     </div>                                    
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
-                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" value="{{ employee.basic_pay }}" id="basicPay">
+                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicPay">
                         <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                     </div>
                 </div>
-                <!-- <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Allowance <span class="text-danger">*</span></label>
-                        <input type="number" name="allowance" class="form-control" required min="0" step="0.01" value="{{ employee.allowance }}" id="allowance">
-                        <div class="invalid-feedback">Please enter a valid allowance amount (greater than or equal to 0).</div>
-                    </div>
-                </div> -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade</label>
                         <select name="grade_code" class="form-control">
                             <option value="">Select</option>
-                            {% for grade in grade_code_data %}
-                            <option value="{{ grade.grade_code }}" {% if employee.grade_code == grade.grade_code %}selected{% endif %}>
-                                {{ grade.grade_code }} - {{ grade.grade_desc }}
-                            </option>
-                            {% endfor %}
                         </select>
                     </div>                                    
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project</label>
-                        <select name="prj_code" class="form-control">
+                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
+                        <select name="prj_code" class="form-control" required>
                             <option value="">Select</option>
-                            {% for project in project_data %}
-                            <option value="{{ project.prj_code }}" {% if employee.prj_code == project.prj_code %}selected{% endif %}>
-                                {{ project.prj_code }} - {{ project.prj_name }}
-                            </option>
-                            {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a project.</div>
                     </div>                                    
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="col-form-label">Project Sub Location</label>
+                    <select name="sub_location" id="locationDropdown" class="form-control">
+                        <option value="">Select</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Multi Entry Section for Earnings/Deductions -->
-<div class="mt-4" id="multiEntryContainer_{{ employee.employee_id }}">
+<div class="mt-4" id="multiEntryContainer">
     <h5>Additional Earnings/Deductions</h5>
     
     <!-- Headings for Static Entry Fields -->
@@ -1699,32 +1883,32 @@ function removeLicenseRow_add(button) {
 </div>
 
 <!-- Static Entry Fields (Always Visible) -->
-<div class="card p-3 mb-2 shadow-sm" id="staticEntryFields_{{ employee.employee_id }}">
+<div class="card p-3 mb-2 shadow-sm" id="staticEntryFields">
     <div class="row align-items-center">
         <div class="col-md-3">
-            <select id="static_entry_type_{{ employee.employee_id }}" class="form-control"
-                onchange="handleTypeChange('{{ employee.employee_id }}')">
+            <select id="static_entry_type" class="form-control"
+                onchange="handleTypeChange()">
                 <option value="">Select Type</option>
                 <option value="EARNINGS">Earning</option>
                 <option value="DEDUCTION">Deduction</option>
             </select>
         </div>
         <div class="col-md-3">
-            <select id="static_entry_code_{{ employee.employee_id }}" class="form-control code-dropdown">
+            <select id="static_entry_code" class="form-control code-dropdown">
                 <option value="">Select Code</option>
             </select>
         </div>
         <div class="col-md-3">
-            <input type="number" id="static_entry_amount_{{ employee.employee_id }}" class="form-control" placeholder="Amount" min="0" step="0.01">
+            <input type="number" id="static_entry_amount" class="form-control" placeholder="Amount" min="0" step="0.01">
         </div>
         <div class="col-md-2">
-            <select id="static_entry_proated_flag_{{ employee.employee_id }}" class="form-control">
+            <select id="static_entry_proated_flag" class="form-control">
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
             </select>
         </div>
         <div class="col-md-1 text-end">
-            <button type="button" class="btn btn-primary" onclick="addEntry('{{ employee.employee_id }}')">
+            <button type="button" class="btn btn-primary" onclick="addEntry()">
                 <i class="fas fa-plus"></i> Add
             </button>
         </div>
@@ -1732,43 +1916,17 @@ function removeLicenseRow_add(button) {
 </div>
 
     <!-- Container for Dynamic Entries -->
-    <div id="entriesContainer_{{ employee.employee_id }}">
-        {% for entry in employee.earn_deducts %}
-        <div class="card p-3 mb-2 shadow-sm entry-row" data-entry-id="{{ entry.id }}">
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <input type="text" name="entry_type[]" class="form-control" value="{{ entry.earn_type }}" placeholder="Type" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="entry_code[]" class="form-control" value="{{ entry.earn_deduct_code }}" placeholder="Code" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="entry_amount[]" class="form-control" value="{{ entry.earn_deduct_amt }}" placeholder="Amount" required min="0" step="0.01">
-                </div>
-                <div class="col-md-2">
-                    <select name="entry_proated_flag[]" class="form-control">
-                        <option value="Yes" {% if entry.prorated_flag %}selected{% endif %}>Yes</option>
-                        <option value="No" {% if not entry.prorated_flag %}selected{% endif %}>No</option>
-                    </select>
-                </div>
-                <div class="col-md-1 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removeEntry(this)">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
+    <div id="entriesContainer">
     </div>
 </div>
         </div>
     </div>
 </div>
 <script>
-    function handleTypeChange(employeeId) {
-        const typeSelect = document.getElementById(`static_entry_type_${employeeId}`);
+    function handleTypeChange() {
+        const typeSelect = document.getElementById(`static_entry_type`);
         const selectedType = typeSelect.value;
-        const codeDropdown = document.getElementById(`static_entry_code_${employeeId}`);
+        const codeDropdown = document.getElementById(`static_entry_code`);
 
         // Clear existing options
         codeDropdown.innerHTML = '<option value="">Select Code</option>';
@@ -1793,11 +1951,11 @@ function removeLicenseRow_add(button) {
 
     
 <script>
-    function addEntry(employeeId) {
-        const type = document.getElementById(`static_entry_type_${employeeId}`).value;
-        const code = document.getElementById(`static_entry_code_${employeeId}`).value;
-        const amount = document.getElementById(`static_entry_amount_${employeeId}`).value;
-        const proatedFlag = document.getElementById(`static_entry_proated_flag_${employeeId}`).value;
+    function addEntry() {
+        const type = document.getElementById(`static_entry_type`).value;
+        const code = document.getElementById(`static_entry_code`).value;
+        const amount = document.getElementById(`static_entry_amount`).value;
+        const proatedFlag = document.getElementById(`static_entry_proated_flag`).value;
     
         if (!type || !code || !amount) {
             alert('Please fill all required fields');
@@ -1831,12 +1989,12 @@ function removeLicenseRow_add(button) {
             </div>
         `;
     
-        document.getElementById(`entriesContainer_${employeeId}`).appendChild(newEntry);
+        document.getElementById(`entriesContainer`).appendChild(newEntry);
     
-        document.getElementById(`static_entry_type_${employeeId}`).value = '';
-        document.getElementById(`static_entry_code_${employeeId}`).value = '';
-        document.getElementById(`static_entry_amount_${employeeId}`).value = '';
-        document.getElementById(`static_entry_proated_flag_${employeeId}`).selectedIndex = 0;
+        document.getElementById(`static_entry_type`).value = '';
+        document.getElementById(`static_entry_code`).value = '';
+        document.getElementById(`static_entry_amount`).value = '';
+        document.getElementById(`static_entry_proated_flag`).selectedIndex = 0;
     }
     
     function removeEntry(button) {
@@ -1844,164 +2002,141 @@ function removeLicenseRow_add(button) {
         if (row) row.remove();
     }
     </script>
-
-
-
-<!-- Account Details -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingAccountDetails_{{ employee.employee_id }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccountDetails_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapseAccountDetails_{{ employee.employee_id }}">
-                            Account Details
-                        </button>
-                    </h2>
-                    <div id="collapseAccountDetails_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingAccountDetails_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Bank Name</label>
-                                        <select name="employee_bank" class="form-control">
-                                            <option value="">Select Bank</option>
-                                            {% for bank in bank_data %}
-                                            <option value="{{ bank.base_type }}" {% if employee.employee_bank == bank.base_type %}selected{% endif %}>
-                                                {{ bank.base_description }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Branch Name</label>
-                                        <select name="bank_branch" class="form-control">
-                                            <option value="">Select Branch</option>
-                                            {% for branch in branch_data %}
-                                            <option value="{{ branch.base_type }}" {% if employee.bank_branch == branch.base_type %}selected{% endif %}>
-                                                {{ branch.base_description }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Account No</label>
-                                        <input type="text" name="account_no" class="form-control" value="{{ employee.account_no }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">IBAN Number</label>
-                                        <input type="text" name="bank_loan" class="form-control" value="{{ employee.bank_loan|default:'' }}">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Account Details -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingAccountDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccountDetails" aria-expanded="false" aria-controls="collapseAccountDetails">
+            Account Details
+        </button>
+    </h2>
+    <div id="collapseAccountDetails" class="accordion-collapse collapse" aria-labelledby="headingAccountDetails" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Bank Name</label>
+                        <select name="employee_bank" class="form-control">
+                            <option value="">Select Bank</option>
+                        </select>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Branch Name</label>
+                        <select name="bank_branch" class="form-control">
+                            <option value="">Select Branch</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Account No</label>
+                        <input type="text" name="account_no" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">IBAN Number</label>
+                        <input type="text" name="bank_loan" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-               <!-- Accommodation Details -->
+<!-- Accommodation Details -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingCampDetailsEdit_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingCampDetailsEdit">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#collapseCampDetailsEdit_{{ employee.employee_id }}" 
+                data-bs-target="#collapseCampDetailsEdit" 
                 aria-expanded="false" 
-                aria-controls="collapseCampDetailsEdit_{{ employee.employee_id }}">
+                aria-controls="collapseCampDetailsEdit">
             Accommodation Details
         </button>
     </h2>
-    <div id="collapseCampDetailsEdit_{{ employee.employee_id }}" 
+    <div id="collapseCampDetailsEdit" 
          class="accordion-collapse collapse" 
-         aria-labelledby="headingCampDetailsEdit_{{ employee.employee_id }}" 
-         data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+         aria-labelledby="headingCampDetailsEdit" 
+         data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
                     <!-- Left side fields -->
                     <div class="mb-3">
-                        <label for="campTypeEdit_{{ employee.employee_id }}" class="col-form-label">Select Type</label>
-                        <select id="campTypeEdit_{{ employee.employee_id }}" 
+                        <label for="campTypeEdit" class="col-form-label">Select Type</label>
+                        <select id="campTypeEdit" 
                                 class="form-control" 
                                 name="camp_type" 
-                                onchange="handleCampTypeChangeEdit({{ employee.employee_id }})">
+                                onchange="handleCampTypeChangeEdit()">
                             <option value="">Select</option>
-                            <option value="self" {% if employee.camp_type == 'self' %}selected{% endif %}>Self</option>
-                            <option value="by_company" {% if employee.camp_type == 'by_company' %}selected{% endif %}>By Company</option>
+                            <option value="self">Self</option>
+                            <option value="by_company">By Company</option>
                         </select>
                     </div>
-                    <div id="campDetailsEdit_{{ employee.employee_id }}" 
-                         style="display: {% if employee.camp_type == 'by_company' %}block{% else %}none{% endif %};">
+                    <div id="campDetailsEdit" 
+                         style="display: none;">
                         <div class="mb-3">
-                            <label for="campInsideOutsideEdit_{{ employee.employee_id }}" class="col-form-label">Accommodation Detail</label>
-                            <select id="campInsideOutsideEdit_{{ employee.employee_id }}" 
+                            <label for="campInsideOutsideEdit" class="col-form-label">Accommodation Detail</label>
+                            <select id="campInsideOutsideEdit" 
                                     class="form-control" 
                                     name="camp_inside_outside"
-                                    onchange="handleInsideOutsideChangeEdit({{ employee.employee_id }})">
+                                    onchange="handleInsideOutsideChangeEdit()">
                                 <option value="">Select</option>
-                                <option value="camp" {% if employee.camp_inside_outside == 'camp' %}selected{% endif %}>Camp</option>
-                                <option value="client_accommodation" {% if employee.camp_inside_outside == 'client_accommodation' %}selected{% endif %}>Client Accommodation</option>
-                                <option value="outside" {% if employee.camp_inside_outside == 'outside' %}selected{% endif %}>Outside</option>
+                                <option value="camp">Camp</option>
+                                <option value="client_accommodation">Client Accommodation</option>
+                                <option value="outside">Outside</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <!-- Right side fields -->
-                    <div id="inCampDetailsEdit_{{ employee.employee_id }}" 
-                         style="display: {% if employee.camp_inside_outside == 'camp' %}block{% else %}none{% endif %};">
+                    <div id="inCampDetailsEdit" 
+                         style="display: none;">
                         <div class="mb-3">
-                            <label for="selectCampEdit_{{ employee.employee_id }}" class="col-form-label">Select Camp</label>
-                            <select id="selectCampEdit_{{ employee.employee_id }}" 
+                            <label for="selectCampEdit" class="col-form-label">Select Camp</label>
+                            <select id="selectCampEdit" 
                                     name="select_camp" 
                                     class="form-control">
                                 <option value="">Select Camp</option>
-                                {% for camp in camp_data %}
-                                <option value="{{ camp.base_value }}" {% if employee.select_camp == camp.base_value %}selected{% endif %}>
-                                    {{ camp.base_description }}
-                                </option>
-                                {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="roomNoEdit_{{ employee.employee_id }}" class="col-form-label">Room No</label>
-                            <input type="text" id="roomNoEdit_{{ employee.employee_id }}" 
+                            <label for="roomNoEdit" class="col-form-label">Room No</label>
+                            <input type="text" id="roomNoEdit" 
                                    name="room_no" 
-                                   class="form-control" 
-                                   value="{{ employee.room_no }}">
+                                   class="form-control">
                         </div>
                     </div>
-                    <div id="clientAccommodationDetailsEdit_{{ employee.employee_id }}" 
-                         style="display: {% if employee.camp_inside_outside == 'client_accommodation' %}block{% else %}none{% endif %};">
+                    <div id="clientAccommodationDetailsEdit" 
+                         style="display: none;">
                         <div class="mb-3">
-                            <label for="clientNameEdit_{{ employee.employee_id }}" class="col-form-label">Client Name</label>
-                            <input type="text" id="clientNameEdit_{{ employee.employee_id }}" 
+                            <label for="clientNameEdit" class="col-form-label">Client Name</label>
+                            <input type="text" id="clientNameEdit" 
                                    name="client_name" 
-                                   class="form-control" 
-                                   value="{{ employee.client_name }}">
+                                   class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label for="clientLocationEdit_{{ employee.employee_id }}" class="col-form-label">Location</label>
-                            <input type="text" id="clientLocationEdit_{{ employee.employee_id }}" 
+                            <label for="clientLocationEdit" class="col-form-label">Location</label>
+                            <input type="text" id="clientLocationEdit" 
                                    name="client_location" 
-                                   class="form-control" 
-                                   value="{{ employee.client_location }}">
+                                   class="form-control">
                         </div>
                     </div>
-                    <div id="outsideDetailsEdit_{{ employee.employee_id }}" 
-                         style="display: {% if employee.camp_inside_outside == 'outside' %}block{% else %}none{% endif %};">
+                    <div id="outsideDetailsEdit" 
+                         style="display: none;">
                         <div class="mb-3">
-                            <label for="outsideLocationEdit_{{ employee.employee_id }}" class="col-form-label">Location</label>
-                            <input type="text" id="outsideLocationEdit_{{ employee.employee_id }}" 
+                            <label for="outsideLocationEdit" class="col-form-label">Location</label>
+                            <input type="text" id="outsideLocationEdit" 
                                    name="outside_location" 
-                                   class="form-control" 
-                                   value="{{ employee.outside_location }}">
+                                   class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label for="roomRentEdit_{{ employee.employee_id }}" class="col-form-label">Room Rent</label>
-                            <input type="text" id="roomRentEdit_{{ employee.employee_id }}" 
+                            <label for="roomRentEdit" class="col-form-label">Room Rent</label>
+                            <input type="text" id="roomRentEdit" 
                                    name="room_rent" 
-                                   class="form-control" 
-                                   value="{{ employee.room_rent }}">
+                                   class="form-control">
                         </div>
                     </div>
                 </div>
@@ -2011,49 +2146,34 @@ function removeLicenseRow_add(button) {
 </div>
 
 <script>
-    function handleCampTypeChangeEdit(employeeId) {
-    console.log(`Triggered handleCampTypeChangeEdit for Employee ID: ${employeeId}`);
-    
-    const campTypeElement = document.getElementById(`campTypeEdit_${employeeId}`);
-    const campType = campTypeElement ? campTypeElement.value : null;
+    function handleCampTypeChangeEdit() {
+        const campType = document.getElementById(`campTypeEdit`).value;
+        const campDetails = document.getElementById(`campDetailsEdit`);
+        const inCampDetails = document.getElementById(`inCampDetailsEdit`);
+        const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit`);
+        const outsideDetails = document.getElementById(`outsideDetailsEdit`);
 
-    const campDetails = document.getElementById(`campDetailsEdit_${employeeId}`);
-    const inCampDetails = document.getElementById(`inCampDetailsEdit_${employeeId}`);
-    const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit_${employeeId}`);
-    const outsideDetails = document.getElementById(`outsideDetailsEdit_${employeeId}`);
-
-    console.log("campType:", campType);
-    console.log("campDetails exists:", !!campDetails);
-    console.log("inCampDetails exists:", !!inCampDetails);
-    console.log("clientAccommodationDetails exists:", !!clientAccommodationDetails);
-    console.log("outsideDetails exists:", !!outsideDetails);
-
-    if (campType === 'by_company') {
-        if (campDetails) {
+        if (campType === 'by_company') {
             campDetails.style.display = 'block';
+            handleInsideOutsideChangeEdit();
+        } else {
+            campDetails.style.display = 'none';
+            inCampDetails.style.display = 'none';
+            clientAccommodationDetails.style.display = 'none';
+            outsideDetails.style.display = 'none';
         }
-        // Trigger the change handler to show the appropriate sub-section
-        handleInsideOutsideChangeEdit(employeeId);
-    } else {
-        if (campDetails) campDetails.style.display = 'none';
-        if (inCampDetails) inCampDetails.style.display = 'none';
-        if (clientAccommodationDetails) clientAccommodationDetails.style.display = 'none';
-        if (outsideDetails) outsideDetails.style.display = 'none';
     }
-}
 
-    function handleInsideOutsideChangeEdit(employeeId) {
-        const insideOutside = document.getElementById(`campInsideOutsideEdit_${employeeId}`).value;
-        const inCampDetails = document.getElementById(`inCampDetailsEdit_${employeeId}`);
-        const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit_${employeeId}`);
-        const outsideDetails = document.getElementById(`outsideDetailsEdit_${employeeId}`);
+    function handleInsideOutsideChangeEdit() {
+        const insideOutside = document.getElementById(`campInsideOutsideEdit`).value;
+        const inCampDetails = document.getElementById(`inCampDetailsEdit`);
+        const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit`);
+        const outsideDetails = document.getElementById(`outsideDetailsEdit`);
 
-        // Hide all first
         inCampDetails.style.display = 'none';
         clientAccommodationDetails.style.display = 'none';
         outsideDetails.style.display = 'none';
 
-        // Show the selected one
         if (insideOutside === 'camp') {
             inCampDetails.style.display = 'block';
         } else if (insideOutside === 'client_accommodation') {
@@ -2063,57 +2183,49 @@ function removeLicenseRow_add(button) {
         }
     }
 
-    // Ensure the correct visibility on page load
     document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('[id^="campTypeEdit_"]').forEach(function (selectElement) {
-            const employeeId = selectElement.id.split('_')[1];
-            handleCampTypeChangeEdit(employeeId);
-        });
+        handleCampTypeChangeEdit();
     });
 </script>
 
-                <!-- Travel Document Detail -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTravelDocumentDetail_{{ employee.employee_id }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapseTravelDocumentDetail_{{ employee.employee_id }}">
-                            Travel Document Detail
-                        </button>
-                    </h2>
-                    <div id="collapseTravelDocumentDetail_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Issued Date</label>
-                                        <input type="date" name="issued_date" class="form-control" value="{{ employee.issued_date|date:'Y-m-d' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Expiry Date</label>
-                                        <input type="date" name="expiry_date" class="form-control" value="{{ employee.expiry_date|date:'Y-m-d' }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+<!-- Travel Document Detail -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTravelDocumentDetail">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail" aria-expanded="false" aria-controls="collapseTravelDocumentDetail">
+            Travel Document Detail
+        </button>
+    </h2>
+    <div id="collapseTravelDocumentDetail" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail" data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Issued Date</label>
+                        <input type="date" name="issued_date" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Expiry Date</label>
+                        <input type="date" name="expiry_date" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Document Upload</label>
                         <input type="file" name="passport_document" class="form-control" accept="application/pdf,image/*">
                         
-                        {% if employee.passport_document %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.passport_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.passport_document.url }}" target="_blank" download="{{ employee.passport_document.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport No.</label>
-                        <input type="text" name="passport_details" class="form-control" value="{{ employee.passport_details }}">
+                        <input type="text" name="passport_details" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2121,11 +2233,6 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Passport Issued Country</label>
                         <select name="passport_issued_country" class="form-control">
                             <option value="">Select Country</option>
-                            {% for country in country_data %}
-                            <option value="{{ country.base_value }}" {% if employee.passport_issued_country == country.base_value %}selected{% endif %}>
-                                {{ country.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -2134,34 +2241,28 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Passport Place Of Issue</label>
                         <select name="passport_place_of_issue" class="form-control">
                             <option value="">Select Place</option>
-                            {% for place in place_data %}
-                            <option value="{{ place.base_value }}" {% if employee.passport_place_of_issue == place.base_value %}selected{% endif %}>
-                                {{ place.base_description }}
-                            </option>
-                            {% endfor %}
                         </select>
                     </div>
                 </div>
-                
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <!-- Visa Details -->
+<!-- Visa Details -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingVisaDetails_{{ employee.employee_id }}">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapseVisaDetails_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingVisaDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
             Visa Details
         </button>
     </h2>
-    <div id="collapseVisaDetails_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa No</label>
-                        <input type="text" name="visa_no" class="form-control" value="{{ employee.visa_no }}">
+                        <input type="text" name="visa_no" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2169,33 +2270,43 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Visa Document Upload</label>
                         <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
                         
-                        {% if employee.visa_document %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.visa_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.visa_document.url }}" target="_blank" download="{{ employee.visa_document.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Issued</label>
-                        <input type="date" name="visa_issued" class="form-control" value="{{ employee.visa_issued|date:'Y-m-d' }}">
+                        <input type="date" name="visa_issued" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Expiry</label>
-                        <input type="date" name="visa_expiry" class="form-control" value="{{ employee.visa_expiry|date:'Y-m-d' }}">
+                        <input type="date" name="visa_expiry" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Issued Emirate</label>
+                        <select name="visa_issued_emirate" class="form-select">
+                            <option value="">Select Emirate</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Visa Designation</label>
+                        <input type="text" name="visa_designation" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates ID</label>
-                        <input type="text" name="emirates_no" class="form-control" value="{{ employee.emirates_no }}">
+                        <input type="text" name="emirates_no" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2203,64 +2314,59 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Emirates Id Document Upload</label>
                         <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
                         
-                        {% if employee.emirate_document %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.emirate_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.emirate_document.url }}" target="_blank" download="{{ employee.emirate_document.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id Issued</label>
-                        <input type="date" name="emirate_issued" class="form-control" value="{{ employee.emirate_issued|date:'Y-m-d' }}">
+                        <input type="date" name="emirate_issued" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id Expiry</label>
-                        <input type="date" name="emirate_expiry" class="form-control" value="{{ employee.emirate_expiry|date:'Y-m-d' }}">
+                        <input type="date" name="emirate_expiry" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">UID Number</label>
-                        <input type="text" name="uid_number" class="form-control" value="{{ employee.uid_number }}">
+                        <input type="text" name="uid_number" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Personal Mohre Code</label>
-                        <input type="text" name="mohra_number" class="form-control" value="{{ employee.mohra_number }}">
+                        <input type="text" name="mohra_number" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mohre Name</label>
-                        <input type="text" name="mohra_name" class="form-control" value="{{ employee.mohra_name }}">
+                        <input type="text" name="mohra_name" class="form-control">
                     </div>
                 </div>
-                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mohre Designation</label>
-                        <input type="text" name="mohra_designation" class="form-control" value="{{ employee.mohra_designation }}">
+                        <input type="text" name="mohra_designation" class="form-control">
                     </div>
                 </div>                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Number</label>
-                        <input type="text" name="work_permit_number" class="form-control" value="{{ employee.work_permit_number }}">
+                        <input type="text" name="work_permit_number" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Expiry</label>
-                        <input type="date" name="work_permit_expiry" class="form-control" value="{{ employee.work_permit_expiry|date:'Y-m-d' }}">
+                        <input type="date" name="work_permit_expiry" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2268,15 +2374,11 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Work Permit Document Upload</label>
                         <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
                         
-                        {% if employee.work_permit_document %}
-                            <div class="mt-2">
-                                <strong>Current Document:</strong>
-                                <a href="{{ employee.work_permit_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ employee.work_permit_document.url }}" target="_blank" download="{{ employee.work_permit_document.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            </div>
-                        {% else %}
-                            <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
+                        <div class="mt-2">
+                            <strong>Current Document:</strong>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
+                        </div>
                     </div>
                 </div>
                 
@@ -2286,8 +2388,8 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">Location</label>
                         <select id="locationSelect_edit" class="form-control" name="visa_location">
                             <option value="">Select</option>
-                            <option value="inside" {% if employee.visa_location == 'inside' %}selected{% endif %}>Inside</option>
-                            <option value="outside" {% if employee.visa_location == 'outside' %}selected{% endif %}>Outside</option>
+                            <option value="inside">Inside</option>
+                            <option value="outside">Outside</option>
                         </select>
                     </div>
                 </div>
@@ -2297,24 +2399,20 @@ function removeLicenseRow_add(button) {
                     <div class="mb-3">
                         <label class="col-form-label">Change Status</label>
                         <input type="file" id="changeStatusFile_edit" name="change_status_file" class="form-control mt-2"
-                            accept="application/pdf,image/*" {% if employee.visa_location != 'inside' %}disabled{% endif %}>
+                            accept="application/pdf,image/*" disabled>
                     
-                        {% if employee.change_status_file %}
                         <div class="mt-2">
                             <strong>Current Document:</strong>
-                            <a href="{{ employee.change_status_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="{{ employee.change_status_file.url }}" target="_blank"
-                                download="{{ employee.change_status_file.name }}" class="btn btn-sm btn-secondary">Download</a>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank"
+                                download="" class="btn btn-sm btn-secondary">Download</a>
                         </div>
-                        {% else %}
-                        <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">ILOE No</label>
-                        <input type="text" name="iloe_no" class="form-control" value="{{ employee.iloe_no }}">
+                        <input type="text" name="iloe_no" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -2322,79 +2420,62 @@ function removeLicenseRow_add(button) {
                         <label class="col-form-label">ILOE Document</label>
                         <input type="file" name="iloe_document" class="form-control" accept="application/pdf,image/*">
                         
-                        {% if employee.iloe_document %}
                         <div class="mt-2">
                             <strong>Current Document:</strong>
-                            <a href="{{ employee.iloe_document.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="{{ employee.iloe_document.url }}" target="_blank" download="{{ employee.iloe_document.name }}" class="btn btn-sm btn-secondary">Download</a>
+                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
                         </div>
-                        {% else %}
-                        <div class="mt-2 text-muted">No document uploaded.</div>
-                        {% endif %}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">ILOE Expiry Date</label>
-                        <input type="date" name="iloe_expiry" class="form-control" value="{{ employee.iloe_expiry|date:'Y-m-d' }}">
+                        <input type="date" name="iloe_expiry" class="form-control">
                     </div>
                 </div>
             </div>
-            </div>
         </div>
     </div>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    var locationSelect = document.getElementById('locationSelect_edit');
-    var changeStatusFile = document.getElementById('changeStatusFile_edit');
+        var locationSelect = document.getElementById('locationSelect_edit');
+        var changeStatusFile = document.getElementById('changeStatusFile_edit');
 
-    // Set initial state
-    if (locationSelect.value === 'inside') {
-        changeStatusFile.removeAttribute('disabled');
-    } else {
-        changeStatusFile.setAttribute('disabled', 'disabled');
-    }
-
-    // Add event listener
-    locationSelect.addEventListener('change', function () {
-        if (this.value === 'inside') {
-            changeStatusFile.removeAttribute('disabled');
-            console.log('Inside selected');
-        } else {
-            changeStatusFile.setAttribute('disabled', 'disabled');
-            console.log('Outside selected or no selection');
-        }
+        locationSelect.addEventListener('change', function () {
+            if (this.value === 'inside') {
+                changeStatusFile.removeAttribute('disabled');
+            } else {
+                changeStatusFile.setAttribute('disabled', 'disabled');
+            }
+        });
     });
-});
 </script>
 
-
-<!-- Edit Document Uploads Section -->
+<!-- Document Uploads Section -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingDocumentUploadsEdit_{{ employee.employee_id }}">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocumentUploadsEdit_{{ employee.employee_id }}" aria-expanded="false" aria-controls="collapseDocumentUploadsEdit_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingDocumentUploadsEdit">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocumentUploadsEdit" aria-expanded="false" aria-controls="collapseDocumentUploadsEdit">
             Document Uploads
         </button>
     </h2>
-    <div id="collapseDocumentUploadsEdit_{{ employee.employee_id }}" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
             <!-- Static Upload Fields -->
             <div class="card p-3 mb-2 shadow-sm">
                 <div class="row align-items-center">
                     <div class="col-md-4">
                         <label class="form-label">Document Type</label>
-                        <select id="documentTypeSelect_{{ employee.employee_id }}" class="form-select">
-                            {% for doc in doc_data %}
-                            <option value="{{ doc.base_value }}">{{ doc.base_description }}</option>
-                            {% endfor %}
+                        <select id="documentTypeSelect" class="form-select">
+                            <option value="">Select</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">File Upload</label>
-                        <input type="file" id="documentFileInput_{{ employee.employee_id }}" class="form-control" accept="application/pdf,image/*">
+                        <input type="file" id="documentFileInput" class="form-control" accept="application/pdf,image/*">
                     </div>
                     <div class="col-md-4 text-end">
-                        <button type="button" class="btn btn-primary" onclick="addNewDocument('{{ employee.employee_id }}')">
+                        <button type="button" class="btn btn-primary" onclick="addNewDocument()">
                             <i class="fas fa-plus"></i> Add Document
                         </button>
                     </div>
@@ -2402,49 +2483,18 @@ function removeLicenseRow_add(button) {
             </div>
             
             <!-- Document List -->
-            <div id="documentList_{{ employee.employee_id }}">
-                {% for document in employee.documents %}
-                <div class="card p-3 mb-2 shadow-sm document-upload-row" data-document-id="{{ document.id }}">
-                    <div class="row align-items-center">
-                        <div class="col-md-4">
-                            <strong>{{ document.document_type }}</strong>
-                            <input type="hidden" name="document_type" value="{{ document.document_type }}">
-                        </div>
-                        <div class="col-md-4">
-                            <strong>{{ document.document_file.name }}</strong>
-                            <input type="hidden" name="document_file" value="{{ document.document_file.url }}">
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <a href="{{ document.document_file.url }}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
-                                <i class="fas fa-eye"></i> Preview
-                            </a>
-                            <a href="{{ document.document_file.url }}" download class="btn btn-sm btn-secondary" title="Download Document">
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                            <button type="button" class="btn btn-danger" onclick="removeDocument(this, '{{ document.id }}')">
-                                <i class="fas fa-times"></i> Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+            <div id="documentList">
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function addNewDocument(empCode) {
+    function addNewDocument() {
         const fileInput = document.getElementById(`documentFileInput`);
         const docTypeSelect = document.getElementById(`documentTypeSelect`);
-        // const container = document.getElementById(`documentList`);
+        const container = document.getElementById(`documentList`);
 
-        if (!fileInput || !docTypeSelect) {
-            console.error("Required elements not found!");
-            return;
-        }
-
-        // Check file selection
         if (fileInput.files.length === 0) {
             alert("Please select a file before adding.");
             return;
@@ -2458,11 +2508,9 @@ function removeLicenseRow_add(button) {
         newRow.innerHTML = `
             <div class="row align-items-center">
                 <div class="col-md-3">
-                    
                     <input type="text" name="document_type[]" value="${documentType}" >
                 </div>
                 <div class="col-md-3">
-                    
                     <input type="file" name="document_file[]" value="${selectedFile}" >
                 </div>
                 <div class="col-md-4 text-end">
@@ -2474,13 +2522,12 @@ function removeLicenseRow_add(button) {
         `;
 
         container.appendChild(newRow);
-        fileInput.value = ''; // Reset input
+        fileInput.value = '';
     }
 
     function removeDocument(button, documentId) {
         const row = button.closest('.document-upload-row');
         if (documentId) {
-            // Logic to handle document removal (e.g., mark for deletion)
             console.log(`Document with ID ${documentId} marked for removal.`);
         }
         row.remove();
@@ -2490,186 +2537,154 @@ function removeLicenseRow_add(button) {
         button.closest('.document-upload-row').remove();
     }
 </script>
-<!-- /Edit Document Uploads Section -->
 
- <!-- Edit Dependent Details Section -->
+<!-- Dependent Details Section -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingDependentDetails_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingDependentDetails">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#collapseDependentDetails_{{ employee.employee_id }}" aria-expanded="false" 
-                aria-controls="collapseDependentDetails_{{ employee.employee_id }}">
+                data-bs-target="#collapseDependentDetails" aria-expanded="false" 
+                aria-controls="collapseDependentDetails">
             Dependent Details
         </button>
     </h2>
-    <div id="collapseDependentDetails_{{ employee.employee_id }}" class="accordion-collapse collapse" 
-         aria-labelledby="headingDependentDetails_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div id="collapseDependentDetails" class="accordion-collapse collapse" 
+         aria-labelledby="headingDependentDetails" data-bs-parent="#employeeAccordion">
         <div class="accordion-body">
-            <div id="dependentsContainer_{{ employee.employee_id }}">
+            <div id="dependentsContainer">
                 <!-- Button to Add New Dependent -->
-            <h5 class="mt-4">Add New Dependent</h5>
-            <div class="new-dependent-entry-add mb-3">
-                <div class="row">
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">Relationship</label>
-                        <select class="form-select" id="new_relationship_{{ employee.employee_id }}">
-                            {% for relative in relatives_data %}
-                                <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
-                            {% endfor %}
-                            <option value="Father">Father</option>
-                        </select>
+                <h5 class="mt-4">Add New Dependent</h5>
+                <div class="new-dependent-entry-add mb-3">
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Relationship</label>
+                            <select class="form-select" id="new_relationship">
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Document Type</label>
+                            <select class="form-select" id="new_doc_type">
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Document Number</label>
+                            <input type="text" id="new_doc_number" class="form-control" placeholder="Enter Document Number">
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Issued Date</label>
+                            <input type="date" id="new_issued_date" class="form-control">
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Expiry Date</label>
+                            <input type="date" id="new_expiry_date" class="form-control">
+                        </div>
+                        <div class="col-md-2 mb-3"><label class="col-form-label">File Upload</label>
+                            <input type="file" id="new_doc_file" class="form-control" accept="application/pdf,image/*">
+                        </div>
                     </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">Document Type</label>
-                        <select class="form-select" id="new_doc_type_{{ employee.employee_id }}">
-                            {% for document in other_documents_data %}
-                                <option value="{{ document.base_value }}">{{ document.base_description }}</option>
-                            {% endfor %}
-                            <option value="visa">Visa Copy</option>
-                            <option value="emirates_id">Emirates ID</option>
-                            <option value="passport">Passport</option>
-                            <option value="birth_certificate">Birth Certificate</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">Document Number</label>
-                        <input type="text" id="new_doc_number_{{ employee.employee_id }}" class="form-control" placeholder="Enter Document Number">
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">Issued Date</label>
-                        <input type="date" id="new_issued_date_{{ employee.employee_id }}" class="form-control">
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label class="col-form-label">Expiry Date</label>
-                        <input type="date" id="new_expiry_date_{{ employee.employee_id }}" class="form-control">
-                    </div>
-                    <div class="col-md-2 mb-3"><label class="col-form-label">File Upload</label>
-                        <input type="file" id="new_doc_file_{{ employee.employee_id }}" class="form-control" accept="application/pdf,image/*">
-                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addDependentRowEdit()">Add Another Dependent</button>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="addDependentRowEdit('{{ employee.employee_id }}')">Add Another Dependent</button>
-            </div>
+                
                 <!-- Existing Dependents -->
                 <h5>Existing Dependents</h5>
-                {% for dependent in employee.dependents %}
-                <div class="dependent-entry-exist mb-3 border p-3 rounded">
-                    <div class="row mb-2">
-                        <div class="col-md-2"><strong>Dependent {{ forloop.counter }}:</strong></div>
-                        <div class="col-md-2">{{ dependent.relationship }}</div>
-                        <div class="col-md-2">{{ dependent.document_type }}</div>
-                        <div class="col-md-2">{{ dependent.document_number }}</div>
-                        <div class="col-md-2">{{ dependent.issued_date|date:'Y-m-d' }}</div>
-                        <div class="col-md-2">{{ dependent.expiry_date|date:'Y-m-d' }}</div>
-                        <div class="col-md-2">
-                            {% if dependent.document_file %}
-                                <a href="{{ dependent.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="{{ dependent.document_file.url }}" target="_blank" download="{{ dependent.document_file.name }}" class="btn btn-sm btn-secondary">Download</a>
-                            {% else %}
-                                <span class="text-muted">No document uploaded.</span>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this)">
-                                Remove
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+                <div id="existingDependents"></div>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     const newDependents = [];
 
-function addDependentRowEdit(employeeId) {
-    const relationship = document.getElementById(`new_relationship_${employeeId}`).value;
-    const docType = document.getElementById(`new_doc_type_${employeeId}`).value;
-    const docNumber = document.getElementById(`new_doc_number_${employeeId}`).value;
-    const issuedDate = document.getElementById(`new_issued_date_${employeeId}`).value;
-    const expiryDate = document.getElementById(`new_expiry_date_${employeeId}`).value;
-    const docFile = document.getElementById(`new_doc_file_${employeeId}`);
+    function addDependentRowEdit() {
+        const relationship = document.getElementById(`new_relationship`).value;
+        const docType = document.getElementById(`new_doc_type`).value;
+        const docNumber = document.getElementById(`new_doc_number`).value;
+        const issuedDate = document.getElementById(`new_issued_date`).value;
+        const expiryDate = document.getElementById(`new_expiry_date`).value;
+        const docFile = document.getElementById(`new_doc_file`);
 
-    if (!docFile.files.length) {
-        alert("Please upload a file for the dependent.");
-        return;
-    }
+        if (!docFile.files.length) {
+            alert("Please upload a file for the dependent.");
+            return;
+        }
 
-    const file = docFile.files[0];
+        const file = docFile.files[0];
+        const index = newDependents.length;
 
-    const index = newDependents.length;
+        const container = document.getElementById(`existingDependents`);
+        const newEntry = document.createElement("div");
+        newEntry.className = "dependent-entry mb-3 border p-3 rounded";
+        newEntry.setAttribute('data-index', index);
 
-    const container = document.getElementById(`dependentsContainer_${employeeId}`);
-    const newEntry = document.createElement("div");
-    newEntry.className = "dependent-entry mb-3 border p-3 rounded";
-    newEntry.setAttribute('data-index', index);
-
-    newEntry.innerHTML = `
-        <div class="row mb-2">
-            <div class="col-md-2"><strong>${relationship}</strong></div>
-            <div class="col-md-2"><strong>${docType}</strong></div>
-            <div class="col-md-2">${docNumber}</div>
-            <div class="col-md-2">${issuedDate}</div>
-            <div class="col-md-2">${expiryDate}</div>
-            <div class="col-md-2">${file.name}</div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this, ${index})">
-                    Remove
-                </button>
+        newEntry.innerHTML = `
+            <div class="row mb-2">
+                <div class="col-md-2"><strong>${relationship}</strong></div>
+                <div class="col-md-2"><strong>${docType}</strong></div>
+                <div class="col-md-2">${docNumber}</div>
+                <div class="col-md-2">${issuedDate}</div>
+                <div class="col-md-2">${expiryDate}</div>
+                <div class="col-md-2">${file.name}</div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this, ${index})">
+                        Remove
+                    </button>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    container.appendChild(newEntry);
+        container.appendChild(newEntry);
 
-    newDependents.push({
-        relationship,
-        document_type: docType,
-        document_number: docNumber,
-        issued_date: issuedDate,
-        expiry_date: expiryDate,
-        document_file: file
-    });
+        newDependents.push({
+            relationship,
+            document_type: docType,
+            document_number: docNumber,
+            issued_date: issuedDate,
+            expiry_date: expiryDate,
+            document_file: file
+        });
 
-    // Clear inputs
-    document.getElementById(`new_relationship_${employeeId}`).value = '';
-    document.getElementById(`new_doc_type_${employeeId}`).value = '';
-    document.getElementById(`new_doc_number_${employeeId}`).value = '';
-    document.getElementById(`new_issued_date_${employeeId}`).value = '';
-    document.getElementById(`new_expiry_date_${employeeId}`).value = '';
-    docFile.value = '';
-}
-function removeDependentRowEdit(button, index) {
-    const entry = button.closest('.dependent-entry');
-    if (entry) entry.remove();
-    if (index >= 0 && index < newDependents.length) {
-        newDependents.splice(index, 1);
+        // Clear inputs
+        document.getElementById(`new_relationship`).value = '';
+        document.getElementById(`new_doc_type`).value = '';
+        document.getElementById(`new_doc_number`).value = '';
+        document.getElementById(`new_issued_date`).value = '';
+        document.getElementById(`new_expiry_date`).value = '';
+        docFile.value = '';
     }
-}
+
+    function removeDependentRowEdit(button, index) {
+        const entry = button.closest('.dependent-entry');
+        if (entry) entry.remove();
+        if (index >= 0 && index < newDependents.length) {
+            newDependents.splice(index, 1);
+        }
+    }
 </script>
 
-<!-- Edit License and Passes Section -->
+<!-- License and Passes Section -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingLicensePasses_{{ employee.employee_id }}">
+    <h2 class="accordion-header" id="headingLicensePasses">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapseLicensePasses_{{ employee.employee_id }}" aria-expanded="false"
-                aria-controls="collapseLicensePasses_{{ employee.employee_id }}">
-            {{ license_passes_title|default:"License and Passes Details" }}
+                data-bs-target="#collapseLicensePasses" aria-expanded="false"
+                aria-controls="collapseLicensePasses">
+            License and Passes Details
         </button>
     </h2>
-    <div id="collapseLicensePasses_{{ employee.employee_id }}" class="accordion-collapse collapse"
-     aria-labelledby="headingLicensePasses_{{ employee.employee_id }}" data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+    <div id="collapseLicensePasses" class="accordion-collapse collapse"
+     aria-labelledby="headingLicensePasses" data-bs-parent="#employeeAccordion">
     <div class="accordion-body">
-        <div id="licensesContainer_{{ employee.employee_id }}">
+        <div id="licensesContainer">
             <!-- Add New License/Pass -->
             <h5 class="mt-3">Add New License or Pass</h5>
             <div class="d-flex flex-wrap gap-3 mb-4 border p-3 rounded align-items-end">
 
                 <!-- Document Type -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ doc_type_heading|default:"Document Type" }}</label>
-                    <select class="form-select" id="new_license_type_{{ employee.employee_id }}"
-                            onchange="toggleCategory('{{ employee.employee_id }}')">
+                    <label class="form-label">Document Type</label>
+                    <select class="form-select" id="new_license_type"
+                            onchange="toggleCategory()">
                         <option value="">-- Select --</option>
                         <option value="license">License</option>
                         <option value="site_medical">Site Medical</option>
@@ -2679,46 +2694,42 @@ function removeDependentRowEdit(button, index) {
 
                 <!-- Document Number -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ doc_number_heading|default:"Document Number" }}</label>
-                    <input type="text" class="form-control" id="new_license_number_{{ employee.employee_id }}" placeholder="Enter Number">
+                    <label class="form-label">Document Number</label>
+                    <input type="text" class="form-control" id="new_license_number" placeholder="Enter Number">
                 </div>
 
                 <!-- File Upload -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ file_upload_heading|default:"Document Upload" }}</label>
-                    <input type="file" class="form-control" id="new_license_file_{{ employee.employee_id }}" accept="application/pdf,image/*">
+                    <label class="form-label">Document Upload</label>
+                    <input type="file" class="form-control" id="new_license_file" accept="application/pdf,image/*">
                 </div>
 
                 <!-- Work Location -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ work_location_heading|default:"Staff Work Location" }}</label>
-                    <select class="form-select" id="new_license_work_location_{{ employee.employee_id }}">
-                        {% for location in work_locations %}
-                            <option value="{{ location.value }}">{{ location.label }}</option>
-                        {% endfor %}
+                    <label class="form-label">Staff Work Location</label>
+                    <select class="form-select" id="new_license_work_location">
+                        <option value="">Select</option>
                     </select>
                 </div>
 
                 <!-- Emirate Issued -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ emirate_issued_heading|default:"Emirate Issued By" }}</label>
-                    <select class="form-select" id="new_license_emirate_issued_{{ employee.employee_id }}">
-                        {% for emirate in emirates_list %}
-                            <option value="{{ emirate.value }}">{{ emirate.label }}</option>
-                        {% endfor %}
+                    <label class="form-label">Emirate Issued By</label>
+                    <select class="form-select" id="new_license_emirate_issued">
+                        <option value="">Select</option>
                     </select>
                 </div>
 
                 <!-- Expiry Date -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ expiry_date_heading|default:"Expiry Date" }}</label>
-                    <input type="date" class="form-control" id="new_license_expiry_date_{{ employee.employee_id }}">
+                    <label class="form-label">Expiry Date</label>
+                    <input type="date" class="form-control" id="new_license_expiry_date">
                 </div>
 
                 <!-- Category -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ category_heading|default:"Category" }}</label>
-                    <select class="form-select" id="new_license_category_{{ employee.employee_id }}" disabled>
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="new_license_category" disabled>
                         <option value="">-- Select Category --</option>
                         <option value="light">Light</option>
                         <option value="heavy">Heavy</option>
@@ -2728,25 +2739,30 @@ function removeDependentRowEdit(button, index) {
 
                 <!-- Comments -->
                 <div class="flex-grow-1">
-                    <label class="form-label">{{ comments_heading|default:"Comments" }}</label>
-                    <input type="text" class="form-control" id="new_license_comments_{{ employee.employee_id }}" placeholder="Enter Comments">
+                    <label class="form-label">Comments</label>
+                    <input type="text" class="form-control" id="new_license_comments" placeholder="Enter Comments">
                 </div>
 
                 <!-- Button -->
                 <div class="flex-grow-1">
-                    <button type="button" class="btn btn-primary mt-3" onclick="addLicenseRowEdit('{{ employee.employee_id }}')">
+                    <button type="button" class="btn btn-primary mt-3" onclick="addLicenseRowEdit()">
                         <i class="fas fa-plus"></i> Add License/Pass
                     </button>
                 </div>
-
             </div>
-        </div>
 
+            <!-- Existing Licenses & Passes -->
+            <h5 class="mt-4">Existing Licenses & Passes</h5>
+            <div id="existingLicenses"></div>
+        </div>
+    </div>
+</div>
+</div>
 
 <script>
-    function toggleCategory(empId) {
-        const typeSelect = document.getElementById(`new_license_type_${empId}`);
-        const categorySelect = document.getElementById(`new_license_category_${empId}`);
+    function toggleCategory() {
+        const typeSelect = document.getElementById(`new_license_type`);
+        const categorySelect = document.getElementById(`new_license_category`);
         if (typeSelect.value === "license") {
             categorySelect.disabled = false;
         } else {
@@ -2754,49 +2770,18 @@ function removeDependentRowEdit(button, index) {
             categorySelect.value = "";
         }
     }
-</script>
 
-                <!-- Existing Licenses & Passes -->
-                <h5 class="mt-4">Existing Licenses & Passes</h5>
-                <div id="existingLicenses_{{ employee.employee_id }}">
-                    {% for license in employee.license_and_passes %}
-                        <div class="row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist">
-                            <div class="col-md-2"><strong>{{ license.document_type }}</strong></div>
-                            <div class="col-md-2">{{ license.document_number }}</div>
-                            <div class="col-md-2">{{ license.expiry_date|date:"Y-m-d" }}</div>
-                            <div class="col-md-3">
-                                {% if license.document_file %}
-                                    <a href="{{ license.document_file.url }}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                    <a href="{{ license.document_file.url }}" download class="btn btn-sm btn-secondary">Download</a>
-                                {% else %}
-                                    <span class="text-muted">No file</span>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-danger" onclick="removeLicenseRowEdit(this)">
-                                    <i class="fas fa-trash"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
     const newLicenses = [];
 
-    function addLicenseRowEdit(employeeId) {
-        const docType = document.getElementById(`new_license_type_${employeeId}`).value;
-        const docNumber = document.getElementById(`new_license_number_${employeeId}`).value;
-        const workLocation = document.getElementById(`new_license_work_location_${employeeId}`).value;
-        const emirateIssued = document.getElementById(`new_license_emirate_issued_${employeeId}`).value;
-        const expiryDate = document.getElementById(`new_license_expiry_date_${employeeId}`).value;
-        const category = document.getElementById(`new_license_category_${employeeId}`).value;
-        const comments = document.getElementById(`new_license_comments_${employeeId}`).value;
-        const fileInput = document.getElementById(`new_license_file_${employeeId}`);
+    function addLicenseRowEdit() {
+        const docType = document.getElementById(`new_license_type`).value;
+        const docNumber = document.getElementById(`new_license_number`).value;
+        const workLocation = document.getElementById(`new_license_work_location`).value;
+        const emirateIssued = document.getElementById(`new_license_emirate_issued`).value;
+        const expiryDate = document.getElementById(`new_license_expiry_date`).value;
+        const category = document.getElementById(`new_license_category`).value;
+        const comments = document.getElementById(`new_license_comments`).value;
+        const fileInput = document.getElementById(`new_license_file`);
 
         if (!docType || !docNumber || !fileInput.files.length) {
             alert("Please fill all required fields and upload a document.");
@@ -2804,7 +2789,7 @@ function removeDependentRowEdit(button, index) {
         }
 
         const file = fileInput.files[0];
-        const container = document.getElementById(`existingLicenses_${employeeId}`);
+        const container = document.getElementById(`existingLicenses`);
 
         const newRow = document.createElement("div");
         newRow.className = "row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist";
@@ -2835,13 +2820,13 @@ function removeDependentRowEdit(button, index) {
         });
 
         // Reset form
-        document.getElementById(`new_license_type_${employeeId}`).value = '';
-        document.getElementById(`new_license_number_${employeeId}`).value = '';
-        document.getElementById(`new_license_work_location_${employeeId}`).value = '';
-        document.getElementById(`new_license_emirate_issued_${employeeId}`).value = '';
-        document.getElementById(`new_license_expiry_date_${employeeId}`).value = '';
-        document.getElementById(`new_license_category_${employeeId}`).value = '';
-        document.getElementById(`new_license_comments_${employeeId}`).value = '';
+        document.getElementById(`new_license_type`).value = '';
+        document.getElementById(`new_license_number`).value = '';
+        document.getElementById(`new_license_work_location`).value = '';
+        document.getElementById(`new_license_emirate_issued`).value = '';
+        document.getElementById(`new_license_expiry_date`).value = '';
+        document.getElementById(`new_license_category`).value = '';
+        document.getElementById(`new_license_comments`).value = '';
         fileInput.value = '';
     }
 
@@ -2851,14 +2836,138 @@ function removeDependentRowEdit(button, index) {
     }
 </script>
 
-
-
-            <div class="d-flex align-items-center justify-content-end mt-4">
-                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-                <button type="submit" class="btn btn-primary">Update Employee</button>
+<!-- Recruitment Information -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingRecruitmentInfo_edit">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRecruitmentInfo_edit" aria-expanded="false"
+            aria-controls="collapseRecruitmentInfo_edit">
+            Recruitment Information
+        </button>
+    </h2>
+    <div id="collapseRecruitmentInfo_edit" class="accordion-collapse collapse"
+        aria-labelledby="headingRecruitmentInfo_edit"
+        data-bs-parent="#employeeAccordion">
+        <div class="accordion-body">
+            <div id="recruitmentInfoContainer_edit">
+                <!-- Add New Recruitment Entry -->
+                <h5 class="mt-4">Add New Recruitment Entry</h5>
+                <div class="new-recruitment-entry-add mb-3">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="col-form-label">Agent Name</label>
+                            <select class="form-select" id="new_agent_name">
+                                <option value="">Select Agent</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="col-form-label">Location</label>
+                            <select class="form-select" id="new_location">
+                                <option value="">Select Location</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Change Status</label>
+                            <select class="form-select" id="new_change_status">
+                                <option value="">Select</option>
+                                <option value="inside">Inside</option>
+                                <option value="outside">Outside</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Recruitment From</label>
+                            <input type="text" id="new_recruitment_from" class="form-control"
+                                placeholder="Enter Recruitment From">
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="col-form-label">Date</label>
+                            <input type="date" id="new_recruitment_date" class="form-control">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addRecruitmentRowEdit()">
+                        Add Recruitment Entry
+                    </button>
+                </div>
+                
+                <!-- Existing Recruitment Entries -->
+                <h5>Existing Recruitment Entries</h5>
+                <div id="existingRecruitmentEntries"></div>
             </div>
-        </form>
+        </div>
     </div>
+</div>
+
+<script>
+    const newRecruitments = [];
+
+    function addRecruitmentRowEdit() {
+        const agentName = document.getElementById(`new_agent_name`).value;
+        const location = document.getElementById(`new_location`).value;
+        const changeStatus = document.getElementById(`new_change_status`).value;
+        const recruitmentFrom = document.getElementById(`new_recruitment_from`).value;
+        const recruitmentDate = document.getElementById(`new_recruitment_date`).value;
+
+        const index = newRecruitments.length;
+
+        const container = document.getElementById(`existingRecruitmentEntries`);
+        const newEntry = document.createElement("div");
+        newEntry.className = "recruitment-entry mb-3 border p-3 rounded";
+        newEntry.setAttribute("data-index", index);
+
+        newEntry.innerHTML = `
+            <div class="row mb-2">
+                <div class="col-md-3"><strong>Agent Name:</strong> ${agentName}</div>
+                <div class="col-md-3"><strong>Location:</strong> ${location}</div>
+                <div class="col-md-2"><strong>Change Status:</strong> ${changeStatus}</div>
+                <div class="col-md-2"><strong>Recruitment From:</strong> ${recruitmentFrom}</div>
+                <div class="col-md-2"><strong>Date:</strong> ${recruitmentDate}</div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRecruitmentRowEdit(this, ${index})">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(newEntry);
+
+        newRecruitments.push({
+            agent_name: agentName,
+            location: location,
+            change_status: changeStatus,
+            recruitment_from: recruitmentFrom,
+            recruitment_date: recruitmentDate,
+        });
+
+        // Clear input fields
+        document.getElementById(`new_agent_name`).value = '';
+        document.getElementById(`new_location`).value = '';
+        document.getElementById(`new_change_status`).value = '';
+        document.getElementById(`new_recruitment_from`).value = '';
+        document.getElementById(`new_recruitment_date`).value = '';
+    }
+
+    function removeRecruitmentRowEdit(button, index) {
+        const entry = button.closest(".recruitment-entry");
+        if (entry) entry.remove();
+        if (index >= 0 && index < newRecruitments.length) {
+            newRecruitments.splice(index, 1);
+        }
+    }
+
+    function removeRecruitmentEntry(button) {
+        const entry = button.closest('.recruitment-entry');
+        if (entry) entry.remove();
+    }
+</script>
+
+<!-- Form Submission Buttons -->
+<div class="d-flex align-items-center justify-content-end mt-4">
+    <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+    <button type="submit" class="btn btn-primary">Update Employee</button>
+</div>
+</form>
+</div>
 </div>
 <!-- /Edit Employee Offcanvas -->
 
@@ -3053,7 +3162,6 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
 
             if (typeof newLicenses !== 'undefined') {
                 newLicenses.forEach(license => {
-                    alert(license.document_type+license.document_number+license.document_file+license.work_location+license.emirate_issued+license.expiry_date+license.category+license.comments)
                     formData.append('license_doc_type[]', license.document_type);
                     formData.append('license_doc_number[]', license.document_number);
                     formData.append('license_doc_file[]', license.document_file);
@@ -3084,6 +3192,15 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
             formData.append('entry_proated_flag[]', proratedFlag);
         });
 
+        // Append new recruitment entries to the FormData
+        // Append new recruitment entries to the FormData
+        newRecruitments.forEach(recruitment => {
+            formData.append('agent_name[]', recruitment.agent_name);
+            formData.append('location[]', recruitment.location);
+            formData.append('change_status[]', recruitment.change_status);
+            formData.append('recruitment_from[]', recruitment.recruitment_from);
+            formData.append('recruitment_date[]', recruitment.recruitment_date);
+        });
 
         // Submit the form via fetch
         fetch(this.action, {
@@ -3109,3 +3226,73 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
     };
 });
 </script>
+
+<script>
+    document.getElementById('addEmployeeForm').onsubmit = function (event) {
+        event.preventDefault(); // Prevent the default form submission
+    
+        const form = this;
+        const formData = new FormData(form);
+    
+        // Submit the form via fetch
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display success message
+                alert('Employee created successfully!');
+                
+                // Optionally, reset the form
+                form.reset();
+    
+                // Close the offcanvas (if applicable)
+                const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvas_add'));
+                if (offcanvas) offcanvas.hide();
+            } else {
+                // Handle errors
+                alert(`Error creating employee: ${data.error || 'Please try again.'}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    };
+    </script>
+    <script>
+        document.getElementById('addEmployeeForm').onsubmit = function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const form = this;
+    const formData = new FormData(form);
+
+    // Submit the form via fetch
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload the page on success
+            location.reload();
+        } else {
+            // Handle errors
+            alert(`Error creating employee: ${data.error || 'Please try again.'}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+};
+    </script>

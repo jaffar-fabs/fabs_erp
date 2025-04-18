@@ -156,36 +156,117 @@ def employee_master(request):
 
     return render(request, 'pages/payroll/employee_master/employee_master.html', context)
 
+from django.http import JsonResponse
+from django.core import serializers
+import json
+
 def get_employee_details(request, employee_id):
     set_comp_code(request)
-
+    
     try:
         # Fetch the employee details
         employee = Employee.objects.get(employee_id=employee_id, comp_code=COMP_CODE)
-
-        # Fetch related data
-        documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, document_number__isnull=True)
-        earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
-        dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
-        license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, issued_date__isnull=True)
-        recruitment_details = EmployeeRecruitmentDetails.objects.filter(emp_code=employee.emp_code)
-        print(recruitment_details)
-
-        # Prepare the context
-        context = {
-            'employee': employee,
-            'documents': documents,
-            'earn_deducts': earn_deducts,
-            'dependents': dependents,
-            'license_and_passes': license_and_passes,
-            'recruitment_details': recruitment_details
+        
+        # Serialize the employee data
+        employee_data = {
+            'emp_code': employee.emp_code,
+            'emp_name': employee.emp_name,
+            'surname': employee.surname,
+            'dob': employee.dob,
+            'emp_sex': employee.emp_sex,
+            'nationality': employee.nationality,
+            'designation': employee.designation,
+            'date_of_join': employee.date_of_join,
+            'qualification': employee.qualification,
+            'emp_status': employee.emp_status,
+            'emp_sub_status': employee.emp_sub_status,
+            'spouse_name': employee.spouse_name,
+            'father_name': employee.father_name,
+            'mother_name': employee.mother_name,
+            'religion': employee.religion,
+            'emp_marital_status': employee.emp_marital_status,
+            'basic_pay': employee.basic_pay,
+            'allowance': employee.allowance,
+            'department': employee.department,
+            'process_cycle': employee.process_cycle,
+            'local_addr_line1': employee.local_addr_line1,
+            'local_addr_line2': employee.local_addr_line2,
+            'local_city': employee.local_city,
+            'local_state': employee.local_state,
+            'local_country_code': employee.local_country_code,
+            'local_phone_no': employee.local_phone_no,
+            'res_addr_line1': employee.res_addr_line1,
+            'res_addr_line2': employee.res_addr_line2,
+            'res_city': employee.res_city,
+            'res_state': employee.res_state,
+            'res_country_code': employee.res_country_code,
+            'res_phone_no': employee.res_phone_no,
+            'visa_no': employee.visa_no,
+            'visa_expiry': employee.visa_expiry,
+            'emirates_no': employee.emirates_no,
+            'emirate_expiry': employee.emirate_expiry.strftime('%Y-%m-%d') if employee.emirate_expiry else None,
+            'passport_details': employee.passport_details,
+            'passport_expiry': employee.passport_expiry_date,
         }
 
-        return render(request, 'pages/modal/payroll/employee_master_modal.html', context)
+        # Fetch and serialize related data
+        earn_deducts = list(EarnDeductMaster.objects.filter(
+            comp_code=COMP_CODE, 
+            employee_code=employee.emp_code
+        ).values(
+            'earn_type', 'earn_deduct_code', 'earn_deduct_amt', 'prorated_flag'
+        ))
+
+        documents = list(EmployeeDocument.objects.filter(
+            emp_code=employee.emp_code, 
+            relationship__isnull=True, 
+            document_number__isnull=True
+        ).values(
+            'document_type', 'document_file'
+        ))
+
+        dependents = list(EmployeeDocument.objects.filter(
+            emp_code=employee.emp_code, 
+            relationship__isnull=False
+        ).values(
+            'relationship', 'document_type', 'document_number', 
+            'issued_date', 'expiry_date', 'document_file'
+        ))
+
+        license_and_passes = list(EmployeeDocument.objects.filter(
+            emp_code=employee.emp_code, 
+            relationship__isnull=True, 
+            issued_date__isnull=True
+        ).values(
+            'document_type', 'document_number', 'expiry_date', 'document_file'
+        ))
+
+        recruitment_details = list(EmployeeRecruitmentDetails.objects.filter(
+            emp_code=employee.emp_code
+        ).values(
+            'agent_or_reference', 'location', 'change_status', 
+            'recruitment_from', 'date'
+        ))
+
+        response_data = {
+            'success': True,
+            'data': {
+                **employee_data,
+                'earn_deducts': earn_deducts,
+                'documents': documents,
+                'dependents': dependents,
+                'license_and_passes': license_and_passes,
+                'recruitment_details': recruitment_details
+            }
+        }
+
+        return JsonResponse(response_data)
 
     except Employee.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Employee not found'}, status=404)
-
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    
 def save_employee(request, employee_id=None):
     set_comp_code(request)
     if request.method == "POST":

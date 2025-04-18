@@ -193,19 +193,82 @@
                 const employeeId = this.getAttribute('data-id');
                 const url = `/get_employee_details/${employeeId}/`; // Update with your URL pattern
 
+                // Show loading state
+                const offcanvas = document.querySelector('#offcanvas_edit');
+                offcanvas.querySelector('.offcanvas-body').innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
                 // Fetch employee details
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             // Populate the form fields in the modal
-                            document.querySelector('input[name="emp_name_passport"]').value = data.data.emp_name;
-                            document.querySelector('input[name="surname"]').value = data.data.surname;
-                            document.querySelector('input[name="dob"]').value = data.data.dob;
-                            document.querySelector('select[name="emp_sex"]').value = data.data.emp_sex;
-                            document.querySelector('select[name="emp_status"]').value = data.data.emp_status;
-                            document.querySelector('select[name="emp_sub_status"]').value = data.data.emp_sub_status;
-                            // Populate other fields as needed
+                            const employee = data.data;
+
+                            // Basic Information
+                            document.querySelector('#editEmployeeForm input[name="emp_code"]').value = employee.emp_code || '';
+                            document.querySelector('#editEmployeeForm input[name="emp_name_passport"]').value = employee.emp_name || '';
+                            document.querySelector('#editEmployeeForm input[name="surname"]').value = employee.surname || '';
+                            document.querySelector('#editEmployeeForm input[name="dob"]').value = employee.dob || '';
+                            document.querySelector('#editEmployeeForm select[name="emp_sex"]').value = employee.emp_sex || '';
+                            document.querySelector('#editEmployeeForm select[name="nationality"]').value = employee.nationality || '';
+                            document.querySelector('#editEmployeeForm select[name="designation"]').value = employee.designation || '';
+                            document.querySelector('#editEmployeeForm input[name="date_of_join"]').value = employee.date_of_join || '';
+                            document.querySelector('#editEmployeeForm input[name="qualification"]').value = employee.qualification || '';
+                            document.querySelector('#editEmployeeForm select[name="emp_status"]').value = employee.emp_status || '';
+                            document.querySelector('#editEmployeeForm select[name="emp_sub_status"]').value = employee.emp_sub_status || '';
+                            document.querySelector('#editEmployeeForm input[name="spouse_name"]').value = employee.spouse_name || '';
+                            document.querySelector('#editEmployeeForm input[name="father_name"]').value = employee.father_name || '';
+                            document.querySelector('#editEmployeeForm input[name="mother_name"]').value = employee.mother_name || '';
+                            document.querySelector('#editEmployeeForm input[name="religion"]').value = employee.religion || '';
+                            document.querySelector('#editEmployeeForm select[name="emp_marital_status"]').value = employee.emp_marital_status || '';
+
+                            // Contact Information
+                            document.querySelector('#editEmployeeForm input[name="res_addr_line1"]').value = employee.res_addr_line1 || '';
+                            document.querySelector('#editEmployeeForm input[name="res_addr_line2"]').value = employee.res_addr_line2 || '';
+                            document.querySelector('#editEmployeeForm input[name="res_city"]').value = employee.res_city || '';
+                            document.querySelector('#editEmployeeForm input[name="res_state"]').value = employee.res_state || '';
+                            document.querySelector('#editEmployeeForm input[name="res_country_code"]').value = employee.res_country_code || '';
+                            document.querySelector('#editEmployeeForm input[name="res_phone_no"]').value = employee.res_phone_no || '';
+                            document.querySelector('#editEmployeeForm input[name="local_addr_line1"]').value = employee.local_addr_line1 || '';
+                            document.querySelector('#editEmployeeForm input[name="local_addr_line2"]').value = employee.local_addr_line2 || '';
+                            document.querySelector('#editEmployeeForm input[name="local_city"]').value = employee.local_city || '';
+                            document.querySelector('#editEmployeeForm input[name="local_state"]').value = employee.local_state || '';
+                            document.querySelector('#editEmployeeForm input[name="local_country_code"]').value = employee.local_country_code || '';
+                            document.querySelector('#editEmployeeForm input[name="local_phone_no"]').value = employee.local_phone_no || '';
+
+                            // Visa Details
+                            document.querySelector('#editEmployeeForm input[name="visa_no"]').value = employee.visa_no || '';
+                            document.querySelector('#editEmployeeForm input[name="visa_expiry"]').value = employee.visa_expiry || '';
+                            document.querySelector('#editEmployeeForm input[name="emirates_no"]').value = employee.emirates_no || '';
+                            document.querySelector('#editEmployeeForm input[name="emirate_expiry"]').value = employee.emirate_expiry || '';
+                            document.querySelector('#editEmployeeForm input[name="passport_no"]').value = employee.passport_no || '';
+                            document.querySelector('#editEmployeeForm input[name="passport_expiry"]').value = employee.passport_expiry || '';
+
+                            // Handle dynamic sections (earnings/deductions, documents, dependents, etc.)
+                            if (employee.earn_deducts) {
+                                populateEarnDeducts(employee.earn_deducts);
+                            }
+
+                            if (employee.documents) {
+                                populateDocuments(employee.documents);
+                            }
+
+                            if (employee.dependents) {
+                                populateDependents(employee.dependents);
+                            }
+
+                            if (employee.license_and_passes) {
+                                populateLicenses(employee.license_and_passes);
+                            }
+
+                            if (employee.recruitment_details) {
+                                populateRecruitment(employee.recruitment_details);
+                            }
+
+                            // Update form action URL
+                            document.querySelector('#editEmployeeForm').action = `/update_employee/${employeeId}/`;
+
                         } else {
                             alert(data.error || 'Failed to fetch employee details.');
                         }
@@ -216,6 +279,145 @@
                     });
             });
         });
+
+        // Helper functions for dynamic sections
+        function populateEarnDeducts(earnDeducts) {
+            const container = document.querySelector('#entriesContainer');
+            container.innerHTML = '';
+
+            earnDeducts.forEach(item => {
+                const newEntry = document.createElement('div');
+                newEntry.className = 'card p-3 mb-2 shadow-sm entry-row';
+                newEntry.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <input type="text" name="entry_type[]" class="form-control" value="${item.earn_type}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="entry_code[]" class="form-control" value="${item.earn_deduct_code}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" name="entry_amount[]" class="form-control" value="${item.earn_deduct_amt}" required min="0" step="0.01">
+                        </div>
+                        <div class="col-md-2">
+                            <select name="entry_proated_flag[]" class="form-control">
+                                <option value="Yes" ${item.prorated_flag ? 'selected' : ''}>Yes</option>
+                                <option value="No" ${!item.prorated_flag ? 'selected' : ''}>No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 text-end">
+                            <button type="button" class="btn btn-danger" onclick="removeEntry(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newEntry);
+            });
+        }
+
+        function populateDocuments(documents) {
+            const container = document.querySelector('#documentList');
+            container.innerHTML = '';
+
+            documents.forEach(doc => {
+                const newRow = document.createElement('div');
+                newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
+                newRow.setAttribute('data-document-id', doc.id);
+                newRow.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <strong>${doc.document_type}</strong>
+                            <input type="hidden" name="document_type" value="${doc.document_type}">
+                        </div>
+                        <div class="col-md-4">
+                            <strong>${doc.document_file.name}</strong>
+                            <input type="hidden" name="document_file" value="${doc.document_file.url}">
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="${doc.document_file.url}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
+                                <i class="fas fa-eye"></i> Preview
+                            </a>
+                            <a href="${doc.document_file.url}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <button type="button" class="btn btn-danger" onclick="removeDocument(this, '${doc.id}')">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newRow);
+            });
+        }
+
+        function populateDependents(dependents) {
+            const container = document.querySelector('#existingDependents');
+            container.innerHTML = '';
+
+            dependents.forEach(dependent => {
+                const newEntry = document.createElement('div');
+                newEntry.className = 'dependent-entry-exist mb-3 border p-3 rounded';
+                newEntry.innerHTML = `
+                    <div class="row mb-2">
+                        <div class="col-md-2"><strong>Dependent:</strong> ${dependent.relationship}</div>
+                        <div class="col-md-2">${dependent.document_type}</div>
+                        <div class="col-md-2">${dependent.document_number}</div>
+                        <div class="col-md-2">${dependent.issued_date}</div>
+                        <div class="col-md-2">${dependent.expiry_date}</div>
+                        <div class="col-md-2">
+                            ${dependent.document_file ? `
+                                <a href="${dependent.document_file.url}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                                <a href="${dependent.document_file.url}" target="_blank" download="${dependent.document_file.name}" class="btn btn-sm btn-secondary">Download</a>
+                            ` : '<span class="text-muted">No document uploaded.</span>'}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newEntry);
+            });
+        }
+
+        function populateLicenses(licenses) {
+            const container = document.querySelector('#existingLicenses');
+            container.innerHTML = '';
+
+            licenses.forEach(license => {
+                const newRow = document.createElement('div');
+                newRow.className = 'row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist';
+                newRow.innerHTML = `
+                    <div class="col-md-2"><strong>${license.document_type}</strong></div>
+                    <div class="col-md-2">${license.document_number}</div>
+                    <div class="col-md-2">${license.expiry_date}</div>
+                    <div class="col-md-3">
+                        ${license.document_file ? `
+                            <a href="${license.document_file.url}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
+                            <a href="${license.document_file.url}" download class="btn btn-sm btn-secondary">Download</a>
+                        ` : '<span class="text-muted">No file</span>'}
+                    </div>
+                `;
+                container.appendChild(newRow);
+            });
+        }
+
+        function populateRecruitment(recruitmentDetails) {
+            const container = document.querySelector('#existingRecruitmentEntries');
+            container.innerHTML = '';
+
+            recruitmentDetails.forEach(detail => {
+                const newEntry = document.createElement('div');
+                newEntry.className = 'recruitment-entry-exist mb-3 border p-3 rounded';
+                newEntry.innerHTML = `
+                    <div class="row mb-2">
+                        <div class="col-md-3"><strong>Agent Name:</strong> ${detail.agent_or_reference}</div>
+                        <div class="col-md-3"><strong>Location:</strong> ${detail.location}</div>
+                        <div class="col-md-2"><strong>Change Status:</strong> ${detail.change_status}</div>
+                        <div class="col-md-2"><strong>Recruitment From:</strong> ${detail.recruitment_from}</div>
+                        <div class="col-md-2"><strong>Date:</strong> ${detail.date}</div>
+                    </div>
+                `;
+                container.appendChild(newEntry);
+            });
+        }
     });
 </script>
 {% block contracts_modal %}
