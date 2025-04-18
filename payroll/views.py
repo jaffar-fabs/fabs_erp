@@ -144,6 +144,7 @@ def employee_master(request):
         employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
         employee.dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
         employee.license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True,issued_date__isnull=True)
+        employee.recruitment_details = EmployeeRecruitmentDetails.objects.filter(emp_code=employee.emp_code)
 
     # Prepare the context for the template
     context = {
@@ -167,6 +168,8 @@ def get_employee_details(request, employee_id):
         earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
         dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
         license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, issued_date__isnull=True)
+        recruitment_details = EmployeeRecruitmentDetails.objects.filter(emp_code=employee.emp_code)
+        print(recruitment_details)
 
         # Prepare the context
         context = {
@@ -175,6 +178,7 @@ def get_employee_details(request, employee_id):
             'earn_deducts': earn_deducts,
             'dependents': dependents,
             'license_and_passes': license_and_passes,
+            'recruitment_details': recruitment_details
         }
 
         return render(request, 'pages/modal/payroll/employee_master_modal.html', context)
@@ -416,9 +420,6 @@ def save_employee(request, employee_id=None):
         license_categories = request.POST.getlist("license_category[]")
         license_comments = request.POST.getlist("license_comments[]")
 
-        print(license_doc_types, license_doc_numbers, license_doc_files,
-                license_work_locations, license_emirates_issued, license_expiry_dates, license_categories, license_comments)
-
         for doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments in zip_longest(
                 license_doc_types, license_doc_numbers, license_doc_files,
                 license_work_locations, license_emirates_issued,
@@ -442,7 +443,29 @@ def save_employee(request, employee_id=None):
                     created_by=request.user.id if request.user.is_authenticated else 1
                 )
 
+        # Handle Recruitment Information
+        recruitment_agents = request.POST.getlist("agent_name[]")
+        recruitment_locations = request.POST.getlist("location[]")
+        recruitment_change_statuses = request.POST.getlist("change_status[]")
+        recruitment_froms = request.POST.getlist("recruitment_from[]")
+        recruitment_dates = request.POST.getlist("recruitment_date[]")
 
+        # Delete existing recruitment details for the employee
+        # EmployeeRecruitmentDetails.objects.filter(comp_code=COMP_CODE, emp_code=emp_code).delete()
+
+        # Save new recruitment details
+        for agent, location, change_status, recruitment_from, date in zip(
+                recruitment_agents, recruitment_locations, recruitment_change_statuses, recruitment_froms, recruitment_dates):
+            if agent or location or change_status or recruitment_from or date:  # Ensure at least one field is filled
+                EmployeeRecruitmentDetails.objects.create(
+                    comp_code=COMP_CODE,
+                    emp_code=emp_code,
+                    agent_or_reference=agent,
+                    location=location,
+                    change_status=change_status,
+                    recruitment_from=recruitment_from,
+                    date=date if date else None
+                )
 
         # Continue with the rest of your code
         messages.success(request, "Employee details and documents updated successfully.")

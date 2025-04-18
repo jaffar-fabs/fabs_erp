@@ -1747,6 +1747,151 @@ function removeDependentRowEdit(button, index) {
     }
 </script>
 
+<!-- Recruitment Information -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingRecruitmentInfo_edit_{{ employee.employee_id }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRecruitmentInfo_edit_{{ employee.employee_id }}" aria-expanded="false"
+            aria-controls="collapseRecruitmentInfo_edit_{{ employee.employee_id }}">
+            Recruitment Information
+        </button>
+    </h2>
+    <div id="collapseRecruitmentInfo_edit_{{ employee.employee_id }}" class="accordion-collapse collapse"
+        aria-labelledby="headingRecruitmentInfo_edit_{{ employee.employee_id }}"
+        data-bs-parent="#employeeAccordion_{{ employee.employee_id }}">
+        <div class="accordion-body">
+            <div id="recruitmentInfoContainer_edit_{{ employee.employee_id }}">
+                <!-- Add New Recruitment Entry -->
+            <h5 class="mt-4">Add New Recruitment Entry</h5>
+            <div class="new-recruitment-entry-add mb-3">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="col-form-label">Agent Name</label>
+                        <select class="form-select" id="new_agent_name_{{ employee.employee_id }}">
+                            <option value="">Select Agent</option>
+                            {% for agent in agent_data %}
+                            <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="col-form-label">Location</label>
+                        <select class="form-select" id="new_location_{{ employee.employee_id }}">
+                            <option value="">Select Location</option>
+                            {% for location in location_data %}
+                            <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="col-form-label">Change Status</label>
+                        <select class="form-select" id="new_change_status_{{ employee.employee_id }}">
+                            <option value="">Select</option>
+                            <option value="inside">Inside</option>
+                            <option value="outside">Outside</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="col-form-label">Recruitment From</label>
+                        <input type="text" id="new_recruitment_from_{{ employee.employee_id }}" class="form-control"
+                            placeholder="Enter Recruitment From">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="col-form-label">Date</label>
+                        <input type="date" id="new_recruitment_date_{{ employee.employee_id }}" class="form-control">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="addRecruitmentRowEdit('{{ employee.employee_id }}')">
+                    Add Recruitment Entry
+                </button>
+            </div>
+                <!-- Existing Recruitment Entries -->
+                <h5>Existing Recruitment Entries</h5>
+                {% for recruitment in employee.recruitment_details %}
+                <div class="recruitment-entry-exist mb-3 border p-3 rounded">
+                    <div class="row mb-2">
+                        <div class="col-md-3"><strong>Agent Name:</strong> {{ recruitment.agent_or_reference }}</div>
+                        <div class="col-md-3"><strong>Location:</strong> {{ recruitment.location }}</div>
+                        <div class="col-md-2"><strong>Change Status:</strong> {{ recruitment.change_status }}</div>
+                        <div class="col-md-2"><strong>Recruitment From:</strong> {{ recruitment.recruitment_from }}</div>
+                        <div class="col-md-2"><strong>Date:</strong> {{ recruitment.date|date:'Y-m-d' }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const newRecruitments = [];
+
+function addRecruitmentRowEdit(employeeId) {
+    const agentName = document.getElementById(`new_agent_name_${employeeId}`).value;
+    const location = document.getElementById(`new_location_${employeeId}`).value;
+    const changeStatus = document.getElementById(`new_change_status_${employeeId}`).value;
+    const recruitmentFrom = document.getElementById(`new_recruitment_from_${employeeId}`).value;
+    const recruitmentDate = document.getElementById(`new_recruitment_date_${employeeId}`).value;
+
+    // if (!agentName || !location || !changeStatus || !recruitmentFrom || !recruitmentDate) {
+    //     alert("Please fill all fields before adding a recruitment entry.");
+    //     return;
+    // }
+
+    const index = newRecruitments.length;
+
+    const container = document.getElementById(`recruitmentInfoContainer_edit_${employeeId}`);
+    const newEntry = document.createElement("div");
+    newEntry.className = "recruitment-entry mb-3 border p-3 rounded";
+    newEntry.setAttribute("data-index", index);
+
+    newEntry.innerHTML = `
+        <div class="row mb-2">
+            <div class="col-md-3"><strong>Agent Name:</strong> ${agentName}</div>
+            <div class="col-md-3"><strong>Location:</strong> ${location}</div>
+            <div class="col-md-2"><strong>Change Status:</strong> ${changeStatus}</div>
+            <div class="col-md-2"><strong>Recruitment From:</strong> ${recruitmentFrom}</div>
+            <div class="col-md-2"><strong>Date:</strong> ${recruitmentDate}</div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeRecruitmentRowEdit(this, ${index})">
+                    Remove
+                </button>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(newEntry);
+
+    newRecruitments.push({
+        agent_name: agentName,
+        location: location,
+        change_status: changeStatus,
+        recruitment_from: recruitmentFrom,
+        recruitment_date: recruitmentDate,
+    });
+
+    // Clear input fields
+    document.getElementById(`new_agent_name_${employeeId}`).value = '';
+    document.getElementById(`new_location_${employeeId}`).value = '';
+    document.getElementById(`new_change_status_${employeeId}`).value = '';
+    document.getElementById(`new_recruitment_from_${employeeId}`).value = '';
+    document.getElementById(`new_recruitment_date_${employeeId}`).value = '';
+}
+
+function removeRecruitmentRowEdit(button, index) {
+    const entry = button.closest(".recruitment-entry");
+    if (entry) entry.remove();
+    if (index >= 0 && index < newRecruitments.length) {
+        newRecruitments.splice(index, 1);
+    }
+}
+
+function removeRecruitmentEntry(button) {
+    const entry = button.closest('.recruitment-entry');
+    if (entry) entry.remove();
+}
+</script>
+
 
 
             <div class="d-flex align-items-center justify-content-end mt-4">
@@ -3207,6 +3352,143 @@ function removeLicenseRow_add(button) {
 </script>
 
 
+<!-- Recruitment Information -->
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingRecruitmentInfo_add">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapseRecruitmentInfo_add" aria-expanded="false" aria-controls="collapseRecruitmentInfo_add">
+            Recruitment Information
+        </button>
+    </h2>
+    <div id="collapseRecruitmentInfo_add" class="accordion-collapse collapse" aria-labelledby="headingRecruitmentInfo_add"
+        data-bs-parent="#employeeAccordion_add">
+        <div class="accordion-body">
+            <table class="table" id="recruitmentInfoTable_add">
+                <thead>
+                    <tr>
+                        <th>Agent Name</th>
+                        <th>Location</th>
+                        <th>Change Status</th>
+                        <th>Recruitment From</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select class="form-select" name="agent_name[]">
+                                <option value="">Select Agent</option>
+                                {% for agent in agent_data %}
+                                <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="location[]">
+                                <option value="">Select Location</option>
+                                {% for location in location_data %}
+                                <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="change_status[]">
+                                <option value="">Select</option>
+                                <option value="inside">Inside</option>
+                                <option value="outside">Outside</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+                        </td>
+                        <td>
+                            <input type="date" name="recruitment_date[]" class="form-control">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addRecruitmentRow_add() {
+        const table = document.getElementById('recruitmentInfoTable_add').getElementsByTagName('tbody')[0];
+        const newRow = table.insertRow();
+        newRow.innerHTML = `
+            <td>
+                <select class="form-select" name="agent_name[]">
+                    <option value="">Select Agent</option>
+                    {% for agent in agent_data %}
+                    <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select class="form-select" name="location[]">
+                    <option value="">Select Location</option>
+                    {% for location in location_data %}
+                    <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select class="form-select" name="change_status[]">
+                    <option value="">Select</option>
+                    <option value="inside">Inside</option>
+                    <option value="outside">Outside</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+            </td>
+            <td>
+                <input type="date" name="recruitment_date[]" class="form-control">
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        `;
+    }
+
+    function removeRecruitmentRow_add(button) {
+        const row = button.closest('tr');
+        const tableBody = row.parentNode;
+
+        // Ensure at least one row remains
+        if (tableBody.rows.length > 1) {
+            row.remove();
+        } else {
+            // Show warning message
+            const message = document.createElement('div');
+            message.className = 'alert alert-warning mt-3';
+            message.innerText = "At least one row must remain.";
+            
+            // Insert after table
+            const table = document.getElementById('recruitmentInfoTable_add');
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
+    }
+</script>
+
+
             
 
             <div class="d-flex align-items-center justify-content-end mt-4">
@@ -3407,7 +3689,6 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
 
             if (typeof newLicenses !== 'undefined') {
                 newLicenses.forEach(license => {
-                    alert(license.document_type+license.document_number+license.document_file+license.work_location+license.emirate_issued+license.expiry_date+license.category+license.comments)
                     formData.append('license_doc_type[]', license.document_type);
                     formData.append('license_doc_number[]', license.document_number);
                     formData.append('license_doc_file[]', license.document_file);
@@ -3438,6 +3719,15 @@ document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
             formData.append('entry_proated_flag[]', proratedFlag);
         });
 
+        // Append new recruitment entries to the FormData
+        // Append new recruitment entries to the FormData
+        newRecruitments.forEach(recruitment => {
+            formData.append('agent_name[]', recruitment.agent_name);
+            formData.append('location[]', recruitment.location);
+            formData.append('change_status[]', recruitment.change_status);
+            formData.append('recruitment_from[]', recruitment.recruitment_from);
+            formData.append('recruitment_date[]', recruitment.recruitment_date);
+        });
 
         // Submit the form via fetch
         fetch(this.action, {

@@ -457,6 +457,15 @@ class EmployeeDocument(models.Model):
     def __str__(self):
         return f"{self.document_name} ({self.emp_code})"
 
+class EmployeeRecruitmentDetails(models.Model):
+    comp_code = models.CharField(max_length=15)  
+    recruitment_id = models.AutoField(primary_key=True)  
+    emp_code = models.CharField(max_length=50) 
+    agent_or_reference = models.CharField(max_length=150, null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
+    change_status = models.CharField(max_length=100, null=True, blank=True)
+    recruitment_from = models.CharField(max_length=100, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
 
 #------------------------------------------------------------------------------------------------------------
 class EarnDeductMaster(models.Model):
