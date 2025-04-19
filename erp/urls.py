@@ -158,13 +158,15 @@ urlpatterns = [
     #Camp Allocation
     path('camp_allocation/', views.camp_allocation_list, name='camp_allocation_list'),
     path('camp_allocation/create/', views.camp_allocation_create, name='camp_allocation_create'),
-    path('camp_allocation/edit/', views.camp_allocation_edit, name='camp_allocation_edit'),
+    # path('camp_allocation/edit/', views.camp_allocation_edit, name='camp_allocation_edit'),
     path('check_employee_allocation/', views.check_employee_allocation, name='check_employee_allocation'),
     path('fetch_buildings/', views.fetch_buildings, name='fetch_buildings'),
     path('fetch_floors/', views.fetch_floors, name='fetch_floors'),
     path('fetch_rooms/', views.fetch_rooms, name='fetch_rooms'),
     path('fetch_beds/', views.fetch_beds, name='fetch_beds'),
     path('check_bed_allocation/', views.check_bed_allocation, name='check_bed_allocation'),
+    path('camp_transaction_approval/', views.camp_transaction_approval, name='camp_transaction_approval'),
+    path('camp_transaction_approval_submit/', views.camp_transaction_approval_submit, name='camp_transaction_approval_submit'),
 
 
     #reports

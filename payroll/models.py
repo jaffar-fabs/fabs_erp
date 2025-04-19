@@ -87,7 +87,7 @@ class CampDetails(models.Model):
     floor = models.CharField(max_length=50, null=True, blank=True)
     type = models.CharField(max_length=50, null=True, blank=True)
     
-    room_no = models.IntegerField(null=True, blank=True)  # renamed from no_of_rooms
+    room_no = models.CharField(null=True, blank=True)  # renamed from no_of_rooms
     as_per_mohre = models.IntegerField(null=True, blank=True)
     allocated = models.IntegerField(null=True, blank=True)
     as_per_rental = models.IntegerField(null=True, blank=True)
@@ -99,7 +99,16 @@ class CampDetails(models.Model):
     occupied_beds = models.IntegerField(null=True, blank=True)
     available_beds = models.IntegerField(null=True, blank=True)
 
-
+class CampBeds(models.Model):
+    comp_code = models.CharField(max_length=15)
+    camp_beds_id = models.BigAutoField(primary_key=True)
+    camp_code = models.CharField(max_length=50)
+    block = models.CharField(max_length=50, null=True, blank=True)
+    floor = models.CharField(max_length=50, null=True, blank=True)
+    room_no = models.IntegerField(null=True, blank=True)
+    bed_no = models.CharField(null=True, blank=True)
+    bed_status = models.CharField(max_length=50, null=True, blank=True)
+    
 class CampDocuments(models.Model):
     comp_code = models.CharField(max_length=15)
     camp_document_id = models.BigAutoField(primary_key=True)
@@ -121,6 +130,7 @@ class CampCheque(models.Model):
 class CampAllocation(models.Model):
     comp_code = models.CharField(max_length=15)
     transaction_id = models.BigAutoField(primary_key=True)
+    request_id = models.CharField(max_length=200, null=True, blank=True)
     action_type = models.CharField(max_length=50, null=True, blank=True)
     employee_code = models.CharField(max_length=50)
     employee_name = models.CharField(max_length=100, null=True, blank=True)
@@ -139,7 +149,7 @@ class CampAllocation(models.Model):
     current_bed_no = models.CharField(max_length=50, null=True, blank=True)
     exit_date = models.DateField(null=True, blank=True)
     created_by = models.BigIntegerField(null=True, blank=True)
-    created_on = models.DateTimeField(default=timezone.now)
+    created_on = models.DateTimeField(auto_now=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True)
 

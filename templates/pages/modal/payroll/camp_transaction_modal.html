@@ -99,7 +99,7 @@
                 </div>
 
                 <!-- Operational Approval Dropdown -->
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Operational Approval</label>
                         <select class="form-select" name="operational_approval" required>
@@ -109,7 +109,7 @@
                             <option value="Pending">Pending</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Current Fields (Pre-filled if Employee Already Allocated) -->
                 <div class="col-md-6">
@@ -173,7 +173,7 @@
         $("#camp").on("change", function () {
             var campCode = $(this).val();
             if (campCode) {
-                alert('helo')
+                // alert('helo')
                 $.ajax({
                     url: "/fetch_buildings/",
                     type: "GET",
@@ -262,35 +262,39 @@
 
         // Fetch beds when a room is selected
         $("#room_no").on("change", function () {
-            var campCode = $("#camp").val();
-            var buildingName = $("#building_name").val();
-            var floorNo = $("#floor_no").val();
-            var roomNo = $(this).val();
-            if (campCode && buildingName && floorNo && roomNo) {
-                $.ajax({
-                    url: "/fetch_beds/",
-                    type: "GET",
-                    data: { camp_code: campCode, building_name: buildingName, floor_no: floorNo, room_no: roomNo },
-                    success: function (response) {
-                        if (response.success) {
-                            var bedDropdown = $("#bed_no");
-                            bedDropdown.empty();
-                            bedDropdown.append('<option value="">Select Bed</option>');
-                            response.beds.forEach(function (bed) {
-                                bedDropdown.append('<option value="' + bed + '">' + bed + '</option>');
-                            });
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function () {
-                        alert("Error fetching beds.");
-                    }
-                });
-            } else {
-                $("#bed_no").empty().append('<option value="">Select Bed</option>');
+    var campCode = $("#camp").val();
+    var buildingName = $("#building_name").val();
+    var floorNo = $("#floor_no").val();
+    var roomNo = $(this).val();
+
+    if (campCode && buildingName && floorNo && roomNo) {
+        $.ajax({
+            url: "/fetch_beds/",
+            type: "GET",
+            data: {
+                camp_code: campCode,
+                building_name: buildingName,
+                floor_no: floorNo,
+                room_no: roomNo
+            },
+            success: function (response) {
+                if (response.success) {
+                    var bedDropdown = $("#bed_no");
+                    bedDropdown.empty();
+                    bedDropdown.append('<option value="">Select Bed</option>');
+                    response.beds.forEach(function (bed) {
+                        bedDropdown.append('<option value="' + bed + '">' + bed + '</option>');
+                    });
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert("Error fetching beds.");
             }
         });
+    }
+});
 
         // Check if the selected bed is already allocated
         $("#bed_no").on("change", function () {
@@ -312,7 +316,7 @@
                         bed_no: bedNo
                     },
                     success: function (response) {
-                        if (response.allocated) {
+                        if (response.allocated_current || response.allocated_future) {
                             alert("This bed is already allocated. Please select another bed.");
                             $("#bed_no").val(""); // Reset the bed dropdown
                         }

@@ -1,0 +1,65 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Camp Transaction Approvals" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Pending Approvals</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="{% url 'camp_transaction_approval_submit' %}" method="POST" id="approvalForm">
+                            {% csrf_token %}
+                            <div class="table-responsive custom-table">
+                                <table class="table datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>Request Id</th>
+                                            <th>Employee Code</th>
+                                            <th>Employee Name</th>
+                                            <th>Camp</th>
+                                            <th>Effective Date</th>
+                                            <th>Approval</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for transaction in pending_transactions %}
+                                        <tr>
+                                            <td>{{ transaction.request_id }}</td>
+                                            <td>{{ transaction.employee_code }}</td>
+                                            <td>{{ transaction.employee_name }}</td>
+                                            <td>{{ transaction.camp }}</td>
+                                            <td>{{ transaction.effective_date|date:"d/m/Y" }}</td>
+                                            <td>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="approval_{{ transaction.transaction_id }}" value="Yes" id="approve_{{ transaction.transaction_id }}">
+                                                    <label class="form-check-label" for="approve_{{ transaction.transaction_id }}">Yes</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="approval_{{ transaction.transaction_id }}" value="No" id="reject_{{ transaction.transaction_id }}">
+                                                    <label class="form-check-label" for="reject_{{ transaction.transaction_id }}">No</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-primary">Submit Approvals</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

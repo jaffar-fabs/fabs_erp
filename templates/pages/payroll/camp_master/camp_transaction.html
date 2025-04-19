@@ -34,20 +34,28 @@
                             <table class="table datatable">
                                 <thead>
                                     <tr>
+                                        <th>Request Id</th>
                                         <th>Employee Code</th>
                                         <th>Employee Name</th>
                                         <th>Camp</th>
                                         <th>Effective Date</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for transaction in camp_transactions %}
                                     <tr>
+                                        <td>{{ transaction.request_id }}</td>
                                         <td>{{ transaction.employee_code }}</td>
-                                        <td>{{ transaction.employee_name }}</td>
+                                        {% if transaction.employee_code == employee_data.emp_code %}
+                                            <td>{{ transaction.employee_name }}</td>
+                                        {% else %}
+                                            <td></td>
+                                        {% endif %}
                                         <td>{{ transaction.camp }}</td>
                                         <td>{{ transaction.effective_date|date:"d/m/Y" }}</td>
+                                        <td>{{ transaction.operational_approval }}</td>
                                         <td>
                                             <div class="dropdown table-action">
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown"
@@ -55,10 +63,10 @@
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item edit-transaction-btn" href="#"
+                                                    <!-- <a class="dropdown-item edit-transaction-btn" href="#"
                                                         data-id="{{ transaction.transaction_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
-                                                    </a>
+                                                    </a> -->
                                                     <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
                                                         data-bs-target="#delete_transaction"
                                                         data-transaction-id="{{ transaction.transaction_id }}">
