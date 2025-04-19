@@ -3566,12 +3566,13 @@ def camp_master_edit(request):
             occupied = request.POST.getlist('occupied[]')
             available = request.POST.getlist('available[]')
             delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
-
             
-            for cid, block, flr, typ, rooms,apm,alloc,apr, ab, low, up, total, occ, avail, rmid in zip_longest(camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,allocation_building,lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available,delete_camp_detail_ids):
+            for cid, block, flr, typ, rooms, apm, alloc, apr, ab, low, up, total, occ, avail, rmid in zip_longest(
+                camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,
+                allocation_building, lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available, delete_camp_detail_ids
+            ):
                 if rmid:
                     camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
-                    camp_detail.delete()
 
                 if cid:
                     camp_detail = CampDetails.objects.get(camp_details_id=cid)
@@ -3589,6 +3590,30 @@ def camp_master_edit(request):
                     camp_detail.occupied_beds = occ or 0
                     camp_detail.available_beds = avail or 0
                     camp_detail.save()
+                    # Update CampBeds for the updated CampDetails
+                    # CampBeds.objects.filter(camp_code=camp_master.camp_code, block=block, room_no=rooms).delete()
+                    # lower_beds = int(low) if low else 0
+                    # upper_beds = int(up) if up else 0
+
+                    # for j in range(1, lower_beds + 1):
+                    #     CampBeds.objects.create(
+                    #         comp_code=COMP_CODE,
+                    #         camp_code=camp_master.camp_code,
+                    #         block=block,
+                    #         room_no=rooms,
+                    #         bed_no=f"L-{j}",
+                    #         bed_status="N"
+                    #     )
+
+                    # for j in range(1, upper_beds + 1):
+                    #     CampBeds.objects.create(
+                    #         comp_code=COMP_CODE,
+                    #         camp_code=camp_master.camp_code,
+                    #         block=block,
+                    #         room_no=rooms,
+                    #         bed_no=f"U-{j}",
+                    #         bed_status="N"
+                    #     )
                 elif not cid:
                         CampDetails.objects.create(
                             comp_code=COMP_CODE,
@@ -3597,15 +3622,38 @@ def camp_master_edit(request):
                             floor=flr,
                             type=typ,
                             room_no=rooms,
-                            as_per_mohre=apm,
-                            allocated=alloc,
-                            as_per_rental=apr,
+                            as_per_mohre=apm or 0,
+                            allocated=alloc or 0,
+                            as_per_rental=apr or 0,
                             lower_bed=low,
                             upper_bed=up,
                             total_beds=total,
-                            occupied_beds=occ,
-                            available_beds=avail
+                            occupied_beds=occ or 0,
+                            available_beds=avail or 0
                         )
+                        # Create CampBeds for the new CampDetails
+                        lower_beds = int(low) if low else 0
+                        upper_beds = int(up) if up else 0
+
+                        for j in range(1, lower_beds + 1):
+                            CampBeds.objects.create(
+                                comp_code=COMP_CODE,
+                                camp_code=camp_master.camp_code,
+                                block=block,
+                                room_no=rooms,
+                                bed_no=f"L-{j}",
+                                bed_status="N"
+                            )
+
+                        for j in range(1, upper_beds + 1):
+                            CampBeds.objects.create(
+                                comp_code=COMP_CODE,
+                                camp_code=camp_master.camp_code,
+                                block=block,
+                                room_no=rooms,
+                                bed_no=f"U-{j}",
+                                bed_status="N"
+                            )
 
 
             # Update Camp Cheque
