@@ -25,7 +25,9 @@ import pdb
 from itertools import zip_longest
 from django.db import connection
 import urllib.parse
+from datetime import date
 import urllib.request
+
 
 PAGINATION_SIZE = 6
 
@@ -3795,7 +3797,7 @@ def check_employee_allocation(request):
     employee_code = request.GET.get('employee_code')
     if employee_code:
         allocation = CampAllocation.objects.filter(employee_code=employee_code).last()
-        if allocation:
+        if allocation and allocation.effective_date <= date.today():
             return JsonResponse({
                 'allocated': True,
                 'current_camp': allocation.camp,
