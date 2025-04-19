@@ -3678,8 +3678,10 @@ def get_camp_files(request, camp_code):
 def camp_allocation_list(request):
     set_comp_code(request)
     keyword = request.GET.get('keyword', '').strip()
-    transactions = CampAllocation.objects.filter(comp_code=COMP_CODE)
+    page_number = request.GET.get('page', 1)
 
+    # Filter transactions based on keyword
+    transactions = CampAllocation.objects.filter(comp_code=COMP_CODE)
     if keyword:
         transactions = transactions.filter(
             Q(employee_code__icontains=keyword) |
@@ -3687,8 +3689,17 @@ def camp_allocation_list(request):
             Q(camp__icontains=keyword)
         )
 
+    # Paginate the results
+    paginator = Paginator(transactions.order_by('-created_on'), PAGINATION_SIZE)
+    try:
+        transactions_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        transactions_page = paginator.page(1)
+    except EmptyPage:
+        transactions_page = paginator.page(paginator.num_pages)
+
     return render(request, 'pages/payroll/camp_master/camp_transaction.html', {
-        'camp_transactions': transactions,
+        'camp_transactions': transactions_page,
         'keyword': keyword,
     })
 
@@ -3829,13 +3840,32 @@ def camp_allocation_create(request):
     return render(request, 'pages/payroll/camp_master/camp_transaction_form.html')
 
 def camp_transaction_approval(request):
-    # Fetch transactions with operational_approval = 'Pending'
-    pending_transactions = CampAllocation.objects.filter(operational_approval='Pending')
+    set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
 
-    context = {
-        'pending_transactions': pending_transactions,
-    }
-    return render(request, 'pages/payroll/camp_master/camp_transaction_approval.html', context)
+    # Filter transactions with operational_approval = 'Pending'
+    pending_transactions = CampAllocation.objects.filter(operational_approval='Pending')
+    if keyword:
+        pending_transactions = pending_transactions.filter(
+            Q(employee_code__icontains=keyword) |
+            Q(employee_name__icontains=keyword) |
+            Q(camp__icontains=keyword)
+        )
+
+    # Paginate the results
+    paginator = Paginator(pending_transactions.order_by('-created_on'), PAGINATION_SIZE)
+    try:
+        transactions_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        transactions_page = paginator.page(1)
+    except EmptyPage:
+        transactions_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/payroll/camp_master/camp_transaction_approval.html', {
+        'pending_transactions': transactions_page,
+        'keyword': keyword,
+    })
 
 @csrf_exempt
 def camp_transaction_approval_submit(request):

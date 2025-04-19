@@ -51,6 +51,31 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- Pagination -->
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        Showing {{ pending_transactions.start_index }} to {{ pending_transactions.end_index }} of {{ pending_transactions.paginator.count }} entries
+    </div>
+    <div>
+        <ul class="pagination">
+            {% if pending_transactions.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ pending_transactions.previous_page_number }}&keyword={{ keyword }}">Previous</a>
+            </li>
+            {% endif %}
+            {% for page_num in pending_transactions.paginator.page_range %}
+            <li class="page-item {% if pending_transactions.number == page_num %}active{% endif %}">
+                <a class="page-link" href="?page={{ page_num }}&keyword={{ keyword }}">{{ page_num }}</a>
+            </li>
+            {% endfor %}
+            {% if pending_transactions.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ pending_transactions.next_page_number }}&keyword={{ keyword }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
                             <div class="d-flex justify-content-end mt-3">
                                 <button type="submit" class="btn btn-primary">Submit Approvals</button>
                             </div>

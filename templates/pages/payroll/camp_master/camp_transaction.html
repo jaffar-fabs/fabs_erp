@@ -55,7 +55,15 @@
                                         {% endif %}
                                         <td>{{ transaction.camp }}</td>
                                         <td>{{ transaction.effective_date|date:"d/m/Y" }}</td>
-                                        <td>{{ transaction.operational_approval }}</td>
+                                        <td>
+                                            <span class="badge badge-pill 
+                                                {% if transaction.operational_approval == 'Pending' %} bg-warning
+                                                {% elif transaction.operational_approval == 'Yes' %} bg-success
+                                                {% elif transaction.operational_approval == 'No' %} bg-danger
+                                                {% else %} bg-secondary {% endif %}">
+                                                {{ transaction.operational_approval|capfirst }}
+                                            </span>
+                                        </td>                                        
                                         <td>
                                             <div class="dropdown table-action">
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown"
@@ -81,33 +89,29 @@
                             </table>
                         </div>
                         <!-- Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 Showing {{ camp_transactions.start_index }} to {{ camp_transactions.end_index }} of {{ camp_transactions.paginator.count }} entries
                             </div>
-                            <nav>
+                            <div>
                                 <ul class="pagination">
                                     {% if camp_transactions.has_previous %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ base_url }}&page={{ camp_transactions.previous_page_number }}" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
+                                        <a class="page-link" href="?page={{ camp_transactions.previous_page_number }}&keyword={{ keyword }}">Previous</a>
                                     </li>
                                     {% endif %}
-                                    {% for num in camp_transactions.paginator.page_range %}
-                                    <li class="page-item {% if camp_transactions.number == num %}active{% endif %}">
-                                        <a class="page-link" href="{{ base_url }}&page={{ num }}">{{ num }}</a>
+                                    {% for page_num in camp_transactions.paginator.page_range %}
+                                    <li class="page-item {% if camp_transactions.number == page_num %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ page_num }}&keyword={{ keyword }}">{{ page_num }}</a>
                                     </li>
                                     {% endfor %}
                                     {% if camp_transactions.has_next %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ base_url }}&page={{ camp_transactions.next_page_number }}" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
+                                        <a class="page-link" href="?page={{ camp_transactions.next_page_number }}&keyword={{ keyword }}">Next</a>
                                     </li>
                                     {% endif %}
                                 </ul>
-                            </nav>
+                            </div>
                         </div>
                     </div>
                 </div>
