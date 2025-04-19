@@ -3968,11 +3968,11 @@ def check_employee_allocation(request):
         if allocation and allocation.effective_date <= date.today():
             return JsonResponse({
                 'allocated': True,
-                'current_camp': allocation.current_camp,
-                'current_building': allocation.current_building,
-                'current_floor_no': allocation.current_floor_no,
-                'current_room_no': allocation.current_room_no,
-                'current_bed_no': allocation.current_bed_no,
+                'current_camp': allocation.camp,
+                'current_building': allocation.building_name,
+                'current_floor_no': allocation.floor_no,
+                'current_room_no': allocation.room_no,
+                'current_bed_no': allocation.bed_no,
             })
         return JsonResponse({'allocated': False})
     return JsonResponse({'error': 'Invalid employee code'}, status=400)
