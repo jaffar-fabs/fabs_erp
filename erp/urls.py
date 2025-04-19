@@ -146,8 +146,6 @@ urlpatterns = [
     path('camp_master_edit/', views.camp_master_edit, name='camp_master_edit'),
     path('check-camp-code/', views.check_camp_code, name='check_camp_code'),
     path('get_camp_files/<str:camp_code>/', views.get_camp_files, name='get_camp_files'),
-    path('camp_allocation/', views.camp_allocation, name='camp_allocation'),
-    path('save_camp_allocations/', views.save_camp_allocations, name='save_camp_allocations'),
     path('fetch-room-numbers/', views.fetch_room_numbers, name='fetch_room_numbers'),
     path('check-employee-allocation/', views.check_employee_allocation, name='check_employee_allocation'),
 
@@ -156,6 +154,17 @@ urlpatterns = [
     path('create-party/', views.create_party, name='create_party'),
     path('party_master_edit/', views.party_master_edit, name='party_master_edit'),
     path('delete-party/<int:party_id>/', views.delete_party, name='delete_party'),
+
+    #Camp Allocation
+    path('camp_allocation/', views.camp_allocation_list, name='camp_allocation_list'),
+    path('camp_allocation/create/', views.camp_allocation_create, name='camp_allocation_create'),
+    path('camp_allocation/edit/', views.camp_allocation_edit, name='camp_allocation_edit'),
+    path('check_employee_allocation/', views.check_employee_allocation, name='check_employee_allocation'),
+    path('fetch_buildings/', views.fetch_buildings, name='fetch_buildings'),
+    path('fetch_floors/', views.fetch_floors, name='fetch_floors'),
+    path('fetch_rooms/', views.fetch_rooms, name='fetch_rooms'),
+    path('fetch_beds/', views.fetch_beds, name='fetch_beds'),
+    path('check_bed_allocation/', views.check_bed_allocation, name='check_bed_allocation'),
 
 
     #reports

@@ -1,0 +1,355 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add_transaction" style="width: 1400px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Transaction</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'camp_allocation_create' %}" method="POST" id="transactionForm">
+            {% csrf_token %}
+            <div class="row">
+                <!-- Action Type Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Action Type</label>
+                        <select class="form-select" name="action_type" required>
+                            <option value="">Select Action Type</option>
+                            <option value="New">New</option>
+                            <option value="Transfer">Transfer</option>
+                            <option value="Exit">Exit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Employee Code Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Employee Code</label>
+                        <select class="form-select" name="employee_code" id="employee_code" required>
+                            <option value="">Select Employee</option>
+                            {% for employee in employee_data %}
+                            <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Camp Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Camp</label>
+                        <select class="form-select" name="camp" id="camp" required>
+                            <option value="">Select Camp</option>
+                            {% for camp in camp_data %}
+                            <option value="{{ camp.camp_code }}">{{ camp.camp_code }} - {{ camp.camp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Building Name (Dependent Field) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Building Name</label>
+                        <select class="form-select" name="building_name" id="building_name" required>
+                            <option value="">Select Building</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Floor No (Dependent Field) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Floor No</label>
+                        <select class="form-select" name="floor_no" id="floor_no" required>
+                            <option value="">Select Floor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Room No (Dependent Field) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Room No</label>
+                        <select class="form-select" name="room_no" id="room_no" required>
+                            <option value="">Select Room</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bed No (Dependent Field) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Bed No</label>
+                        <select class="form-select" name="bed_no" id="bed_no" required>
+                            <option value="">Select Bed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Effective Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Effective Date</label>
+                        <input class="form-control" type="date" name="effective_date" id="effective_date" required>
+                    </div>
+                </div>
+
+                <!-- Operational Approval Dropdown -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Operational Approval</label>
+                        <select class="form-select" name="operational_approval" required>
+                            <option value="">Select Approval</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Current Fields (Pre-filled if Employee Already Allocated) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Current Camp</label>
+                        <input class="form-control" name="current_camp" id="current_camp" type="text" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Current Building</label>
+                        <input class="form-control" name="current_building" id="current_building" type="text" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Current Floor No</label>
+                        <input class="form-control" name="current_floor_no" id="current_floor_no" type="text" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Current Room No</label>
+                        <input class="form-control" name="current_room_no" id="current_room_no" type="text" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Current Bed No</label>
+                        <input class="form-control" name="current_bed_no" id="current_bed_no" type="text" readonly>
+                    </div>
+                </div>
+                <!-- Exit Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Exit Date</label>
+                        <input class="form-control" type="date" name="exit_date" id="exit_date" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end mt-4">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Enable or disable Exit Date based on Action Type
+    $("select[name='action_type']").on("change", function () {
+        var actionType = $(this).val();
+        if (actionType === "Exit") {
+            $("#exit_date").prop("disabled", false); // Enable Exit Date
+        } else {
+            $("#exit_date").prop("disabled", true).val(""); // Disable and clear Exit Date
+        }
+    });
+        // Fetch buildings when a camp is selected
+        $("#camp").on("change", function () {
+            var campCode = $(this).val();
+            if (campCode) {
+                alert('helo')
+                $.ajax({
+                    url: "/fetch_buildings/",
+                    type: "GET",
+                    data: { camp_code: campCode },
+                    success: function (response) {
+                        if (response.success) {
+                            var buildingDropdown = $("#building_name");
+                            buildingDropdown.empty();
+                            buildingDropdown.append('<option value="">Select Building</option>');
+                            response.buildings.forEach(function (building) {
+                                buildingDropdown.append('<option value="' + building + '">' + building + '</option>');
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching buildings.");
+                    }
+                });
+            } else {
+                $("#building_name, #floor_no, #room_no, #bed_no").empty().append('<option value="">Select</option>');
+            }
+        });
+
+        // Fetch floors when a building is selected
+        $("#building_name").on("change", function () {
+            var campCode = $("#camp").val();
+            var buildingName = $(this).val();
+            if (campCode && buildingName) {
+                $.ajax({
+                    url: "/fetch_floors/",
+                    type: "GET",
+                    data: { camp_code: campCode, building_name: buildingName },
+                    success: function (response) {
+                        if (response.success) {
+                            var floorDropdown = $("#floor_no");
+                            floorDropdown.empty();
+                            floorDropdown.append('<option value="">Select Floor</option>');
+                            response.floors.forEach(function (floor) {
+                                floorDropdown.append('<option value="' + floor + '">' + floor + '</option>');
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching floors.");
+                    }
+                });
+            } else {
+                $("#floor_no, #room_no, #bed_no").empty().append('<option value="">Select</option>');
+            }
+        });
+
+        // Fetch rooms when a floor is selected
+        $("#floor_no").on("change", function () {
+            var campCode = $("#camp").val();
+            var buildingName = $("#building_name").val();
+            var floorNo = $(this).val();
+            if (campCode && buildingName && floorNo) {
+                $.ajax({
+                    url: "/fetch_rooms/",
+                    type: "GET",
+                    data: { camp_code: campCode, building_name: buildingName, floor_no: floorNo },
+                    success: function (response) {
+                        if (response.success) {
+                            var roomDropdown = $("#room_no");
+                            roomDropdown.empty();
+                            roomDropdown.append('<option value="">Select Room</option>');
+                            response.rooms.forEach(function (room) {
+                                roomDropdown.append('<option value="' + room + '">' + room + '</option>');
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching rooms.");
+                    }
+                });
+            } else {
+                $("#room_no, #bed_no").empty().append('<option value="">Select</option>');
+            }
+        });
+
+        // Fetch beds when a room is selected
+        $("#room_no").on("change", function () {
+            var campCode = $("#camp").val();
+            var buildingName = $("#building_name").val();
+            var floorNo = $("#floor_no").val();
+            var roomNo = $(this).val();
+            if (campCode && buildingName && floorNo && roomNo) {
+                $.ajax({
+                    url: "/fetch_beds/",
+                    type: "GET",
+                    data: { camp_code: campCode, building_name: buildingName, floor_no: floorNo, room_no: roomNo },
+                    success: function (response) {
+                        if (response.success) {
+                            var bedDropdown = $("#bed_no");
+                            bedDropdown.empty();
+                            bedDropdown.append('<option value="">Select Bed</option>');
+                            response.beds.forEach(function (bed) {
+                                bedDropdown.append('<option value="' + bed + '">' + bed + '</option>');
+                            });
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error fetching beds.");
+                    }
+                });
+            } else {
+                $("#bed_no").empty().append('<option value="">Select Bed</option>');
+            }
+        });
+
+        // Check if the selected bed is already allocated
+        $("#bed_no").on("change", function () {
+            var campCode = $("#camp").val();
+            var buildingName = $("#building_name").val();
+            var floorNo = $("#floor_no").val();
+            var roomNo = $("#room_no").val();
+            var bedNo = $(this).val();
+
+            if (campCode && buildingName && floorNo && roomNo && bedNo) {
+                $.ajax({
+                    url: "/check_bed_allocation/", // Endpoint to check bed allocation
+                    type: "GET",
+                    data: {
+                        camp_code: campCode,
+                        building_name: buildingName,
+                        floor_no: floorNo,
+                        room_no: roomNo,
+                        bed_no: bedNo
+                    },
+                    success: function (response) {
+                        if (response.allocated) {
+                            alert("This bed is already allocated. Please select another bed.");
+                            $("#bed_no").val(""); // Reset the bed dropdown
+                        }
+                    },
+                    error: function () {
+                        alert("Error checking bed allocation.");
+                    }
+                });
+            }
+        });
+
+        // Fetch current allocation details when an employee is selected
+        $("#employee_code").on("change", function () {
+            var empCode = $(this).val();
+            if (empCode) {
+                $.ajax({
+                    url: "/check_employee_allocation/",
+                    type: "GET",
+                    data: { employee_code: empCode },
+                    success: function (response) {
+                        if (response.allocated) {
+                            $("#current_camp").val(response.current_camp || "");
+                            $("#current_building").val(response.current_building || "");
+                            $("#current_floor_no").val(response.current_floor_no || "");
+                            $("#current_room_no").val(response.current_room_no || "");
+                            $("#current_bed_no").val(response.current_bed_no || "");
+                        } else {
+                            $("#current_camp, #current_building, #current_floor_no, #current_room_no, #current_bed_no").val("");
+                        }
+                    },
+                    error: function () {
+                        alert("Error checking employee allocation.");
+                    }
+                });
+            } else {
+                $("#current_camp, #current_floor_no, #current_room_no, #current_bed_no").val("");
+            }
+        });
+    });
+</script>

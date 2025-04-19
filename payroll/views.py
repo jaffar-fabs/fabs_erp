@@ -3644,105 +3644,145 @@ def get_camp_files(request, camp_code):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
-def camp_allocation(request):
+def camp_allocation_list(request):
     set_comp_code(request)
-
-    # Get search keyword
     keyword = request.GET.get('keyword', '').strip()
+    transactions = CampAllocation.objects.filter(comp_code=COMP_CODE)
 
-    # Get page number for pagination
-    page_number = request.GET.get('page', 1)
-
-    # Filter camp allocations
-    camp_allocations_query = CampAllocation.objects.filter(comp_code=COMP_CODE)
     if keyword:
-        camp_allocations_query = camp_allocations_query.filter(
-            Q(emp_code__icontains=keyword) |
-            Q(current_camp_id__icontains=keyword) |
-            Q(new_camp_id__icontains=keyword) |
-            Q(reason__icontains=keyword)
+        transactions = transactions.filter(
+            Q(employee_code__icontains=keyword) |
+            Q(employee_name__icontains=keyword) |
+            Q(camp__icontains=keyword)
         )
 
-    # Paginate the results
-    paginator = Paginator(camp_allocations_query.order_by('-camp_allocation_id'), 5)
-    try:
-        camp_allocations = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        camp_allocations = paginator.page(1)
-    except EmptyPage:
-        camp_allocations = paginator.page(paginator.num_pages)
-
-    # Build base URL for pagination
-    params = request.GET.copy()
-    if 'page' in params:
-        del params['page']
-    base_url = request.path + '?' + params.urlencode()
-
-    # Fetch camps and employees
-    camps = CampMaster.objects.filter(comp_code=COMP_CODE)
-    employees = Employee.objects.filter(comp_code=COMP_CODE).values('emp_code', 'emp_name')
-
     return render(request, 'pages/payroll/camp_master/camp_transaction.html', {
-        'camp_allocations': camp_allocations,
-        'camps': camps,
-        'employees': employees,
+        'camp_transactions': transactions,
         'keyword': keyword,
-        'base_url': base_url,  # Updated this line
     })
 
+def check_employee_allocation(request):
+    employee_code = request.GET.get('employee_code')
+    if employee_code:
+        is_allocated = CampAllocation.objects.filter(emp_code=employee_code).exists()
+        return JsonResponse({'allocated': is_allocated})
+    return JsonResponse({'error': 'Invalid employee code'}, status=400)
 
-@csrf_exempt
-def save_camp_allocations(request):
+def fetch_buildings(request):
+    camp_code = request.GET.get('camp_code')
+    if camp_code:
+        buildings = CampDetails.objects.filter(camp_code=camp_code).values_list('block', flat=True)
+        print(buildings)
+        return JsonResponse({'success': True, 'buildings': list(buildings)})
+    return JsonResponse({'success': False, 'message': 'Invalid camp code.'}, status=400)
+
+def fetch_floors(request):
+    camp_code = request.GET.get('camp_code')
+    building_name = request.GET.get('building_name')
+    if camp_code and building_name:
+        floors = CampDetails.objects.filter(camp_code=camp_code, block=building_name).values_list('floor', flat=True)
+        return JsonResponse({'success': True, 'floors': list(floors)})
+    return JsonResponse({'success': False, 'message': 'Invalid camp code or building name.'}, status=400)
+
+def fetch_rooms(request):
+    camp_code = request.GET.get('camp_code')
+    building_name = request.GET.get('building_name')
+    floor_no = request.GET.get('floor_no')
+    if camp_code and building_name and floor_no:
+        rooms = CampDetails.objects.filter(camp_code=camp_code, block=building_name, floor=floor_no).values_list('room_no', flat=True)
+        return JsonResponse({'success': True, 'rooms': list(rooms)})
+    return JsonResponse({'success': False, 'message': 'Invalid camp code, building name, or floor number.'}, status=400)
+
+def fetch_beds(request):
+    camp_code = request.GET.get('camp_code')
+    building_name = request.GET.get('building_name')
+    floor_no = request.GET.get('floor_no')
+    room_no = request.GET.get('room_no')
+    if camp_code and building_name and floor_no and room_no:
+        camp_details = CampDetails.objects.filter(camp_code=camp_code, block=building_name, floor=floor_no, room_no=room_no).first()
+        if camp_details:
+            lower_beds = camp_details.lower_bed
+            upper_beds = camp_details.upper_bed
+            beds = []
+            for i in range(1, lower_beds + 1):
+                beds.append(f"L-{i}")
+            for i in range(1, upper_beds + 1):
+                beds.append(f"U-{i}")
+            return JsonResponse({'success': True, 'beds': beds})
+    return JsonResponse({'success': False, 'message': 'Invalid room details.'}, status=400)
+
+def check_bed_allocation(request):
+    camp_code = request.GET.get('camp_code')
+    building_name = request.GET.get('building_name')
+    floor_no = request.GET.get('floor_no')
+    room_no = request.GET.get('room_no')
+    bed_no = request.GET.get('bed_no')
+
+    if camp_code and building_name and floor_no and room_no and bed_no:
+        is_allocated = CampAllocation.objects.filter(
+            current_camp=camp_code,
+            current_building=building_name,
+            current_floor_no=floor_no,
+            current_room_no=room_no,
+            current_bed_no=bed_no
+        ).exists()
+        return JsonResponse({'allocated': is_allocated})
+    return JsonResponse({'error': 'Invalid bed details.'}, status=400)
+
+def camp_allocation_create(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        data = request.POST
+        CampAllocation.objects.create(
+            comp_code=COMP_CODE,
+            action_type=data.get('action_type'),
+            employee_code=data.get('employee_code'),
+            employee_name=data.get('employee_name'),
+            camp=data.get('camp'),
+            building_name=data.get('building_name'),
+            floor_no=data.get('floor_no'),
+            room_no=data.get('room_no'),
+            bed_no=data.get('bed_no'),
+            effective_date=data.get('effective_date') or None,
+            reason=data.get('reason'),
+            operational_approval=data.get('operational_approval'),
+            current_camp=data.get('current_camp'),
+            current_building =data.get('current_building'),
+            current_floor_no=data.get('current_floor_no'),
+            current_room_no=data.get('current_room_no'),
+            current_bed_no=data.get('current_bed_no'),
+            exit_date=data.get('exit_date') or None,
+            created_by=request.user.id if request.user.is_authenticated else 1,
+        )
+        return redirect('camp_allocation_list')
+
+    return render(request, 'pages/payroll/camp_master/camp_transaction_form.html')
+
+def camp_allocation_edit(request):
+    transaction_id = request.GET.get('transaction_id')
     try:
-        set_comp_code(request)
-        comp_code = COMP_CODE
-        
-        # Parse the JSON data
-        data = json.loads(request.POST.get('data', '[]'))
-        
-        saved_count = 0
-        
-        for item in data:
-            # Skip rows with missing required fields
-            if not item.get('employee_code') or not item.get('action_type'):
-                continue
-                
-            # Prepare data for update_or_create
-            defaults = {
-                'action_type': item.get('action_type'),
-                'current_camp_id': item.get('current_camp'),
-                'current_room_no': item.get('current_room'),
-                'new_camp_id': item.get('new_camp'),
-                'new_room_no': item.get('new_room'),
-                'bed_number': item.get('bed_no'),
-                'effective_date': item.get('effective_date') or None,
-                'reason': item.get('reason'),
-                'approval_operation': item.get('approval', 'Pending'),
-                'comp_code': comp_code
-            }
-            
-            # Remove None values
-            defaults = {k: v for k, v in defaults.items() if v is not None}
-            
-            # Update or create the record
-            allocation, created = CampAllocation.objects.update_or_create(
-                emp_code=item['employee_code'],
-                comp_code=comp_code,
-                defaults=defaults
-            )
-            saved_count += 1
-            
-        return JsonResponse({
-            'success': True,
-            'message': f'Successfully saved {saved_count} allocations',
-            'redirect': '/camp_allocation/'
-        })
-        
-    except Exception as e:
-        return JsonResponse({
-            'success': False,
-            'message': str(e)
-        }, status=500)
+        transaction = CampAllocation.objects.get(transaction_id=transaction_id)
+        data = {
+            'action_type': transaction.action_type,
+            'employee_code': transaction.employee_code,
+            'employee_name': transaction.employee_name,
+            'camp': transaction.camp,
+            'building_name': transaction.building_name,
+            'floor_no': transaction.floor_no,
+            'room_no': transaction.room_no,
+            'bed_no': transaction.bed_no,
+            'effective_date': transaction.effective_date.strftime('%Y-%m-%d') if transaction.effective_date else None,
+            'reason': transaction.reason,
+            'operational_approval': transaction.operational_approval,
+            'current_camp': transaction.current_camp,
+            'current_floor_no': transaction.current_floor_no,
+            'current_room_no': transaction.current_room_no,
+            'current_bed_no': transaction.current_bed_no,
+            'exit_date': transaction.exit_date.strftime('%Y-%m-%d') if transaction.exit_date else None,
+        }
+        return JsonResponse({'success': True, 'data': data})
+    except CampAllocation.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Transaction not found'}, status=404)
     
 def fetch_room_numbers(request):
     camp_code = request.GET.get('camp_code')
@@ -3754,8 +3794,17 @@ def fetch_room_numbers(request):
 def check_employee_allocation(request):
     employee_code = request.GET.get('employee_code')
     if employee_code:
-        is_allocated = CampAllocation.objects.filter(emp_code=employee_code).exists()
-        return JsonResponse({'allocated': is_allocated})
+        allocation = CampAllocation.objects.filter(employee_code=employee_code).last()
+        if allocation:
+            return JsonResponse({
+                'allocated': True,
+                'current_camp': allocation.camp,
+                'current_building': allocation.building_name,
+                'current_floor_no': allocation.floor_no,
+                'current_room_no': allocation.room_no,
+                'current_bed_no': allocation.bed_no,
+            })
+        return JsonResponse({'allocated': False})
     return JsonResponse({'error': 'Invalid employee code'}, status=400)
 
 def party_master_list(request):

@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-12">
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Camp Allocation Transactions" %}
+                {% include "partials/title.html" with title="Camp Transactions" %}
                 {% endblock pagetitle %}
                 <div class="card">
                     <div class="card-header">
@@ -22,206 +22,82 @@
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
-                                    <button type="button" class="btn btn-primary me-2" id="add-row-btn">
-                                        <i class="ti ti-square-rounded-plus me-2"></i>Add Row
-                                    </button>
-                                    <button type="button" class="btn btn-success me-2" id="save-all-btn">
-                                        <i class="ti ti-device-floppy me-2"></i>Save All
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" id="clear-all-btn">
-                                        <i class="ti ti-trash me-2"></i>Clear All
-                                    </button>
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvas_add_transaction"><i
+                                            class="ti ti-square-rounded-plus me-2"></i>Add New Transaction</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <form id="allocation-form" method="post">
-                            {% csrf_token %}
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="transaction-table">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 120px !important;">Employee Code</th>
-                                            <th width="120px">Action Type</th>
-                                            <th>Current Camp</th>
-                                            <th width="40px">Current Room</th>
-                                            <th>New Camp</th>
-                                            <th width="40px">New Room</th>
-                                            <th width="40px">Bed No</th>
-                                            <th width="120px">Effective Date</th>
-                                            <th>Reason</th>
-                                            <th width="150px">Operation Approval</th>
-                                            <th width="50px"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="transaction-body">
-                                        <!-- Empty row template (hidden) -->
-                                        <tr id="empty-row" style="display:none;">
-                                            <td>
-                                                <select class="form-select employee-code" name="employee_code[]" required>
-                                                    <option value="">Select Employee</option>
-                                                    {% for emp in employee_data %}
-                                                    <option value="{{ emp.emp_code }}">{{ emp.emp_code }} - {{ emp.emp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select action-type" name="action_type[]" required>
-                                                    <option value="">Select</option>
-                                                    <option value="Transfer">Transfer</option>
-                                                    <option value="New Allocation">New Allocation</option>
-                                                    <option value="Termination">Termination</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select current-camp" name="current_camp[]">
-                                                    <option value="">Select Camp</option>
-                                                    {% for camp in camps %}
-                                                    <option value="{{ camp.camp_code }}">{{ camp.camp_code }} - {{ camp.camp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control current-room" name="current_room[]">
-                                            </td>
-                                            <td>
-                                                <select class="form-select new-camp" name="new_camp[]" disabled>
-                                                    <option value="">Select Camp</option>
-                                                    {% for camp in camps %}
-                                                    <option value="{{ camp.camp_code }}">{{ camp.camp_code }} - {{ camp.camp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select new-room" name="new_room[]" disabled>
-                                                    <option value="">Select Room</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control bed-no" name="bed_no[]" disabled>
-                                            </td>
-                                            <td>
-                                                <input type="date" class="form-control effective-date" name="effective_date[]" disabled>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control reason" name="reason[]" disabled>
-                                            </td>
-                                            <td>
-                                                <select class="form-select approval" name="approval[]" disabled>
-                                                    <option value="Pending">Pending</option>
-                                                    <option value="Approved">Approved</option>
-                                                    <option value="Rejected">Rejected</option>
-                                                </select>
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-danger remove-row">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        
-                                        <!-- Existing data rows -->
-                                        {% for item in camp_allocations %}
-                                        <tr>
-                                            <input type="hidden" name="id[]" value="{{ item.camp_allocation_id }}">
-                                            <td>
-                                                <select class="form-select employee-code" name="employee_code[]" required disabled>
-                                                    <option value="">Select Employee</option>
-                                                    {% for emp in employee_data %}
-                                                    <option value="{{ emp.emp_code }}" {% if item.emp_code == emp.emp_code %}selected{% endif %}>{{ emp.emp_code }} - {{ emp.emp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select action-type" name="action_type[]" required>
-                                                    <option value="">Select</option>
-                                                    <option value="Transfer" {% if item.action_type == "Transfer" %}selected{% endif %}>Transfer</option>
-                                                    <option value="New Allocation" {% if item.action_type == "New Allocation" %}selected{% endif %}>New Allocation</option>
-                                                    <option value="Termination" {% if item.action_type == "Termination" %}selected{% endif %}>Termination</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select current-camp" name="current_camp[]">
-                                                    <option value="">Select Camp</option>
-                                                    {% for camp in camps %}
-                                                    <option value="{{ camp.camp_code }}" {% if item.current_camp_id == camp.camp_code %}selected{% endif %}>{{ camp.camp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control current-room" name="current_room[]" value="{{ item.current_room_no }}">
-                                            </td>
-                                            <td>
-                                                <select class="form-select new-camp" name="new_camp[]" disabled>
-                                                    <option value="">Select Camp</option>
-                                                    {% for camp in camps %}
-                                                    <option value="{{ camp.camp_code }}" {% if item.new_camp_id == camp.camp_code %}selected{% endif %}>{{ camp.camp_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <select class="form-select new-room" name="new_room[]" data-selected-room="{{ item.new_room_no }}" disabled>
-                                                    <option value="">Select Room</option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control bed-no" name="bed_no[]" value="{{ item.bed_number }}" disabled>
-                                            </td>
-                                            <td>
-                                                <input type="date" class="form-control effective-date" name="effective_date[]" value="{{ item.effective_date|date:'Y-m-d' }}" disabled>
-                                            </td>
-                                            <td>
-                                                <input type="text" class="form-control reason" name="reason[]" value="{{ item.reason }}" disabled>
-                                            </td>
-                                            <td>
-                                                <select class="form-select approval" name="approval[]" disabled>
-                                                    <option value="Pending" {% if item.approval_operation == "Pending" %}selected{% endif %}>Pending</option>
-                                                    <option value="Approved" {% if item.approval_operation == "Approved" %}selected{% endif %}>Approved</option>
-                                                    <option value="Rejected" {% if item.approval_operation == "Rejected" %}selected{% endif %}>Rejected</option>
-                                                </select>
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-danger remove-row">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        {% empty %}
-                                        <tr id="no-data-row">
-                                            <td colspan="11" class="text-center text-muted">No transactions found. Click "Add Row" to create new entries.</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Code</th>
+                                        <th>Employee Name</th>
+                                        <th>Camp</th>
+                                        <th>Effective Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for transaction in camp_transactions %}
+                                    <tr>
+                                        <td>{{ transaction.employee_code }}</td>
+                                        <td>{{ transaction.employee_name }}</td>
+                                        <td>{{ transaction.camp }}</td>
+                                        <td>{{ transaction.effective_date|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-transaction-btn" href="#"
+                                                        data-id="{{ transaction.transaction_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_transaction"
+                                                        data-transaction-id="{{ transaction.transaction_id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div>
-                                Showing {{ camp_allocations.start_index }} to {{ camp_allocations.end_index }} of {{ camp_allocations.paginator.count }} entries
+                                Showing {{ camp_transactions.start_index }} to {{ camp_transactions.end_index }} of {{ camp_transactions.paginator.count }} entries
                             </div>
                             <nav>
                                 <ul class="pagination">
-                                    <!-- In your pagination section -->
-                                        {% if camp_allocations.has_previous %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ base_url }}&page={{ camp_allocations.previous_page_number }}" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
-                                        {% for num in camp_allocations.paginator.page_range %}
-                                        <li class="page-item {% if camp_allocations.number == num %}active{% endif %}">
-                                            <a class="page-link" href="{{ base_url }}&page={{ num }}">{{ num }}</a>
-                                        </li>
-                                        {% endfor %}
-                                        {% if camp_allocations.has_next %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="{{ base_url }}&page={{ camp_allocations.next_page_number }}" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
+                                    {% if camp_transactions.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ base_url }}&page={{ camp_transactions.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in camp_transactions.paginator.page_range %}
+                                    <li class="page-item {% if camp_transactions.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ base_url }}&page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if camp_transactions.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ base_url }}&page={{ camp_transactions.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
                                 </ul>
                             </nav>
                         </div>
@@ -232,244 +108,58 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function () {
-    // Add new row before existing rows
-    $('#add-row-btn').click(function () {
-        var newRow = $('#empty-row').clone();
-        newRow.removeAttr('id').show();
-        $('#no-data-row').remove();
-        $('#transaction-body').prepend(newRow); // Prepend the new row before existing rows
-    });
-
-    // Remove row
-    $(document).on('click', '.remove-row', function () {
-        $(this).closest('tr').remove();
-        if ($('#transaction-body tr').length === 0) {
-            $('#transaction-body').append('<tr id="no-data-row"><td colspan="11" class="text-center text-muted">No transactions found. Click "Add Row" to create new entries.</td></tr>');
-        }
-    });
-
-    // Clear all rows
-    $('#clear-all-btn').click(function () {
-        if (confirm('Are you sure you want to clear all entries?')) {
-            $('#transaction-body').empty();
-            $('#transaction-body').append('<tr id="no-data-row"><td colspan="11" class="text-center text-muted">No transactions found. Click "Add Row" to create new entries.</td></tr>');
-        }
-    });
-
-    // Enable/Disable fields based on Action Type
-    $(document).ready(function () {
-    // Function to toggle fields based on Action Type
-    function toggleFieldsBasedOnActionType(row, actionType) {
-        if (actionType === "New Allocation") {
-            // Enable fields for New Allocation
-            row.find('.new-camp, .new-room, .bed-no, .effective-date').prop('disabled', false);
-            row.find('.current-camp, .current-room, .reason, .approval').prop('disabled', true);
-        } else if (actionType === "Transfer") {
-            // Enable all fields for Transfer
-            row.find('.current-camp, .current-room, .new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', false);
-        } else {
-            // Disable all fields for other cases
-            row.find('.current-camp, .current-room, .new-camp, .new-room, .bed-no, .effective-date, .reason, .approval').prop('disabled', true);
-        }
-    }
-
-    // Handle change event for Action Type in new and existing rows
-    $(document).on('change', '.action-type', function () {
-        var actionType = $(this).val();
-        var row = $(this).closest('tr');
-        toggleFieldsBasedOnActionType(row, actionType);
-    });
-
-    // Initialize existing rows based on their Action Type
-    $('#transaction-body tr').each(function () {
-        var row = $(this);
-        var actionType = row.find('.action-type').val();
-        toggleFieldsBasedOnActionType(row, actionType);
-    });
-});
-
-    // Save all data
-    $('#save-all-btn').click(function () {
-        $('#allocation-form').submit();
-    });
-
-    // Form submission
-$('#allocation-form').on('submit', function (e) {
-    e.preventDefault();
-    
-    // Enable all disabled fields before submission to ensure they're included
-    $(this).find('[disabled]').prop('disabled', false);
-    
-    // Collect data in a more structured way
-    var formData = [];
-    $('#transaction-body tr').each(function() {
-        var row = $(this);
-        formData.push({
-            employee_code: row.find('.employee-code').val(),
-            action_type: row.find('.action-type').val(),
-            current_camp: row.find('.current-camp').val(),
-            current_room: row.find('.current-room').val(),
-            new_camp: row.find('.new-camp').val(),
-            new_room: row.find('.new-room').val(),
-            bed_no: row.find('.bed-no').val(),
-            effective_date: row.find('.effective-date').val(),
-            reason: row.find('.reason').val(),
-            approval: row.find('.approval').val(),
-            // Include any hidden ID field if you have one
-            id: row.find('[name="id[]"]').val() 
-        });
-    });
-    
-    $.ajax({
-        url: '{% url "save_camp_allocations" %}',
-        type: 'POST',
-        data: {
-            'data': JSON.stringify(formData),
-            'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
-        },
-        success: function (response) {
-            if (response.success) {
-                alert('Data saved successfully!');
-                if (response.redirect) {
-                    window.location.href = response.redirect;
-                }
-            } else {
-                alert('Error: ' + response.message);
-            }
-        },
-        error: function (xhr) {
-            alert('An error occurred while saving data.');
-            console.error(xhr.responseText);
-        }
-    });
-});
-});
-</script>
 <script>
     $(document).ready(function () {
-        // Function to populate the New Room dropdown for a given row
-        function populateNewRoomDropdown(row, campCode, selectedRoom) {
-            var roomDropdown = row.find('.new-room');
-            if (campCode) {
-                // Fetch room numbers via AJAX
-                $.ajax({
-                    url: '{% url "fetch_room_numbers" %}', // Replace with the correct URL name
-                    type: 'GET',
-                    data: { camp_code: campCode },
-                    success: function (response) {
-                        if (response.success) {
-                            // Populate the New Room dropdown
-                            roomDropdown.empty();
-                            roomDropdown.append('<option value="">Select Room</option>');
-                            response.rooms.forEach(function (room) {
-                                roomDropdown.append('<option value="' + room + '"' + (room === selectedRoom ? ' selected' : '') + '>' + room + '</option>');
-                            });
-                            roomDropdown.prop('disabled', false);
-                        } else {
-                            alert(response.message || 'Failed to fetch room numbers.');
-                        }
-                    },
-                    error: function () {
-                        alert('An error occurred while fetching room numbers.');
-                    }
-                });
-            } else {
-                // Clear and disable the New Room dropdown if no camp is selected
-                roomDropdown.empty();
-                roomDropdown.append('<option value="">Select Room</option>');
-                roomDropdown.prop('disabled', true);
-            }
-        }
+        // Edit Transaction Functionality
+        $(".edit-transaction-btn").on("click", function (event) {
+            event.preventDefault();
+            var transactionId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit_transaction"));
+            offcanvasElement.show();
 
-        // Populate New Room dropdown for existing rows on page load
-        $('#transaction-body tr').each(function () {
-            var row = $(this);
-            var campCode = row.find('.new-camp').val();
-            var selectedRoom = row.find('.new-room').data('selected-room'); // Use a data attribute for the selected room
-            if (campCode) {
-                populateNewRoomDropdown(row, campCode, selectedRoom);
-            }
+            // Reset all fields
+            $("#offcanvas_edit_transaction input, #offcanvas_edit_transaction select").val("");
+
+            // Fetch transaction details
+            $.ajax({
+                url: "/camp_transaction_edit/",
+                type: "GET",
+                data: { 'transaction_id': transactionId },
+                success: function (response) {
+                    // Populate the offcanvas with transaction details
+                    $("#action_type").val(response.action_type);
+                    $("#employee_code").val(response.employee_code);
+                    $("#employee_name").val(response.employee_name);
+                    $("#camp").val(response.camp);
+                    $("#building_name").val(response.building_name);
+                    $("#floor_no").val(response.floor_no);
+                    $("#room_no").val(response.room_no);
+                    $("#bed_no").val(response.bed_no);
+                    $("#effective_date").val(response.effective_date);
+                    $("#reason").val(response.reason);
+                    $("#operational_approval").val(response.operational_approval);
+                    $("#current_camp").val(response.current_camp);
+                    $("#current_floor_no").val(response.current_floor_no);
+                    $("#current_room_no").val(response.current_room_no);
+                    $("#current_bed_no").val(response.current_bed_no);
+                    $("#exit_date").val(response.exit_date);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading transaction details. Please try again.");
+                }
+            });
         });
 
-        // Handle change event for New Camp dropdown
-        $(document).on('change', '.new-camp', function () {
-            var campCode = $(this).val();
-            var row = $(this).closest('tr');
-            populateNewRoomDropdown(row, campCode, null);
+        // Delete functionality
+        $(".delete-btn").on("click", function () {
+            let transactionId = $(this).data("transaction-id");
+            $("#delete_transaction_id").val(transactionId);
         });
     });
 </script>
-<script>
-$(document).ready(function () {
-    // Function to check if the employee is already allocated
-    function checkEmployeeAllocation(employeeCode, currentRow) {
-        var isDuplicate = false;
 
-        // Loop through all rows to check for duplicate employee allocation
-        $('#transaction-body tr').each(function () {
-            var row = $(this);
-            if (row.is(currentRow)) {
-                // Skip the current row being edited
-                return;
-            }
-
-            var existingEmployeeCode = row.find('.employee-code').val();
-            if (existingEmployeeCode === employeeCode) {
-                isDuplicate = true;
-                return false; // Break the loop
-            }
-        });
-
-        return isDuplicate;
-    }
-
-    $(document).on('change', '.employee-code', function () {
-    var employeeCode = $(this).val();
-    var currentRow = $(this).closest('tr');
-
-    if (employeeCode) {
-        // Check if the employee is already allocated via AJAX
-        $.ajax({
-            url: '{% url "check_employee_allocation" %}',
-            type: 'GET',
-            data: { employee_code: employeeCode },
-            success: function (response) {
-                if (response.allocated) {
-                    alert('The selected employee is already allocated to a camp.');
-                    currentRow.find('.employee-code').val(''); // Reset the dropdown
-                }
-            },
-            error: function () {
-                alert('An error occurred while checking employee allocation.');
-            }
-        });
-    }
-});
-});
-</script>
-<style>
-    #transaction-table th {
-        white-space: nowrap;
-        position: sticky;
-        top: 0;
-        background: #f8f9fa;
-        z-index: 10;
-    }
-    
-    #transaction-table td {
-        vertical-align: middle;
-    }
-    
-    .form-control, .form-select {
-        min-width: 100px;
-    }
-    
-    .remove-row {
-        padding: 0.25rem 0.5rem;
-    }
-</style>
-
+{% block transaction_modal %}
+{% include "pages/modal/payroll/camp_transaction_modal.html" %}
+{% endblock %}
 {% endblock content %}

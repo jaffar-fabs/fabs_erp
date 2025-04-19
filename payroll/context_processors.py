@@ -1,6 +1,6 @@
 # your_app/context_processors.py
 
-from .models import CodeMaster, GradeMaster, Employee, projectMaster,PaycycleMaster
+from .models import *
 from django.http import  JsonResponse
 from .views import set_comp_code
 
@@ -273,4 +273,12 @@ def get_room_type(request):
     room_type_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'ROOM_TYPE')
     return {
         'room_type_data': room_type_data
+        }
+
+
+def get_camp(request):
+    comp_code = get_comp_code(request)
+    camp_data = CampMaster.objects.filter(comp_code=comp_code)
+    return {
+        'camp_data': camp_data
         }
