@@ -14,6 +14,7 @@ from django.conf import settings
 from django.template import loader
 from django.http import HttpResponse
 import pandas as pd
+from django.db.models import F
 from zipfile import BadZipFile
 from security.models import UserRoleMapping, RoleMaster
 from django.views import View
@@ -661,8 +662,8 @@ def my_login_view(request):
                 set_comp_code(request)
 
                 # Execute the sync_current_campallocations function
-                with connection.cursor() as cursor:
-                    cursor.execute("SELECT sync_current_campallocations();")
+                # with connection.cursor() as cursor:
+                #     cursor.execute("SELECT sync_current_campallocations();")
                 
                 # messages.success(request, "Login successful!")
                 return redirect("/index")
@@ -3925,9 +3926,28 @@ def camp_transaction_approval_submit(request):
                 print(approval_status)
 
                 # Update the operational_approval field
-                CampAllocation.objects.filter(transaction_id=transaction_id).update(
+                camp_allow = CampAllocation.objects.filter(transaction_id=transaction_id)
+                camp_allow.update(
                     operational_approval='Yes' if approval_status == 'Yes' else 'No'
                 )
+                camp_obj = camp_allow.first()
+                if camp_obj:
+                    CampDetails.objects.filter(
+                        camp_code=camp_obj.camp,
+                        block=camp_obj.building_name,
+                        floor=camp_obj.floor_no,
+                        room_no=camp_obj.room_no
+                    ).update(
+                        occupied_beds=F('occupied_beds') + 1,
+                        available_beds=F('total_beds') - F('occupied_beds') - 1
+                    )
+                    CampBeds.objects.filter(
+                        camp_code=camp_obj.camp,
+                        block=camp_obj.building_name,
+                        floor=camp_obj.floor_no,
+                        room_no=camp_obj.room_no,
+                        bed_no =camp_obj.bed_no
+                    ).update(bed_status = 'A', emp_code = camp_obj.employee_code)
 
         return redirect('camp_transaction_approval')  # Redirect back to the approval page
 

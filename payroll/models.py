@@ -108,6 +108,7 @@ class CampBeds(models.Model):
     room_no = models.IntegerField(null=True, blank=True)
     bed_no = models.CharField(null=True, blank=True)
     bed_status = models.CharField(max_length=50, null=True, blank=True)
+    emp_code = models.CharField(max_length=50, null=True, blank=True)
     
 class CampDocuments(models.Model):
     comp_code = models.CharField(max_length=15)
