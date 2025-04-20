@@ -39,9 +39,11 @@
                             <table class="table datatable">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th>Advance ID</th>
+                                        <!-- <th>Advance ID</th> -->
                                         <th>Employee Code</th>
+                                        <th>Employee Name</th>
                                         <th>Advance Code</th>
+                                        <th>Description</th>
                                         <th>Repayment From</th>
                                         <th>Next Repayment Date</th>
                                         <th>Status</th>
@@ -51,11 +53,21 @@
                                 <tbody>
                                     {% for record in advances %}
                                     <tr>
-                                        <td>{{ record.advance_id }}</td>
+                                        <!-- <td>{{ record.advance_id }}</td> -->
                                         <td>{{ record.emp_code }}</td>
+                                        <td>{{ record.emp_name }}</td>
                                         <td>{{ record.advance_code }}</td>
-                                        <td>{{ record.repayment_from }}</td>
-                                        <td>{{ record.next_repayment_date }}</td>
+                                        <td>
+                                            {% for deduction in deductions_data %}
+                                                {% if deduction.base_value == record.advance_code %}
+                                                    {{ deduction.base_description }}
+                                                {% endif %}
+                                            {% empty %}
+                                                -
+                                            {% endfor %}
+                                        </td>                                                                              
+                                        <td>{{ record.repayment_from|date:"d-m-Y" }}</td>
+                                        <td>{{ record.next_repayment_date|date:"d-m-Y" }}</td>
                                         <td>
                                             <span
                                                 class="badge badge-pill badge-status 

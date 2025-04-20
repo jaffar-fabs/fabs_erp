@@ -2971,18 +2971,28 @@ class AdvanceMasterList(View):
 
         # Apply search filter if a keyword is provided
         if keyword:
-            try:
-                query = query.filter(
-                    Q(emp_code__icontains=keyword) |
-                    Q(advance_code__icontains=keyword) |
-                    Q(advance_reference__icontains=keyword)
-                )
-            except Exception as e:
-                print(f"Error in keyword search: {e}")
-                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+            query = query.filter(
+                Q(emp_code__icontains=keyword) |
+                Q(advance_code__icontains=keyword) |
+                Q(advance_reference__icontains=keyword)
+            )
+
+        # Fetch employee names and add them to the query
+        advances_with_details = []
+        for advance in query:
+            emp_name = Employee.objects.filter(emp_code=advance.emp_code).values_list('emp_name', flat=True).first()
+            advances_with_details.append({
+                'emp_code': advance.emp_code,
+                'emp_name': emp_name or 'N/A',  # Default to 'N/A' if no employee name is found
+                'advance_code': advance.advance_code,
+                'repayment_from': advance.repayment_from,
+                'next_repayment_date': advance.next_repayment_date,
+                'is_active': advance.is_active,
+                'advance_id': advance.advance_id
+            })
 
         # Apply pagination
-        paginator = Paginator(query.order_by('-reference_date'), PAGINATION_SIZE)
+        paginator = Paginator(advances_with_details, PAGINATION_SIZE)
 
         try:
             advances_page = paginator.get_page(page_number)
@@ -2999,8 +3009,7 @@ class AdvanceMasterList(View):
             'result_cnt': query.count()
         }
 
-        return render(request, self.template_name, context)
-
+        return render(request, self.template_name, context)    
     def post(self, request, *args, **kwargs):
         data = request.POST
         advance_id = data.get('advance_id')  # Fetch the advance_id from the form
