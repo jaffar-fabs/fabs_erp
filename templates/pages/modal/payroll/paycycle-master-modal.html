@@ -148,7 +148,7 @@
                         <div class="mb-3">
                             <label class="col-form-label">Days Per Month</label>
                             <input class="form-control" type="number" name="days_per_month" id="days_per_month"
-                                autocomplete="off">
+                                autocomplete="off" readonly>
                             <div class="invalid-feedback">Please provide days per month.</div>
                         </div>
                     </div>
@@ -587,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="mb-3">
                             <label class="col-form-label">Days Per Month</label>
                             <input class="form-control" type="number" name="days_per_month" id="edit_days_per_month"
-                                autocomplete="off">
+                                autocomplete="off" readonly>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -1003,4 +1003,59 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const fromDateInput = document.getElementById('date_from');
+    const toDateInput = document.getElementById('date_to');
+    const daysPerMonthInput = document.getElementById('days_per_month');
+    const dateErrorContainerFrom = document.getElementById('date-error-from');
+    const dateErrorContainerTo = document.getElementById('date-error-to');
+
+    // Function to calculate days between From Date and To Date
+    function calculateDaysBetweenDates() {
+        const fromDate = new Date(fromDateInput.value);
+        const toDate = new Date(toDateInput.value);
+
+        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+            daysPerMonthInput.value = ''; // Clear the field if dates are invalid
+            return;
+        }
+
+        if (toDate < fromDate) {
+            dateErrorContainerTo.textContent = 'The To Date cannot be earlier than the From Date.';
+            toDateInput.classList.add('is-invalid');
+            daysPerMonthInput.value = ''; // Clear the field
+        } else {
+            dateErrorContainerTo.textContent = ''; // Clear error
+            toDateInput.classList.remove('is-invalid');
+
+            // Calculate the difference in days
+            const timeDifference = toDate.getTime() - fromDate.getTime() + (1000 * 3600 * 24); // Add one day
+            const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+            daysPerMonthInput.value = dayDifference; // Set the calculated days
+        }
+    }
+
+    // Event listeners for From Date and To Date changes
+    fromDateInput.addEventListener('change', function () {
+        const fromDate = new Date(fromDateInput.value);
+        const currentDate = new Date();
+
+        if (fromDate > currentDate) {
+            dateErrorContainerFrom.textContent = 'The From Date cannot be in the future.';
+            fromDateInput.classList.add('is-invalid');
+            fromDateInput.value = ''; // Clear the field
+        } else {
+            dateErrorContainerFrom.textContent = ''; // Clear error
+            fromDateInput.classList.remove('is-invalid');
+        }
+
+        calculateDaysBetweenDates(); // Recalculate days
+    });
+
+    toDateInput.addEventListener('change', calculateDaysBetweenDates);
+});
 </script>
