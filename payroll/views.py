@@ -3159,7 +3159,7 @@ def adhoc_earn_deduct_list(request):
 
     # Filter distinct employees based on the keyword
     distinct_employees = PayrollEarnDeduct.objects.filter(comp_code=COMP_CODE).values(
-        'emp_code', 'pay_process_month', 'pay_process_cycle'
+        'emp_code', 'pay_process_month', 'pay_process_cycle', 'earn_deduct_type'
     ).distinct()
 
     if keyword:
@@ -3185,6 +3185,7 @@ def adhoc_earn_deduct_list(request):
             'emp_name': emp_name,  # Include employee name
             'pay_process_month': emp['pay_process_month'],
             'pay_process_cycle': emp['pay_process_cycle'],
+            'earn_deduct_type': emp['earn_deduct_type'],
             'entries': entries
         })
 

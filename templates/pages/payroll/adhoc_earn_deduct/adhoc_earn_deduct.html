@@ -54,6 +54,7 @@
                                         <th>Employee Name</th>
                                         <th>Month</th>
                                         <th>Process Cycle</th>
+                                        <th>Type</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -64,6 +65,7 @@
                                         <td>{{ group.emp_name }}</td>
                                         <td>{{ group.pay_process_month }}</td>
                                         <td>{{ group.pay_process_cycle }}</td>
+                                        <td>{{ group.earn_deduct_type }}</td>
                                         <td>
                                             <div class="dropdown">
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown">
@@ -184,10 +186,10 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="number" name="pay_amount[]" class="form-control" required>
-                            </td>
+                                <input type="number" name="pay_amount[]" class="form-control" min="1" step="any" required>
+                            </td>                            
                             <td>
-                                <select name="project_code[]" class="form-control project-select">
+                                <select name="project_code[]" class="form-control project-select" required>
                                     <option value="">-- Select Project --</option>
                                     {% for project in project_data %}
                                         <option value="{{ project.prj_code }}">
@@ -295,7 +297,7 @@
                                 <input type="number" name="pay_amount[]" value="{{ entry.pay_amount }}" class="form-control" required>
                             </td>
                             <td>
-                                <select name="project_code[]" class="form-control">
+                                <select name="project_code[]" class="form-control" required>
                                     <option value="">-- Select Project --</option>
                                     {% for project in project_data %}
                                         <option value="{{ project.prj_code }}"
@@ -445,4 +447,15 @@ $(document).ready(function() {
     initializeEditForms();
 });
 </script>
+<script>
+    document.addEventListener("input", function(e) {
+        if (e.target.name === "pay_amount[]") {
+            if (e.target.value < 0) {
+                alert("Only Positive Values Accepted")
+                e.target.value = '';
+            }
+        }
+    });
+    </script>
+    
 {% endblock %}
