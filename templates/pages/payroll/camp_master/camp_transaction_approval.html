@@ -33,7 +33,15 @@
                                         <tr>
                                             <td>{{ transaction.request_id }}</td>
                                             <td>{{ transaction.employee_code }}</td>
-                                            <td>{{ transaction.employee_name }}</td>
+                                            <td>
+                                                {% for employee in employee_data %}
+                                                    {% if employee.emp_code == transaction.employee_code %}
+                                                        {{ employee.emp_name }}
+                                                    {% endif %}
+                                                    {% empty %}
+                                                    <p>Employee not found</p>
+                                                {% endfor %}
+                                            </td>
                                             <td>{{ transaction.camp }}</td>
                                             <td>{{ transaction.effective_date|date:"d/m/Y" }}</td>
                                             <td>
