@@ -51,6 +51,7 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th>Employee Code</th>
+                                        <th>Employee Name</th>
                                         <th>Month</th>
                                         <th>Process Cycle</th>
                                         <th>Actions</th>
@@ -60,6 +61,7 @@
                                     {% for group in adhoc_groups %}
                                     <tr>
                                         <td>{{ group.emp_code }}</td>
+                                        <td>{{ group.emp_name }}</td>
                                         <td>{{ group.pay_process_month }}</td>
                                         <td>{{ group.pay_process_cycle }}</td>
                                         <td>
@@ -87,6 +89,31 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                Showing {{ adhoc_groups.start_index }} to {{ adhoc_groups.end_index }} of {{ adhoc_groups.paginator.count }} entries
+                            </div>
+                            <div>
+                                <ul class="pagination">
+                                    {% if adhoc_groups.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ adhoc_groups.previous_page_number }}&keyword={{ keyword }}">Previous</a>
+                                    </li>
+                                    {% endif %}
+                                    {% for page_num in adhoc_groups.paginator.page_range %}
+                                    <li class="page-item {% if adhoc_groups.number == page_num %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ page_num }}&keyword={{ keyword }}">{{ page_num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if adhoc_groups.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ adhoc_groups.next_page_number }}&keyword={{ keyword }}">Next</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

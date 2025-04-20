@@ -3149,14 +3149,31 @@ def update_advance_details(request, advance_id):
 
 # Adhoc Earn Deduct
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
+
 def adhoc_earn_deduct_list(request):
     set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()  # Get the search keyword
+    page_number = request.GET.get('page', 1)  # Get the current page number
+
+    # Filter distinct employees based on the keyword
     distinct_employees = PayrollEarnDeduct.objects.filter(comp_code=COMP_CODE).values(
         'emp_code', 'pay_process_month', 'pay_process_cycle'
     ).distinct()
-    
+
+    if keyword:
+        distinct_employees = distinct_employees.filter(
+            Q(emp_code__icontains=keyword) |
+            Q(pay_process_month__icontains=keyword) |
+            Q(pay_process_cycle__icontains=keyword)
+        )
+
     adhoc_groups = []
     for emp in distinct_employees:
+        # Fetch employee name from the Employee model
+        emp_name = Employee.objects.filter(emp_code=emp['emp_code']).values_list('emp_name', flat=True).first()
+
         entries = PayrollEarnDeduct.objects.filter(
             comp_code=COMP_CODE,
             emp_code=emp['emp_code'],
@@ -3165,13 +3182,25 @@ def adhoc_earn_deduct_list(request):
         )
         adhoc_groups.append({
             'emp_code': emp['emp_code'],
+            'emp_name': emp_name,  # Include employee name
             'pay_process_month': emp['pay_process_month'],
             'pay_process_cycle': emp['pay_process_cycle'],
             'entries': entries
         })
 
-    
-    return render(request, 'pages/payroll/adhoc_earn_deduct/adhoc_earn_deduct.html', {'adhoc_groups': adhoc_groups})
+    # Paginate the results
+    paginator = Paginator(adhoc_groups, PAGINATION_SIZE)
+    try:
+        adhoc_groups_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        adhoc_groups_page = paginator.page(1)
+    except EmptyPage:
+        adhoc_groups_page = paginator.page(paginator.num_pages)
+
+    return render(request, 'pages/payroll/adhoc_earn_deduct/adhoc_earn_deduct.html', {
+        'adhoc_groups': adhoc_groups_page,
+        'keyword': keyword,
+    })
 
 
 def create_adhoc_earn_deduct(request):
