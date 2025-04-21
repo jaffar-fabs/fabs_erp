@@ -98,7 +98,7 @@
                                                     <a class="dropdown-item edit-employee-btn" href="javascript:void(0);"
                                                        data-id="{{ employee.employee_id }}"
                                                        data-bs-toggle="offcanvas"
-                                                       data-bs-target="#offcanvas_edit">
+                                                       data-bs-target="#offcanvas_add">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_employee_{{ employee.employee_id }}"><i
@@ -243,6 +243,10 @@
                         $("#local_state").val(response.data.local_state);
                         $("#local_country_code").val(response.data.local_country_code);
                         $("#local_phone_no").val(response.data.local_phone_no);
+
+                        //Populate Salary Details 
+                        $('#process_cycle').val(response.data.process_cycle);
+                        $('#basicpay').val(response.data.basic_pay);
 
                         // Populate visa details
                         $("#visa_no").val(response.data.visa_no);

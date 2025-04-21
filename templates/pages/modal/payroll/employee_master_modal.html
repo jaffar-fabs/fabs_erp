@@ -1546,36 +1546,39 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_code" class="form-control" required readonly>
+                        <input type="text" name="emp_code" class="form-control" id="emp_code" required readonly>
                         <div class="invalid-feedback">Please provide an employee code.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_name_passport" class="form-control" required>
+                        <input type="text" name="emp_name_passport" id="emp_name_passport" class="form-control" required>
                         <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                        <input type="text" name="surname" class="form-control" required>
+                        <input type="text" name="surname" id="surname" class="form-control" required>
                         <div class="invalid-feedback">Please provide a surname.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                        <input type="date" name="dob" class="form-control" required>
+                        <input type="date" name="dob" class="form-control" id="dob" required>
                         <div class="invalid-feedback">Please provide a date of birth.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                        <select name="emp_sex" class="form-select" required>
+                        <select name="emp_sex" id="emp_sex" class="form-select" required>
                             <option value="">Select</option>
+                            {% for gender in gender_data %}
+                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a gender.</div>
                     </div>                    
@@ -1583,8 +1586,11 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
-                        <select name="nationality" class="form-select" required>
+                        <select name="nationality" id = "nationality" class="form-select" required>
                             <option value="">Select</option>
+                            {% for nationality in nationality_data %}
+                            <option value="{{ nationality.base_value }}">{{ nationality.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a Nationality</div>
                     </div>
@@ -1592,8 +1598,11 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation <span class="text-danger">*</span></label>
-                        <select name="designation" class="form-control" required>
+                        <select name="designation" id="designation" class="form-control" required>
                             <option value="">Select</option>
+                            {% for designation in desig_data %}
+                            <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a designation.</div>
                     </div>                                    
@@ -1601,61 +1610,64 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
-                        <input type="date" name="date_of_join" class="form-control" required>
+                        <input type="date" name="date_of_join" class="form-control" required id="date_of_join">
                         <div class="invalid-feedback">Please provide a date of joining.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Rejoin</label>
-                        <input type="date" name="date_of_rejoin" class="form-control">
+                        <input type="date" name="date_of_rejoin" class="form-control" id="date_of_rejoin">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Qualification</label>
-                        <input type="text" name="qualification" class="form-control">
+                        <input type="text" name="qualification" class="form-control" id="qualification">
                     </div>
                 </div>
                 <div class="col-md-6">
     <div class="mb-3">
         <label class="col-form-label">Marital Status</label>
-        <select name="emp_marital_status" class="form-select">
+        <select name="emp_marital_status" class="form-select" id="emp_marital_status">
             <option value="">Select</option>
+            {% for status in mar_status_data %}
+                            <option value="{{ status.base_value }}">
+                                {{ status.base_description }}
+                            </option>
+                            {% endfor %}
         </select>
     </div>
 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Spouse Name</label>
-                        <input type="text" name="spouse_name" class="form-control">
+                        <input type="text" name="spouse_name" class="form-control" id="spouse_name">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Father's Name</label>
-                        <input type="text" name="father_name" class="form-control">
+                        <input type="text" name="father_name" class="form-control" id="father_name">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mother's Name</label>
-                        <input type="text" name="mother_name" class="form-control">
+                        <input type="text" name="mother_name" class="form-control" id="mother_name">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Religion</label>
-                        <input type="text" name="religion" class="form-control">
+                        <input type="text" name="religion" class="form-control" id="religion">
                     </div>
                 </div>               
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                        <select name="emp_status" class="form-select" required>
-                            <option value="">Select</option>
-                        </select>
+                        <input type="text" name="emp_status" id="emp_status" class="form-control">
                         <div class="invalid-feedback">Please select a status.</div>
                     </div>
                 </div>
@@ -1664,9 +1676,7 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Sub Status</label>
-                        <select name="emp_sub_status" class="form-select">
-                            <option value="">Select</option>
-                        </select>
+                        <input type="text" name="sub_status" id="sub_status" class="form-control">
                     </div>
                 </div>
                 
@@ -1674,7 +1684,7 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Control</label>
-                        <select name="passport_release" class="form-select">
+                        <select name="passport_release" class="form-select" id="passport_release">
                             <option value="">Select</option>
                             <option value="Yes">Yes</option>
                             <option value="No">No</option>
@@ -1685,14 +1695,17 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Release Reason</label>
-                        <input type="text" name="release_reason" class="form-control">
+                        <input type="text" name="release_reason" class="form-control" id="release_reason">
                     </div>
                 </div> 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Department <span class="text-danger">*</span></label>
-                        <select name="department" class="form-control" required>
+                        <select name="department" class="form-control" required id="department">
                             <option value="">Select</option>
+                            {% for statuses in dept_data %}
+                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a department.</div>
                     </div>                                    
@@ -1744,30 +1757,30 @@ function removeLicenseRow_add(button) {
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_addr_line1" class="form-control" required>
+                                            <input type="text" name="res_addr_line1" class="form-control" required id="res_addr_line1">
                                             <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="res_addr_line2" class="form-control">
+                                            <input type="text" name="res_addr_line2" class="form-control" id="res_addr_line2">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_city" class="form-control" required>
+                                            <input type="text" name="res_city" class="form-control" required id="res_city">
                                             <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_state" class="form-control" required>
+                                            <input type="text" name="res_state" class="form-control" required id="res_state">
                                             <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control">
+                                            <input type="text" name="res_country_code" class="form-control" id="res_country_code">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control">
+                                            <input type="text" name="res_phone_no" class="form-control" id="res_phone_no">
                                         </div>
                                     </div>
 
@@ -1776,31 +1789,31 @@ function removeLicenseRow_add(button) {
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1 </label>
-                                            <input type="text" name="local_addr_line1" class="form-control">
+                                            <input type="text" name="local_addr_line1" class="form-control" id="local_addr_line1">
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="local_addr_line2" class="form-control">
+                                            <input type="text" name="local_addr_line2" class="form-control" id="local_addr_line2">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City </label>
-                                            <input type="text" name="local_city" class="form-control">
+                                            <input type="text" name="local_city" class="form-control" id="local_city">
                                         
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State </label>
-                                            <input type="text" name="local_state" class="form-control">
+                                            <input type="text" name="local_state" class="form-control" id="local_state">
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code </label>
-                                            <input type="text" name="local_country_code" class="form-control">
+                                            <input type="text" name="local_country_code" class="form-control" id="local_country_code">
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number </label>
-                                            <input type="text" name="local_phone_no" class="form-control">
+                                            <input type="text" name="local_phone_no" class="form-control" id="local_phone_no">
                                             
                                         </div>
                                     </div>
@@ -1825,22 +1838,25 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Process Cycle</label>
-                        <select name="process_cycle" class="form-control">
+                        <select name="process_cycle" class="form-control" id="process_cycle">
                             <option value="">Select</option>
+                            {% for paycycle in paycycle_data %}
+                            <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
+                        {% endfor %}
                         </select>
                     </div>                                    
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
-                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicPay">
+                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicpay">
                         <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade</label>
-                        <select name="grade_code" class="form-control">
+                        <select name="grade_code" class="form-control" id="grade_code">
                             <option value="">Select</option>
                         </select>
                     </div>                                    
@@ -1848,8 +1864,11 @@ function removeLicenseRow_add(button) {
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project <span class="text-danger">*</span></label>
-                        <select name="prj_code" class="form-control" required>
+                        <select name="prj_code" class="form-control" required id="prj_code">
                             <option value="">Select</option>
+                            {% for statuses in project_data %}
+                                <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a project.</div>
                     </div>                                    
@@ -1859,8 +1878,11 @@ function removeLicenseRow_add(button) {
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="col-form-label">Project Sub Location</label>
-                    <select name="sub_location" id="locationDropdown" class="form-control">
+                    <select name="sub_location" id="locationDropdown" class="form-control" id = "sub_location">
                         <option value="">Select</option>
+                        {% for statuses in pro_sub_location_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                     </select>
                 </div>
             </div>
