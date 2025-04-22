@@ -117,11 +117,11 @@
                     </div>
                  </div>
 
-                <!-- op head -->
+                <!-- OP Head -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">OP Head</label>
-                        <select name="op_head" class="form-control select">
+                        <select name="op_head" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
                                 <option value="{{ type.emp_code }}">
@@ -132,11 +132,11 @@
                     </div>
                 </div>
 
-                <!-- manger -->
+                <!-- Manager -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Manager</label>
-                        <select name="manager" class="form-control select">
+                        <select name="manager" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
                                 <option value="{{ type.emp_code }}">
@@ -147,11 +147,11 @@
                     </div>
                 </div>
 
-                <!-- commercial manage -->
+                <!-- Commercial Manager -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Commercial Manager</label>
-                        <select name="commercial_manager" class="form-control select">
+                        <select name="commercial_manager" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
                                 <option value="{{ type.emp_code }}">
@@ -162,11 +162,11 @@
                     </div>
                 </div>
 
-                <!-- procruitement user -->
+                <!-- Procurement User -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Procurement User</label>
-                        <select name="procurement_user" class="form-control select">
+                        <select name="procurement_user" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
                                 <option value="{{ type.emp_code }}">
@@ -177,11 +177,11 @@
                     </div>
                 </div>
 
-                <!-- indent user -->
+                <!-- Indent User -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Indent User</label>
-                        <select name="indent_user" class="form-control select">
+                        <select name="indent_user" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
                                 <option value="{{ type.emp_code }}">
@@ -390,13 +390,14 @@
                     </div>
                 </div>
 
+                <!-- OP Head -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">OP Head</label>
-                        <select name="op_head" id="op_head" class="form-control select">
+                        <select name="op_head" id="op_head" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
-                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.op_head %}selected{% endif %}>
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.op_head %}selected{% endif %}>
                                     {{ type.emp_code }} - {{ type.emp_name }}
                                 </option>
                             {% endfor %}
@@ -404,13 +405,14 @@
                     </div>
                 </div>
 
+                <!-- Manager -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Manager</label>
-                        <select name="manager" id="manager" class="form-control select">
+                        <select name="manager" id="manager" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
-                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.manager %}selected{% endif %}>
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.manager %}selected{% endif %}>
                                     {{ type.emp_code }} - {{ type.emp_name }}
                                 </option>
                             {% endfor %}
@@ -418,13 +420,14 @@
                     </div>
                 </div>
 
+                <!-- Commercial Manager -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Commercial Manager</label>
-                        <select name="commercial_manager" id="commercial_manager" class="form-control select">
+                        <select name="commercial_manager" id="commercial_manager" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
-                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.commercial_manager %}selected{% endif %}>
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.commercial_manager %}selected{% endif %}>
                                     {{ type.emp_code }} - {{ type.emp_name }}
                                 </option>
                             {% endfor %}
@@ -432,13 +435,14 @@
                     </div>
                 </div>
 
+                <!-- Procurement User -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Procurement User</label>
-                        <select name="procurement_user" id="procurement_user" class="form-control select">
+                        <select name="procurement_user" id="procurement_user" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
-                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.procurement_user %}selected{% endif %}>
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.procurement_user %}selected{% endif %}>
                                     {{ type.emp_code }} - {{ type.emp_name }}
                                 </option>
                             {% endfor %}
@@ -446,13 +450,14 @@
                     </div>
                 </div>
 
+                <!-- Indent User -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Indent User</label>
-                        <select name="indent_user" id="indent_user" class="form-control select">
+                        <select name="indent_user" id="indent_user" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
-                                <option value="{{ type.emp_code }}" {% if type.emp_code == user.indent_user %}selected{% endif %}>
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.indent_user %}selected{% endif %}>
                                     {{ type.emp_code }} - {{ type.emp_name }}
                                 </option>
                             {% endfor %}

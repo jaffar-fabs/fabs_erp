@@ -1050,11 +1050,11 @@ def project(request):
                     "pro_sub_location": project.pro_sub_location.split(':') if project.pro_sub_location else [],
                     "customer": project.customer,
                     "agreement_ref": project.agreement_ref,
-                    "op_head": project.op_head,
-                    "manager": project.manager,
-                    "commercial_manager": project.commercial_manager,
-                    "procurement_user": project.procurement_user,
-                    "indent_user": project.indent_user,
+                    "op_head": project.op_head.split(':') if project.op_head else [],
+                    "manager": project.manager.split(':') if project.manager else [],
+                    "commercial_manager": project.commercial_manager.split(':') if project.commercial_manager else [],
+                    "procurement_user": project.procurement_user.split(':') if project.procurement_user else [],
+                    "indent_user": project.indent_user.split(':') if project.indent_user else [],
                     "final_contract_value": project.final_contract_value or 0,
                     "project_status": project.project_status,
                 })
@@ -1156,6 +1156,20 @@ def project(request):
         pro_sub_location = request.POST.getlist('pro_sub_location')  # Get list of selected sub-locations
         prj_sub_location_str = ':'.join(pro_sub_location)  # Convert list to colon-separated string
 
+        # Handle multi-select fields
+        op_heads = request.POST.getlist("op_head")  # Get list of selected OP Heads
+        managers = request.POST.getlist("manager")  # Get list of selected Managers
+        commercial_managers = request.POST.getlist("commercial_manager")  # Get list of selected Commercial Managers
+        procurement_users = request.POST.getlist("procurement_user")  # Get list of selected Procurement Users
+        indent_users = request.POST.getlist("indent_user")  # Get list of selected Indent Users
+
+        # Convert lists to colon-separated strings for storage
+        op_heads_str = ":".join(op_heads)
+        managers_str = ":".join(managers)
+        commercial_managers_str = ":".join(commercial_managers)
+        procurement_users_str = ":".join(procurement_users)
+        indent_users_str = ":".join(indent_users)
+
         if projectMaster.objects.filter(project_id=project_id, comp_code=COMP_CODE).exists():
             project = get_object_or_404(projectMaster, project_id=int(project_id), comp_code=COMP_CODE)
 
@@ -1173,11 +1187,11 @@ def project(request):
             project.service_type = request.POST.get("service_type", project.service_type)
             project.service_category = request.POST.get("service_category", project.service_category)
             project.pro_sub_location = prj_sub_location_str
-            project.op_head = request.POST.get("op_head", project.op_head)
-            project.manager = request.POST.get("manager", project.manager)
-            project.commercial_manager = request.POST.get("commercial_manager", project.commercial_manager)
-            project.procurement_user = request.POST.get("procurement_user", project.procurement_user)
-            project.indent_user = request.POST.get("indent_user", project.indent_user)
+            project.op_head = op_heads_str
+            project.manager = managers_str
+            project.commercial_manager = commercial_managers_str
+            project.procurement_user = procurement_users_str
+            project.indent_user = indent_users_str
             project.customer = request.POST.get("customer", project.customer)
             project.agreement_ref = request.POST.get("agreement_ref", project.agreement_ref)
             project.final_contract_value = request.POST.get("final_contract_value", project.final_contract_value)
@@ -1203,11 +1217,11 @@ def project(request):
                 service_type=request.POST.get("service_type"),
                 service_category=request.POST.get("service_category"),
                 pro_sub_location=request.POST.get("pro_sub_location"),
-                op_head=request.POST.get("op_head"),
-                manager=request.POST.get("manager"),
-                commercial_manager=request.POST.get("commercial_manager"),
-                procurement_user=request.POST.get("procurement_user"),
-                indent_user=request.POST.get("indent_user"),
+                op_head=op_heads_str,
+                manager=managers_str,
+                commercial_manager=commercial_managers_str,
+                procurement_user=procurement_users,
+                indent_user=indent_users,
                 customer=request.POST.get("customer"),
                 agreement_ref=request.POST.get("agreement_ref"),
                 project_status=request.POST.get("project_status"),
