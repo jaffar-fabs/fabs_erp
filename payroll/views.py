@@ -623,7 +623,14 @@ def index(request):
     company_count = CompanyMaster.objects.filter(company_code=COMP_CODE).count()
     grade_count = GradeMaster.objects.filter(comp_code=COMP_CODE).count()
     user_count = UserMaster.objects.filter(comp_code=COMP_CODE).count()
-    
+    camp_count = CampMaster.objects.filter(comp_code=COMP_CODE).count()
+
+    # Prepare data for charts
+    chart_data = {
+        "labels": ["Employees", "Projects", "Holidays", "Seeds", "Paycycles", "Companies", "Grades", "Users", "Camps"],
+        "values": [employee_count, project_count, holiday_count, seed_count, paycycle_count, company_count, grade_count, user_count, camp_count],
+    }
+
     context = {
         'employee_count': employee_count,
         'project_count': project_count,
@@ -633,6 +640,8 @@ def index(request):
         'company_count': company_count,
         'grade_count': grade_count,
         'user_count': user_count,
+        'camp_count': camp_count,
+        'chart_data': chart_data,
     }
     
     return render(request, 'pages/dashboard/index.html', context)
@@ -4296,4 +4305,41 @@ def employee_enquiries(request):
         'result_cnt': query.count(),
     }
 
-    return render(request, 'pages/payroll/employee_master/employee_enquiries.html', context)
+    return render(request, 'pages/modal/enquiries/employee_enquiries.html', context)
+
+
+def attendance_enquiries(request):
+    set_comp_code(request)  # Ensure the company code is set in the session
+
+    # Fetch attendance records based on search keyword
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+
+    # Initialize the query
+    query = WorkerAttendanceRegister.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        query = query.filter(
+            Q(employee_code__icontains=keyword) |
+            Q(project_code__icontains=keyword) |
+            Q(attendance_type__icontains=keyword)
+        )
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('date'), PAGINATION_SIZE)
+    try:
+        attendance_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        attendance_page = paginator.page(1)
+    except EmptyPage:
+        attendance_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'attendance_records': attendance_page,
+        'keyword': keyword,
+        'result_cnt': query.count(),
+    }
+
+    return render(request, 'pages/modal/enquiries/attendance_enquiries.html', context)

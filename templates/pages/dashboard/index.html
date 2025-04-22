@@ -4,7 +4,8 @@
 {% block content %}
 
 <!-- Page Wrapper -->
-<div class="page-wrapper">
+<div class="page-wrapper" style="height: 100vh; display: flex; flex-direction: column;">
+    <!-- Fixed Header -->
     <div class="content">
         <div class="row">
             <div class="col-md-12">
@@ -12,79 +13,159 @@
                 {% block pagetitle %}
                 {% include "partials/page-title.html" with title="Dashboard" %}
                 {% endblock pagetitle %}
-                <!-- /Page Header -->			
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Employees</h5>
-                        <p class="card-text">{{ employee_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Projects</h5>
-                        <p class="card-text">{{ project_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Holidays</h5>
-                        <p class="card-text">{{ holiday_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Seeds</h5>
-                        <p class="card-text">{{ seed_count }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Paycycles</h5>
-                        <p class="card-text">{{ paycycle_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Companies</h5>
-                        <p class="card-text">{{ company_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Grades</h5>
-                        <p class="card-text">{{ grade_count }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Users</h5>
-                        <p class="card-text">{{ user_count }}</p>
-                    </div>
-                </div>
+                <!-- /Page Header -->
             </div>
         </div>
     </div>
+
+    <!-- Scrollable Content -->
+    <div class="content" style="flex: 1; overflow-y: auto; padding: 20px;">
+        <!-- Summary Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Employees</h5>
+                        <h2 class="card-text text-primary">{{ employee_count }}</h2>
+                        <a href="{% url 'employee_enquiries' %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Projects</h5>
+                        <h2 class="card-text text-success">{{ project_count }}</h2>
+                        <a href="{% url 'project' %}" class="btn btn-sm btn-outline-success">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Holidays</h5>
+                        <h2 class="card-text text-warning">{{ holiday_count }}</h2>
+                        <a href="{% url 'holiday_master' %}" class="btn btn-sm btn-outline-warning">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Camps</h5>
+                        <h2 class="card-text text-danger">{{ camp_count }}</h2>
+                        <a href="{% url 'camp_master' %}" class="btn btn-sm btn-outline-danger">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Summary Cards -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Paycycles</h5>
+                        <h2 class="card-text text-info">{{ paycycle_count }}</h2>
+                        <a href="{% url 'payroll_paycycle_master' %}" class="btn btn-sm btn-outline-info">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Companies</h5>
+                        <h2 class="card-text text-secondary">{{ company_count }}</h2>
+                        <a href="{% url 'company_list' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Grades</h5>
+                        <h2 class="card-text text-dark">{{ grade_count }}</h2>
+                        <a href="{% url 'grade_master' %}" class="btn btn-sm btn-outline-dark">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Seeds</h5>
+                        <h2 class="card-text text-primary">{{ seed_count }}</h2>
+                        <a href="{% url 'create_seed' %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Pie Chart</h5>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Bar Chart</h5>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Charts Section -->
+    </div>
 </div>
 <!-- /Page Wrapper -->
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Pie Chart
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ chart_data.labels|safe }},
+                datasets: [{
+                    data: {{ chart_data.values|safe }},
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#C9CBCF', '#36A2EB'
+                    ],
+                }]
+            },
+        });
+
+        // Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.labels|safe }},
+                datasets: [{
+                    label: 'Counts',
+                    data: {{ chart_data.values|safe }},
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#C9CBCF', '#36A2EB'
+                    ],
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
 
 {% endblock content %}

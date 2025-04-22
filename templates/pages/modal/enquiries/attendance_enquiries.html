@@ -1,0 +1,124 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h4 class="page-title">Attendance Enquiries<span class="count-title">{{ attendance_records.paginator.count }}</span></h4>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="head-icons">
+                                <a href="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Refresh">
+                                    <i class="ti ti-refresh-dot"></i>
+                                </a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Collapse" id="collapse-header">
+                                    <i class="ti ti-chevrons-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+
+                <div class="card">
+                    <div class="card-header">
+                        <!-- Search -->
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search by Employee Code, Project Code, or Attendance Type" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /Search -->
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Attendance Enquiries List -->
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Employee Code</th>
+                                        <th>Project Code</th>
+                                        <th>Attendance Type</th>
+                                        <th>Morning</th>
+                                        <th>Afternoon</th>
+                                        <th>OT1</th>
+                                        <th>OT2</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in attendance_records %}
+                                    <tr>
+                                        <td>{{ record.date }}</td>
+                                        <td>{{ record.employee_code }}</td>
+                                        <td>{{ record.project_code }}</td>
+                                        <td>{{ record.attendance_type }}</td>
+                                        <td>{{ record.morning }}</td>
+                                        <td>{{ record.afternoon }}</td>
+                                        <td>{{ record.ot1 }}</td>
+                                        <td>{{ record.ot2 }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if attendance_records.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ attendance_records.start_index }} to {{ attendance_records.end_index }} of {{ attendance_records.paginator.count }} entries</span>
+                            </div>
+                            <ul class="pagination">
+                                <!-- Previous button -->
+                                {% if attendance_records.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ attendance_records.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                <!-- Page numbers -->
+                                {% for page in attendance_records.paginator.page_range %}
+                                {% if page >= attendance_records.number|add:-3 and page <= attendance_records.number|add:3 %}
+                                <li class="page-item {% if page == attendance_records.number %} active {% endif %}">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                <!-- Next button -->
+                                {% if attendance_records.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ attendance_records.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        <!-- /Pagination -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
