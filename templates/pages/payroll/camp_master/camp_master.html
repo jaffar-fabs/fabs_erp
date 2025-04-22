@@ -152,11 +152,6 @@
                     $("#cheque_details").val(response.cheque_details);
 
                     const campCode = $("#camp_code").val(); // Get the camp_code from the input field
-                    if (campCode) {
-                        loadCampFiles(campCode); // Call the function to load files
-                    } else {
-                        console.error("Camp Code is missing.");
-                    }
 
                     // Clear existing rows and add camp details
                     $("#camp_details_edit tbody").empty();
@@ -208,7 +203,37 @@
                     } else {
                         add_detail_row_edit();
                     }
-
+                    
+                    $("camp-files-body").empty();
+                    if (response.camp_documents && response.camp_documents.length > 0) {
+                        console.log(response.camp_documents)
+                        response.camp_documents.forEach(function (document) {
+                            const documentRow = `
+                                <tr>
+                                    <td>${document.document_name}</td>
+                                    <td>
+                                        <a href="${document.document_url}" target="_blank" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="${document.document_url}" download class="btn btn-sm btn-success">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </td>
+                                </tr>
+                            `;
+                            $("#camp-files-body").append(documentRow);
+                        });
+                    } else {
+                        const noDocumentsRow = `
+                            <tr>
+                                <td colspan="3" class="text-center">No documents available.</td>
+                            </tr>
+                        `;
+                        $("#camp-files-body").append(noDocumentsRow);
+                    }
+                    
                     // Clear existing rows and add cheque details
                     $("#cheque_edit tbody").empty();
                     if (response.camp_cheque && response.camp_cheque.length > 0) {

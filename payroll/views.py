@@ -3518,6 +3518,7 @@ def camp_master_edit(request):
             camp_master = CampMaster.objects.get(camp_id=camp_id, comp_code = COMP_CODE)
             camp_details = CampDetails.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
             camp_cheque = CampCheque.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
+            camp_documents = CampDocuments.objects.filter(comp_code=COMP_CODE, camp_code=camp_master.camp_code)
             
             camp_details_data = []
 
@@ -3548,6 +3549,14 @@ def camp_master_edit(request):
                     'cheque_date': cheque.cheque_date,
                     'cheque_amount': cheque.cheque_amount
                 })
+
+            camp_documents_data = []
+            for document in camp_documents:
+                camp_documents_data.append({
+                    'camp_document_id': document.camp_document_id,
+                    'document_name': document.document_name,
+                    'document_url': document.document_file.url if document.document_file else None
+                })
             
             return JsonResponse({
                 "camp_id" : camp_master.camp_id,
@@ -3564,7 +3573,8 @@ def camp_master_edit(request):
                 "camp_value" : camp_master.camp_value,
                 "cheque_details" : camp_master.cheque_details,
                 "camp_details": camp_details_data,
-                "camp_cheque": camp_cheque_data
+                "camp_cheque": camp_cheque_data,
+                "camp_documents": camp_documents_data
             })
         except CampMaster.DoesNotExist:
             return JsonResponse({"error": "Camp not found"}, status=404)
@@ -3754,28 +3764,6 @@ def check_camp_code(request):
     camp_code = request.GET.get('camp_code', None)
     exists = CampMaster.objects.filter(camp_code=camp_code).exists()
     return JsonResponse({'exists': exists})
-
-def get_camp_files(request, camp_code):
-    try:
-        # Define the folder path
-        folder_path = os.path.join(settings.MEDIA_ROOT, 'camp_documents', camp_code)
-        
-        # Check if the folder exists
-        if not os.path.exists(folder_path):
-            return JsonResponse({'success': False, 'message': 'No files found for this camp code.'})
-        
-        # List all files in the folder
-        files = os.listdir(folder_path)
-        file_list = [
-            {
-                'file_name': file,
-                'file_url': os.path.join(settings.MEDIA_URL, 'camp_documents', camp_code, file)
-            }
-            for file in files
-        ]
-        return JsonResponse({'success': True, 'files': file_list})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 def camp_allocation_list(request):
     set_comp_code(request)
