@@ -4345,13 +4345,11 @@ def attendance_enquiries(request):
     return render(request, 'pages/modal/enquiries/attendance_enquiries.html', context)
 
 def documents_enquiries(request):
-    set_comp_code(request)  # Ensure the company code is set in the session
+    set_comp_code(request)
 
-    # Fetch category and keyword
     category = request.GET.get('category', 'employee_document')
     keyword = request.GET.get('keyword', '').strip()
 
-    # Initialize queries for different document types
     employee_documents = dependent_documents = camp_documents = party_documents = license_and_passes = []
 
     if category == 'employee_document':
@@ -4395,7 +4393,6 @@ def documents_enquiries(request):
                 Q(document_name__icontains=keyword)
             )
 
-    # Prepare the context for the template
     context = {
         'category': category,
         'keyword': keyword,
