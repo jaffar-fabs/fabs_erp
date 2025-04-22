@@ -168,6 +168,8 @@ urlpatterns = [
     path('camp_transaction_approval/', views.camp_transaction_approval, name='camp_transaction_approval'),
     path('camp_transaction_approval_submit/', views.camp_transaction_approval_submit, name='camp_transaction_approval_submit'),
 
+    #enquiries
+    path('employee_enquiries/', views.employee_enquiries, name='employee_enquiries'),
 
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),

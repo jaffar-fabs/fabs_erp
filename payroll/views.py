@@ -4274,3 +4274,38 @@ def submit_salary_register(request):
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=405)
 
 
+def employee_enquiries(request):
+    set_comp_code(request)  # Ensure the company code is set in the session
+
+    # Fetch employees based on search keyword
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+
+    # Initialize the query
+    query = Employee.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        query = query.filter(
+            Q(emp_code__icontains=keyword) |
+            Q(emp_name__icontains=keyword) |
+            Q(department__icontains=keyword)
+        )
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
+    try:
+        employees_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        employees_page = paginator.page(1)
+    except EmptyPage:
+        employees_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'employees': employees_page,
+        'keyword': keyword,
+        'result_cnt': query.count(),
+    }
+
+    return render(request, 'pages/payroll/employee_master/employee_enquiries.html', context)
