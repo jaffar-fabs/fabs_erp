@@ -3486,7 +3486,8 @@ def create_camp(request):
                     block=block_name[i],
                     room_no=room_no[i],
                     bed_no=f"L-{j}",
-                    bed_status="N"
+                    bed_status="N",
+                    floor = floor
                 )
 
             for j in range(1, upper_beds + 1):
@@ -3496,7 +3497,8 @@ def create_camp(request):
                     block=block_name[i],
                     room_no=room_no[i],
                     bed_no=f"U-{j}",
-                    bed_status="N"
+                    bed_status="N",
+                    floor = floor
                 )
 
         # Cheque Details
@@ -3715,7 +3717,8 @@ def camp_master_edit(request):
                                 block=block,
                                 room_no=rooms,
                                 bed_no=f"L-{j}",
-                                bed_status="N"
+                                bed_status="N",
+                                floor = floor
                             )
 
                         for j in range(1, upper_beds + 1):
@@ -3725,7 +3728,8 @@ def camp_master_edit(request):
                                 block=block,
                                 room_no=rooms,
                                 bed_no=f"U-{j}",
-                                bed_status="N"
+                                bed_status="N",
+                                floor = floor
                             )
 
 
