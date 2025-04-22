@@ -170,6 +170,7 @@ urlpatterns = [
     #enquiries
     path('employee_enquiries/', views.employee_enquiries, name='employee_enquiries'),
     path('attendance_enquiries/', views.attendance_enquiries, name='attendance_enquiries'),
+    path('documents_enquiries/', payroll_views.documents_enquiries, name='documents_enquiries'),
 
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),

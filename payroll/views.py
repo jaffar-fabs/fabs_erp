@@ -4343,3 +4343,67 @@ def attendance_enquiries(request):
     }
 
     return render(request, 'pages/modal/enquiries/attendance_enquiries.html', context)
+
+def documents_enquiries(request):
+    set_comp_code(request)  # Ensure the company code is set in the session
+
+    # Fetch category and keyword
+    category = request.GET.get('category', 'employee_document')
+    keyword = request.GET.get('keyword', '').strip()
+
+    # Initialize queries for different document types
+    employee_documents = dependent_documents = camp_documents = party_documents = license_and_passes = []
+
+    if category == 'employee_document':
+        employee_documents = EmployeeDocument.objects.filter(comp_code=COMP_CODE)
+        if keyword:
+            employee_documents = employee_documents.filter(
+                Q(emp_code__icontains=keyword) |
+                Q(document_type__icontains=keyword)
+            )
+
+    elif category == 'dependent_document':
+        dependent_documents = EmployeeDocument.objects.filter(comp_code=COMP_CODE, relationship__isnull=False)
+        if keyword:
+            dependent_documents = dependent_documents.filter(
+                Q(emp_code__icontains=keyword) |
+                Q(relationship__icontains=keyword) |
+                Q(document_type__icontains=keyword)
+            )
+
+    elif category == 'license_and_passes':
+        license_and_passes = EmployeeDocument.objects.filter(comp_code=COMP_CODE, relationship__isnull=True, issued_date__isnull=True)
+        if keyword:
+                license_and_passes = license_and_passes.filter(
+                    Q(emp_code__icontains=keyword) |
+                    Q(document_type__icontains=keyword)
+                )
+
+    elif category == 'camp_document':
+        camp_documents = CampDocuments.objects.filter(comp_code=COMP_CODE)
+        if keyword:
+            camp_documents = camp_documents.filter(
+                Q(camp_code__icontains=keyword) |
+                Q(document_name__icontains=keyword)
+            )
+
+    elif category == 'party_document':
+        party_documents = PartyDocuments.objects.filter(comp_code=COMP_CODE)
+        if keyword:
+            party_documents = party_documents.filter(
+                Q(customer_code__icontains=keyword) |
+                Q(document_name__icontains=keyword)
+            )
+
+    # Prepare the context for the template
+    context = {
+        'category': category,
+        'keyword': keyword,
+        'employee_documents': employee_documents,
+        'dependent_documents': dependent_documents,
+        'camp_documents': camp_documents,
+        'party_documents': party_documents,
+        'license_and_passes': license_and_passes
+    }
+
+    return render(request, 'pages/modal/enquiries/documents_enquiries.html', context)
