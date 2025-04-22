@@ -282,3 +282,11 @@ def get_camp(request):
     return {
         'camp_data': camp_data
         }
+
+
+def get_customer(request):
+    comp_code = get_comp_code(request)
+    customer_data = PartyMaster.objects.filter(comp_code=comp_code)
+    return{
+        'customer_data' : customer_data
+    }

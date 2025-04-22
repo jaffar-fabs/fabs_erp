@@ -4085,6 +4085,7 @@ def create_party(request):
 
 
         PartyMaster.objects.create(
+            comp_code = COMP_CODE,
             customer_code=customer_code,
             customer_name=customer_name,
             trade_license=trade_license,

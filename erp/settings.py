@@ -101,6 +101,7 @@ TEMPLATES = [
                 'payroll.context_processors.get_room_type',
                 'payroll.context_processors.get_currency',
                 'payroll.context_processors.get_camp',
+                'payroll.context_processors.get_customer'
             ],
         },
     },

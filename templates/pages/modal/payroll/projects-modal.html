@@ -100,10 +100,9 @@
                         <label class="col-form-label">Customer</label>
                         <select name="customer" class="form-control select">
                             <option value="">Select</option>
-                            <option value="cus1">Cus1</option>
                             {% for type in customer_data %}
-                                <option value="{{ type.base_value }}">
-                                    {{ type.base_description }}
+                                <option value="{{ type.customer_code }}">
+                                    {{ type.customer_code }} - {{ type.customer_name }}
                                 </option>
                             {% endfor %}
                         </select>
@@ -375,10 +374,9 @@
                         <label class="col-form-label">Customer</label>
                         <select name="customer" id="customer" class="form-control select">
                             <option value="">Select</option>
-                            <option value="cus1">cus1</option>
                             {% for type in customer_data %}
-                                <option value="{{ type.base_value }}" {% if type.base_value == user.customer %}selected{% endif %}>
-                                    {{ type.base_description }}
+                                <option value="{{ type.customer_code }}">
+                                    {{ type.customer_code }} - {{ type.customer_name }}
                                 </option>
                             {% endfor %}
                         </select>
