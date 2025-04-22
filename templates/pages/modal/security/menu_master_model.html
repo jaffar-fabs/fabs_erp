@@ -169,22 +169,22 @@
         });
     });
 
-    function validateNoSpaces(inputId, errorId) {
-        const inputField = document.getElementById(inputId);
-        const errorField = document.getElementById(errorId);
+    // function validateNoSpaces(inputId, errorId) {
+    //     const inputField = document.getElementById(inputId);
+    //     const errorField = document.getElementById(errorId);
 
-        inputField.addEventListener('input', function () {
-            if (this.value.includes(" ")) {
-                errorField.textContent = "Spaces are not allowed.";
-                this.value = this.value.replace(/\s+/g, '');
-            } else {
-                errorField.textContent = "";
-            }
-        });
-    }
+    //     inputField.addEventListener('input', function () {
+    //         if (this.value.includes(" ")) {
+    //             errorField.textContent = "Spaces are not allowed.";
+    //             this.value = this.value.replace(/\s+/g, '');
+    //         } else {
+    //             errorField.textContent = "";
+    //         }
+    //     });
+    // }
 
-    validateNoSpaces("menu_name", "menuNameError");
-    validateNoSpaces("screen_name", "screenNameError");
+    // validateNoSpaces("menu_name", "menuNameError");
+    // validateNoSpaces("screen_name", "screenNameError");
 </script>
 
 
@@ -356,22 +356,22 @@
         });
     });
 
-    function validateNoSpaces(inputId, errorId) {
-        const inputField = document.getElementById(inputId);
-        const errorField = document.getElementById(errorId);
+    // function validateNoSpaces(inputId, errorId) {
+    //     const inputField = document.getElementById(inputId);
+    //     const errorField = document.getElementById(errorId);
 
-        inputField.addEventListener('input', function () {
-            if (this.value.includes(" ")) {
-                errorField.textContent = "Spaces are not allowed.";
-                this.value = this.value.replace(/\s+/g, '');
-            } else {
-                errorField.textContent = "";
-            }
-        });
-    }
+    //     inputField.addEventListener('input', function () {
+    //         if (this.value.includes(" ")) {
+    //             errorField.textContent = "Spaces are not allowed.";
+    //             this.value = this.value.replace(/\s+/g, '');
+    //         } else {
+    //             errorField.textContent = "";
+    //         }
+    //     });
+    // }
 
-    validateNoSpaces("edit_menu_name", "editmenuNameError");
-    validateNoSpaces("edit_screen_name", "editscreenNameError");
+    // validateNoSpaces("edit_menu_name", "editmenuNameError");
+    // validateNoSpaces("edit_screen_name", "editscreenNameError");
 
 </script>
 
