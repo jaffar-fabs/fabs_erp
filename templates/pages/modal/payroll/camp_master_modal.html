@@ -613,7 +613,7 @@
                 const row = button.closest('tr')
 
                 // Find the camp_detail_id input in this row
-                const idInput = row.querySelector('input[name="camp_detail_id[]"]')?.value;
+                const idInput = row.querySelector('input[name="camp_detail_id"]')?.value;
                 if (idInput) {
                     const input = document.createElement('input');
                     input.type = 'hidden';

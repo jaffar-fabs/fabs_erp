@@ -3639,14 +3639,15 @@ def camp_master_edit(request):
             total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
             occupied = request.POST.getlist('occupied[]')
             available = request.POST.getlist('available[]')
-            delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
-            print(camp_detail_ids,block_name,floor,type)
+            delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]') 
+            print(delete_camp_detail_ids)           
             
             for cid, block, flr, typ, rooms, apm, alloc, apr, ab, low, up, total, occ, avail, rmid in zip_longest(
                 camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,
                 allocation_building, lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available, delete_camp_detail_ids
             ):
                 if rmid:
+                    print(rmid)
                     camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
 
                 if cid:
@@ -3690,49 +3691,49 @@ def camp_master_edit(request):
                     #         bed_no=f"U-{j}",
                     #         bed_status="N"
                     #     )
-                elif not cid:
-                        print(block,flr,typ)
-                        CampDetails.objects.create(
-                            comp_code=COMP_CODE,
-                            camp_code=camp_master.camp_code,
-                            block=block,
-                            floor=flr,
-                            type=typ,
-                            room_no=rooms,
-                            as_per_mohre=apm or 0,
-                            allocated=alloc or 0,
-                            as_per_rental=apr or 0,
-                            lower_bed=low,
-                            upper_bed=up,
-                            total_beds=total,
-                            occupied_beds=occ or 0,
-                            available_beds=avail or 0
-                        )
-                        # Create CampBeds for the new CampDetails
-                        lower_beds = int(low) if low else 0
-                        upper_beds = int(up) if up else 0
-                        print(flr)
-                        for j in range(1, lower_beds + 1):
-                            CampBeds.objects.create(
+                elif not cid and not rmid:
+                        if block and flr and typ:
+                            CampDetails.objects.create(
                                 comp_code=COMP_CODE,
                                 camp_code=camp_master.camp_code,
                                 block=block,
+                                floor=flr,
+                                type=typ,
                                 room_no=rooms,
-                                bed_no=f"L-{j}",
-                                bed_status="N",
-                                floor = flr
+                                as_per_mohre=apm or 0,
+                                allocated=alloc or 0,
+                                as_per_rental=apr or 0,
+                                lower_bed=low,
+                                upper_bed=up,
+                                total_beds=total,
+                                occupied_beds=occ or 0,
+                                available_beds=avail or 0
                             )
+                            # Create CampBeds for the new CampDetails
+                            lower_beds = int(low) if low else 0
+                            upper_beds = int(up) if up else 0
+                            print(flr)
+                            for j in range(1, lower_beds + 1):
+                                CampBeds.objects.create(
+                                    comp_code=COMP_CODE,
+                                    camp_code=camp_master.camp_code,
+                                    block=block,
+                                    room_no=rooms,
+                                    bed_no=f"L-{j}",
+                                    bed_status="N",
+                                    floor = flr
+                                )
 
-                        for j in range(1, upper_beds + 1):
-                            CampBeds.objects.create(
-                                comp_code=COMP_CODE,
-                                camp_code=camp_master.camp_code,
-                                block=block,
-                                room_no=rooms,
-                                bed_no=f"U-{j}",
-                                bed_status="N",
-                                floor = flr
-                            )
+                            for j in range(1, upper_beds + 1):
+                                CampBeds.objects.create(
+                                    comp_code=COMP_CODE,
+                                    camp_code=camp_master.camp_code,
+                                    block=block,
+                                    room_no=rooms,
+                                    bed_no=f"U-{j}",
+                                    bed_status="N",
+                                    floor = flr
+                                )
 
 
             # Update Camp Cheque
@@ -3811,7 +3812,7 @@ def camp_allocation_list(request):
 def check_employee_allocation(request):
     employee_code = request.GET.get('employee_code')
     if employee_code:
-        is_allocated = CampAllocation.objects.filter(emp_code=employee_code).exists()
+        is_allocated = CampAllocation.objects.filter(emp_code=employee_code, operational_approval = 'Yes').exists()
         return JsonResponse({'allocated': is_allocated})
     return JsonResponse({'error': 'Invalid employee code'}, status=400)
 
@@ -3978,37 +3979,49 @@ def camp_transaction_approval_submit(request):
         for key, value in request.POST.items():
             if key.startswith('approval_'):  # Check for approval fields
                 transaction_id = key.split('_')[1]  # Extract transaction ID
-                approval_status = value  # Get the approval value ('yes' or 'no')
-                print(approval_status)
+                approval_status = value  # Get the approval value ('Yes' or 'No')
+                print(f"Transaction ID: {transaction_id}, Approval Status: {approval_status}")
 
                 # Update the operational_approval field
                 camp_allow = CampAllocation.objects.filter(transaction_id=transaction_id)
                 camp_allow.update(
                     operational_approval='Yes' if approval_status == 'Yes' else 'No'
                 )
+
                 camp_obj = camp_allow.first()
                 if camp_obj:
-                    CampDetails.objects.filter(
-                        camp_code=camp_obj.camp,
-                        block=camp_obj.building_name,
-                        floor=camp_obj.floor_no,
-                        room_no=camp_obj.room_no
-                    ).update(
-                        occupied_beds=F('occupied_beds') + 1,
-                        available_beds=F('total_beds') - F('occupied_beds') - 1
-                    )
-                    CampBeds.objects.filter(
-                        camp_code=camp_obj.camp,
-                        block=camp_obj.building_name,
-                        floor=camp_obj.floor_no,
-                        room_no=camp_obj.room_no,
-                        bed_no =camp_obj.bed_no
-                    ).update(bed_status = 'A', emp_code = camp_obj.employee_code)
+                    if approval_status == 'Yes':
+                        # If approval is "Yes," update bed details
+                        CampDetails.objects.filter(
+                            camp_code=camp_obj.camp,
+                            block=camp_obj.building_name,
+                            floor=camp_obj.floor_no,
+                            room_no=camp_obj.room_no
+                        ).update(
+                            occupied_beds=F('occupied_beds') + 1,
+                            available_beds=F('total_beds') - F('occupied_beds') - 1
+                        )
+
+                        CampBeds.objects.filter(
+                            camp_code=camp_obj.camp,
+                            block=camp_obj.building_name,
+                            floor=camp_obj.floor_no,
+                            room_no=camp_obj.room_no,
+                            bed_no=camp_obj.bed_no
+                        ).update(bed_status='A', emp_code=camp_obj.employee_code)
+                    elif approval_status == 'No':
+                        # If approval is "No," reset the bed status to 'N'
+                        CampBeds.objects.filter(
+                            camp_code=camp_obj.camp,
+                            block=camp_obj.building_name,
+                            floor=camp_obj.floor_no,
+                            room_no=camp_obj.room_no,
+                            bed_no=camp_obj.bed_no
+                        ).update(bed_status='N', emp_code=None)
 
         return redirect('camp_transaction_approval')  # Redirect back to the approval page
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 
 def fetch_room_numbers(request):
     camp_code = request.GET.get('camp_code')
