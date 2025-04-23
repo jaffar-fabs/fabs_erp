@@ -2,6 +2,14 @@
 {% load static %}
 
 {% block content %}
+
+<style>
+    .bg-green { background-color: #d4edda !important; }  /* light green */
+    .bg-yellow { background-color: #fff3cd !important; } /* light yellow */
+    .bg-red { background-color: #f8d7da !important; }     /* light red */
+    .bg-gray { background-color: #e2e3e5 !important; }    /* light gray */
+</style>
+
 <div class="page-wrapper" style="height: 100vh; display: flex; flex-direction: column;">
     <!-- Fixed Search Section -->
     <div class="content-header" style="padding: 20px; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
@@ -77,6 +85,9 @@
                         <th>Relationship</th>
                         <th>Document Type</th>
                         <th>Document File</th>
+                        <th>Issued Date</th>
+                        <th>Expiry Date</th>
+                        <th>Days to Expiry</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,6 +103,9 @@
                             No File
                             {% endif %}
                         </td>
+                        <td>{{ doc.issued_date }}</td>
+                        <td class="expiry-date">{{ doc.expiry_date|date:"Y-m-d" }}</td>
+                        <td class="days-to-expiry"></td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -182,6 +196,9 @@
                         <th>Employee Code</th>
                         <th>Document Type</th>
                         <th>Document File</th>
+                        <th>Emirate Issued By</th>
+                        <th>Expiry Date</th>
+                        <th>Days to Expiry</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -196,6 +213,11 @@
                             No File
                             {% endif %}
                         </td>
+                        <td>
+                            {{ doc.emirate_issued_by }}
+                        </td>
+                        <td class="expiry-date">{{ doc.expiry_date|date:"Y-m-d" }}</td>
+                        <td class="days-to-expiry"></td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -209,4 +231,37 @@
 
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const rows = document.querySelectorAll("tbody tr");
+  
+      rows.forEach((row) => {
+        const expiryCell = row.querySelector(".expiry-date");
+        const daysCell = row.querySelector(".days-to-expiry");
+        const expiryDateText = expiryCell.textContent.trim();
+  
+        if (expiryDateText) {
+          const expiryDate = new Date(expiryDateText);
+          const today = new Date();
+          const timeDiff = expiryDate - today;
+          const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  
+          daysCell.textContent = daysDiff >= 0 ? daysDiff + " days" : "Expired";
+  
+          if (daysDiff < 0) {
+            daysCell.classList.add("bg-gray");
+          } else if (daysDiff < 30) {
+            daysCell.classList.add("bg-red");
+          } else if (daysDiff < 60) {
+            daysCell.classList.add("bg-yellow");
+          } else {
+            daysCell.classList.add("bg-green");
+          }
+        } else {
+          daysCell.textContent = "N/A";
+          daysCell.classList.add("bg-gray");
+        }
+      });
+    });
+  </script>
 {% endblock %}

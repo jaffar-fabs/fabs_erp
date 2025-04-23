@@ -167,6 +167,8 @@ urlpatterns = [
     path('camp_transaction_approval/', views.camp_transaction_approval, name='camp_transaction_approval'),
     path('camp_transaction_approval_submit/', views.camp_transaction_approval_submit, name='camp_transaction_approval_submit'),
 
+    path('duty_roster/', views.duty_roster, name='duty_roster'),
+
     #enquiries
     path('employee_enquiries/', views.employee_enquiries, name='employee_enquiries'),
     path('attendance_enquiries/', views.attendance_enquiries, name='attendance_enquiries'),

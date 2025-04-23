@@ -4389,7 +4389,7 @@ def documents_enquiries(request):
             )
 
     elif category == 'license_and_passes':
-        license_and_passes = EmployeeDocument.objects.filter(comp_code=COMP_CODE, relationship__isnull=True, issued_date__isnull=True)
+        license_and_passes = EmployeeDocument.objects.filter(comp_code=COMP_CODE, relationship__isnull=True, issued_date__isnull=True, emirates_issued_by__isnull=False)
         if keyword:
                 license_and_passes = license_and_passes.filter(
                     Q(emp_code__icontains=keyword) |
@@ -4423,3 +4423,37 @@ def documents_enquiries(request):
     }
 
     return render(request, 'pages/modal/enquiries/documents_enquiries.html', context)
+
+from calendar import Calendar
+from datetime import datetime
+from django.shortcuts import render
+from .models import Employee  # Ensure you have an Employee model
+
+def duty_roster(request):
+    month = request.GET.get('month')
+    calendar_data = None
+    employee_list = Employee.objects.all()  # Fetch all employees
+
+    if month:
+        # Parse the selected month
+        year, month = map(int, month.split('-'))
+        cal = Calendar()
+        weeks = cal.monthdatescalendar(year, month)  # Get weeks with dates for the month
+
+        # Prepare calendar data
+        calendar_data = {
+            'month': f"{datetime(year, month, 1):%B %Y}",  # Format as "Month Year"
+            'weeks': [
+                [
+                    {'day': day.day, 'date': day.strftime('%Y-%m-%d')} if day.month == month else None
+                    for day in week
+                ]
+                for week in weeks
+            ],
+        }
+
+    context = {
+        'calendar_data': calendar_data,
+        'employee_list': employee_list,
+    }
+    return render(request, 'pages/payroll/duty_roster/duty_roster.html', context)

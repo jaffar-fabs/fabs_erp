@@ -1,0 +1,91 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Duty Roster" %}
+                {% endblock pagetitle %}
+                <!-- /Page Header -->
+            </div>
+        </div>
+
+        <!-- Month Selection -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Select Month</h4>
+            </div>
+            <div class="card-body">
+                <form method="get" action="{% url 'duty_roster' %}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="month">Month</label>
+                            <input type="month" id="month" name="month" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">Show Roster</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Duty Roster Calendar -->
+        {% if calendar_data %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="card-title">Duty Roster for {{ calendar_data.month }}</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                {% for week in calendar_data.weeks %}
+                                    {% for day in week %}
+                                    <th>
+                                        {% if day %}
+                                            {{ day.day }}
+                                        {% else %}
+                                            &nbsp; <!-- Empty cell for days outside the current month -->
+                                        {% endif %}
+                                    </th>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employee_list %}
+                            <tr>
+                                <td>{{ employee.emp_code }} - {{ employee.emp_name }}</td>
+                                {% for week in calendar_data.weeks %}
+                                    {% for day in week %}
+                                        <td>
+                                            {% if day %}
+                                            <select name="duty[{{ employee.id }}][{{ day.date }}]" class="form-control">
+                                                <option value="">Select Duty</option>
+                                                <option value="Day">Day</option>
+                                                <option value="Night">Night</option>
+                                                <option value="Off">Off</option>
+                                            </select>
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
