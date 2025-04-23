@@ -3453,8 +3453,7 @@ def create_camp(request):
         upper_bed_level = request.POST.getlist('upper_bed_level[]')
         total_no_of_beds = request.POST.getlist('total_no_of_beds[]')
         occupied = request.POST.getlist('occupied[]')
-        available = request.POST.getlist('available[]')
-        print(block_name)
+        available = request.POST.getlist('available[]')        
 
         for i in range(len(block_name)):
             CampDetails.objects.create(
@@ -3487,7 +3486,7 @@ def create_camp(request):
                     room_no=room_no[i],
                     bed_no=f"L-{j}",
                     bed_status="N",
-                    floor = floor
+                    floor = floor[i]
                 )
 
             for j in range(1, upper_beds + 1):
@@ -3498,7 +3497,7 @@ def create_camp(request):
                     room_no=room_no[i],
                     bed_no=f"U-{j}",
                     bed_status="N",
-                    floor = floor
+                    floor = floor[i]
                 )
 
         # Cheque Details
@@ -3641,6 +3640,7 @@ def camp_master_edit(request):
             occupied = request.POST.getlist('occupied[]')
             available = request.POST.getlist('available[]')
             delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]')
+            print(camp_detail_ids,block_name,floor,type)
             
             for cid, block, flr, typ, rooms, apm, alloc, apr, ab, low, up, total, occ, avail, rmid in zip_longest(
                 camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,
@@ -3650,6 +3650,7 @@ def camp_master_edit(request):
                     camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
 
                 if cid:
+                    print(flr,typ,'u')
                     camp_detail = CampDetails.objects.get(camp_details_id=cid)
                     camp_detail.block = block
                     camp_detail.floor = flr
@@ -3690,6 +3691,7 @@ def camp_master_edit(request):
                     #         bed_status="N"
                     #     )
                 elif not cid:
+                        print(block,flr,typ)
                         CampDetails.objects.create(
                             comp_code=COMP_CODE,
                             camp_code=camp_master.camp_code,
@@ -3709,7 +3711,7 @@ def camp_master_edit(request):
                         # Create CampBeds for the new CampDetails
                         lower_beds = int(low) if low else 0
                         upper_beds = int(up) if up else 0
-
+                        print(flr)
                         for j in range(1, lower_beds + 1):
                             CampBeds.objects.create(
                                 comp_code=COMP_CODE,
@@ -3718,7 +3720,7 @@ def camp_master_edit(request):
                                 room_no=rooms,
                                 bed_no=f"L-{j}",
                                 bed_status="N",
-                                floor = floor
+                                floor = flr
                             )
 
                         for j in range(1, upper_beds + 1):
@@ -3729,7 +3731,7 @@ def camp_master_edit(request):
                                 room_no=rooms,
                                 bed_no=f"U-{j}",
                                 bed_status="N",
-                                floor = floor
+                                floor = flr
                             )
 
 
