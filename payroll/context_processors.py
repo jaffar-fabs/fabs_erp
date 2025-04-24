@@ -1,6 +1,7 @@
 # your_app/context_processors.py
 
 from .models import *
+from procurement.models import *
 from django.http import  JsonResponse
 from .views import set_comp_code
 
@@ -290,3 +291,11 @@ def get_customer(request):
     return{
         'customer_data' : customer_data
     }
+
+def get_uom(request):
+    comp_code = get_comp_code(request)
+    uom_data = UOMMaster.objects.filter(comp_code=comp_code)
+    return {
+        'uom_data': uom_data
+    }
+

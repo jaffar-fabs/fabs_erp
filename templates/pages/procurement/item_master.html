@@ -1,0 +1,170 @@
+{% extends "partials/base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Item Master" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get" id="searchForm">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Items" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Item
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Item Code</th>
+                                        <th>Item Description</th>
+                                        <th>UOM</th>
+                                        <th>Category</th>
+                                        <th>Stock Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td>{{ item.item_code }}</td>
+                                        <td>{{ item.item_description }}</td>
+                                        <td>{{ item.uom }}</td>
+                                        <td>{{ item.category }}</td>
+                                        <td>{{ item.stock_qty }}</td>
+                                        <td>
+                                            {% if item.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-item-btn" href="#" data-id="{{ item.id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_item" data-item-id="{{ item.id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing {{ items.start_index }} to {{ items.end_index }} of {{ items.paginator.count }} entries
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    {% if items.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ items.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in items.paginator.page_range %}
+                                    <li class="page-item {% if items.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if items.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ items.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Edit Item Functionality
+        $(".edit-item-btn").on("click", function (event) {
+            event.preventDefault();
+            var itemId = $(this).data("id");
+            alert(itemId);
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+
+            $.ajax({
+                url: "{% url 'item_master_edit' %}",
+                type: "GET",
+                data: { 'item_id': itemId },
+                success: function (response) {
+                    // Populate the edit form with the response data
+                    $("#item_id").val(response.id);
+                    $("#item_code").val(response.item_code);
+                    $("#item_description").val(response.item_description);
+                    $("#uom").val(response.uom);
+                    $("#remarks").val(response.remarks);
+                    $("#category").val(response.category);
+                    $("#sub_category").val(response.sub_category);
+                    $("#brand").val(response.brand);
+                    $("#material").val(response.material);
+                    $("#size").val(response.size);
+                    $("#color").val(response.color);
+                    $("#style").val(response.style);
+                    $("#origin").val(response.origin);
+                    $("#gender").val(response.gender);
+                    $("#item_rate").val(response.item_rate);
+                    $("#price_if_credit").val(response.price_if_credit);
+                    $("#stock_qty").val(response.stock_qty);
+                    $("#open_qty").val(response.open_qty);
+                    $("#is_active").val(response.is_active).change();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading item details. Please try again.");
+                }
+            });
+        });
+    });
+</script>
+
+{% block item_modal %}
+{% include "pages/modal/procurement/item_master_modal.html" %}
+{% endblock %}
+{% endblock content %}

@@ -22,6 +22,7 @@ from security import views as role_views
 from payroll import views as payroll_views
 from payroll import views as projects
 from payroll import views
+from procurement import views as procurement
 from payroll.views import GradeMasterList
 from payroll.views import get_employee_data
 from payroll.views import my_login_view, logout
@@ -177,6 +178,18 @@ urlpatterns = [
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),
     path('submit_salary_register/', views.submit_salary_register, name='submit_salary_register'),
+
+
+    #procurement
+    path('procurement/item_master/', procurement.item_master, name='item_master'),
+    path('procurement/item_master_add/', procurement.item_master_add, name='item_master_add'),
+    path('procurement/item_master_edit/', procurement.item_master_edit, name='item_master_edit'),
+    path('procurement/item_master_delete/', procurement.item_master_delete, name='item_master_delete'),
+
+    path('procurement/uom_master/', procurement.uom_master, name='uom_master'),
+    path('procurement/uom_master_add/', procurement.uom_master_add, name='uom_master_add'),
+    path('procurement/uom_master_edit/', procurement.uom_master_edit, name='uom_master_edit'),
+    path('procurement/uom_master_delete/', procurement.uom_master_delete, name='uom_master_delete'),
 
 ]
 
