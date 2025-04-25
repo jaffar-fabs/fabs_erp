@@ -191,6 +191,21 @@ urlpatterns = [
     path('procurement/uom_master_edit/', procurement.uom_master_edit, name='uom_master_edit'),
     path('procurement/uom_master_delete/', procurement.uom_master_delete, name='uom_master_delete'),
 
+    path('procurement/warehouse_master/', procurement.warehouse_master, name='warehouse_master'),
+    path('procurement/warehouse_master_add/', procurement.warehouse_master_add, name='warehouse_master_add'),
+    path('procurement/warehouse_master_edit/', procurement.warehouse_master_edit, name='warehouse_master_edit'),
+    path('procurement/warehouse_master_delete/', procurement.warehouse_master_delete, name='warehouse_master_delete'),
+
+    path('procurement/purchase_order/', procurement.purchase_order, name='purchase_order'),
+    path('procurement/purchase_order_add/', procurement.purchase_order_add, name='purchase_order_add'),
+    path('procurement/purchase_order_edit/', procurement.purchase_order_edit, name='purchase_order_edit'),
+    path('procurement/purchase_order_delete/', procurement.purchase_order_delete, name='purchase_order_delete'),
+
+    path('procurement/grn/', procurement.grn, name='grn'),
+    path('procurement/grn_add/', procurement.grn_add, name='grn_add'),
+    path('procurement/grn_delete/', procurement.grn_delete, name='grn_delete'),
+    path('procurement/get_po_items/', procurement.get_po_items, name='get_po_items'),
+
 ]
 
 
