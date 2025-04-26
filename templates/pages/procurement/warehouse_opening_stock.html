@@ -1,0 +1,201 @@
+{% extends "partials/base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Warehouse Opening Stock" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get" id="searchForm">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Warehouse Opening Stock" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Opening Stock
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Warehouse</th>
+                                        <th>Item Code</th>
+                                        <th>Opening Qty</th>
+                                        <th>Received Qty</th>
+                                        <th>Issued Qty</th>
+                                        <th>Balance Qty</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stock in stocks %}
+                                    <tr>
+                                        <td>{{ stock.ware_code }}</td>
+                                        <td>{{ stock.item_code }}</td>
+                                        <td>{{ stock.open_qnty }}</td>
+                                        <td>{{ stock.recv_qnty }}</td>
+                                        <td>{{ stock.issu_qnty }}</td>
+                                        <td>{{ stock.baln_qnty }}</td>
+                                        <td>
+                                            {% if stock.stat_code == 'ACT' %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-stock-btn" href="#" data-id="{{ stock.id_number }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_stock" data-stock-id="{{ stock.id_number }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing {{ stocks.start_index }} to {{ stocks.end_index }} of {{ stocks.paginator.count }} entries
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    {% if stocks.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ stocks.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in stocks.paginator.page_range %}
+                                    <li class="page-item {% if stocks.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if stocks.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ stocks.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Edit Stock Functionality
+    $(".edit-stock-btn").on("click", function(event) {
+            event.preventDefault();
+            var stockId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            $.ajax({
+                url: "{% url 'warehouse_opening_stock_edit' %}",
+                type: "GET",
+                data: { 'stock_id': stockId },
+                success: function(response) {
+                    $("#stock_id").val(response.id_number);
+                    $("#ware_code").val(response.ware_code);
+                    $("#item_code").val(response.item_code);
+                    $("#open_qnty").val(response.open_qnty);
+                    $("#item_luom").val(response.item_luom);
+                    $("#stat_code").val(response.stat_code);
+                },
+                error: function(xhr, status, error) {
+                    alert("Error loading stock details. Please try again.");
+                }
+            });
+        });
+
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Handle item selection to get UOM
+        $("select[name='item_code']").on("change", function() {
+            var itemCode = $(this).val();
+            if (itemCode) {
+                $.ajax({
+                    url: "{% url 'get_item_details' %}",
+                    type: "GET",
+                    data: { 'item_code': itemCode },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            $("input[name='item_luom']").val(response.uom);
+                        }
+                    }
+                });
+            } else {
+                $("input[name='item_luom']").val('');
+            }
+        });
+
+        // Delete Stock
+        $("#confirmDelete").on("click", function() {
+            var stockId = $(".delete-btn").data("stock-id");
+            $.ajax({
+                url: "{% url 'warehouse_opening_stock_delete' %}",
+                type: "POST",
+                data: {
+                    'stock_id': stockId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error deleting stock. Please try again.");
+                }
+            });
+            $("#delete_stock").modal("hide");
+        });
+    });
+</script> 
+
+{% block stock_modal %}
+{% include "pages/modal/procurement/warehouse_opening_stock_modal.html" %}
+{% endblock %}
+
+{% endblock content %} 

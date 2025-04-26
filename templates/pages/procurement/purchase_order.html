@@ -246,14 +246,126 @@
             createInitialTableEdit();
         });
 
+        // Handle PR selection for add form
+        $("#addPOForm select[name='refn_numb']").on("change", function() {
+            var selectedOrdrNumb = $(this).val();
+            if (selectedOrdrNumb) {
+                // Disable Add Item button
+                $("#add-item-add").prop('disabled', true);
+                
+                // Clear existing items
+                $("#items-tbody-add").empty();
+                
+                // Fetch PR items
+                $.ajax({
+                    url: "{% url 'get_pr_items' %}",
+                    type: "GET",
+                    data: { 'ordr_numb': selectedOrdrNumb },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // Add items from PR
+                            response.items.forEach(function(item) {
+                                var itemData = {
+                                    id: item.id,
+                                    item_code: item.item_code,
+                                    item_desc: item.item_desc,
+                                    item_unit: item.item_unit,
+                                    item_qnty: item.item_qnty,
+                                    item_rate: item.item_rate,
+                                    item_disc: 0,
+                                    item_amnt: item.item_amnt,
+                                    item_taxx: 0
+                                };
+                                addItemRowAdd(itemData);
+                            });
+                            // Recalculate totals
+                            calculateTotalAmount();
+                        } else {
+                            alert(response.message || "Error fetching PR items");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error fetching PR items: " + error);
+                    }
+                });
+            } else {
+                // Enable Add Item button
+                $("#add-item-add").prop('disabled', false);
+                
+                // Clear items when no PR is selected
+                $("#items-tbody-add").empty();
+                calculateTotalAmount();
+            }
+        });
+
+        // Handle PR selection for edit form
+        $("#editPOForm select[name='refn_numb']").on("change", function() {
+            var selectedOrdrNumb = $(this).val();
+            if (selectedOrdrNumb) {
+                // Disable Add Item button
+                $("#add-item-edit").prop('disabled', true);
+                
+                // Clear existing items
+                $("#items-tbody-edit").empty();
+                
+                // Fetch PR items
+                $.ajax({
+                    url: "{% url 'get_pr_items' %}",
+                    type: "GET",
+                    data: { 'ordr_numb': selectedOrdrNumb },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // Add items from PR
+                            response.items.forEach(function(item) {
+                                var itemData = {
+                                    id: item.id,
+                                    item_code: item.item_code,
+                                    item_desc: item.item_desc,
+                                    item_unit: item.item_unit,
+                                    item_qnty: item.item_qnty,
+                                    item_rate: item.item_rate,
+                                    item_disc: 0,
+                                    item_amnt: item.item_amnt,
+                                    item_taxx: 0
+                                };
+                                addItemRowEdit(itemData);
+                            });
+                            // Recalculate totals
+                            calculateTotalAmount();
+                        } else {
+                            alert(response.message || "Error fetching PR items");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error fetching PR items: " + error);
+                    }
+                });
+            } else {
+                // Enable Add Item button
+                $("#add-item-edit").prop('disabled', false);
+                
+                // Clear items when no PR is selected
+                $("#items-tbody-edit").empty();
+                calculateTotalAmount();
+            }
+        });
+
         // Add New Item for add form
         $("#add-item-add").on("click", function() {
+            if ($("#addPOForm select[name='refn_numb']").val()) {
+                alert("Cannot add items manually when a PR is selected. Items will be fetched from the selected PR.");
+                return;
+            }
             var itemId = Date.now();
             addItemRowAdd({id: itemId});
         });
 
         // Add New Item for edit form
         $("#add-item-edit").on("click", function() {
+            if ($("#editPOForm select[name='refn_numb']").val()) {
+                alert("Cannot add items manually when a PR is selected. Items will be fetched from the selected PR.");
+                return;
+            }
             var itemId = Date.now();
             addItemRowEdit({id: itemId});
         });
@@ -517,7 +629,20 @@
                     $("#mobl_numb").val(header.mobl_numb);
                     $("#teln_numb").val(header.teln_numb);
                     $("#mail_addr").val(header.mail_addr);
-                    $("#refn_numb").val(header.refn_numb);
+                    
+                    // Populate PR dropdown
+                    var $refnNumb = $("#refn_numb");
+                    $refnNumb.empty();
+                    $refnNumb.append('<option value="">Select PR Number</option>');
+                    response.pr_items_data.forEach(function(pr) {
+                        $refnNumb.append(`<option value="${pr.ordr_numb}" data-ordr-numb="${pr.ordr_numb}">${pr.ordr_numb}</option>`);
+                    });
+                    
+                    // Set reference number
+                    if (header.refn_numb) {
+                        $refnNumb.val(header.refn_numb);
+                    }
+                    
                     $("#refn_date").val(header.refn_date);
                     $("#tran_remk").val(header.tran_remk);
                     $("#totl_amnt").val(header.totl_amnt);
@@ -526,12 +651,31 @@
                     $("#taxx_prct").val(header.taxx_prct);
                     $("#taxx_amnt").val(header.taxx_amnt);
                     $("#lpoo_amnt").val(header.lpoo_amnt);
-                    $("#stat_code").val(header.stat_code).change();
+                    
+                    // Set status code
+                    if (header.stat_code) {
+                        $("#stat_code").val(header.stat_code);
+                    }
 
-                    // Add items
-                    response.details.forEach(function(detail) {
-                        addItemRowEdit(detail);
-                    });
+                    // Add items from PO details
+                    if (response.details && response.details.length > 0) {
+                        response.details.forEach(function(detail) {
+                            var itemData = {
+                                id: detail.id,
+                                item_code: detail.item_code,
+                                item_desc: detail.item_desc,
+                                item_unit: detail.item_unit,
+                                item_qnty: detail.item_qnty,
+                                item_rate: detail.item_rate,
+                                item_disc: detail.item_disc,
+                                item_amnt: detail.item_amnt,
+                                item_taxx: detail.item_taxx
+                            };
+                            addItemRowEdit(itemData);
+                        });
+                        // Recalculate totals
+                        calculateTotalAmount();
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", xhr.responseText);
@@ -563,6 +707,23 @@
                 }
             });
             $("#delete_po").modal("hide");
+        });
+
+        // Add New Purchase Order button click handler
+        $("[data-bs-target='#offcanvas_add']").on("click", function() {
+            // Reset all amount fields
+            $("#addPOForm input[name='totl_amnt']").val('');
+            $("#addPOForm input[name='disc_prct']").val('');
+            $("#addPOForm input[name='disc_amnt']").val('');
+            $("#addPOForm input[name='taxx_prct']").val('');
+            $("#addPOForm input[name='taxx_amnt']").val('');
+            $("#addPOForm input[name='lpoo_amnt']").val('');
+            
+            // Clear items container
+            $("#items-tbody-add").empty();
+            
+            // Reset form
+            $("#addPOForm")[0].reset();
         });
     });
 </script>

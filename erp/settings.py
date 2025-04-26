@@ -103,7 +103,8 @@ TEMPLATES = [
                 'payroll.context_processors.get_currency',
                 'payroll.context_processors.get_camp',
                 'payroll.context_processors.get_customer',
-                'payroll.context_processors.get_uom'
+                'payroll.context_processors.get_uom',
+                'payroll.context_processors.get_pr_items'
             ],
         },
     },

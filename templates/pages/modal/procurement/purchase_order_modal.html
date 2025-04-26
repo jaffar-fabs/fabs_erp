@@ -23,7 +23,12 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Reference Number</label>
-                        <input type="text" class="form-control" name="refn_numb">
+                        <select class="form-select" name="refn_numb">
+                            <option value="">Select PR Number</option>
+                            {% for pr in pr_items_data %}
+                            <option value="{{ pr.ordr_numb }}" data-ordr-numb="{{ pr.ordr_numb }}">{{ pr.ordr_numb }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -202,7 +207,12 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Reference Number</label>
-                        <input type="text" class="form-control" id="refn_numb" name="refn_numb">
+                        <select class="form-select" id="refn_numb" name="refn_numb">
+                            <option value="">Select PR Number</option>
+                            {% for pr in pr_items_data %}
+                            <option value="{{ pr.ordr_numb }}" data-ordr-numb="{{ pr.ordr_numb }}">{{ pr.ordr_numb }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -372,4 +382,45 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Handle PR selection
+        $("#refn_numb").on("change", function() {
+            var selectedOrdrNumb = $(this).find("option:selected").data("ordr-numb");
+            if (selectedOrdrNumb) {
+                // Clear existing items
+                $("#items-tbody-add").empty();
+                $("#items-tbody-edit").empty();
+                
+                // Fetch PR items
+                $.ajax({
+                    url: "{% url 'get_pr_items' %}",
+                    type: "GET",
+                    data: { 'ordr_numb': selectedOrdrNumb },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // Add items from PR
+                            response.items.forEach(function(item) {
+                                addItemRowAdd(item);
+                            });
+                            // Recalculate totals
+                            calculateTotalAmount();
+                        } else {
+                            alert(response.message || "Error fetching PR items");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error fetching PR items: " + error);
+                    }
+                });
+            } else {
+                // Clear items when no PR is selected
+                $("#items-tbody-add").empty();
+                $("#items-tbody-edit").empty();
+                calculateTotalAmount();
+            }
+        });
+    });
+</script> 

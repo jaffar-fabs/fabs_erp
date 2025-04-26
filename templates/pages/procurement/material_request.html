@@ -1,0 +1,530 @@
+{% extends "partials/base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Material Request" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get" id="searchForm">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Material Request" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Material Request
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Request Number</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Type</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mr in mrs %}
+                                    <tr>
+                                        <td>{{ mr.ordr_numb }}</td>
+                                        <td>{{ mr.ordr_date|date:"d-m-Y" }}</td>
+                                        <td>{{ mr.cust_code }}</td>
+                                        <td>{{ mr.ordr_type }}</td>
+                                        <td>{{ mr.totl_amnt }}</td>
+                                        <td>
+                                            {% if mr.quot_stat == 'ACT' %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-mr-btn" href="#" data-id="{{ mr.id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_mr" data-mr-id="{{ mr.id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing {{ mrs.start_index }} to {{ mrs.end_index }} of {{ mrs.paginator.count }} entries
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    {% if mrs.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ mrs.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in mrs.paginator.page_range %}
+                                    <li class="page-item {% if mrs.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if mrs.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ mrs.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Create initial table structure for add form
+        function createInitialTableAdd() {
+            var tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody-add">
+                    </tbody>
+                </table>
+            `;
+            $("#items-container-add").html(tableHtml);
+        }
+
+        // Create initial table structure for edit form
+        function createInitialTableEdit() {
+            var tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody-edit">
+                    </tbody>
+                </table>
+            `;
+            $("#items-container-edit").html(tableHtml);
+        }
+
+        // Add Item Row for add form
+        function addItemRowAdd(item) {
+            var itemHtml = `
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" value="${item.item_unit || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_qnty_${item.id || Date.now()}" value="${item.item_qnty || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_rate_${item.id || Date.now()}" value="${item.item_rate || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_amnt_${item.id || Date.now()}" value="${item.item_amnt || ''}" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-item">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            $("#items-tbody-add").append(itemHtml);
+        }
+
+        // Add Item Row for edit form
+        function addItemRowEdit(item) {
+            console.log("Adding item row:", item);
+            var itemHtml = `
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" value="${item.item_unit || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_qnty_${item.id || Date.now()}" value="${item.item_qnty || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_rate_${item.id || Date.now()}" value="${item.item_rate || ''}" required>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="item_amnt_${item.id || Date.now()}" value="${item.item_amnt || ''}" readonly>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-item">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            $("#items-tbody-edit").append(itemHtml);
+        }
+
+        // Initialize tables when document is ready
+        $(document).ready(function() {
+            createInitialTableAdd();
+            createInitialTableEdit();
+        });
+
+        // Add New Item for add form
+        $("#add-item-add").on("click", function() {
+            var itemId = Date.now();
+            addItemRowAdd({id: itemId});
+        });
+
+        // Add New Item for edit form
+        $("#add-item-edit").on("click", function() {
+            var itemId = Date.now();
+            addItemRowEdit({id: itemId});
+        });
+
+        // Remove Item
+        $(document).on("click", ".remove-item", function() {
+            $(this).closest("tr").remove();
+            calculateTotalAmount();
+        });
+
+        // Calculate Amount
+        $(document).on("input", "input[name^='item_qnty_'], input[name^='item_rate_']", function() {
+            var row = $(this).closest("tr");
+            var qty = parseFloat(row.find("input[name^='item_qnty_']").val()) || 0;
+            var rate = parseFloat(row.find("input[name^='item_rate_']").val()) || 0;
+            
+            // Prevent negative values
+            if (qty < 0) {
+                row.find("input[name^='item_qnty_']").val(0);
+                qty = 0;
+            }
+            if (rate < 0) {
+                row.find("input[name^='item_rate_']").val(0);
+                rate = 0;
+            }
+            
+            // Calculate amount
+            var amount = qty * rate;
+            
+            // Update amount field with 2 decimal places
+            row.find("input[name^='item_amnt_']").val(amount.toFixed(2));
+            
+            // Recalculate total amount
+            calculateTotalAmount();
+        });
+
+        // Calculate Total Amount
+        function calculateTotalAmount() {
+            var totalAmount = 0;
+            $("input[name^='item_amnt_']").each(function() {
+                totalAmount += parseFloat($(this).val()) || 0;
+            });
+            
+            // Update total amount field
+            $("input[name='totl_amnt']").val(totalAmount.toFixed(2));
+            
+            // Calculate discount amount
+            var discAmnt = parseFloat($("input[name='disc_amnt']").val()) || 0;
+            if (discAmnt < 0) {
+                $("input[name='disc_amnt']").val(0);
+                discAmnt = 0;
+            }
+            
+            // Calculate VAT amount
+            var vatPrct = parseFloat($("input[name='vat_perct']").val()) || 0;
+            if (vatPrct < 0) {
+                $("input[name='vat_perct']").val(0);
+                vatPrct = 0;
+            }
+            if (vatPrct > 100) {
+                $("input[name='vat_perct']").val(100);
+                vatPrct = 100;
+            }
+            var vatAmnt = (totalAmount - discAmnt) * (vatPrct / 100);
+            $("input[name='vat_amnt']").val(vatAmnt.toFixed(2));
+            
+            // Calculate grand total
+            var grandTotal = totalAmount - discAmnt + vatAmnt;
+            $("input[name='gtot_amnt']").val(grandTotal.toFixed(2));
+        }
+
+        // Handle discount amount change
+        $(document).on("input", "input[name='disc_amnt']", function() {
+            var value = parseFloat($(this).val()) || 0;
+            if (value < 0) {
+                $(this).val(0);
+            }
+            calculateTotalAmount();
+        });
+
+        // Handle VAT percentage change
+        $(document).on("input", "input[name='vat_perct']", function() {
+            var value = parseFloat($(this).val()) || 0;
+            if (value < 0) {
+                $(this).val(0);
+            } else if (value > 100) {
+                $(this).val(100);
+            }
+            calculateTotalAmount();
+        });
+
+        // Form submission for add
+        $("#addMRForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Collect all item IDs
+            var itemIds = [];
+            $("#items-tbody-add tr").each(function() {
+                var inputs = $(this).find("input");
+                var itemId = inputs.first().attr("name").split("_")[2];
+                itemIds.push(itemId);
+            });
+            
+            // Add items array to form data
+            var formData = new FormData(this);
+            itemIds.forEach(function(itemId) {
+                formData.append("items[]", itemId);
+            });
+            
+            // Submit form
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message || "Error saving material request");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error saving material request: " + error);
+                }
+            });
+        });
+
+        // Form submission for edit
+        $("#editMRForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Collect all item IDs
+            var itemIds = [];
+            $("#items-tbody-edit tr").each(function() {
+                var inputs = $(this).find("input");
+                var itemId = inputs.first().attr("name").split("_")[2];
+                itemIds.push(itemId);
+            });
+            
+            // Add items array to form data
+            var formData = new FormData(this);
+            itemIds.forEach(function(itemId) {
+                formData.append("items[]", itemId);
+            });
+            
+            // Submit form
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message || "Error updating material request");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error updating material request: " + error);
+                }
+            });
+        });
+
+        // Edit MR Functionality
+        $(".edit-mr-btn").on("click", function (event) {
+            event.preventDefault();
+            var mrId = $(this).data("id");
+            console.log("Editing MR ID:", mrId);
+            
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+            $("#items-container-edit").empty();
+            createInitialTableEdit();
+
+            $.ajax({
+                url: "{% url 'material_request_edit' %}",
+                type: "GET",
+                data: { 'mr_id': mrId },
+                success: function (response) {
+                    console.log("Response data:", response);
+                    
+                    if (!response || !response.header) {
+                        console.error("Invalid response format");
+                        alert("Error: Invalid response format");
+                        return;
+                    }
+                    
+                    // Populate the edit form with the response data
+                    var header = response.header;
+                    console.log("Header data:", header);
+                    
+                    // Set header fields
+                    $("#mr_id").val(header.id || '');
+                    $("#ordr_date").val(header.ordr_date || '');
+                    $("#ordr_numb").val(header.ordr_numb || '');
+                    $("#cust_code").val(header.cust_code || '');
+                    $("#ordr_type").val(header.ordr_type || '');
+                    $("#quot_numb").val(header.quot_numb || '');
+                    $("#quot_date").val(header.quot_date || '');
+                    $("#lpo_numb").val(header.lpo_numb || '');
+                    $("#lpo_date").val(header.lpo_date || '');
+                    $("#services").val(header.services || '');
+                    $("#companys").val(header.companys || '');
+                    $("#employee").val(header.employee || '');
+                    $("#paym_mode").val(header.paym_mode || '');
+                    $("#totl_amnt").val(header.totl_amnt || '0');
+                    $("#disc_amnt").val(header.disc_amnt || '0');
+                    $("#vat_perct").val(header.vat_perct || '0');
+                    $("#vat_amnt").val(header.vat_amnt || '0');
+                    $("#gtot_amnt").val(header.gtot_amnt || '0');
+
+                    // Add items
+                    console.log("Details data:", response.details);
+                    if (response.details && Array.isArray(response.details) && response.details.length > 0) {
+                        response.details.forEach(function(detail) {
+                            console.log("Processing detail:", detail);
+                            if (detail) {
+                                var item = {
+                                    id: detail.id || Date.now(),
+                                    item_code: detail.item_code || '',
+                                    item_desc: detail.item_desc || '',
+                                    item_unit: detail.item_unit || '',
+                                    item_qnty: detail.item_qnty || 0,
+                                    item_rate: detail.item_rate || 0,
+                                    item_amnt: detail.item_amnt || 0
+                                };
+                                addItemRowEdit(item);
+                            }
+                        });
+                    } else {
+                        console.log("No details found in response");
+                    }
+
+                    // Recalculate totals
+                    calculateTotalAmount();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error details:", {
+                        status: status,
+                        error: error,
+                        response: xhr.responseText
+                    });
+                    alert("Error loading MR details. Please try again.");
+                }
+            });
+        });
+
+        // Delete MR
+        $("#confirmDelete").on("click", function() {
+            var mrId = $(".delete-btn").data("mr-id");
+            $.ajax({
+                url: "{% url 'material_request_delete' %}",
+                type: "POST",
+                data: {
+                    'mr_id': mrId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error deleting MR. Please try again.");
+                }
+            });
+            $("#delete_mr").modal("hide");
+        });
+    });
+</script>
+
+{% block mr_modal %}
+{% include "pages/modal/procurement/material_request_modal.html" %}
+{% endblock %}
+{% endblock content %} 

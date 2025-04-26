@@ -1,0 +1,151 @@
+<!-- Add Warehouse Opening Stock Modal -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1000px !important;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Add New Opening Stock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addStockForm" method="post" action="{% url 'warehouse_opening_stock_add' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Warehouse Code <span class="text-danger">*</span></label>
+                        <select class="form-select" name="ware_code" required>
+                            <option value="">Select Warehouse</option>
+                            {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_code }} - {{ warehouse.ware_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Item Code <span class="text-danger">*</span></label>
+                        <select class="form-select" name="item_code" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                            <option value="{{ item.item_code }}">{{ item.item_code }} - {{ item.item_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Opening Quantity <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" class="form-control" name="open_qnty" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Item UOM</label>
+                        <input type="text" class="form-control" name="item_luom" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-select" name="stat_code">
+                            <option value="ACT">Active</option>
+                            <option value="INA">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Warehouse Opening Stock Modal -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1000px !important;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Edit Opening Stock</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="editStockForm" method="post" action="{% url 'warehouse_opening_stock_edit' %}">
+            {% csrf_token %}
+            <input type="hidden" id="stock_id" name="stock_id">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Warehouse Code <span class="text-danger">*</span></label>
+                        <select class="form-select" id="ware_code" name="ware_code" required>
+                            <option value="">Select Warehouse</option>
+                            {% for warehouse in warehouses %}
+                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_code }} - {{ warehouse.ware_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Item Code <span class="text-danger">*</span></label>
+                        <select class="form-select" id="item_code" name="item_code" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                            <option value="{{ item.item_code }}">{{ item.item_code }} - {{ item.item_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Opening Quantity <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" class="form-control" id="open_qnty" name="open_qnty" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Item UOM</label>
+                        <input type="text" class="form-control" id="item_luom" name="item_luom" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="form-select" id="stat_code" name="stat_code">
+                            <option value="ACT">Active</option>
+                            <option value="INA">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Warehouse Opening Stock Modal -->
+<div class="modal fade" id="delete_stock" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Opening Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this opening stock?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>

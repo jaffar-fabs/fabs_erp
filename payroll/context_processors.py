@@ -299,3 +299,24 @@ def get_uom(request):
         'uom_data': uom_data
     }
 
+def get_pr_items(request):
+    comp_code = get_comp_code(request)
+    
+    # Get all PR numbers that are already referenced in POs
+    used_pr_numbers = PurchaseOrderHeader.objects.filter(
+        comp_code=comp_code,
+        refn_numb__isnull=False
+    ).values_list('refn_numb', flat=True).distinct()
+    
+    # Get PR items excluding those that are already used in POs
+    pr_items_data = MaterialRequestHeader.objects.filter(
+        comp_code=comp_code,
+        ordr_type='PR'
+    ).exclude(
+        ordr_numb__in=used_pr_numbers
+    ).order_by('-ordr_date')
+    
+    return {
+        'pr_items_data': pr_items_data
+    }
+

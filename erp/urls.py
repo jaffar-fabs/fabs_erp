@@ -200,11 +200,30 @@ urlpatterns = [
     path('procurement/purchase_order_add/', procurement.purchase_order_add, name='purchase_order_add'),
     path('procurement/purchase_order_edit/', procurement.purchase_order_edit, name='purchase_order_edit'),
     path('procurement/purchase_order_delete/', procurement.purchase_order_delete, name='purchase_order_delete'),
+    path('procurement/get_pr_items/', procurement.get_pr_items, name='get_pr_items'),
 
     path('procurement/grn/', procurement.grn, name='grn'),
     path('procurement/grn_add/', procurement.grn_add, name='grn_add'),
     path('procurement/grn_delete/', procurement.grn_delete, name='grn_delete'),
     path('procurement/get_po_items/', procurement.get_po_items, name='get_po_items'),
+
+    path('procurement/material_request/', procurement.material_request, name='material_request'),
+    path('procurement/material_request_add/', procurement.material_request_add, name='material_request_add'),
+    path('procurement/material_request_edit/', procurement.material_request_edit, name='material_request_edit'),
+    path('procurement/material_request_delete/', procurement.material_request_delete, name='material_request_delete'),
+
+    path('procurement/warehouse_opening_stock/', procurement.warehouse_opening_stock, name='warehouse_opening_stock'),
+    path('procurement/warehouse_opening_stock_add/', procurement.warehouse_opening_stock_add, name='warehouse_opening_stock_add'),
+    path('procurement/warehouse_opening_stock_edit/', procurement.warehouse_opening_stock_edit, name='warehouse_opening_stock_edit'),
+    path('procurement/warehouse_opening_stock_delete/', procurement.warehouse_opening_stock_delete, name='warehouse_opening_stock_delete'),
+    path('procurement/get_item_details/', procurement.get_item_details, name='get_item_details'),
+
+    path('procurement/material_issue/', procurement.material_issue, name='material_issue'),
+    path('procurement/material_issue_add/', procurement.material_issue_add, name='material_issue_add'),
+    path('procurement/material_issue_edit/', procurement.material_issue_edit, name='material_issue_edit'),
+    path('procurement/material_issue_delete/', procurement.material_issue_delete, name='material_issue_delete'),
+    path('procurement/get_mr_items/', procurement.get_mr_items, name='get_mr_items'),
+    path('procurement/get_warehouse_stock/', procurement.get_warehouse_stock, name='get_warehouse_stock'),
 
 ]
 
