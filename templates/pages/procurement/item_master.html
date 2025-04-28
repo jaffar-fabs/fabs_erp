@@ -38,6 +38,7 @@
                                         <th>UOM</th>
                                         <th>Category</th>
                                         <th>Stock Qty</th>
+                                        <th>Reorder Qty</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -50,6 +51,7 @@
                                         <td>{{ item.uom }}</td>
                                         <td>{{ item.category }}</td>
                                         <td>{{ item.stock_qty }}</td>
+                                        <td>{{ item.reorder_qty }}</td>
                                         <td>
                                             {% if item.is_active %}
                                             <span class="badge bg-success">Active</span>
@@ -122,12 +124,11 @@
         $(".edit-item-btn").on("click", function (event) {
             event.preventDefault();
             var itemId = $(this).data("id");
-            alert(itemId);
             var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
             offcanvasElement.show();
 
             // Reset all fields
-            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+            $("#offcanvas_edit input, #offcanvas_edit select, #offcanvas_edit textarea").val("");
 
             $.ajax({
                 url: "{% url 'item_master_edit' %}",
@@ -139,25 +140,47 @@
                     $("#item_code").val(response.item_code);
                     $("#item_description").val(response.item_description);
                     $("#uom").val(response.uom);
-                    $("#remarks").val(response.remarks);
                     $("#category").val(response.category);
                     $("#sub_category").val(response.sub_category);
-                    $("#brand").val(response.brand);
-                    $("#material").val(response.material);
-                    $("#size").val(response.size);
-                    $("#color").val(response.color);
-                    $("#style").val(response.style);
-                    $("#origin").val(response.origin);
-                    $("#gender").val(response.gender);
                     $("#item_rate").val(response.item_rate);
-                    $("#price_if_credit").val(response.price_if_credit);
                     $("#stock_qty").val(response.stock_qty);
                     $("#open_qty").val(response.open_qty);
-                    $("#is_active").val(response.is_active).change();
+                    $("#reorder_qty").val(response.reorder_qty);
+                    $("#is_active").val(response.is_active.toString());
+                    $("#remarks").val(response.remarks);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", xhr.responseText);
                     alert("Error loading item details. Please try again.");
+                }
+            });
+        });
+
+        // Delete Item Functionality
+        $(".delete-btn").on("click", function () {
+            var itemId = $(this).data("item-id");
+            $("#confirmDelete").data("item-id", itemId);
+        });
+
+        $("#confirmDelete").on("click", function () {
+            var itemId = $(this).data("item-id");
+            $.ajax({
+                url: "{% url 'item_master_delete' %}",
+                type: "POST",
+                data: {
+                    'item_id': itemId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error deleting item. Please try again.");
                 }
             });
         });

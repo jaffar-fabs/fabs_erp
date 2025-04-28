@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from .models import *
 from django.views.decorators.csrf import csrf_exempt
-from django.db import transaction
+from django.db import transaction, connection
 from datetime import datetime
 from decimal import Decimal
 
@@ -53,25 +53,24 @@ def item_master_add(request):
     set_comp_code(request)
     if request.method == 'POST':
         try:
+            # Generate item code using fn_get_seed_no
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'ITEM'])
+                result = cursor.fetchone()
+                item_code = result[0] if result else None
+
             # Create new item
             item = ItemMaster(
-                item_code=request.POST.get('item_code'),
-                item_description=request.POST.get('item_description'),
+                item_code=item_code,
+                item_description=request.POST.get('item_description').upper(),
                 uom=request.POST.get('uom'),
                 remarks=request.POST.get('remarks'),
                 category=request.POST.get('category'),
                 sub_category=request.POST.get('sub_category'),
-                brand=request.POST.get('brand'),
-                material=request.POST.get('material'),
-                size=request.POST.get('size'),
-                color=request.POST.get('color'),
-                style=request.POST.get('style'),
-                origin=request.POST.get('origin'),
-                gender=request.POST.get('gender'),
                 item_rate=request.POST.get('item_rate') or 0,
-                price_if_credit=request.POST.get('price_if_credit') or 0,
                 stock_qty=request.POST.get('stock_qty') or 0,
                 open_qty=request.POST.get('open_qty') or 0,
+                reorder_qty=request.POST.get('reorder_qty') or 0,
                 is_active=request.POST.get('is_active') == 'true',
                 created_by=request.user.username,
                 comp_code=COMP_CODE
@@ -94,21 +93,14 @@ def item_master_edit(request):
                 'item_code': item.item_code,
                 'item_description': item.item_description,
                 'uom': item.uom,
-                'remarks': item.remarks,
                 'category': item.category,
                 'sub_category': item.sub_category,
-                'brand': item.brand,
-                'material': item.material,
-                'size': item.size,
-                'color': item.color,
-                'style': item.style,
-                'origin': item.origin,
-                'gender': item.gender,
-                'item_rate': item.item_rate,
-                'price_if_credit': item.price_if_credit,
-                'stock_qty': item.stock_qty,
-                'open_qty': item.open_qty,
-                'is_active': item.is_active
+                'item_rate': float(item.item_rate),
+                'stock_qty': float(item.stock_qty),
+                'open_qty': float(item.open_qty),
+                'reorder_qty': float(item.reorder_qty),
+                'is_active': item.is_active,
+                'remarks': item.remarks
             }
             return JsonResponse(data)
         except Exception as e:
@@ -123,21 +115,14 @@ def item_master_edit(request):
             item.item_code = request.POST.get('item_code')
             item.item_description = request.POST.get('item_description')
             item.uom = request.POST.get('uom')
-            item.remarks = request.POST.get('remarks')
             item.category = request.POST.get('category')
             item.sub_category = request.POST.get('sub_category')
-            item.brand = request.POST.get('brand')
-            item.material = request.POST.get('material')
-            item.size = request.POST.get('size')
-            item.color = request.POST.get('color')
-            item.style = request.POST.get('style')
-            item.origin = request.POST.get('origin')
-            item.gender = request.POST.get('gender')
-            item.item_rate = request.POST.get('item_rate') or 0
-            item.price_if_credit = request.POST.get('price_if_credit') or 0
-            item.stock_qty = request.POST.get('stock_qty') or 0
-            item.open_qty = request.POST.get('open_qty') or 0
+            item.item_rate = Decimal(request.POST.get('item_rate') or 0)
+            item.stock_qty = Decimal(request.POST.get('stock_qty') or 0)
+            item.open_qty = Decimal(request.POST.get('open_qty') or 0)
+            item.reorder_qty = Decimal(request.POST.get('reorder_qty') or 0)
             item.is_active = request.POST.get('is_active') == 'true'
+            item.remarks = request.POST.get('remarks')
             item.updated_by = request.user.username
             
             item.save()
@@ -290,21 +275,22 @@ def warehouse_master(request):
     
     return render(request, 'pages/procurement/warehouse_master.html', context)
 
+@csrf_exempt
 def warehouse_master_add(request):
-    set_comp_code(request)
     if request.method == 'POST':
         try:
-            # Create new warehouse
-            warehouse = WarehouseMaster(
-                comp_code=COMP_CODE,
-                ware_code=request.POST.get('ware_code'),
-                ware_name=request.POST.get('ware_name'),
-                ware_type=request.POST.get('ware_type'),
-                stat_code=request.POST.get('stat_code', 'A'),
-                created_by=request.user.username
-            )
-            warehouse.save()
-            return redirect('warehouse_master')
+            with transaction.atomic():
+                # Create new warehouse
+                warehouse = WarehouseMaster(
+                    comp_code=request.session.get('comp_code'),
+                    ware_code=request.POST.get('ware_code'),
+                    ware_name=request.POST.get('ware_name'),
+                    ware_type=request.POST.get('ware_type'),
+                    stat_code=request.POST.get('stat_code'),
+                    created_by=request.user.username
+                )
+                warehouse.save()
+                return JsonResponse({'status': 'success', 'message': 'Warehouse created successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -329,30 +315,32 @@ def warehouse_master_edit(request):
     
     elif request.method == 'POST':
         try:
-            warehouse_id = request.POST.get('warehouse_id')
-            warehouse = get_object_or_404(WarehouseMaster, id=warehouse_id)
-            
-            # Update warehouse fields
-            warehouse.ware_code = request.POST.get('ware_code')
-            warehouse.ware_name = request.POST.get('ware_name')
-            warehouse.ware_type = request.POST.get('ware_type')
-            warehouse.stat_code = request.POST.get('stat_code', 'A')
-            warehouse.updated_by = request.user.username
-            
-            warehouse.save()
-            return redirect('warehouse_master')
+            with transaction.atomic():
+                warehouse_id = request.POST.get('warehouse_id')
+                warehouse = get_object_or_404(WarehouseMaster, id=warehouse_id)
+                
+                # Update warehouse fields
+                warehouse.ware_code = request.POST.get('ware_code')
+                warehouse.ware_name = request.POST.get('ware_name')
+                warehouse.ware_type = request.POST.get('ware_type')
+                warehouse.stat_code = request.POST.get('stat_code')
+                warehouse.updated_by = request.user.username
+                warehouse.save()
+                
+                return JsonResponse({'status': 'success', 'message': 'Warehouse updated successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-def warehouse_master_delete(request):
-    if request.method == 'POST':
+@csrf_exempt
+def warehouse_master_delete(request, warehouse_id):
+    if request.method == 'DELETE':
         try:
-            warehouse_id = request.POST.get('warehouse_id')
-            warehouse = get_object_or_404(WarehouseMaster, id=warehouse_id)
-            warehouse.delete()
-            return JsonResponse({'status': 'success', 'message': 'Warehouse deleted successfully'})
+            with transaction.atomic():
+                warehouse = get_object_or_404(WarehouseMaster, id=warehouse_id)
+                warehouse.delete()
+                return JsonResponse({'status': 'success', 'message': 'Warehouse deleted successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -1096,21 +1084,31 @@ def warehouse_opening_stock(request):
     # Get search keyword
     keyword = request.GET.get('keyword', '')
     
-    # Get all stocks or filter by keyword
+    # Get all details or filter by keyword
     if keyword:
-        stocks = WarehouseHeader.objects.filter(
+        details = WarehouseDetail.objects.filter(
             Q(ware_code__icontains=keyword) |
             Q(item_code__icontains=keyword)
-        ).order_by('ware_code', 'item_code')
+        ).filter(tran_type='OPN').order_by('-tran_date', 'ware_code', 'item_code')
     else:
-        stocks = WarehouseHeader.objects.all().order_by('ware_code', 'item_code')
+        details = WarehouseDetail.objects.filter(tran_type='OPN').order_by('-tran_date', 'ware_code', 'item_code')
     
     # Get warehouses and items for dropdowns
     warehouses = WarehouseMaster.objects.filter(stat_code='A').order_by('ware_code')
     items = ItemMaster.objects.filter(is_active=True).order_by('item_code')
     
+    # Get item descriptions
+    item_descriptions = {}
+    for item in ItemMaster.objects.all():
+        if item.item_code not in item_descriptions:
+            item_descriptions[item.item_code] = item.item_description
+    
+    # Add item descriptions to details
+    for detail in details:
+        detail.item_desc = item_descriptions.get(detail.item_code, '')
+    
     # Pagination
-    paginator = Paginator(stocks, 10)  # Show 10 stocks per page
+    paginator = Paginator(details, 10)  # Show 10 details per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -1119,7 +1117,7 @@ def warehouse_opening_stock(request):
     page_obj.end_index = min(page_obj.start_index + paginator.per_page - 1, paginator.count)
     
     context = {
-        'stocks': page_obj,
+        'details': page_obj,
         'keyword': keyword,
         'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
         'warehouses': warehouses,
@@ -1133,38 +1131,40 @@ def warehouse_opening_stock_add(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                # Create warehouse header
-                stock = WarehouseHeader(
-                    comp_code=COMP_CODE,
-                    ware_code=request.POST.get('ware_code'),
-                    item_code=request.POST.get('item_code'),
-                    open_qnty=request.POST.get('open_qnty') or 0,
-                    recv_qnty=0,
-                    issu_qnty=0,
-                    baln_qnty=request.POST.get('open_qnty') or 0,
-                    stat_code=request.POST.get('stat_code', 'ACT'),
-                    item_luom=request.POST.get('item_luom'),
-                    crte_user=request.user.username
-                )
-                stock.save()
+                # Get items from form data
+                items = []
+                for key in request.POST:
+                    if key.startswith('items[') and key.endswith('][item_code]'):
+                        index = key.split('[')[1].split(']')[0]
+                        item_code = request.POST.get(f'items[{index}][item_code]')
+                        quantity = request.POST.get(f'items[{index}][quantity]')
+                        if item_code and quantity:
+                            items.append({
+                                'item_code': item_code,
+                                'quantity': quantity
+                            })
+                
+                if not items:
+                    return JsonResponse({'status': 'error', 'message': 'No items provided'})
+                
+                # Create warehouse details for each item
+                for item in items:
+                    detail = WarehouseDetail(
+                        comp_code=COMP_CODE,
+                        tran_type='OPN',
+                        tran_date=datetime.strptime(request.POST.get('tran_date'), '%Y-%m-%d').date(),
+                        tran_numb=f"OPN{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                        tran_srno=1,
+                        ware_code=request.POST.get('ware_code'),
+                        item_code=item['item_code'],
+                        item_tran='OPN',
+                        tran_qnty=item['quantity'],
+                        item_luom=request.POST.get('item_luom'),
+                        crte_user=request.user.username
+                    )
+                    detail.save()
 
-                # Create warehouse detail
-                detail = WarehouseDetail(
-                    comp_code=COMP_CODE,
-                    tran_type='OS',
-                    tran_date=datetime.now().date(),
-                    tran_numb=f"OS{datetime.now().strftime('%Y%m%d%H%M%S')}",
-                    tran_srno=1,
-                    ware_code=stock.ware_code,
-                    item_code=stock.item_code,
-                    item_tran='IN',
-                    tran_qnty=stock.open_qnty,
-                    item_luom=stock.item_luom,
-                    crte_user=request.user.username
-                )
-                detail.save()
-
-            return JsonResponse({'status': 'success', 'message': 'Opening stock created successfully'})
+                return JsonResponse({'status': 'success', 'message': 'Opening stock created successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -1173,16 +1173,22 @@ def warehouse_opening_stock_add(request):
 @csrf_exempt
 def warehouse_opening_stock_edit(request):
     if request.method == 'GET':
-        stock_id = request.GET.get('stock_id')
+        stock_id = request.GET.get('id_number')
         try:
-            stock = get_object_or_404(WarehouseHeader, id_number=stock_id)
+            detail = get_object_or_404(WarehouseDetail, id_number=stock_id, tran_type='OPN')
+            # Get item description from ItemMaster
+            item = ItemMaster.objects.filter(item_code=detail.item_code).first()
             data = {
-                'id_number': stock.id_number,
-                'ware_code': stock.ware_code,
-                'item_code': stock.item_code,
-                'open_qnty': float(stock.open_qnty),
-                'item_luom': stock.item_luom,
-                'stat_code': stock.stat_code
+                'status': 'success',
+                'data': {
+                    'id_number': detail.id_number,
+                    'tran_date': detail.tran_date.strftime('%Y-%m-%d'),
+                    'ware_code': detail.ware_code,
+                    'item_code': detail.item_code,
+                    'item_desc': item.item_description if item else '',
+                    'tran_qnty': float(detail.tran_qnty),
+                    'item_luom': detail.item_luom
+                }
             }
             return JsonResponse(data)
         except Exception as e:
@@ -1192,32 +1198,16 @@ def warehouse_opening_stock_edit(request):
         try:
             with transaction.atomic():
                 stock_id = request.POST.get('stock_id')
-                stock = get_object_or_404(WarehouseHeader, id_number=stock_id)
+                detail = get_object_or_404(WarehouseDetail, id_number=stock_id, tran_type='OPN')
                 
-                # Update stock
-                old_qnty = stock.open_qnty
-                new_qnty = Decimal(request.POST.get('open_qnty') or 0)
-                
-                stock.ware_code = request.POST.get('ware_code')
-                stock.item_code = request.POST.get('item_code')
-                stock.open_qnty = new_qnty
-                stock.baln_qnty = stock.baln_qnty - old_qnty + new_qnty
-                stock.item_luom = request.POST.get('item_luom')
-                stock.stat_code = request.POST.get('stat_code', 'ACT')
-                stock.updt_user = request.user.username
-                stock.save()
-
                 # Update detail
-                detail = WarehouseDetail.objects.filter(
-                    comp_code=stock.comp_code,
-                    tran_type='OS',
-                    tran_numb=stock.tran_numb
-                ).first()
-                
-                if detail:
-                    detail.tran_qnty = new_qnty
-                    detail.updt_user = request.user.username
-                    detail.save()
+                detail.tran_date = datetime.strptime(request.POST.get('tran_date'), '%Y-%m-%d').date()
+                detail.ware_code = request.POST.get('ware_code')
+                detail.item_code = request.POST.get('item_code')
+                detail.tran_qnty = request.POST.get('open_qnty') or 0
+                detail.item_luom = request.POST.get('item_luom')
+                detail.updt_user = request.user.username
+                detail.save()
 
             return JsonResponse({'status': 'success', 'message': 'Opening stock updated successfully'})
         except Exception as e:
@@ -1230,17 +1220,10 @@ def warehouse_opening_stock_delete(request):
         try:
             with transaction.atomic():
                 stock_id = request.POST.get('stock_id')
-                stock = get_object_or_404(WarehouseHeader, id_number=stock_id)
+                detail = get_object_or_404(WarehouseDetail, id_number=stock_id, tran_type='OPN')
                 
-                # Delete detail first
-                WarehouseDetail.objects.filter(
-                    comp_code=stock.comp_code,
-                    tran_type='OS',
-                    tran_numb=stock.tran_numb
-                ).delete()
-                
-                # Delete header
-                stock.delete()
+                # Delete detail
+                detail.delete()
                 
             return JsonResponse({'status': 'success', 'message': 'Opening stock deleted successfully'})
         except Exception as e:

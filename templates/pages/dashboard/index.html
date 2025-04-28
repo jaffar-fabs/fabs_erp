@@ -20,13 +20,13 @@
 
     <!-- Scrollable Content -->
     <div class="content" style="flex: 1; overflow-y: auto; padding: 20px;">
-        <!-- Summary Cards -->
+        <!-- Employee Status Cards -->
         <div class="row">
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Employees</h5>
-                        <h2 class="card-text text-primary">{{ employee_count }}</h2>
+                        <h5 class="card-title">Total Employees</h5>
+                        <h2 class="card-text text-primary">{{ total_employees }}</h2>
                         <a href="{% url 'employee_enquiries' %}" class="btn btn-sm btn-outline-primary">View Details</a>
                     </div>
                 </div>
@@ -34,9 +34,40 @@
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
+                        <h5 class="card-title">Active Employees</h5>
+                        <h2 class="card-text text-success">{{ active_employees }}</h2>
+                        <a href="{% url 'employee_enquiries' %}?status=ACTIVE" class="btn btn-sm btn-outline-success">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">On Leave</h5>
+                        <h2 class="card-text text-warning">{{ on_leave_employees }}</h2>
+                        <a href="{% url 'employee_enquiries' %}?status=ON_LEAVE" class="btn btn-sm btn-outline-warning">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Inactive</h5>
+                        <h2 class="card-text text-danger">{{ inactive_employees }}</h2>
+                        <a href="{% url 'employee_enquiries' %}?status=INACTIVE" class="btn btn-sm btn-outline-danger">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Summary Cards -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
                         <h5 class="card-title">Projects</h5>
-                        <h2 class="card-text text-success">{{ project_count }}</h2>
-                        <a href="{% url 'project' %}" class="btn btn-sm btn-outline-success">View Details</a>
+                        <h2 class="card-text text-info">{{ project_count }}</h2>
+                        <a href="{% url 'project' %}" class="btn btn-sm btn-outline-info">View Details</a>
                     </div>
                 </div>
             </div>
@@ -44,8 +75,8 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Holidays</h5>
-                        <h2 class="card-text text-warning">{{ holiday_count }}</h2>
-                        <a href="{% url 'holiday_master' %}" class="btn btn-sm btn-outline-warning">View Details</a>
+                        <h2 class="card-text text-secondary">{{ holiday_count }}</h2>
+                        <a href="{% url 'holiday_master' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
                     </div>
                 </div>
             </div>
@@ -53,48 +84,17 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Camps</h5>
-                        <h2 class="card-text text-danger">{{ camp_count }}</h2>
-                        <a href="{% url 'camp_master' %}" class="btn btn-sm btn-outline-danger">View Details</a>
+                        <h2 class="card-text text-dark">{{ camp_count }}</h2>
+                        <a href="{% url 'camp_master' %}" class="btn btn-sm btn-outline-dark">View Details</a>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Additional Summary Cards -->
-        <div class="row mt-4">
             <div class="col-md-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Paycycles</h5>
-                        <h2 class="card-text text-info">{{ paycycle_count }}</h2>
-                        <a href="{% url 'payroll_paycycle_master' %}" class="btn btn-sm btn-outline-info">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Companies</h5>
-                        <h2 class="card-text text-secondary">{{ company_count }}</h2>
-                        <a href="{% url 'company_list' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Grades</h5>
-                        <h2 class="card-text text-dark">{{ grade_count }}</h2>
-                        <a href="{% url 'grade_master' %}" class="btn btn-sm btn-outline-dark">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Seeds</h5>
-                        <h2 class="card-text text-primary">{{ seed_count }}</h2>
-                        <a href="{% url 'create_seed' %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        <h2 class="card-text text-primary">{{ paycycle_count }}</h2>
+                        <a href="{% url 'payroll_paycycle_master' %}" class="btn btn-sm btn-outline-primary">View Details</a>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Pie Chart</h5>
+                        <h5 class="card-title">Employee Status Distribution</h5>
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
@@ -113,16 +113,14 @@
             <div class="col-md-6">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Bar Chart</h5>
+                        <h5 class="card-title">Employee Status Comparison</h5>
                         <canvas id="barChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /Charts Section -->
     </div>
 </div>
-<!-- /Page Wrapper -->
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -137,10 +135,20 @@
                 datasets: [{
                     data: {{ chart_data.values|safe }},
                     backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#C9CBCF', '#36A2EB'
+                        '#28a745', // Active - green
+                        '#ffc107', // On Leave - yellow
+                        '#dc3545'  // Inactive - red
                     ],
                 }]
             },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
         });
 
         // Bar Chart
@@ -150,17 +158,28 @@
             data: {
                 labels: {{ chart_data.labels|safe }},
                 datasets: [{
-                    label: 'Counts',
+                    label: 'Number of Employees',
                     data: {{ chart_data.values|safe }},
                     backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#C9CBCF', '#36A2EB'
+                        '#28a745', // Active - green
+                        '#ffc107', // On Leave - yellow
+                        '#dc3545'  // Inactive - red
                     ],
                 }]
             },
             options: {
+                responsive: true,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
                     }
                 }
             }

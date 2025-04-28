@@ -1,4 +1,4 @@
-<!-- Add Warehouse Opening Stock Modal -->
+<!-- Add Opening Stock Modal -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1000px !important;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title">Add New Opening Stock</h5>
@@ -8,51 +8,32 @@
         <form id="addStockForm" method="post" action="{% url 'warehouse_opening_stock_add' %}">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label>Warehouse Code <span class="text-danger">*</span></label>
+                        <label>Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="tran_date" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Warehouse <span class="text-danger">*</span></label>
                         <select class="form-select" name="ware_code" required>
                             <option value="">Select Warehouse</option>
                             {% for warehouse in warehouses %}
-                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_code }} - {{ warehouse.ware_name }}</option>
+                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_name }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Item Code <span class="text-danger">*</span></label>
-                        <select class="form-select" name="item_code" required>
-                            <option value="">Select Item</option>
-                            {% for item in items %}
-                            <option value="{{ item.item_code }}">{{ item.item_code }} - {{ item.item_description }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Opening Quantity <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" class="form-control" name="open_qnty" required>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Item UOM</label>
-                        <input type="text" class="form-control" name="item_luom" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select class="form-select" name="stat_code">
-                            <option value="ACT">Active</option>
-                            <option value="INA">Inactive</option>
-                        </select>
-                    </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h6>Items</h6>
+                    <div id="items-container"></div>
+                    <button type="button" class="btn btn-secondary mt-2" id="add-item">
+                        <i class="ti ti-plus me-2"></i>Add Item
+                    </button>
                 </div>
             </div>
 
@@ -64,7 +45,7 @@
     </div>
 </div>
 
-<!-- Edit Warehouse Opening Stock Modal -->
+<!-- Edit Opening Stock Modal -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1000px !important;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title">Edit Opening Stock</h5>
@@ -75,51 +56,32 @@
             {% csrf_token %}
             <input type="hidden" id="stock_id" name="stock_id">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label>Warehouse Code <span class="text-danger">*</span></label>
+                        <label>Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="tran_date" name="tran_date" required>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label>Warehouse <span class="text-danger">*</span></label>
                         <select class="form-select" id="ware_code" name="ware_code" required>
                             <option value="">Select Warehouse</option>
                             {% for warehouse in warehouses %}
-                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_code }} - {{ warehouse.ware_name }}</option>
+                            <option value="{{ warehouse.ware_code }}">{{ warehouse.ware_name }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Item Code <span class="text-danger">*</span></label>
-                        <select class="form-select" id="item_code" name="item_code" required>
-                            <option value="">Select Item</option>
-                            {% for item in items %}
-                            <option value="{{ item.item_code }}">{{ item.item_code }} - {{ item.item_description }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Opening Quantity <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" class="form-control" id="open_qnty" name="open_qnty" required>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Item UOM</label>
-                        <input type="text" class="form-control" id="item_luom" name="item_luom" readonly>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select class="form-select" id="stat_code" name="stat_code">
-                            <option value="ACT">Active</option>
-                            <option value="INA">Inactive</option>
-                        </select>
-                    </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <h6>Items</h6>
+                    <div id="items-container-edit"></div>
+                    <button type="button" class="btn btn-secondary mt-2" id="add-item-edit">
+                        <i class="ti ti-plus me-2"></i>Add Item
+                    </button>
                 </div>
             </div>
 
@@ -131,7 +93,7 @@
     </div>
 </div>
 
-<!-- Delete Warehouse Opening Stock Modal -->
+<!-- Delete Opening Stock Modal -->
 <div class="modal fade" id="delete_stock" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -149,3 +111,346 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Create initial table structure
+        function createInitialTable() {
+            var tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody">
+                    </tbody>
+                </table>
+            `;
+            $("#items-container").html(tableHtml);
+        }
+
+        // Create initial table structure for edit
+        function createInitialTableEdit() {
+            var tableHtml = `
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Description</th>
+                            <th>Unit</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-tbody-edit">
+                    </tbody>
+                </table>
+            `;
+            $("#items-container-edit").html(tableHtml);
+        }
+
+        // Add Item Row
+        function addItemRow(item) {
+            var itemHtml = `
+                <tr>
+                    <td>
+                        <select class="form-select item-code" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                            <option value="{{ item.item_code }}" data-uom="{{ item.uom }}">{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}" readonly>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_luom_${item.id || Date.now()}" value="${item.item_luom || ''}" readonly>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="open_qnty_${item.id || Date.now()}" value="${item.tran_qnty || ''}" required>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-item">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            $("#items-tbody").append(itemHtml);
+        }
+
+        // Add Item Row for edit
+        function addItemRowEdit(item) {
+            var itemHtml = `
+                <tr>
+                    <td>
+                        <select class="form-select item-code" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                            <option value="{{ item.item_code }}" data-uom="{{ item.uom }}">{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}" readonly>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item_luom_${item.id || Date.now()}" value="${item.item_luom || ''}" readonly>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" class="form-control" name="open_qnty_${item.id || Date.now()}" value="${item.tran_qnty || ''}" required>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm remove-item">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            $("#items-tbody-edit").append(itemHtml);
+        }
+
+        // Initialize tables when document is ready
+        $(document).ready(function() {
+            createInitialTable();
+            createInitialTableEdit();
+        });
+
+        // Add New Item
+        $("#add-item").on("click", function() {
+            var itemId = Date.now();
+            addItemRow({id: itemId});
+        });
+
+        // Add New Item for edit
+        $("#add-item-edit").on("click", function() {
+            var itemId = Date.now();
+            addItemRowEdit({id: itemId});
+        });
+
+        // Remove Item
+        $(document).on("click", ".remove-item", function() {
+            $(this).closest("tr").remove();
+        });
+
+        // Handle item code selection
+        $(document).on("change", ".item-code", function() {
+            var row = $(this).closest("tr");
+            var selectedOption = $(this).find("option:selected");
+            var uom = selectedOption.data("uom");
+            
+            // Update UOM field
+            row.find("input[name^='item_luom_']").val(uom);
+            
+            // Fetch item description
+            $.ajax({
+                url: "{% url 'get_item_details' %}",
+                type: "GET",
+                data: { 'item_code': $(this).val() },
+                success: function(response) {
+                    if (response.status === "success") {
+                        row.find("input[name^='item_desc_']").val(response.description);
+                    }
+                }
+            });
+        });
+
+        // Form submission for add
+        $("#addStockForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Collect all item codes and their quantities
+            var items = [];
+            $("#items-tbody tr").each(function() {
+                var row = $(this);
+                var itemCode = row.find("select[name^='item_code_']").val();
+                var quantity = row.find("input[name^='open_qnty_']").val();
+                
+                if (itemCode && quantity) {
+                    items.push({
+                        item_code: itemCode,
+                        quantity: quantity
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                alert("Please add at least one item");
+                return;
+            }
+            
+            // Add items to form data
+            var formData = new FormData(this);
+            items.forEach(function(item, index) {
+                formData.append(`items[${index}][item_code]`, item.item_code);
+                formData.append(`items[${index}][quantity]`, item.quantity);
+            });
+            
+            // Submit form
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message || "Error saving opening stock");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error saving opening stock: " + error);
+                }
+            });
+        });
+
+        // Edit Stock Functionality
+        $(".edit-stock-btn").on("click", function (event) {
+            event.preventDefault();
+            var stockId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select").val("");
+            $("#items-container-edit").empty();
+            createInitialTableEdit();
+
+            $.ajax({
+                url: "{% url 'warehouse_opening_stock_edit' %}",
+                type: "GET",
+                data: { 'id_number': stockId },
+                success: function (response) {
+                    if (response.status === "success") {
+                        // Populate the edit form with the response data
+                        $("#stock_id").val(stockId);
+                        $("#tran_date").val(response.data.tran_date);
+                        $("#ware_code").val(response.data.ware_code);
+                        
+                        // Clear existing items
+                        $("#items-tbody-edit").empty();
+                        
+                        // Add items from response
+                        if (response.data.items && response.data.items.length > 0) {
+                            response.data.items.forEach(function(item) {
+                                var itemData = {
+                                    id_number: item.id_number,
+                                    item_code: item.item_code,
+                                    item_desc: item.item_desc,
+                                    item_luom: item.item_luom,
+                                    tran_qnty: item.tran_qnty
+                                };
+                                addItemRowEdit(itemData);
+                                
+                                // Set the selected value for item code dropdown
+                                var row = $("#items-tbody-edit tr:last");
+                                row.find("select[name^='item_code_']").val(item.item_code);
+                            });
+                        }
+                    } else {
+                        alert("Error loading stock details: " + (response.message || "Unknown error"));
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading stock details. Please try again.");
+                }
+            });
+        });
+
+        // Form submission for edit
+        $("#editStockForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // Collect all item codes and their quantities
+            var items = [];
+            $("#items-tbody-edit tr").each(function() {
+                var row = $(this);
+                var itemCode = row.find("select[name^='item_code_']").val();
+                var quantity = row.find("input[name^='open_qnty_']").val();
+                
+                if (itemCode && quantity) {
+                    items.push({
+                        item_code: itemCode,
+                        quantity: quantity
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                alert("Please add at least one item");
+                return;
+            }
+            
+            // Add items to form data
+            var formData = new FormData(this);
+            items.forEach(function(item, index) {
+                formData.append(`items[${index}][item_code]`, item.item_code);
+                formData.append(`items[${index}][quantity]`, item.quantity);
+            });
+            
+            // Submit form
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.status === "success") {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message || "Error updating opening stock");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error updating opening stock: " + error);
+                }
+            });
+        });
+
+        // Delete Stock
+        $("#confirmDelete").on("click", function() {
+            var stockId = $(".delete-btn").data("stock-id");
+            $.ajax({
+                url: "{% url 'warehouse_opening_stock_delete' %}",
+                type: "POST",
+                data: {
+                    'stock_id': stockId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error deleting stock. Please try again.");
+                }
+            });
+            $("#delete_stock").modal("hide");
+        });
+
+        // Add New Opening Stock button click handler
+        $("[data-bs-target='#offcanvas_add']").on("click", function() {
+            // Clear items container
+            $("#items-tbody").empty();
+            
+            // Reset form
+            $("#addStockForm")[0].reset();
+        });
+    });
+</script>

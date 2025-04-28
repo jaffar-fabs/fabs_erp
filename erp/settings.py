@@ -104,7 +104,9 @@ TEMPLATES = [
                 'payroll.context_processors.get_camp',
                 'payroll.context_processors.get_customer',
                 'payroll.context_processors.get_uom',
-                'payroll.context_processors.get_pr_items'
+                'payroll.context_processors.get_pr_items',
+                'payroll.context_processors.get_item_categories',
+                'payroll.context_processors.get_item_sub_categories'
             ],
         },
     },

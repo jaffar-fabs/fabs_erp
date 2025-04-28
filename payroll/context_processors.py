@@ -320,3 +320,17 @@ def get_pr_items(request):
         'pr_items_data': pr_items_data
     }
 
+def get_item_categories(request):
+    comp_code = get_comp_code(request)
+    item_category_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type='ITEM_CATEGORY')
+    return {
+        'item_category_data': item_category_data
+    }
+
+def get_item_sub_categories(request):
+    comp_code = get_comp_code(request)
+    item_sub_category_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type='ITEM_SUB_CATEGORY')
+    return {
+        'item_sub_category_data': item_sub_category_data
+    }
+

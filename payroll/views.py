@@ -615,7 +615,10 @@ def index(request):
     set_comp_code(request)
     
     # Count records for each model
-    employee_count = Employee.objects.filter(comp_code=COMP_CODE).count()
+    total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
+    active_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count()
+    on_leave_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ON_LEAVE').count()
+    inactive_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='INACTIVE').count()
     project_count = projectMaster.objects.filter(comp_code=COMP_CODE).count()
     holiday_count = HolidayMaster.objects.filter(comp_code=COMP_CODE).count()
     seed_count = SeedModel.objects.filter(comp_code=COMP_CODE).count()
@@ -628,11 +631,14 @@ def index(request):
     # Prepare data for charts
     chart_data = {
         "labels": ["Employees", "Projects", "Holidays", "Seeds", "Paycycles", "Companies", "Grades", "Users", "Camps"],
-        "values": [employee_count, project_count, holiday_count, seed_count, paycycle_count, company_count, grade_count, user_count, camp_count],
+        "values": [total_employees, project_count, holiday_count, seed_count, paycycle_count, company_count, grade_count, user_count, camp_count],
     }
 
     context = {
-        'employee_count': employee_count,
+        'total_employees': total_employees,
+        'active_employees': active_employees,
+        'on_leave_employees': on_leave_employees,
+        'inactive_employees': inactive_employees,
         'project_count': project_count,
         'holiday_count': holiday_count,
         'seed_count': seed_count,
