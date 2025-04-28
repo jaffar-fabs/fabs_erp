@@ -334,3 +334,10 @@ def get_item_sub_categories(request):
         'item_sub_category_data': item_sub_category_data
     }
 
+def get_warehouse_types(request):
+    comp_code = get_comp_code(request)
+    warehouse_type_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type='WARE_TYPE')
+    return {
+        'warehouse_type_data': warehouse_type_data
+    }
+

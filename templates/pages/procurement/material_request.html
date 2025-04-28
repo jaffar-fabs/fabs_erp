@@ -128,8 +128,6 @@
                             <th>Description</th>
                             <th>Unit</th>
                             <th>Quantity</th>
-                            <th>Rate</th>
-                            <th>Amount</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -150,8 +148,6 @@
                             <th>Description</th>
                             <th>Unit</th>
                             <th>Quantity</th>
-                            <th>Rate</th>
-                            <th>Amount</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -167,22 +163,21 @@
             var itemHtml = `
                 <tr>
                     <td>
-                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                        <select class="form-select item-code-select" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                                <option value="{{ item.item_code }}" data-desc="{{ item.item_description }}" data-unit="{{ item.uom }}">{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" readonly>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" value="${item.item_unit || ''}" required>
+                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" readonly>
                     </td>
                     <td>
                         <input type="number" step="0.01" class="form-control" name="item_qnty_${item.id || Date.now()}" value="${item.item_qnty || ''}" required>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="item_rate_${item.id || Date.now()}" value="${item.item_rate || ''}" required>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="item_amnt_${item.id || Date.now()}" value="${item.item_amnt || ''}" readonly>
                     </td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-item">
@@ -196,26 +191,24 @@
 
         // Add Item Row for edit form
         function addItemRowEdit(item) {
-            console.log("Adding item row:", item);
             var itemHtml = `
                 <tr>
                     <td>
-                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                        <select class="form-select item-code-select" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                                <option value="{{ item.item_code }}" data-desc="{{ item.item_description }}" data-unit="{{ item.uom }}" ${item.item_code === item.item_code ? 'selected' : ''}>{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
+                        <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}" readonly>
                     </td>
                     <td>
-                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" value="${item.item_unit || ''}" required>
+                        <input type="text" class="form-control" name="item_unit_${item.id || Date.now()}" value="${item.item_unit || ''}" readonly>
                     </td>
                     <td>
                         <input type="number" step="0.01" class="form-control" name="item_qnty_${item.id || Date.now()}" value="${item.item_qnty || ''}" required>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="item_rate_${item.id || Date.now()}" value="${item.item_rate || ''}" required>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" class="form-control" name="item_amnt_${item.id || Date.now()}" value="${item.item_amnt || ''}" readonly>
                     </td>
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-item">
@@ -226,6 +219,17 @@
             `;
             $("#items-tbody-edit").append(itemHtml);
         }
+
+        // Handle item code selection
+        $(document).on('change', '.item-code-select', function() {
+            var row = $(this).closest('tr');
+            var selectedOption = $(this).find('option:selected');
+            var desc = selectedOption.data('desc');
+            var unit = selectedOption.data('unit');
+            
+            row.find('input[name^="item_desc_"]').val(desc);
+            row.find('input[name^="item_unit_"]').val(unit);
+        });
 
         // Initialize tables when document is ready
         $(document).ready(function() {
@@ -248,88 +252,6 @@
         // Remove Item
         $(document).on("click", ".remove-item", function() {
             $(this).closest("tr").remove();
-            calculateTotalAmount();
-        });
-
-        // Calculate Amount
-        $(document).on("input", "input[name^='item_qnty_'], input[name^='item_rate_']", function() {
-            var row = $(this).closest("tr");
-            var qty = parseFloat(row.find("input[name^='item_qnty_']").val()) || 0;
-            var rate = parseFloat(row.find("input[name^='item_rate_']").val()) || 0;
-            
-            // Prevent negative values
-            if (qty < 0) {
-                row.find("input[name^='item_qnty_']").val(0);
-                qty = 0;
-            }
-            if (rate < 0) {
-                row.find("input[name^='item_rate_']").val(0);
-                rate = 0;
-            }
-            
-            // Calculate amount
-            var amount = qty * rate;
-            
-            // Update amount field with 2 decimal places
-            row.find("input[name^='item_amnt_']").val(amount.toFixed(2));
-            
-            // Recalculate total amount
-            calculateTotalAmount();
-        });
-
-        // Calculate Total Amount
-        function calculateTotalAmount() {
-            var totalAmount = 0;
-            $("input[name^='item_amnt_']").each(function() {
-                totalAmount += parseFloat($(this).val()) || 0;
-            });
-            
-            // Update total amount field
-            $("input[name='totl_amnt']").val(totalAmount.toFixed(2));
-            
-            // Calculate discount amount
-            var discAmnt = parseFloat($("input[name='disc_amnt']").val()) || 0;
-            if (discAmnt < 0) {
-                $("input[name='disc_amnt']").val(0);
-                discAmnt = 0;
-            }
-            
-            // Calculate VAT amount
-            var vatPrct = parseFloat($("input[name='vat_perct']").val()) || 0;
-            if (vatPrct < 0) {
-                $("input[name='vat_perct']").val(0);
-                vatPrct = 0;
-            }
-            if (vatPrct > 100) {
-                $("input[name='vat_perct']").val(100);
-                vatPrct = 100;
-            }
-            var vatAmnt = (totalAmount - discAmnt) * (vatPrct / 100);
-            $("input[name='vat_amnt']").val(vatAmnt.toFixed(2));
-            
-            // Calculate grand total
-            var grandTotal = totalAmount - discAmnt + vatAmnt;
-            $("input[name='gtot_amnt']").val(grandTotal.toFixed(2));
-        }
-
-        // Handle discount amount change
-        $(document).on("input", "input[name='disc_amnt']", function() {
-            var value = parseFloat($(this).val()) || 0;
-            if (value < 0) {
-                $(this).val(0);
-            }
-            calculateTotalAmount();
-        });
-
-        // Handle VAT percentage change
-        $(document).on("input", "input[name='vat_perct']", function() {
-            var value = parseFloat($(this).val()) || 0;
-            if (value < 0) {
-                $(this).val(0);
-            } else if (value > 100) {
-                $(this).val(100);
-            }
-            calculateTotalAmount();
         });
 
         // Form submission for add
@@ -445,21 +367,10 @@
                     $("#mr_id").val(header.id || '');
                     $("#ordr_date").val(header.ordr_date || '');
                     $("#ordr_numb").val(header.ordr_numb || '');
-                    $("#cust_code").val(header.cust_code || '');
+                    $("#job_code").val(header.job_code || '').change();
                     $("#ordr_type").val(header.ordr_type || '');
                     $("#quot_numb").val(header.quot_numb || '');
                     $("#quot_date").val(header.quot_date || '');
-                    $("#lpo_numb").val(header.lpo_numb || '');
-                    $("#lpo_date").val(header.lpo_date || '');
-                    $("#services").val(header.services || '');
-                    $("#companys").val(header.companys || '');
-                    $("#employee").val(header.employee || '');
-                    $("#paym_mode").val(header.paym_mode || '');
-                    $("#totl_amnt").val(header.totl_amnt || '0');
-                    $("#disc_amnt").val(header.disc_amnt || '0');
-                    $("#vat_perct").val(header.vat_perct || '0');
-                    $("#vat_amnt").val(header.vat_amnt || '0');
-                    $("#gtot_amnt").val(header.gtot_amnt || '0');
 
                     // Add items
                     console.log("Details data:", response.details);
@@ -472,9 +383,7 @@
                                     item_code: detail.item_code || '',
                                     item_desc: detail.item_desc || '',
                                     item_unit: detail.item_unit || '',
-                                    item_qnty: detail.item_qnty || 0,
-                                    item_rate: detail.item_rate || 0,
-                                    item_amnt: detail.item_amnt || 0
+                                    item_qnty: detail.item_qnty || 0
                                 };
                                 addItemRowEdit(item);
                             }
@@ -482,9 +391,6 @@
                     } else {
                         console.log("No details found in response");
                     }
-
-                    // Recalculate totals
-                    calculateTotalAmount();
                 },
                 error: function (xhr, status, error) {
                     console.error("Error details:", {

@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
 from .models import *
+from payroll.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.db import transaction, connection
 from datetime import datetime
@@ -277,20 +278,27 @@ def warehouse_master(request):
 
 @csrf_exempt
 def warehouse_master_add(request):
+    set_comp_code(request)
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                # Generate warehouse code using fn_get_seed_no
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'WARE'])
+                    result = cursor.fetchone()
+                    ware_code = result[0] if result else None
+
                 # Create new warehouse
                 warehouse = WarehouseMaster(
-                    comp_code=request.session.get('comp_code'),
-                    ware_code=request.POST.get('ware_code'),
+                    comp_code=COMP_CODE,
+                    ware_code=ware_code,
                     ware_name=request.POST.get('ware_name'),
                     ware_type=request.POST.get('ware_type'),
                     stat_code=request.POST.get('stat_code'),
                     created_by=request.user.username
                 )
                 warehouse.save()
-                return JsonResponse({'status': 'success', 'message': 'Warehouse created successfully'})
+                return redirect('warehouse_master')
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -298,6 +306,7 @@ def warehouse_master_add(request):
 
 @csrf_exempt
 def warehouse_master_edit(request):
+    set_comp_code(request)
     if request.method == 'GET':
         warehouse_id = request.GET.get('warehouse_id')
         try:
@@ -327,7 +336,7 @@ def warehouse_master_edit(request):
                 warehouse.updated_by = request.user.username
                 warehouse.save()
                 
-                return JsonResponse({'status': 'success', 'message': 'Warehouse updated successfully'})
+                return redirect('warehouse_master')
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     
@@ -335,6 +344,7 @@ def warehouse_master_edit(request):
 
 @csrf_exempt
 def warehouse_master_delete(request, warehouse_id):
+    set_comp_code(request)
     if request.method == 'DELETE':
         try:
             with transaction.atomic():
@@ -790,294 +800,221 @@ def get_po_items(request):
 
 # Material Request Views
 def material_request(request):
+    set_comp_code(request)
     # Get search keyword
     keyword = request.GET.get('keyword', '')
     
-    # Get all MRs or filter by keyword
+    # Get all material requests
+    mrs = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE).order_by('-ordr_date')
+    pr_data = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE, ordr_type='PR', quot_stat='ACT').order_by('-ordr_date')
+    items = ItemMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
+    job_codes = projectMaster.objects.filter(comp_code=COMP_CODE).values('prj_code', 'prj_name').distinct()
+    
+    # Apply search filter if keyword exists
     if keyword:
-        mrs = MaterialRequestHeader.objects.filter(
+        mrs = mrs.filter(
             Q(ordr_numb__icontains=keyword) |
-            Q(cust_code__icontains=keyword) |
-            Q(ordr_type__icontains=keyword)
-        ).order_by('-ordr_date')
-    else:
-        mrs = MaterialRequestHeader.objects.all().order_by('-ordr_date')
+            Q(job_code__icontains=keyword) |
+            Q(quot_numb__icontains=keyword)
+        )
     
     # Pagination
-    paginator = Paginator(mrs, 10)  # Show 10 MRs per page
+    paginator = Paginator(mrs, 10)  # Show 10 items per page
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    mrs = paginator.get_page(page_number)
     
-    # Add pagination info to the page object
-    page_obj.start_index = (page_obj.number - 1) * paginator.per_page + 1
-    page_obj.end_index = min(page_obj.start_index + paginator.per_page - 1, paginator.count)
+    # Get current URL for pagination
+    current_url = request.path + '?'
+    if keyword:
+        current_url += f'keyword={keyword}&'
     
     context = {
-        'mrs': page_obj,
+        'mrs': mrs,
         'keyword': keyword,
-        'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?'
+        'current_url': current_url,
+        'pr_data': pr_data,
+        'items': items,
+        'job_codes': job_codes
     }
     
     return render(request, 'pages/procurement/material_request.html', context)
 
+@csrf_exempt
 def material_request_add(request):
     set_comp_code(request)
     if request.method == 'POST':
         try:
-            with transaction.atomic():
-                # Generate unique number
-                uniq_numb = f"MR{datetime.now().strftime('%Y%m%d%H%M%S')}"
-                
-                # Calculate totals
-                totl_amnt = Decimal(request.POST.get('totl_amnt') or 0)
-                disc_amnt = Decimal(request.POST.get('disc_amnt') or 0)
-                vat_perct = Decimal(request.POST.get('vat_perct') or 0)
-                vat_amnt = (totl_amnt - disc_amnt) * (vat_perct / 100)
-                gtot_amnt = totl_amnt - disc_amnt + vat_amnt
-                
-                # Create MR header
-                mr_header = MaterialRequestHeader(
-                    uniq_numb=uniq_numb,
-                    comp_code=COMP_CODE,
-                    ordr_type=request.POST.get('ordr_type'),
-                    ordr_date=datetime.strptime(request.POST.get('ordr_date'), '%Y-%m-%d').date(),
-                    ordr_numb=request.POST.get('ordr_numb'),
-                    cust_code=request.POST.get('cust_code'),
-                    quot_numb=request.POST.get('quot_numb'),
-                    quot_date=datetime.strptime(request.POST.get('quot_date'), '%Y-%m-%d').date() if request.POST.get('quot_date') else None,
-                    quot_type=request.POST.get('quot_type'),
-                    ordr_disc=request.POST.get('ordr_disc') or 0,
-                    lpo_numb=request.POST.get('lpo_numb'),
-                    lpo_date=datetime.strptime(request.POST.get('lpo_date'), '%Y-%m-%d').date() if request.POST.get('lpo_date') else None,
-                    services=request.POST.get('services'),
-                    companys=request.POST.get('companys'),
-                    employee=request.POST.get('employee'),
-                    paym_mode=request.POST.get('paym_mode'),
-                    totl_amnt=totl_amnt,
-                    disc_amnt=disc_amnt,
-                    vat_perct=vat_perct,
-                    vat_amnt=vat_amnt,
-                    gtot_amnt=gtot_amnt,
+            ordr_type = request.POST.get('ordr_type')
+            ordr_date = request.POST.get('ordr_date')
+            ordr_numb = request.POST.get('ordr_numb')
+            job_code = request.POST.get('job_code')
+            quot_numb = request.POST.get('quot_numb')
+            quot_date = request.POST.get('quot_date')
+
+            mr_header = MaterialRequestHeader.objects.create(
+                ordr_type=ordr_type,
+                ordr_date=ordr_date,
+                ordr_numb=ordr_numb,
+                job_code=job_code,
+                quot_numb=quot_numb,
+                quot_date=quot_date or None,
+                created_by=request.user.username,
+                comp_code=COMP_CODE
+            )
+
+            items = request.POST.getlist('items[]')
+            for item_id in items:
+                item_code = request.POST.get(f'item_code_{item_id}')
+                item_desc = request.POST.get(f'item_desc_{item_id}')
+                item_unit = request.POST.get(f'item_unit_{item_id}')
+                item_qnty = request.POST.get(f'item_qnty_{item_id}')
+
+                MaterialRequestDetail.objects.create(
+                    uniq_numb=mr_header.uniq_numb,
+                    comp_code=mr_header.comp_code,
+                    ordr_type=mr_header.ordr_type,
+                    ordr_date=mr_header.ordr_date,
+                    ordr_numb=mr_header.ordr_numb,
+                    serl_numb=len(items),
+                    item_code=item_code,
+                    item_desc=item_desc,
+                    item_unit=item_unit,
+                    item_qnty=item_qnty,
                     created_by=request.user.username
                 )
-                mr_header.save()
 
-                # Create MR details
-                items = request.POST.getlist('items[]')
-                for i, item_id in enumerate(items, 1):
-                    # Get item details from form
-                    item_code = request.POST.get(f'item_code_{item_id}')
-                    item_desc = request.POST.get(f'item_desc_{item_id}')
-                    item_unit = request.POST.get(f'item_unit_{item_id}')
-                    item_qnty = Decimal(request.POST.get(f'item_qnty_{item_id}') or 0)
-                    item_rate = Decimal(request.POST.get(f'item_rate_{item_id}') or 0)
-                    item_amnt = Decimal(request.POST.get(f'item_amnt_{item_id}') or 0)
-
-                    if item_qnty <= 0 or item_rate <= 0:
-                        continue  # Skip items with zero or negative values
-
-                    # Create MR detail
-                    mr_detail = MaterialRequestDetail(
-                        uniq_numb=uniq_numb,
-                        comp_code=COMP_CODE,
-                        ordr_type=mr_header.ordr_type,
-                        ordr_date=mr_header.ordr_date,
-                        ordr_numb=mr_header.ordr_numb,
-                        serl_numb=i,
-                        item_code=item_code,
-                        item_desc=item_desc,
-                        item_unit=item_unit,
-                        item_qnty=item_qnty,
-                        item_rate=item_rate,
-                        item_amnt=item_amnt,
-                        created_by=request.user.username
-                    )
-                    mr_detail.save()
-
-            return JsonResponse({'status': 'success', 'message': 'Material Request created successfully'})
+            return JsonResponse({'status': 'success', 'message': 'Material request added successfully'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
-    
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+    return JsonResponse({'status': 'error', 'message': 'GET not allowed'})
 
 @csrf_exempt
 def material_request_edit(request):
-    if request.method == 'GET':
-        mr_id = request.GET.get('mr_id')
+    if request.method == 'POST':
         try:
-            mr_header = get_object_or_404(MaterialRequestHeader, id=mr_id)
-            mr_details = MaterialRequestDetail.objects.filter(
+            mr_id = request.POST.get('mr_id')
+            mr_header = MaterialRequestHeader.objects.get(id=mr_id)
+            
+            # Update header
+            mr_header.ordr_type = request.POST.get('ordr_type')
+            mr_header.ordr_date = request.POST.get('ordr_date')
+            mr_header.ordr_numb = request.POST.get('ordr_numb')
+            mr_header.job_code = request.POST.get('job_code')
+            mr_header.quot_numb = request.POST.get('quot_numb')
+            mr_header.quot_date = request.POST.get('quot_date') or None
+            mr_header.updated_by = request.user.username
+            mr_header.updated_date = datetime.now()
+            mr_header.save()
+            
+            # Delete existing details
+            MaterialRequestDetail.objects.filter(
                 uniq_numb=mr_header.uniq_numb,
                 comp_code=mr_header.comp_code,
                 ordr_type=mr_header.ordr_type,
                 ordr_date=mr_header.ordr_date,
                 ordr_numb=mr_header.ordr_numb
-            ).order_by('serl_numb')
+            ).delete()
             
-            # Debug prints
-            print("Header:", mr_header.__dict__)
-            print("Details:", [detail.__dict__ for detail in mr_details])
-            
-            # Prepare header data
-            header_data = {
-                'id': mr_header.id,
-                'ordr_date': mr_header.ordr_date.strftime('%Y-%m-%d'),
-                'ordr_numb': mr_header.ordr_numb,
-                'cust_code': mr_header.cust_code,
-                'ordr_type': mr_header.ordr_type,
-                'quot_numb': mr_header.quot_numb,
-                'quot_date': mr_header.quot_date.strftime('%Y-%m-%d') if mr_header.quot_date else None,
-                'quot_type': mr_header.quot_type,
-                'ordr_disc': float(mr_header.ordr_disc),
-                'lpo_numb': mr_header.lpo_numb,
-                'lpo_date': mr_header.lpo_date.strftime('%Y-%m-%d') if mr_header.lpo_date else None,
-                'services': mr_header.services,
-                'companys': mr_header.companys,
-                'employee': mr_header.employee,
-                'paym_mode': mr_header.paym_mode,
-                'quot_stat': mr_header.quot_stat,
-                'totl_amnt': float(mr_header.totl_amnt),
-                'disc_amnt': float(mr_header.disc_amnt),
-                'vat_perct': float(mr_header.vat_perct),
-                'vat_amnt': float(mr_header.vat_amnt),
-                'gtot_amnt': float(mr_header.gtot_amnt)
-            }
-            
-            # Prepare details data
-            details_data = []
-            for detail in mr_details:
-                detail_data = {
-                    'id': detail.id,
-                    'item_code': detail.item_code,
-                    'item_desc': detail.item_desc,
-                    'item_unit': detail.item_unit,
-                    'item_qnty': float(detail.item_qnty),
-                    'item_rate': float(detail.item_rate),
-                    'item_amnt': float(detail.item_amnt)
-                }
-                details_data.append(detail_data)
-            
-            response_data = {
-                'header': header_data,
-                'details': details_data
-            }
-            
-            # Debug print
-            print("Response data:", response_data)
-            
-            return JsonResponse(response_data)
-        except Exception as e:
-            print("Error:", str(e))
-            return JsonResponse({'status': 'error', 'message': str(e)})
-    
-    elif request.method == 'POST':
-        try:
-            with transaction.atomic():
-                mr_id = request.POST.get('mr_id')
-                mr_header = get_object_or_404(MaterialRequestHeader, id=mr_id)
+            # Create new details
+            items = request.POST.getlist('items[]')
+            for item_id in items:
+                item_code = request.POST.get(f'item_code_{item_id}')
+                item_desc = request.POST.get(f'item_desc_{item_id}')
+                item_unit = request.POST.get(f'item_unit_{item_id}')
+                item_qnty = request.POST.get(f'item_qnty_{item_id}')
                 
-                # Calculate totals
-                totl_amnt = Decimal(request.POST.get('totl_amnt') or 0)
-                disc_amnt = Decimal(request.POST.get('disc_amnt') or 0)
-                vat_perct = Decimal(request.POST.get('vat_perct') or 0)
-                vat_amnt = (totl_amnt - disc_amnt) * (vat_perct / 100)
-                gtot_amnt = totl_amnt - disc_amnt + vat_amnt
-                
-                # Update MR header
-                mr_header.ordr_date = datetime.strptime(request.POST.get('ordr_date'), '%Y-%m-%d').date()
-                mr_header.ordr_numb = request.POST.get('ordr_numb')
-                mr_header.cust_code = request.POST.get('cust_code')
-                mr_header.ordr_type = request.POST.get('ordr_type')
-                mr_header.quot_numb = request.POST.get('quot_numb')
-                mr_header.quot_date = datetime.strptime(request.POST.get('quot_date'), '%Y-%m-%d').date() if request.POST.get('quot_date') else None
-                mr_header.quot_type = request.POST.get('quot_type')
-                mr_header.ordr_disc = request.POST.get('ordr_disc') or 0
-                mr_header.lpo_numb = request.POST.get('lpo_numb')
-                mr_header.lpo_date = datetime.strptime(request.POST.get('lpo_date'), '%Y-%m-%d').date() if request.POST.get('lpo_date') else None
-                mr_header.services = request.POST.get('services')
-                mr_header.companys = request.POST.get('companys')
-                mr_header.employee = request.POST.get('employee')
-                mr_header.paym_mode = request.POST.get('paym_mode')
-                mr_header.totl_amnt = totl_amnt
-                mr_header.disc_amnt = disc_amnt
-                mr_header.vat_perct = vat_perct
-                mr_header.vat_amnt = vat_amnt
-                mr_header.gtot_amnt = gtot_amnt
-                mr_header.updated_by = request.user.username
-                mr_header.updated_date = datetime.now()
-                mr_header.save()
-
-                # Delete existing details
-                MaterialRequestDetail.objects.filter(
+                MaterialRequestDetail.objects.create(
                     uniq_numb=mr_header.uniq_numb,
                     comp_code=mr_header.comp_code,
                     ordr_type=mr_header.ordr_type,
                     ordr_date=mr_header.ordr_date,
-                    ordr_numb=mr_header.ordr_numb
-                ).delete()
-
-                # Create new details
-                items = request.POST.getlist('items[]')
-                for i, item_id in enumerate(items, 1):
-                    # Get item details from form
-                    item_code = request.POST.get(f'item_code_{item_id}')
-                    item_desc = request.POST.get(f'item_desc_{item_id}')
-                    item_unit = request.POST.get(f'item_unit_{item_id}')
-                    item_qnty = Decimal(request.POST.get(f'item_qnty_{item_id}') or 0)
-                    item_rate = Decimal(request.POST.get(f'item_rate_{item_id}') or 0)
-                    item_amnt = Decimal(request.POST.get(f'item_amnt_{item_id}') or 0)
-
-                    if item_qnty <= 0 or item_rate <= 0:
-                        continue  # Skip items with zero or negative values
-
-                    # Create MR detail
-                    mr_detail = MaterialRequestDetail(
-                        uniq_numb=mr_header.uniq_numb,
-                        comp_code=COMP_CODE,
-                        ordr_type=mr_header.ordr_type,
-                        ordr_date=mr_header.ordr_date,
-                        ordr_numb=mr_header.ordr_numb,
-                        serl_numb=i,
-                        item_code=item_code,
-                        item_desc=item_desc,
-                        item_unit=item_unit,
-                        item_qnty=item_qnty,
-                        item_rate=item_rate,
-                        item_amnt=item_amnt,
-                        created_by=request.user.username
-                    )
-                    mr_detail.save()
-
-            return JsonResponse({'status': 'success', 'message': 'Material Request updated successfully'})
+                    ordr_numb=mr_header.ordr_numb,
+                    serl_numb=len(items),
+                    item_code=item_code,
+                    item_desc=item_desc,
+                    item_unit=item_unit,
+                    item_qnty=item_qnty,
+                    created_by=request.user.username
+                )
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Material request updated successfully'
+            })
+            
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
     
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    # GET request - get MR details
+    mr_id = request.GET.get('mr_id')
+    try:
+        mr_header = MaterialRequestHeader.objects.get(id=mr_id)
+        mr_details = MaterialRequestDetail.objects.filter(
+            uniq_numb=mr_header.uniq_numb,
+            comp_code=mr_header.comp_code,
+            ordr_type=mr_header.ordr_type,
+            ordr_date=mr_header.ordr_date,
+            ordr_numb=mr_header.ordr_numb
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'header': {
+                'id': mr_header.id,
+                'ordr_type': mr_header.ordr_type,
+                'ordr_date': mr_header.ordr_date.strftime('%Y-%m-%d'),
+                'ordr_numb': mr_header.ordr_numb,
+                'job_code': mr_header.job_code,
+                'quot_numb': mr_header.quot_numb,
+                'quot_date': mr_header.quot_date.strftime('%Y-%m-%d') if mr_header.quot_date else None
+            },
+            'details': list(mr_details.values())
+        })
+        
+    except MaterialRequestHeader.DoesNotExist:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Material request not found'
+        })
 
+@csrf_exempt
 def material_request_delete(request):
     if request.method == 'POST':
         try:
-            with transaction.atomic():
-                mr_id = request.POST.get('mr_id')
-                mr_header = get_object_or_404(MaterialRequestHeader, id=mr_id)
-                
-                # Delete details first
-                MaterialRequestDetail.objects.filter(
-                    uniq_numb=mr_header.uniq_numb,
-                    comp_code=mr_header.comp_code,
-                    ordr_type=mr_header.ordr_type,
-                    ordr_date=mr_header.ordr_date,
-                    ordr_numb=mr_header.ordr_numb
-                ).delete()
-                
-                # Delete header
-                mr_header.delete()
-                
-            return JsonResponse({'status': 'success', 'message': 'Material Request deleted successfully'})
+            mr_id = request.POST.get('mr_id')
+            mr_header = MaterialRequestHeader.objects.get(id=mr_id)
+            
+            # Delete details first
+            MaterialRequestDetail.objects.filter(
+                uniq_numb=mr_header.uniq_numb,
+                comp_code=mr_header.comp_code,
+                ordr_type=mr_header.ordr_type,
+                ordr_date=mr_header.ordr_date,
+                ordr_numb=mr_header.ordr_numb
+            ).delete()
+            
+            # Delete header
+            mr_header.delete()
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Material request deleted successfully'
+            })
+            
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
     
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    })
 
 # Warehouse Opening Stock Views
 def warehouse_opening_stock(request):

@@ -10,8 +10,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Warehouse Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="ware_code" required>
+                        <label>Warehouse Code</label>
+                        <input type="text" class="form-control" name="ware_code" readonly>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -23,7 +23,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Warehouse Type</label>
-                        <input type="text" class="form-control" name="ware_type">
+                        <select class="form-select" name="ware_type">
+                            <option value="">Select Warehouse Type</option>
+                            {% for type in warehouse_type_data %}
+                                <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -57,8 +62,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Warehouse Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="ware_code" name="ware_code" required>
+                        <label>Warehouse Code</label>
+                        <input type="text" class="form-control" id="ware_code" name="ware_code" readonly>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -70,7 +75,12 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label>Warehouse Type</label>
-                        <input type="text" class="form-control" id="ware_type" name="ware_type">
+                        <select class="form-select" id="ware_type" name="ware_type">
+                            <option value="">Select Warehouse Type</option>
+                            {% for type in warehouse_type_data %}
+                                <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">

@@ -8,25 +8,7 @@
         <form id="addMRForm" method="post" action="{% url 'material_request_add' %}">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Request Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" name="ordr_date" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Request Number <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="ordr_numb" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Customer Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" name="cust_code" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>Request Type <span class="text-danger">*</span></label>
                         <select class="form-select" name="ordr_type" required>
@@ -35,62 +17,47 @@
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Quotation Number</label>
-                        <input type="text" class="form-control" name="quot_numb">
+                        <label>Request Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="ordr_date" required>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Quotation Date</label>
-                        <input type="date" class="form-control" name="quot_date">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>LPO Number</label>
-                        <input type="text" class="form-control" name="lpo_numb">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>LPO Date</label>
-                        <input type="date" class="form-control" name="lpo_date">
+                        <label>Request Number <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="ordr_numb" required>
                     </div>
                 </div>
             </div>
 
             <div class="row mt-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Services</label>
-                        <input type="text" class="form-control" name="services">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Company</label>
-                        <input type="text" class="form-control" name="companys">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Employee</label>
-                        <input type="text" class="form-control" name="employee">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Payment Mode</label>
-                        <select class="form-select" name="paym_mode">
-                            <option value="CASH">Cash</option>
-                            <option value="CREDIT">Credit</option>
-                            <option value="BANK">Bank</option>
+                        <label>Job Code <span class="text-danger">*</span></label>
+                        <select class="form-select" name="job_code" required>
+                            <option value="">Select Job Code</option>
+                            {% for job in job_codes %}
+                                <option value="{{ job.prj_code }}">{{ job.prj_code }} - {{ job.prj_name }}</option>
+                            {% endfor %}
                         </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>PR Number</label>
+                        <select class="form-select" name="quot_numb">
+                            <option value="">Select PR Number</option>
+                            {% for pr in pr_data %}
+                                <option value="{{ pr.ordr_numb }}">{{ pr.ordr_numb }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Ref Date</label>
+                        <input type="date" class="form-control" name="quot_date">
                     </div>
                 </div>
             </div>
@@ -102,42 +69,6 @@
                     <button type="button" class="btn btn-secondary mt-2" id="add-item-add">
                         <i class="ti ti-plus me-2"></i>Add Item
                     </button>
-                </div>
-            </div>
-
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Total Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="totl_amnt" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Discount Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="disc_amnt">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>VAT %</label>
-                        <input type="number" step="0.01" class="form-control" name="vat_perct">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>VAT Amount</label>
-                        <input type="number" step="0.01" class="form-control" name="vat_amnt" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Grand Total</label>
-                        <input type="number" step="0.01" class="form-control" name="gtot_amnt" readonly>
-                    </div>
                 </div>
             </div>
 
@@ -160,25 +91,7 @@
             {% csrf_token %}
             <input type="hidden" id="mr_id" name="mr_id">
             <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Request Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="ordr_date" name="ordr_date" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Request Number <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="ordr_numb" name="ordr_numb" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Customer Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="cust_code" name="cust_code" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>Request Type <span class="text-danger">*</span></label>
                         <select class="form-select" id="ordr_type" name="ordr_type" required>
@@ -187,62 +100,47 @@
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Quotation Number</label>
-                        <input type="text" class="form-control" id="quot_numb" name="quot_numb">
+                        <label>Request Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="ordr_date" name="ordr_date" required>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Quotation Date</label>
-                        <input type="date" class="form-control" id="quot_date" name="quot_date">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>LPO Number</label>
-                        <input type="text" class="form-control" id="lpo_numb" name="lpo_numb">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>LPO Date</label>
-                        <input type="date" class="form-control" id="lpo_date" name="lpo_date">
+                        <label>Request Number <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="ordr_numb" name="ordr_numb" required>
                     </div>
                 </div>
             </div>
 
             <div class="row mt-3">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group">
-                        <label>Services</label>
-                        <input type="text" class="form-control" id="services" name="services">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Company</label>
-                        <input type="text" class="form-control" id="companys" name="companys">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Employee</label>
-                        <input type="text" class="form-control" id="employee" name="employee">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Payment Mode</label>
-                        <select class="form-select" id="paym_mode" name="paym_mode">
-                            <option value="CASH">Cash</option>
-                            <option value="CREDIT">Credit</option>
-                            <option value="BANK">Bank</option>
+                        <label>Job Code <span class="text-danger">*</span></label>
+                        <select class="form-select" id="job_code" name="job_code" required>
+                            <option value="">Select Job Code</option>
+                            {% for job in job_codes %}
+                                <option value="{{ job.prj_code }}">{{ job.prj_code }} - {{ job.prj_name }}</option>
+                            {% endfor %}
                         </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>PR Number</label>
+                        <select class="form-select" id="quot_numb" name="quot_numb">
+                            <option value="">Select PR Number</option>
+                            {% for pr in pr_data %}
+                                <option value="{{ pr.ordr_numb }}">{{ pr.ordr_numb }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Ref Date</label>
+                        <input type="date" class="form-control" id="quot_date" name="quot_date">
                     </div>
                 </div>
             </div>
@@ -254,42 +152,6 @@
                     <button type="button" class="btn btn-secondary mt-2" id="add-item-edit">
                         <i class="ti ti-plus me-2"></i>Add Item
                     </button>
-                </div>
-            </div>
-
-            <div class="row mt-4">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Total Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="totl_amnt" name="totl_amnt" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Discount Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="disc_amnt" name="disc_amnt">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>VAT %</label>
-                        <input type="number" step="0.01" class="form-control" id="vat_perct" name="vat_perct">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>VAT Amount</label>
-                        <input type="number" step="0.01" class="form-control" id="vat_amnt" name="vat_amnt" readonly>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Grand Total</label>
-                        <input type="number" step="0.01" class="form-control" id="gtot_amnt" name="gtot_amnt" readonly>
-                    </div>
                 </div>
             </div>
 

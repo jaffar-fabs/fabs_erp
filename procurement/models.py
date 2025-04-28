@@ -179,7 +179,7 @@ class MaterialRequestHeader(models.Model):
     ordr_type = models.CharField(max_length=50)
     ordr_date = models.DateField()
     ordr_numb = models.CharField(max_length=30)
-    cust_code = models.CharField(max_length=40)
+    cust_code = models.CharField(max_length=40, null=True, blank=True)
     quot_stat = models.CharField(max_length=20, default='ACT')
     quot_numb = models.CharField(max_length=50, null=True, blank=True)
     quot_date = models.DateField(null=True, blank=True)
@@ -202,10 +202,8 @@ class MaterialRequestHeader(models.Model):
     updated_date = models.DateTimeField(null=True, blank=True)
     old_flags = models.IntegerField(default=0)
     ordr_rvsn = models.IntegerField(default=0)
+    job_code = models.CharField(max_length=50, null=True, blank=True)
 
-    class Meta:
-        db_table = 'procurement_materialrequestheader'
-        unique_together = ('uniq_numb', 'comp_code', 'ordr_type', 'ordr_date', 'ordr_numb')
 
 class MaterialRequestDetail(models.Model):
     id = models.AutoField(primary_key=True)
@@ -218,8 +216,8 @@ class MaterialRequestDetail(models.Model):
     item_code = models.CharField(max_length=20)
     item_desc = models.CharField(max_length=500)
     item_unit = models.CharField(max_length=30)
-    item_qnty = models.DecimalField(max_digits=18, decimal_places=2)
-    item_rate = models.DecimalField(max_digits=18, decimal_places=2)
+    item_qnty = models.DecimalField(max_digits=18, decimal_places=2, default=0)
+    item_rate = models.DecimalField(max_digits=18, decimal_places=2, default=0)
     item_amnt = models.DecimalField(max_digits=18, decimal_places=2, default=0)
     mr_qnty = models.DecimalField(max_digits=18, decimal_places=2, default=0)
     pr_qnty = models.DecimalField(max_digits=18, decimal_places=2, default=0)
@@ -233,10 +231,6 @@ class MaterialRequestDetail(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_by = models.CharField(max_length=50, null=True, blank=True)
     updated_date = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'procurement_materialrequestdetail'
-        unique_together = ('uniq_numb', 'comp_code', 'ordr_type', 'ordr_date', 'ordr_numb', 'serl_numb')
 
 class WarehouseHeader(models.Model):
     id_number = models.AutoField(primary_key=True)
