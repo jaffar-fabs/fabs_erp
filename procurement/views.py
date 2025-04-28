@@ -1548,3 +1548,14 @@ def get_warehouse_stock(request):
         'status': 'error',
         'message': 'Invalid request method'
     })
+
+@csrf_exempt
+def check_uom_exists(request):
+    if request.method == 'GET':
+        uom = request.GET.get('uom')
+        try:
+            exists = UOMMaster.objects.filter(uom=uom).exists()
+            return JsonResponse({'exists': exists})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

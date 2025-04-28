@@ -190,6 +190,7 @@ urlpatterns = [
     path('procurement/uom_master_add/', procurement.uom_master_add, name='uom_master_add'),
     path('procurement/uom_master_edit/', procurement.uom_master_edit, name='uom_master_edit'),
     path('procurement/uom_master_delete/', procurement.uom_master_delete, name='uom_master_delete'),
+    path('check_uom_exists/', procurement.check_uom_exists, name='check_uom_exists'),
 
     path('procurement/warehouse_master/', procurement.warehouse_master, name='warehouse_master'),
     path('procurement/warehouse_master_add/', procurement.warehouse_master_add, name='warehouse_master_add'),
