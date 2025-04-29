@@ -28,6 +28,7 @@ from django.db import connection
 import urllib.parse
 from datetime import date
 import urllib.request
+from io import BytesIO
 
 
 PAGINATION_SIZE = 6
@@ -1030,6 +1031,114 @@ class Paycycle(View):
         return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
 def project(request):
+    if request.method == 'POST':
+        try:
+            # Check if it's an Excel upload
+            if 'excel_file' in request.FILES:
+                excel_file = request.FILES['excel_file']
+                if not excel_file.name.endswith(('.xlsx', '.xls')):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Please upload a valid Excel file (.xlsx or .xls)'
+                    })
+
+                # Read Excel file
+                df = pd.read_excel(excel_file)
+                
+                # Validate required columns
+                required_columns = [
+                    'Project Code*', 'Project Name*', 'Project Description*',
+                    'Project Type*', 'Project Value*', 'Start Date* (YYYY-MM-DD)',
+                    'End Date* (YYYY-MM-DD)'
+                ]
+                missing_columns = [col for col in required_columns if col not in df.columns]
+                if missing_columns:
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Missing required columns: {", ".join(missing_columns)}'
+                    })
+
+                # Process each row
+                success_count = 0
+                error_rows = []
+                
+                for index, row in df.iterrows():
+                    try:
+                        # Validate required fields
+                        if any(pd.isna(row[col]) for col in required_columns):
+                            error_rows.append(f"Row {index + 2}: Missing required fields")
+                            continue
+
+                        # Validate dates
+                        try:
+                            start_date = pd.to_datetime(row['Start Date* (YYYY-MM-DD)']).date()
+                            end_date = pd.to_datetime(row['End Date* (YYYY-MM-DD)']).date()
+                        except:
+                            error_rows.append(f"Row {index + 2}: Invalid date format")
+                            continue
+
+                        # Validate project code
+                        if projectMaster.objects.filter(prj_code=row['Project Code*']).exists():
+                            error_rows.append(f"Row {index + 2}: Project code already exists")
+                            continue
+
+                        # Create project
+                        project = projectMaster(
+                            comp_code=request.session.get('comp_code'),
+                            prj_code=row['Project Code*'],
+                            prj_name=row['Project Name*'],
+                            project_description=row['Project Description*'],
+                            project_type=row['Project Type*'],
+                            project_value=row['Project Value*'],
+                            timeline_from=start_date,
+                            timeline_to=end_date,
+                            prj_city=row.get('Project City', ''),
+                            service_type=row.get('Service Type', ''),
+                            service_category=row.get('Service Category', ''),
+                            pro_sub_location=row.get('Project Sub Location', ''),
+                            customer=row.get('Customer', ''),
+                            agreement_ref=row.get('Agreement Ref', ''),
+                            op_head=row.get('OP Head', ''),
+                            manager=row.get('Manager', ''),
+                            commercial_manager=row.get('Commercial Manager', ''),
+                            procurement_user=row.get('Procurement User', ''),
+                            indent_user=row.get('Indent User', ''),
+                            final_contract_value=row.get('Final Contract Value', 0),
+                            project_status=row.get('Project Status', ''),
+                            created_by=1
+                        )
+                        project.save()
+                        success_count += 1
+
+                    except Exception as e:
+                        error_rows.append(f"Row {index + 2}: {str(e)}")
+
+                # Prepare response
+                if error_rows:
+                    return JsonResponse({
+                        'status': 'partial',
+                        'message': f'Successfully imported {success_count} projects. Errors in {len(error_rows)} rows.',
+                        'errors': error_rows
+                    })
+                else:
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': f'Successfully imported {success_count} projects'
+                    })
+
+            # Handle regular form submission
+            else:
+                # Your existing form handling code here
+                pass
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+
+    # GET request handling
+    # Your existing GET request code here
     set_comp_code(request)
     template_name = 'pages/payroll/project_master/projects.html'
     
@@ -4463,3 +4572,113 @@ def duty_roster(request):
         'employee_list': employee_list,
     }
     return render(request, 'pages/payroll/duty_roster/duty_roster.html', context)
+
+def download_project_template(request):
+    # Create a DataFrame with the required columns
+    df = pd.DataFrame(columns=[
+        'Project Code*',
+        'Project Name*',
+        'Project Description*',
+        'Project Type*',
+        'Project Value*',
+        'Start Date* (YYYY-MM-DD)',
+        'End Date* (YYYY-MM-DD)',
+        'Project City',
+        'Service Type',
+        'Service Category',
+        'Project Sub Location',
+        'Customer',
+        'Agreement Ref',
+        'OP Head',
+        'Manager',
+        'Commercial Manager',
+        'Procurement User',
+        'Indent User',
+        'Final Contract Value',
+        'Project Status'
+    ])
+
+    # Add example row with properly formatted dates
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    next_year_date = (datetime.now().replace(year=datetime.now().year + 1)).strftime('%Y-%m-%d')
+    
+    example_data = {
+        'Project Code*': 'PRJ001',
+        'Project Name*': 'Example Project',
+        'Project Description*': 'This is an example project description',
+        'Project Type*': 'Construction',
+        'Project Value*': '100000.00',
+        'Start Date* (YYYY-MM-DD)': current_date,
+        'End Date* (YYYY-MM-DD)': next_year_date,
+        'Project City': 'Dubai',
+        'Service Type': 'Construction',
+        'Service Category': 'Commercial',
+        'Project Sub Location': 'Downtown',
+        'Customer': 'CUST001',
+        'Agreement Ref': 'AGR001',
+        'OP Head': 'EMP001',
+        'Manager': 'EMP002',
+        'Commercial Manager': 'EMP003',
+        'Procurement User': 'EMP004',
+        'Indent User': 'EMP005',
+        'Final Contract Value': '100000.00',
+        'Project Status': 'Active'
+    }
+    df = pd.concat([df, pd.DataFrame([example_data])], ignore_index=True)
+
+    # Create Excel writer
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Projects', index=False)
+        
+        # Get workbook and worksheet objects
+        workbook = writer.book
+        worksheet = writer.sheets['Projects']
+        
+        # Add formatting
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#D9E1F2',
+            'border': 1
+        })
+        
+        # Date format
+        date_format = workbook.add_format({
+            'num_format': 'yyyy-mm-dd'
+        })
+        
+        # Format headers
+        for col_num, value in enumerate(df.columns.values):
+            worksheet.write(0, col_num, value, header_format)
+            worksheet.set_column(col_num, col_num, 20)  # Set column width
+        
+        # Add data validation for required fields
+        required_cols = [col for col in df.columns if '*' in col]
+        for col in required_cols:
+            col_num = df.columns.get_loc(col)
+            if 'Date' in col:
+                # Date validation
+                worksheet.data_validation(1, col_num, 1000, col_num, {
+                    'validate': 'date',
+                    'criteria': '>=',
+                    'value': '1900-01-01',
+                    'error_message': 'Please enter a valid date in YYYY-MM-DD format'
+                })
+                # Apply date format to the column
+                worksheet.set_column(col_num, col_num, 20, date_format)
+            else:
+                # Non-date validation
+                worksheet.data_validation(1, col_num, 1000, col_num, {
+                    'validate': 'not_blank',
+                    'error_message': 'This field is required'
+                })
+
+    # Set up the response
+    output.seek(0)
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=project_template.xlsx'
+    
+    return response

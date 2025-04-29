@@ -612,7 +612,7 @@ def get_pr_items(request):
             pr = MaterialRequestHeader.objects.get(ordr_numb=ordr_numb)
             items = []
             for item in MaterialRequestDetail.objects.filter(
-                uniq_numb=pr.uniq_numb,
+                # uniq_numb=pr.uniq_numb,
                 comp_code=pr.comp_code,
                 ordr_type=pr.ordr_type,
                 ordr_date=pr.ordr_date,
@@ -1263,7 +1263,7 @@ def material_issue_add(request):
                 # Create material issue header
                 issue = WarehouseDetail(
                     comp_code=COMP_CODE,
-                    tran_type='MI',
+                    tran_type='ISS',
                     tran_date=datetime.strptime(request.POST.get('tran_date'), '%Y-%m-%d').date(),
                     tran_numb=f"MI{datetime.now().strftime('%Y%m%d%H%M%S')}",
                     tran_srno=1,
@@ -1275,7 +1275,7 @@ def material_issue_add(request):
                     refn_date=datetime.strptime(request.POST.get('refn_date'), '%Y-%m-%d').date(),
                     refn_numb=request.POST.get('refn_numb'),
                     refn_srno=1,
-                    cust_code=request.POST.get('cust_code'),
+                    job_code=request.POST.get('job_code'),
                     item_luom=request.POST.get('item_luom'),
                     crte_user=request.user.username
                 )
@@ -1414,7 +1414,7 @@ def get_mr_items(request):
             
             items = []
             mr_details = MaterialRequestDetail.objects.filter(
-                uniq_numb=mr.uniq_numb,
+                # uniq_numb=mr.uniq_numb,
                 comp_code=mr.comp_code,
                 ordr_type=mr.ordr_type,
                 ordr_date=mr.ordr_date,

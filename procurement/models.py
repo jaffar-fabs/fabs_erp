@@ -268,6 +268,7 @@ class WarehouseDetail(models.Model):
     refn_numb = models.CharField(max_length=30, null=True, blank=True)
     refn_srno = models.IntegerField(null=True, blank=True)
     tran_ware = models.CharField(max_length=30, null=True, blank=True)
+    job_code = models.CharField(max_length=30, null=True, blank=True)
     crte_user = models.CharField(max_length=30, default='SYSTEM')
     crte_date = models.DateTimeField(auto_now_add=True)
     updt_user = models.CharField(max_length=30, default='SYSTEM', null=True, blank=True)

@@ -20,7 +20,7 @@
                         <select class="form-select" name="refn_numb" required>
                             <option value="">Select MR</option>
                             {% for mr in material_requests %}
-                            <option value="{{ mr.ordr_numb }}" data-date="{{ mr.ordr_date|date:'Y-m-d' }}" data-customer="{{ mr.cust_code }}">{{ mr.ordr_numb }}</option>
+                            <option value="{{ mr.ordr_numb }}" data-date="{{ mr.ordr_date|date:'Y-m-d' }}" data-job="{{ mr.job_code }}">{{ mr.ordr_numb }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -33,8 +33,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label>Customer Code</label>
-                        <input type="text" class="form-control" name="cust_code" readonly>
+                        <label>Job Code</label>
+                        <input type="text" class="form-control" name="job_code" readonly>
                     </div>
                 </div>
             </div>
@@ -110,17 +110,17 @@
         $("select[name='refn_numb']").on("change", function() {
             var selectedOption = $(this).find("option:selected");
             var mrDate = selectedOption.data("date");
-            var customer = selectedOption.data("customer");
+            var jobCode = selectedOption.data("job");
             var selectedMrNumber = $(this).val();
             
             console.log("Selected MR:", {
                 number: selectedMrNumber,
                 date: mrDate,
-                customer: customer
+                jobCode: jobCode
             });
             
             $("input[name='refn_date']").val(mrDate);
-            $("input[name='cust_code']").val(customer);
+            $("input[name='job_code']").val(jobCode);
             
             if (selectedMrNumber) {
                 // Fetch MR items
@@ -183,7 +183,7 @@
                 });
             } else {
                 $("input[name='refn_date']").val('');
-                $("input[name='cust_code']").val('');
+                $("input[name='job_code']").val('');
                 $("#items-tbody").empty();
             }
         });
