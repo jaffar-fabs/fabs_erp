@@ -156,52 +156,6 @@ class CampAllocation(models.Model):
     modified_on = models.DateTimeField(auto_now=True)
 
 # -------------------------------------------------------------------------------
-# Leave Master
-class LeaveMaster(models.Model):
-    DAY_TYPE_CHOICES = [
-        ('Calendar', 'Calendar Days'),
-        ('Working', 'Working Days'),
-    ]
-
-    PAYMENT_TYPE_CHOICES = [
-        ('Paid', 'Paid Leave'),
-        ('Unpaid', 'Unpaid Leave'),
-        ('Half Paid', 'Half Paid Leave'),
-    ]
-
-    FREQUENCY_CHOICES = [
-        ('Monthly', 'Monthly'),
-        ('Yearly', 'Yearly'),
-        ('One-time', 'One-time'),
-    ]
-
-    GENDER_CHOICES = [
-        ('Male', 'Male'),
-        ('Female', 'Female'),
-        ('All', 'All Genders'),
-    ]
-
-    leave_code = models.CharField(max_length=20, unique=True)  # Unique leave code
-    leave_description = models.TextField()  # Description of leave
-    work_month = models.PositiveIntegerField()  # Number of work months required for eligibility
-    eligible_days = models.PositiveIntegerField()  # Number of eligible leave days
-    eligible_day_type = models.CharField(max_length=10, choices=DAY_TYPE_CHOICES)  # Calendar or Working Days
-    payment_type = models.CharField(max_length=10, choices=PAYMENT_TYPE_CHOICES)  # Paid, Unpaid, Half Paid
-    frequency = models.CharField(max_length=10, choices=FREQUENCY_CHOICES)  # Monthly, Yearly, One-time
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='All')  # Gender eligibility
-    grade = models.CharField(max_length=50, blank=True, null=True)  # Employee grade (if applicable)
-    carry_forward = models.BooleanField(default=False)  # Can leave be carried forward?
-    carry_forward_period = models.PositiveIntegerField(default=0, help_text="Months allowed for carry forward")  # Carry forward period in months
-    encashment = models.BooleanField(default=False)  # Whether the leave can be encashed
-    encashment_days = models.PositiveIntegerField(default=0, help_text="Number of days allowed for encashment")  # Encashment days
-
-    created_at = models.DateTimeField(auto_now_add=True)  # Auto timestamp on creation
-    updated_at = models.DateTimeField(auto_now=True)  # Auto timestamp on update
-
-    def __str__(self):
-        return f"{self.leave_code} - {self.leave_description}"
-
-# -------------------------------------------------------------------------------
 #Payprocess
 
 class PayProcess(models.Model):
@@ -824,4 +778,47 @@ class PayrollEarnDeduct(models.Model):
         return self.comp_code
     
 # -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------------------------------------
+# Leave Transaction
+
+class LeaveTransaction(models.Model):
+    id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15)
+    tran_id = models.CharField(max_length=15)
+    # Basic Info
+    employee = models.CharField(max_length=100)
+    employee_name = models.CharField(max_length=100)  # Redundant but for quick reference
+    department = models.CharField(max_length=50, blank=True, null=True)
+    designation = models.CharField(max_length=50, blank=True, null=True)
+    date_of_application = models.DateField(default=timezone.now)
+    leave_type = models.CharField(max_length=20)  # e.g., CL, SL, EL, etc.
+    eligible_leave_days = models.PositiveIntegerField(default=0)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    total_leave_days = models.PositiveIntegerField(default=0)
+    reason_for_leave = models.TextField(blank=True, null=True)
+    contact_during_leave = models.CharField(max_length=100, blank=True, null=True)
+    leave_policy_agreed = models.BooleanField(default=False)
+    supporting_document = models.FileField(upload_to='leave_documents/', blank=True, null=True)
+    delegate_person = models.CharField(max_length=100, blank=True, null=True)
+
+    # Stage Approval Workflow
+    supervisor_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], default='Pending')
+    supervisor_approval_date = models.DateField(blank=True, null=True)
+    supervisor_comments = models.TextField(blank=True, null=True)
+    dept_head_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], default='Pending')
+    dept_head_approval_date = models.DateField(blank=True, null=True)
+    dept_head_comments = models.TextField(blank=True, null=True)
+    hr_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], default='Pending')
+    hr_approval_date = models.DateField(blank=True, null=True)
+    hr_comments = models.TextField(blank=True, null=True)
+    remarks_notes = models.TextField(blank=True, null=True)  # Optional
+
+    # Audit Fields
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"LeaveTransaction({self.employee.emp_code}, {self.start_date} to {self.end_date})"
 

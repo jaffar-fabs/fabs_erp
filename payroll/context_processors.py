@@ -352,3 +352,15 @@ def get_party_type(request):
         'party_type_data': party_type_data
     }
 
+
+def get_leave_types(request):
+    comp_code = get_comp_code(request)
+    leave_types_data = CodeMaster.objects.filter(
+        comp_code=comp_code,
+        base_type='LEAVE_TYPES',
+        is_active='Y'
+    )    
+    return {
+        'leave_types': leave_types_data
+    }
+

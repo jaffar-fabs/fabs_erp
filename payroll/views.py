@@ -29,6 +29,8 @@ import urllib.parse
 from datetime import date
 import urllib.request
 from io import BytesIO
+from django.db import transaction
+from django.utils import timezone
 
 
 PAGINATION_SIZE = 6
@@ -48,59 +50,6 @@ def set_comp_code(request):
 
     # Split pay cycles by ":" if it's a string, default to empty list
     PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
-
-# -----Leave Master
-
-def create_leave_master(request):
-    if request.method == 'POST':
-        # Get data from the POST request
-        leave_code = request.POST.get('leave_code')
-        leave_description = request.POST.get('leave_description')
-        work_month = request.POST.get('work_month')
-        eligible_days = request.POST.get('eligible_days')
-        eligible_day_type = request.POST.get('eligible_day_type')
-        payment_type = request.POST.get('payment_type')
-        frequency = request.POST.get('frequency')
-        gender = request.POST.get('gender')
-        grade = request.POST.get('grade')
-        carry_forward = request.POST.get('carry_forward') == 'on'  # Checkbox field
-        carry_forward_period = request.POST.get('carry_forward_period')
-        encashment = request.POST.get('encashment') == 'on'  # Checkbox field
-
-        # Save data to the database
-        LeaveMaster.objects.create(
-            leave_code=leave_code,
-            leave_description=leave_description,
-            work_month=int(work_month),
-            eligible_days=int(eligible_days),
-            eligible_day_type=eligible_day_type,
-            payment_type=payment_type,
-            frequency=frequency,
-            gender=gender,
-            grade=grade if grade else None,
-            carry_forward=carry_forward,
-            carry_forward_period=int(carry_forward_period) if carry_forward_period else 0,
-            encashment=encashment
-        )
-        # Redirect to the leave master list
-        return redirect('leavemaster')
-
-    # Render the template for GET request
-    return render(request, 'pages/payroll/leave_master/leavemaster.html')
-
-def leave_master_list(request):
-    # Fetch all leave records to display in the list
-    leavemaster = LeaveMaster.objects.all()
-    return render(request, 'pages/payroll/leave_master/leavemaster.html', {'leavemaster': leavemaster})
-
-def delete_leavemaster(request, pk):
-    if request.method == 'POST':
-        record = get_object_or_404(LeaveMaster, pk=pk)
-        record.delete()
-        return JsonResponse({'success': True})  # Return JSON response
-    return JsonResponse({'success': False}, status=400)
-# -----Leave Master
-
 
 def employee_master(request):
     set_comp_code(request)
@@ -4687,3 +4636,248 @@ def download_project_template(request):
     response['Content-Disposition'] = 'attachment; filename=project_template.xlsx'
     
     return response
+
+# Leave Transaction Views
+def leave_transaction_list(request):
+    set_comp_code(request)
+    # Get search keyword
+    keyword = request.GET.get('keyword', '')
+    
+    # Get all leave transactions or filter by keyword
+    if keyword:
+        leaves = LeaveTransaction.objects.filter(
+            Q(employee_name__icontains=keyword) |
+            Q(department__icontains=keyword) |
+            Q(leave_type__icontains=keyword)
+        ).order_by('-date_of_application')
+    else:
+        leaves = LeaveTransaction.objects.filter(comp_code=COMP_CODE).order_by('-date_of_application')
+    
+    employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').values(
+        'emp_code',
+        'emp_name',
+        'department',
+        'designation',
+        'date_of_join',
+        'date_of_rejoin'
+    )
+    context = {
+        'leaves': leaves,
+        'keyword': keyword,
+        'result_cnt': leaves.count(),
+        'employees': employees
+    }
+    
+    return render(request, 'pages/payroll/leave_master/leave_transaction_list.html', context)
+
+@csrf_exempt
+def leave_transaction_add(request):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                # Create new leave transaction
+                leave = LeaveTransaction.objects.create(
+                    comp_code=request.session.get('comp_code', '1000'),
+                    tran_id=generate_transaction_id('LEAVE'),
+                    employee=request.POST.get('employee'),
+                    employee_name=request.POST.get('employee_name'),
+                    department=request.POST.get('department'),
+                    designation=request.POST.get('designation'),
+                    date_of_application=request.POST.get('date_of_application'),
+                    leave_type=request.POST.get('leave_type'),
+                    eligible_leave_days=request.POST.get('eligible_leave_days'),
+                    start_date=request.POST.get('start_date'),
+                    end_date=request.POST.get('end_date'),
+                    total_leave_days=request.POST.get('total_leave_days'),
+                    reason_for_leave=request.POST.get('reason_for_leave'),
+                    contact_during_leave=request.POST.get('contact_during_leave'),
+                    leave_policy_agreed=bool(request.POST.get('leave_policy_agreed')),
+                    delegate_person=request.POST.get('delegate_person')
+                )
+                
+                # Handle file upload if present
+                if 'supporting_document' in request.FILES:
+                    leave.supporting_document = request.FILES['supporting_document']
+                    leave.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Leave transaction added successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def leave_transaction_edit(request):
+    if request.method == 'GET':
+        leave_id = request.GET.get('id')
+        try:
+            leave = get_object_or_404(LeaveTransaction, id=leave_id)
+            data = {
+                'status': 'success',
+                'data': {
+                    'id': leave.id,
+                    'employee': leave.employee,
+                    'employee_name': leave.employee_name,
+                    'department': leave.department,
+                    'designation': leave.designation,
+                    'date_of_application': leave.date_of_application.strftime('%Y-%m-%d'),
+                    'leave_type': leave.leave_type,
+                    'eligible_leave_days': leave.eligible_leave_days,
+                    'start_date': leave.start_date.strftime('%Y-%m-%d'),
+                    'end_date': leave.end_date.strftime('%Y-%m-%d'),
+                    'total_leave_days': leave.total_leave_days,
+                    'reason_for_leave': leave.reason_for_leave,
+                    'contact_during_leave': leave.contact_during_leave,
+                    'leave_policy_agreed': leave.leave_policy_agreed,
+                    'delegate_person': leave.delegate_person,
+                    'supporting_document': leave.supporting_document.url if leave.supporting_document else None,
+                    'supervisor_status': leave.supervisor_status,
+                    'dept_head_status': leave.dept_head_status,
+                    'hr_status': leave.hr_status
+                }
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    elif request.method == 'POST':
+        try:
+            with transaction.atomic():
+                leave_id = request.POST.get('leave_id')
+                leave = get_object_or_404(LeaveTransaction, id=leave_id)
+                
+                # Update leave transaction
+                leave.employee = request.POST.get('employee')
+                leave.employee_name = request.POST.get('employee_name')
+                leave.department = request.POST.get('department')
+                leave.designation = request.POST.get('designation')
+                leave.date_of_application = request.POST.get('date_of_application')
+                leave.leave_type = request.POST.get('leave_type')
+                leave.eligible_leave_days = request.POST.get('eligible_leave_days')
+                leave.start_date = request.POST.get('start_date')
+                leave.end_date = request.POST.get('end_date')
+                leave.total_leave_days = request.POST.get('total_leave_days')
+                leave.reason_for_leave = request.POST.get('reason_for_leave')
+                leave.contact_during_leave = request.POST.get('contact_during_leave')
+                leave.leave_policy_agreed = bool(request.POST.get('leave_policy_agreed'))
+                leave.delegate_person = request.POST.get('delegate_person')
+                
+                # Handle file upload if present
+                if 'supporting_document' in request.FILES:
+                    leave.supporting_document = request.FILES['supporting_document']
+                
+                leave.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Leave transaction updated successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def leave_transaction_delete(request):
+    if request.method == 'POST':
+        try:
+            leave_id = request.POST.get('leave_id')
+            leave = get_object_or_404(LeaveTransaction, id=leave_id)
+            leave.delete()
+            return JsonResponse({'status': 'success', 'message': 'Leave transaction deleted successfully'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def generate_transaction_id(prefix):
+    # Get the current date in YYMM format
+    current_date = timezone.now().strftime('%y%m')
+    
+    # Get the last transaction ID for this prefix and date
+    last_transaction = LeaveTransaction.objects.filter(
+        tran_id__startswith=f'{prefix}{current_date}'
+    ).order_by('-tran_id').first()
+    
+    if last_transaction:
+        # Extract the sequence number and increment it
+        last_sequence = int(last_transaction.tran_id[-4:])
+        new_sequence = last_sequence + 1
+    else:
+        # Start with 1 if no previous transaction
+        new_sequence = 1
+    
+    # Format the new transaction ID
+    return f'{prefix}{current_date}{new_sequence:04d}'
+
+def leave_approval_list(request):
+    """View for listing leave approvals"""
+    keyword = request.GET.get('keyword', '')
+    filter_type = request.GET.get('filter', 'all')
+    
+    leaves = LeaveTransaction.objects.all()
+    
+    if keyword:
+        leaves = leaves.filter(
+            Q(employee_name__icontains=keyword) |
+            Q(department__icontains=keyword) |
+            Q(leave_type__icontains=keyword)
+        )
+    
+    if filter_type == 'supervisor':
+        leaves = leaves.filter(supervisor_status='Pending')
+    elif filter_type == 'dept_head':
+        leaves = leaves.filter(supervisor_status='Approved', dept_head_status='Pending')
+    elif filter_type == 'hr':
+        leaves = leaves.filter(dept_head_status='Approved', hr_status='Pending')
+    
+    context = {
+        'leaves': leaves,
+        'keyword': keyword,
+        'result_cnt': leaves.count()
+    }
+    return render(request, 'pages/payroll/leave_master/leave_approval_list.html', context)
+
+@csrf_exempt
+def leave_approval(request):
+    """View for handling leave approvals"""
+    if request.method == 'POST':
+        leave_id = request.POST.get('leave_id')
+        role = request.POST.get('role')
+        action = request.POST.get('action')
+        comments = request.POST.get('comments')
+        
+        try:
+            leave = LeaveTransaction.objects.get(id=leave_id)
+            
+            if role == 'supervisor':
+                leave.supervisor_status = 'Approved' if action == 'approve' else 'Rejected'
+                leave.supervisor_approval_date = timezone.now()
+                leave.supervisor_comments = comments
+            elif role == 'dept_head':
+                leave.dept_head_status = 'Approved' if action == 'approve' else 'Rejected'
+                leave.dept_head_approval_date = timezone.now()
+                leave.dept_head_comments = comments
+            elif role == 'hr':
+                leave.hr_status = 'Approved' if action == 'approve' else 'Rejected'
+                leave.hr_approval_date = timezone.now()
+                leave.hr_comments = comments
+            
+            leave.save()
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': f'Leave {action}d successfully'
+            })
+        except LeaveTransaction.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Leave not found'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    })

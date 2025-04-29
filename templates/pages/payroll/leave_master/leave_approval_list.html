@@ -1,0 +1,412 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content" style="flex: 1; overflow-y: auto; padding: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Leave Approvals" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                <div class="icon-form mb-3 mb-sm-0">
+                                    <span class="form-icon"><i class="ti ti-search"></i></span>
+                                    <input type="text" name="keyword" class="form-control" placeholder="Search Leaves" value="{{ keyword }}">
+                                </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <select class="form-control" id="approval_filter">
+                                        <option value="all">All Leaves</option>
+                                        <option value="supervisor">Supervisor Approval</option>
+                                        <option value="dept_head">Department Head Approval</option>
+                                        <option value="hr">HR Approval</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Leave Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Total Days</th>
+                                        <th>Supervisor Status</th>
+                                        <th>Dept Head Status</th>
+                                        <th>HR Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in leaves %}
+                                    <tr>
+                                        <td>{{ record.employee_name }}</td>
+                                        <td>{{ record.department }}</td>
+                                        <td>{{ record.leave_type }}</td>
+                                        <td>{{ record.start_date|date:"d-M-Y" }}</td>
+                                        <td>{{ record.end_date|date:"d-M-Y" }}</td>
+                                        <td>{{ record.total_leave_days }}</td>
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if record.supervisor_status == 'Approved' %} bg-success 
+                                                {% elif record.supervisor_status == 'Rejected' %} bg-danger 
+                                                {% else %} bg-warning {% endif %}">
+                                                {{ record.supervisor_status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if record.dept_head_status == 'Approved' %} bg-success 
+                                                {% elif record.dept_head_status == 'Rejected' %} bg-danger 
+                                                {% else %} bg-warning {% endif %}">
+                                                {{ record.dept_head_status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if record.hr_status == 'Approved' %} bg-success 
+                                                {% elif record.hr_status == 'Rejected' %} bg-danger 
+                                                {% else %} bg-warning {% endif %}">
+                                                {{ record.hr_status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="#" class="action-icon view-leave-btn" data-id="{{ record.id }}">
+                                                <i class="ti ti-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Leave Modal -->
+<div class="modal fade" id="view_leave" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leave Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Employee</label>
+                        <p id="view_employee_name"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Department</label>
+                        <p id="view_department"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Leave Type</label>
+                        <p id="view_leave_type"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Total Days</label>
+                        <p id="view_total_days"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Start Date</label>
+                        <p id="view_start_date"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">End Date</label>
+                        <p id="view_end_date"></p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="col-form-label">Reason for Leave</label>
+                        <p id="view_reason"></p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Supporting Document</label>
+                        <div id="view_document"></div>
+                    </div>
+                </div>
+
+                <!-- Approval Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h6>Approval Status</h6>
+                        <div class="approval-stages">
+                            <!-- Supervisor Approval -->
+                            <div class="approval-stage mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6>Supervisor Approval</h6>
+                                    <div class="approval-actions" id="supervisor_actions">
+                                        <button class="btn btn-sm btn-success approve-btn" data-role="supervisor">Approve</button>
+                                        <button class="btn btn-sm btn-danger reject-btn" data-role="supervisor">Reject</button>
+                                    </div>
+                                </div>
+                                <div class="approval-comments mt-2" id="supervisor_comments" style="display: none;">
+                                    <textarea class="form-control" rows="2" placeholder="Enter your comments"></textarea>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary submit-approval" data-role="supervisor" data-action="approve">Submit Approval</button>
+                                        <button class="btn btn-sm btn-secondary cancel-approval" data-role="supervisor">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="approval-status mt-2" id="supervisor_status"></div>
+                            </div>
+
+                            <!-- Department Head Approval -->
+                            <div class="approval-stage mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6>Department Head Approval</h6>
+                                    <div class="approval-actions" id="dept_head_actions">
+                                        <button class="btn btn-sm btn-success approve-btn" data-role="dept_head">Approve</button>
+                                        <button class="btn btn-sm btn-danger reject-btn" data-role="dept_head">Reject</button>
+                                    </div>
+                                </div>
+                                <div class="approval-comments mt-2" id="dept_head_comments" style="display: none;">
+                                    <textarea class="form-control" rows="2" placeholder="Enter your comments"></textarea>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary submit-approval" data-role="dept_head" data-action="approve">Submit Approval</button>
+                                        <button class="btn btn-sm btn-secondary cancel-approval" data-role="dept_head">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="approval-status mt-2" id="dept_head_status"></div>
+                            </div>
+
+                            <!-- HR Approval -->
+                            <div class="approval-stage mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6>HR Approval</h6>
+                                    <div class="approval-actions" id="hr_actions">
+                                        <button class="btn btn-sm btn-success approve-btn" data-role="hr">Approve</button>
+                                        <button class="btn btn-sm btn-danger reject-btn" data-role="hr">Reject</button>
+                                    </div>
+                                </div>
+                                <div class="approval-comments mt-2" id="hr_comments" style="display: none;">
+                                    <textarea class="form-control" rows="2" placeholder="Enter your comments"></textarea>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary submit-approval" data-role="hr" data-action="approve">Submit Approval</button>
+                                        <button class="btn btn-sm btn-secondary cancel-approval" data-role="hr">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="approval-status mt-2" id="hr_status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var currentLeaveId = null;
+
+    // Handle view button click
+    $('.view-leave-btn').click(function(e) {
+        e.preventDefault();
+        currentLeaveId = $(this).data('id');
+        
+        $.ajax({
+            url: '{% url "leave_transaction_edit" %}',
+            type: 'GET',
+            data: { id: currentLeaveId },
+            success: function(response) {
+                if (response.status === 'success') {
+                    var data = response.data;
+                    $('#view_employee_name').text(data.employee_name);
+                    $('#view_department').text(data.department);
+                    $('#view_leave_type').text(data.leave_type);
+                    $('#view_total_days').text(data.total_leave_days);
+                    $('#view_start_date').text(data.start_date);
+                    $('#view_end_date').text(data.end_date);
+                    $('#view_reason').text(data.reason_for_leave);
+                    
+                    if (data.supporting_document) {
+                        $('#view_document').html(`
+                            <div class="btn-group">
+                                <a href="${data.supporting_document}" class="btn btn-sm btn-info" target="_blank">
+                                    <i class="ti ti-eye"></i> Preview
+                                </a>
+                                <a href="${data.supporting_document}" class="btn btn-sm btn-info" target="_blank">
+                                    <i class="ti ti-download"></i> Download
+                                </a>
+                            </div>
+                        `);
+                    } else {
+                        $('#view_document').text('No document uploaded');
+                    }
+                    // Debug logging
+                    console.log('Supervisor Status:', data.supervisor_status);
+                    console.log('Dept Head Status:', data.dept_head_status);
+                    console.log('HR Status:', data.hr_status);
+                    console.log('Supervisor Actions Element:', $('#supervisor_actions').length);
+                    console.log('Dept Head Actions Element:', $('#dept_head_actions').length);
+                    console.log('HR Actions Element:', $('#hr_actions').length);
+
+                    // Hide actions if status is approved
+                    if (data.supervisor_status == 'Approved') {
+                        console.log('Hiding supervisor actions');
+                        $('#supervisor_actions').hide();
+                    }
+                    else{
+                        console.log('Showing supervisor actions');
+                        $('#supervisor_actions').show();
+                    }
+                    if (data.dept_head_status == 'Approved') {
+                        console.log('Hiding dept head actions');
+                        $('#dept_head_actions').hide();
+                    }
+                    else{
+                        console.log('Showing dept head actions');
+                        $('#dept_head_actions').show();
+                    }
+                    if (data.hr_status == 'Approved') {
+                        console.log('Hiding hr actions');
+                        $('#hr_actions').hide();
+                    }
+                    else{
+                        console.log('Showing hr actions');
+                        $('#hr_actions').show();
+                    }
+
+                    // Update approval statuses
+                    updateApprovalStatus('supervisor', data.supervisor_status, data.supervisor_comments);
+                    updateApprovalStatus('dept_head', data.dept_head_status, data.dept_head_comments);
+                    updateApprovalStatus('hr', data.hr_status, data.hr_comments);
+                    
+                    $('#view_leave').modal('show');
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred while fetching leave details');
+            }
+        });
+    });
+
+    // Handle approve/reject button clicks
+    $('.approve-btn, .reject-btn').click(function() {
+        var role = $(this).data('role');
+        var action = $(this).hasClass('approve-btn') ? 'approve' : 'reject';
+        
+        // Hide all comment sections first
+        $('.approval-comments').hide();
+        
+        // Show the relevant comment section
+        $(`#${role}_comments`).show();
+        
+        // Update the submit button action
+        $(`#${role}_comments .submit-approval`).data('action', action);
+    });
+
+    // Handle cancel button clicks
+    $('.cancel-approval').click(function() {
+        var role = $(this).data('role');
+        $(`#${role}_comments`).hide();
+    });
+
+    // Handle approval submission
+    $('.submit-approval').click(function() {
+        var role = $(this).data('role');
+        var action = $(this).data('action');
+        var comments = $(`#${role}_comments textarea`).val();
+        
+        if (!comments) {
+            alert('Please enter comments');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('leave_id', currentLeaveId);
+        formData.append('role', role);
+        formData.append('action', action);
+        formData.append('comments', comments);
+        
+        $.ajax({
+            url: '{% url "leave_approval" %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred while processing your request');
+            }
+        });
+    });
+
+    // Function to update approval status display
+    function updateApprovalStatus(role, status, comments) {
+        var statusDiv = $(`#${role}_status`);
+        var actionsDiv = $(`#${role}_actions`);
+        
+        if (status === 'Approved') {
+            statusDiv.html(`<span class="badge bg-success">Approved</span>`);
+            actionsDiv.hide();
+        } else if (status === 'Rejected') {
+            statusDiv.html(`<span class="badge bg-danger">Rejected</span>`);
+            actionsDiv.hide();
+        } else {
+            statusDiv.html(`<span class="badge bg-warning">Pending</span>`);
+            actionsDiv.show();
+        }
+
+        if (comments) {
+            statusDiv.append(`<div class="mt-1"><small>${comments}</small></div>`);
+        }
+    }
+});
+</script>
+
+<style>
+.approval-stage {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.approval-stage h6 {
+    margin-bottom: 0;
+    color: #333;
+}
+
+.approval-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.approval-status {
+    font-size: 0.9em;
+}
+
+.approval-comments {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+</style>
+{% endblock content %}

@@ -53,10 +53,15 @@ urlpatterns = [
     path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
     path('get-employee-data/<str:emp_code>/', get_employee_data, name='get_employee_data'),
 
-    #leav Master urls
-    path('leavemaster/', views.leave_master_list, name='leavemaster'),
-    path('leavemaster/add/', views.create_leave_master, name='create_leavemaster'),
-    path('leavemaster/delete/<int:pk>/', views.delete_leavemaster, name='delete_leavemaster'),
+    #leave transaction urls
+    path('leave_transaction/', views.leave_transaction_list, name='leave_transaction'),
+    path('leave_transaction/add/', views.leave_transaction_add, name='leave_transaction_add'),
+    path('leave_transaction/edit/', views.leave_transaction_edit, name='leave_transaction_edit'),
+    path('leave_transaction/delete/', views.leave_transaction_delete, name='leave_transaction_delete'),
+    path('leave_approval/', views.leave_approval_list, name='leave_approval_list'),
+    path('leave_approval/submit/', views.leave_approval, name='leave_approval'),
+    
+
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),
     path('update_seed_status/<int:seed_id>/', views.update_seed_status, name='update_seed_status'),
