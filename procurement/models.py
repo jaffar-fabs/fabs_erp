@@ -174,7 +174,6 @@ class GRNDetail(models.Model):
 
 class MaterialRequestHeader(models.Model):
     id = models.AutoField(primary_key=True)
-    uniq_numb = models.CharField(max_length=50)
     comp_code = models.CharField(max_length=20)
     ordr_type = models.CharField(max_length=50)
     ordr_date = models.DateField()
@@ -207,7 +206,6 @@ class MaterialRequestHeader(models.Model):
 
 class MaterialRequestDetail(models.Model):
     id = models.AutoField(primary_key=True)
-    uniq_numb = models.CharField(max_length=50)
     comp_code = models.CharField(max_length=20)
     ordr_type = models.CharField(max_length=50)
     ordr_date = models.DateField()

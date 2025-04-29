@@ -845,50 +845,82 @@ def material_request_add(request):
     set_comp_code(request)
     if request.method == 'POST':
         try:
-            ordr_type = request.POST.get('ordr_type')
-            ordr_date = request.POST.get('ordr_date')
-            ordr_numb = request.POST.get('ordr_numb')
-            job_code = request.POST.get('job_code')
-            quot_numb = request.POST.get('quot_numb')
-            quot_date = request.POST.get('quot_date')
+            with transaction.atomic():
+                ordr_type = request.POST.get('ordr_type')
+                
+                # Generate order number based on type
+                with connection.cursor() as cursor:
+                    if ordr_type == 'MR':
+                        cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'MR'])
+                    elif ordr_type == 'PR':
+                        cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'PR'])
+                    else:
+                        raise ValueError("Invalid order type. Must be 'MR' or 'PR'")
+                    
+                    result = cursor.fetchone()
+                    ordr_numb = result[0] if result else None
 
-            mr_header = MaterialRequestHeader.objects.create(
-                ordr_type=ordr_type,
-                ordr_date=ordr_date,
-                ordr_numb=ordr_numb,
-                job_code=job_code,
-                quot_numb=quot_numb,
-                quot_date=quot_date or None,
-                created_by=request.user.username,
-                comp_code=COMP_CODE
-            )
+                if not ordr_numb:
+                    raise ValueError(f"Failed to generate order number for type {ordr_type}")
 
-            items = request.POST.getlist('items[]')
-            for item_id in items:
-                item_code = request.POST.get(f'item_code_{item_id}')
-                item_desc = request.POST.get(f'item_desc_{item_id}')
-                item_unit = request.POST.get(f'item_unit_{item_id}')
-                item_qnty = request.POST.get(f'item_qnty_{item_id}')
-
-                MaterialRequestDetail.objects.create(
-                    uniq_numb=mr_header.uniq_numb,
-                    comp_code=mr_header.comp_code,
-                    ordr_type=mr_header.ordr_type,
-                    ordr_date=mr_header.ordr_date,
-                    ordr_numb=mr_header.ordr_numb,
-                    serl_numb=len(items),
-                    item_code=item_code,
-                    item_desc=item_desc,
-                    item_unit=item_unit,
-                    item_qnty=item_qnty,
+                # Create MR header
+                mr_header = MaterialRequestHeader.objects.create(
+                    comp_code=COMP_CODE,
+                    ordr_type=ordr_type,
+                    ordr_date=datetime.strptime(request.POST.get('ordr_date'), '%Y-%m-%d').date(),
+                    ordr_numb=ordr_numb,
+                    job_code=request.POST.get('job_code'),
+                    quot_numb=request.POST.get('quot_numb'),
+                    quot_date=datetime.strptime(request.POST.get('quot_date'), '%Y-%m-%d').date() if request.POST.get('quot_date') else None,
+                    quot_stat='ACT',
                     created_by=request.user.username
                 )
 
-            return JsonResponse({'status': 'success', 'message': 'Material request added successfully'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+                # Create MR details
+                items = request.POST.getlist('items[]')
+                for index, item_id in enumerate(items, 1):
+                    item_code = request.POST.get(f'item_code_{item_id}')
+                    item_desc = request.POST.get(f'item_desc_{item_id}')
+                    item_unit = request.POST.get(f'item_unit_{item_id}')
+                    item_qnty = request.POST.get(f'item_qnty_{item_id}')
 
-    return JsonResponse({'status': 'error', 'message': 'GET not allowed'})
+                    if not all([item_code, item_desc, item_unit, item_qnty]):
+                        raise ValueError(f"Missing required fields for item {index}")
+
+                    MaterialRequestDetail.objects.create(
+                        comp_code=mr_header.comp_code,
+                        ordr_type=mr_header.ordr_type,
+                        ordr_date=mr_header.ordr_date,
+                        ordr_numb=mr_header.ordr_numb,
+                        serl_numb=index,
+                        item_code=item_code,
+                        item_desc=item_desc,
+                        item_unit=item_unit,
+                        item_qnty=item_qnty,
+                        created_by=request.user.username
+                    )
+
+                return JsonResponse({
+                    'status': 'success',
+                    'message': f'{ordr_type} request added successfully',
+                    'ordr_numb': ordr_numb
+                })
+
+        except ValueError as ve:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(ve)
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Failed to create {ordr_type} request: {str(e)}'
+            }, status=500)
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=405)
 
 @csrf_exempt
 def material_request_edit(request):

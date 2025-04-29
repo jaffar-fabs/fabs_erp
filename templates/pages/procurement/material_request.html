@@ -260,6 +260,19 @@
             createInitialTableEdit();
         });
 
+        // Handle request type change
+        $("select[name='ordr_type']").on("change", function() {
+            var type = $(this).val();
+            if (type === 'PR') {
+                // Disable PR dropdown for PR type
+                $("#pr_number").prop("disabled", true);
+                $("#pr_number").val("");
+            } else {
+                // Enable PR dropdown for MR type
+                $("#pr_number").prop("disabled", false);
+            }
+        });
+
         // Add New Item for add form
         $("#add-item-add").on("click", function() {
             if ($("#pr_number").val()) {
@@ -284,9 +297,6 @@
         $("#pr_number").on("change", function() {
             var prNumber = $(this).val();
             if (prNumber) {
-                // Disable add item button
-                // $("#add-item-add").prop("disabled", true);
-                
                 // Clear existing items
                 $("#items-tbody-add").empty();
                 
@@ -340,8 +350,7 @@
                     }
                 });
             } else {
-                // Enable add item button and clear items
-                $("#add-item-add").prop("disabled", false);
+                // Clear items
                 $("#items-tbody-add").empty();
             }
         });
