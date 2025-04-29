@@ -229,6 +229,29 @@
             
             row.find('input[name^="item_desc_"]').val(desc);
             row.find('input[name^="item_unit_"]').val(unit);
+            
+            // Only set quantity if PR is selected
+            if ($("#pr_number").val()) {
+                var itemCode = $(this).val();
+                if (itemCode) {
+                    $.ajax({
+                        url: "{% url 'get_pr_items' %}",
+                        type: "GET",
+                        data: { 
+                            'ordr_numb': $("#pr_number").val(),
+                            'item_code': itemCode
+                        },
+                        success: function(response) {
+                            if (response.status === "success" && response.items.length > 0) {
+                                var item = response.items.find(i => i.item_code === itemCode);
+                                if (item) {
+                                    row.find('input[name^="item_qnty_"]').val(item.item_qnty);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
         });
 
         // Initialize tables when document is ready
@@ -239,14 +262,88 @@
 
         // Add New Item for add form
         $("#add-item-add").on("click", function() {
+            if ($("#pr_number").val()) {
+                alert("Cannot add items manually when a PR is selected. Items will be fetched from the selected PR.");
+                return;
+            }
             var itemId = Date.now();
             addItemRowAdd({id: itemId});
         });
 
         // Add New Item for edit form
         $("#add-item-edit").on("click", function() {
+            if ($("#quot_numb").val()) {
+                alert("Cannot add items manually when a PR is selected. Items will be fetched from the selected PR.");
+                return;
+            }
             var itemId = Date.now();
             addItemRowEdit({id: itemId});
+        });
+
+        // Handle PR number selection
+        $("#pr_number").on("change", function() {
+            var prNumber = $(this).val();
+            if (prNumber) {
+                // Disable add item button
+                // $("#add-item-add").prop("disabled", true);
+                
+                // Clear existing items
+                $("#items-tbody-add").empty();
+                
+                // Fetch PR items
+                $.ajax({
+                    url: "{% url 'get_pr_items' %}",
+                    type: "GET",
+                    data: { 'ordr_numb': prNumber },
+                    success: function(response) {
+                        if (response.status === "success") {
+                            // Add PR items to the table
+                            response.items.forEach(function(item) {
+                                var itemHtml = `
+                                    <tr>
+                                        <td>
+                                            <select class="form-select item-code-select" name="item_code_${Date.now()}" required>
+                                                <option value="">Select Item</option>
+                                                {% for item in items %}
+                                                    <option value="{{ item.item_code }}" data-desc="{{ item.item_description }}" data-unit="{{ item.uom }}" ${item.item_code === item.item_code ? 'selected' : ''}>{{ item.item_code }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="item_desc_${Date.now()}" value="${item.item_desc}" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="item_unit_${Date.now()}" value="${item.item_unit}" readonly>
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.01" class="form-control" name="item_qnty_${Date.now()}" value="${item.item_qnty}" required>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-item">
+                                                <i class="ti ti-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                                $("#items-tbody-add").append(itemHtml);
+                                
+                                // Set the selected item code
+                                var select = $("#items-tbody-add tr:last-child .item-code-select");
+                                select.val(item.item_code);
+                            });
+                        } else {
+                            alert(response.message || "Error fetching PR items");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error fetching PR items: " + error);
+                    }
+                });
+            } else {
+                // Enable add item button and clear items
+                $("#add-item-add").prop("disabled", false);
+                $("#items-tbody-add").empty();
+            }
         });
 
         // Remove Item

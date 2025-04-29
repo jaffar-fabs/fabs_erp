@@ -9,6 +9,8 @@ from django.db import transaction, connection
 from datetime import datetime
 from decimal import Decimal
 
+# Define pagination size constant
+PAGINATION_SIZE = 6
 
 def set_comp_code(request):
     global COMP_CODE
@@ -33,7 +35,7 @@ def item_master(request):
     uoms = UOMMaster.objects.filter(is_active=True).order_by('uom')
     
     # Pagination
-    paginator = Paginator(items, 10)  # Show 10 items per page
+    paginator = Paginator(items, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -160,7 +162,7 @@ def uom_master(request):
         uoms = UOMMaster.objects.all().order_by('uom')
     
     # Pagination
-    paginator = Paginator(uoms, 10)  # Show 10 UOMs per page
+    paginator = Paginator(uoms, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -260,7 +262,7 @@ def warehouse_master(request):
         warehouses = WarehouseMaster.objects.all().order_by('ware_code')
     
     # Pagination
-    paginator = Paginator(warehouses, 10)  # Show 10 warehouses per page
+    paginator = Paginator(warehouses, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -371,9 +373,8 @@ def purchase_order(request):
     else:
         pos = PurchaseOrderHeader.objects.all().order_by('-tran_date')
     
-    
     # Pagination
-    paginator = Paginator(pos, 10)  # Show 10 POs per page
+    paginator = Paginator(pos, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -666,7 +667,7 @@ def grn(request):
     pos = PurchaseOrderHeader.objects.filter(stat_code='ACT').order_by('-tran_date')
     
     # Pagination
-    paginator = Paginator(grns, 10)  # Show 10 GRNs per page
+    paginator = Paginator(grns, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -819,7 +820,7 @@ def material_request(request):
         )
     
     # Pagination
-    paginator = Paginator(mrs, 10)  # Show 10 items per page
+    paginator = Paginator(mrs, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     mrs = paginator.get_page(page_number)
     
@@ -1045,7 +1046,7 @@ def warehouse_opening_stock(request):
         detail.item_desc = item_descriptions.get(detail.item_code, '')
     
     # Pagination
-    paginator = Paginator(details, 10)  # Show 10 details per page
+    paginator = Paginator(details, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -1204,7 +1205,7 @@ def material_issue(request):
     warehouses = WarehouseMaster.objects.filter(stat_code='A').order_by('ware_code')
     
     # Pagination
-    paginator = Paginator(issues, 10)  # Show 10 issues per page
+    paginator = Paginator(issues, PAGINATION_SIZE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
