@@ -360,6 +360,7 @@ def warehouse_master_delete(request, warehouse_id):
 
 # Purchase Order Views
 def purchase_order(request):
+    set_comp_code(request)
     # Get search keyword
     keyword = request.GET.get('keyword', '')
     
@@ -372,6 +373,12 @@ def purchase_order(request):
         ).order_by('-tran_date')
     else:
         pos = PurchaseOrderHeader.objects.all().order_by('-tran_date')
+    
+    # Get suppliers from PartyMaster
+    suppliers = PartyMaster.objects.filter(comp_code=COMP_CODE, party_type='SUPPLIER').order_by('customer_name')
+    
+    # Get active POs for dropdown
+    pr_items_data = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE, ordr_type='PR', quot_stat='ACT').order_by('-ordr_date')
     
     # Pagination
     paginator = Paginator(pos, PAGINATION_SIZE)
@@ -386,7 +393,8 @@ def purchase_order(request):
         'pos': page_obj,
         'keyword': keyword,
         'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
-        
+        'suppliers': suppliers,
+        'pr_items_data': pr_items_data
     }
     
     return render(request, 'pages/procurement/purchase_order.html', context)
@@ -396,12 +404,21 @@ def purchase_order_add(request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                # Generate PO number using fn_get_seed_no
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'PO'])
+                    result = cursor.fetchone()
+                    tran_numb = result[0] if result else None
+
+                if not tran_numb:
+                    raise ValueError("Failed to generate PO number")
+
                 # Create PO header
                 po_header = PurchaseOrderHeader(
                     comp_code=COMP_CODE,
                     tran_type='PO',
                     tran_date=datetime.strptime(request.POST.get('tran_date'), '%Y-%m-%d').date(),
-                    tran_numb=request.POST.get('tran_numb'),
+                    tran_numb=tran_numb,
                     supl_code=request.POST.get('supl_code'),
                     supl_name=request.POST.get('supl_name'),
                     supl_add1=request.POST.get('supl_add1'),
@@ -420,6 +437,7 @@ def purchase_order_add(request):
                     taxx_prct=request.POST.get('taxx_prct') or 0,
                     taxx_amnt=request.POST.get('taxx_amnt') or 0,
                     lpoo_amnt=request.POST.get('lpoo_amnt') or 0,
+                    stat_code=request.POST.get('stat_code', 'ACT'),
                     created_by=request.user.username
                 )
                 po_header.save()
@@ -445,11 +463,21 @@ def purchase_order_add(request):
                     )
                     po_detail.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Purchase Order created successfully'})
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Purchase Order created successfully',
+                'tran_numb': tran_numb
+            })
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
     
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    })
 
 @csrf_exempt
 def purchase_order_edit(request):
@@ -1389,7 +1417,10 @@ def material_issue_delete(request):
                 # Delete issue
                 issue.delete()
                 
-            return JsonResponse({'status': 'success', 'message': 'Material issue deleted successfully'})
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Material issue deleted successfully'
+            })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     

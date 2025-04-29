@@ -46,6 +46,7 @@ class PartyMaster(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+    party_type = models.CharField(max_length=50, null=True, blank=True)
 
 class PartyDocuments (models.Model):
     comp_code = models.CharField(max_length=15, null=True)  # Removed default value

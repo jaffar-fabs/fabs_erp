@@ -341,3 +341,14 @@ def get_warehouse_types(request):
         'warehouse_type_data': warehouse_type_data
     }
 
+def get_party_type(request):
+    comp_code = get_comp_code(request)
+    party_type_data = CodeMaster.objects.filter(
+        comp_code=comp_code,
+        base_type='PARTY_TYPE',
+        is_active='Y'
+    ).order_by('sequence_id')
+    return {
+        'party_type_data': party_type_data
+    }
+

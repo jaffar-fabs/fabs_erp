@@ -4162,11 +4162,12 @@ def check_employee_allocation(request):
     return JsonResponse({'error': 'Invalid employee code'}, status=400)
 
 def party_master_list(request):
+    set_comp_code(request)
     keyword = request.GET.get('keyword', '').strip()
     page_number = request.GET.get('page', 1)
 
     # Filter parties based on keyword
-    parties_query = PartyMaster.objects.all()
+    parties_query = PartyMaster.objects.filter(comp_code=COMP_CODE)
     if keyword:
         parties_query = parties_query.filter(customer_name__icontains=keyword)
 
@@ -4216,6 +4217,7 @@ def create_party(request):
         currency = request.POST.get('currency')
         payment_terms = request.POST.get('payment_terms')
         status = request.POST.get('status')
+        party_type = request.POST.get('party_type')
         upload_document = request.FILES.getlist('file_upload[]')
 
         if upload_document:
@@ -4248,6 +4250,7 @@ def create_party(request):
             currency=currency,
             payment_terms=payment_terms,
             status=status,
+            party_type=party_type
         )
         return redirect('party_master_list')
 
@@ -4290,6 +4293,7 @@ def party_master_edit(request):
                 'currency': party.currency,
                 'payment_terms': party.payment_terms,
                 'status': party.status,
+                'party_type': party.party_type,
                 'documents': document_data,  # Include document data
             })
         except PartyMaster.DoesNotExist:
@@ -4317,6 +4321,7 @@ def party_master_edit(request):
             party.currency = request.POST.get('currency')
             party.payment_terms = request.POST.get('payment_terms')
             party.status = request.POST.get('status')
+            party.party_type = request.POST.get('party_type')
             party.modified_by = request.user.id if request.user.is_authenticated else 1
             upload_document = request.FILES.getlist('file_upload[]')
 

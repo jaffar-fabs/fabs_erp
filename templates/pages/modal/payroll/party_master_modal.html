@@ -22,6 +22,17 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
+                        <label for="party_type" class="form-label">Party Type<span class="text-danger">*</span></label>
+                        <select name="party_type" class="form-control select" required>
+                            <option value="">Select Party Type</option>
+                            {% for type in party_type_data %}
+                            <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
                         <label for="trade_license" class="form-label">Trade License</label>
                         <input type="text" class="form-control" name="trade_license">
                     </div>
@@ -173,6 +184,17 @@
                     <div class="mb-3">
                         <label for="customer_name" class="form-label">Customer Name<span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="party_type" class="form-label">Party Type<span class="text-danger">*</span></label>
+                        <select name="party_type" id="party_type" class="form-control select" required>
+                            <option value="">Select Party Type</option>
+                            {% for type in party_type_data %}
+                            <option value="{{ type.base_value }}">{{ type.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">

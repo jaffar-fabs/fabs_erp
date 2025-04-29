@@ -152,8 +152,10 @@
                     $("#currency").val(response.currency).change();
                     $("#payment_terms").val(response.payment_terms).change();
                     $("#status").val(response.status).change();
-                // Populate the files table
-                if (response.documents && response.documents.length > 0) {
+                    $("#party_type").val(response.party_type).change();
+
+                    // Populate the files table
+                    if (response.documents && response.documents.length > 0) {
                         response.documents.forEach(function (doc) {
                             $("#party-files-body").append(`
                                 <tr>

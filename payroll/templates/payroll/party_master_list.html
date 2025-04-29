@@ -1,0 +1,6 @@
+<select class="form-select" id="party_type" name="party_type" required>
+    <option value="">Select Party Type</option>
+    {% for type in party_type_data %}
+    <option value="{{ type.code_value }}">{{ type.code_value }}</option>
+    {% endfor %}
+</select> 
