@@ -11,13 +11,13 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>PO Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" name="tran_date" id="tran_date" required>
+                        <input type="date" class="form-control" name="tran_date" required>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>PO Number</label>
-                        <input type="text" class="form-control" name="tran_numb" id="tran_numb" readonly>
+                        <input type="text" class="form-control" name="tran_numb" readonly>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -48,12 +48,8 @@
                             {% for supplier in suppliers %}
                             <option value="{{ supplier.customer_code }}" 
                                     data-name="{{ supplier.customer_name }}"
-                                    data-address1="{{ supplier.physical_address }}"
-                                    data-address2="{{ supplier.po_box }}"
-                                    data-address3="{{ supplier.emirates }}"
                                     data-contact="{{ supplier.contact_person }}"
-                                    data-phone="{{ supplier.contact_person_phone }}"
-                                    data-email="{{ supplier.contact_person_email }}">
+                                    data-phone="{{ supplier.contact_person_phone }}">
                                 {{ supplier.customer_code }} - {{ supplier.customer_name }}
                             </option>
                             {% endfor %}
@@ -76,52 +72,6 @@
                     <div class="form-group">
                         <label>Mobile Number</label>
                         <input type="text" class="form-control" name="mobl_numb">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Telephone</label>
-                        <input type="text" class="form-control" name="teln_numb">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" name="mail_addr">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Remarks</label>
-                        <input type="text" class="form-control" name="tran_remk">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" class="form-control" name="supl_add1" placeholder="Address Line 1" id="supl_add1">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="supl_add2" placeholder="Address Line 2" id="supl_add2">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="supl_add3" placeholder="Address Line 3" id="supl_add3">
                     </div>
                 </div>
             </div>
@@ -241,7 +191,17 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Supplier Code <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="supl_code" name="supl_code" required>
+                        <select class="form-select" name="supl_code" id="supl_code" required>
+                            <option value="">Select Supplier</option>
+                            {% for supplier in suppliers %}
+                            <option value="{{ supplier.customer_code }}" 
+                                    data-name="{{ supplier.customer_name }}"
+                                    data-contact="{{ supplier.contact_person }}"
+                                    data-phone="{{ supplier.contact_person_phone }}">
+                                {{ supplier.customer_code }} - {{ supplier.customer_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -260,52 +220,6 @@
                     <div class="form-group">
                         <label>Mobile Number</label>
                         <input type="text" class="form-control" id="mobl_numb" name="mobl_numb">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Telephone</label>
-                        <input type="text" class="form-control" id="teln_numb" name="teln_numb">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" id="mail_addr" name="mail_addr">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Remarks</label>
-                        <input type="text" class="form-control" id="tran_remk" name="tran_remk">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" class="form-control" id="supl_add1" name="supl_add1" placeholder="Address Line 1">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="supl_add2" name="supl_add2" placeholder="Address Line 2">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="supl_add3" name="supl_add3" placeholder="Address Line 3">
                     </div>
                 </div>
             </div>
@@ -441,28 +355,32 @@
             }
         });
 
-        // Handle supplier selection
-        $("#supl_code").on("change", function() {
-            var selectedOption = $(this).find("option:selected");
-            if (selectedOption.val()) {
-                // Auto-fill supplier details
-                $("#supl_name").val(selectedOption.data("name"));
-                $("#supl_add1").val(selectedOption.data("address1"));
-                $("#supl_add2").val(selectedOption.data("address2"));
-                $("#supl_add3").val(selectedOption.data("address3"));
-                $("#cont_name").val(selectedOption.data("contact"));
-                $("#mobl_numb").val(selectedOption.data("phone"));
-                $("#mail_addr").val(selectedOption.data("email"));
-            } else {
-                // Clear fields if no supplier selected
-                $("#supl_name").val("");
-                $("#supl_add1").val("");
-                $("#supl_add2").val("");
-                $("#supl_add3").val("");
-                $("#cont_name").val("");
-                $("#mobl_numb").val("");
-                $("#mail_addr").val("");
-            }
-        });
+        // Supplier field fetching for ADD modal
+$("#offcanvas_add select[name='supl_code']").on("change", function() {
+    var selectedOption = $(this).find("option:selected");
+    if (selectedOption.val()) {
+        $("#offcanvas_add input[name='supl_name']").val(selectedOption.data("name"));
+        $("#offcanvas_add input[name='cont_name']").val(selectedOption.data("contact"));
+        $("#offcanvas_add input[name='mobl_numb']").val(selectedOption.data("phone"));
+    } else {
+        $("#offcanvas_add input[name='supl_name']").val("");
+        $("#offcanvas_add input[name='cont_name']").val("");
+        $("#offcanvas_add input[name='mobl_numb']").val("");
+    }
+});
+
+// Supplier field fetching for EDIT modal
+$("#offcanvas_edit select[name='supl_code']").on("change", function() {
+    var selectedOption = $(this).find("option:selected");
+    if (selectedOption.val()) {
+        $("#offcanvas_edit input[name='supl_name']").val(selectedOption.data("name"));
+        $("#offcanvas_edit input[name='cont_name']").val(selectedOption.data("contact"));
+        $("#offcanvas_edit input[name='mobl_numb']").val(selectedOption.data("phone"));
+    } else {
+        $("#offcanvas_edit input[name='supl_name']").val("");
+        $("#offcanvas_edit input[name='cont_name']").val("");
+        $("#offcanvas_edit input[name='mobl_numb']").val("");
+    }
+});
     });
-</script> 
+</script>

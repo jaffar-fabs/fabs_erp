@@ -372,7 +372,7 @@ def purchase_order(request):
             Q(supl_code__icontains=keyword)
         ).order_by('-tran_date')
     else:
-        pos = PurchaseOrderHeader.objects.all().order_by('-tran_date')
+        pos = PurchaseOrderHeader.objects.filter(comp_code = COMP_CODE).order_by('-tran_date')
     
     # Get suppliers from PartyMaster
     suppliers = PartyMaster.objects.filter(comp_code=COMP_CODE, party_type='SUPPLIER').order_by('customer_name')
@@ -380,6 +380,7 @@ def purchase_order(request):
     # Get active POs for dropdown
     pr_items_data = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE, ordr_type='PR', quot_stat='ACT').order_by('-ordr_date')
     
+    items = ItemMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
     # Pagination
     paginator = Paginator(pos, PAGINATION_SIZE)
     page_number = request.GET.get('page')
@@ -394,7 +395,8 @@ def purchase_order(request):
         'keyword': keyword,
         'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
         'suppliers': suppliers,
-        'pr_items_data': pr_items_data
+        'pr_items_data': pr_items_data,
+        'items': items
     }
     
     return render(request, 'pages/procurement/purchase_order.html', context)
@@ -489,10 +491,12 @@ def purchase_order_edit(request):
             
         try:
             po_header = get_object_or_404(PurchaseOrderHeader, id=po_id)
+            print(po_header)
             po_details = PurchaseOrderDetail.objects.filter(
                 tran_numb=po_header.tran_numb,
                 tran_type='PO'
             ).order_by('tran_srno')
+            print(po_details)
             
             # Get PR data for dropdown
             pr_items_data = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE, ordr_type='PR').order_by('-ordr_date')
@@ -536,7 +540,7 @@ def purchase_order_edit(request):
                 'pr_items_data': [{
                     'id': pr.id,
                     'ordr_numb': pr.ordr_numb,
-                    'uniq_numb': pr.uniq_numb
+                    
                 } for pr in pr_items_data]
             }
             return JsonResponse(data)

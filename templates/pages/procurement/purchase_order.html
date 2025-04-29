@@ -169,7 +169,12 @@
             var itemHtml = `
                 <tr>
                     <td>
-                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                        <select class="form-select item-code-select" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                                <option value="{{ item.item_code }}" data-desc="{{ item.item_description }}" data-unit="{{ item.uom }}">{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td>
                         <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
@@ -207,7 +212,12 @@
             var itemHtml = `
                 <tr>
                     <td>
-                        <input type="text" class="form-control" name="item_code_${item.id || Date.now()}" value="${item.item_code || ''}" required>
+                        <select class="form-select item-code-select" name="item_code_${item.id || Date.now()}" required>
+                            <option value="">Select Item</option>
+                            {% for item in items %}
+                                <option value="{{ item.item_code }}" data-desc="{{ item.item_description }}" data-unit="{{ item.uom }}" ${item.item_code === item.item_code ? 'selected' : ''}>{{ item.item_code }}</option>
+                            {% endfor %}
+                        </select>
                     </td>
                     <td>
                         <input type="text" class="form-control" name="item_desc_${item.id || Date.now()}" value="${item.item_desc || ''}">
@@ -239,6 +249,39 @@
             `;
             $("#items-tbody-edit").append(itemHtml);
         }
+
+        $(document).on('change', '.item-code-select', function() {
+            var row = $(this).closest('tr');
+            var selectedOption = $(this).find('option:selected');
+            var desc = selectedOption.data('desc');
+            var unit = selectedOption.data('unit');
+            
+            row.find('input[name^="item_desc_"]').val(desc);
+            row.find('input[name^="item_unit_"]').val(unit);
+            
+            // Only set quantity if PR is selected
+            if ($("#pr_number").val()) {
+                var itemCode = $(this).val();
+                if (itemCode) {
+                    $.ajax({
+                        url: "{% url 'get_pr_items' %}",
+                        type: "GET",
+                        data: { 
+                            'ordr_numb': $("#pr_number").val(),
+                            'item_code': itemCode
+                        },
+                        success: function(response) {
+                            if (response.status === "success" && response.items.length > 0) {
+                                var item = response.items.find(i => i.item_code === itemCode);
+                                if (item) {
+                                    row.find('input[name^="item_qnty_"]').val(item.item_qnty);
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
         // Initialize tables when document is ready
         $(document).ready(function() {
@@ -371,22 +414,39 @@
         });
 
         // Handle Tab key on tax field for add form
-        $(document).on("keydown", "#items-tbody-add .item-tax", function(e) {
+        $(document).on("keydown", "#items-tbody-add .item-tax", function (e) {
             if (e.keyCode === 9) { // Tab key
                 e.preventDefault();
+
+                // Check if a PR is selected
+                if ($("#addPOForm select[name='refn_numb']").val()) {
+                    return; // Exit if PR is selected
+                }
+
+                // Add a new row if no PR is selected
                 var itemId = Date.now();
-                addItemRowAdd({id: itemId});
+                addItemRowAdd({ id: itemId });
+
                 // Focus on the first input of the new row
                 $(this).closest("tr").next().find("input:first").focus();
             }
         });
 
         // Handle Tab key on tax field for edit form
-        $(document).on("keydown", "#items-tbody-edit .item-tax", function(e) {
+        $(document).on("keydown", "#items-tbody-edit .item-tax", function (e) {
             if (e.keyCode === 9) { // Tab key
                 e.preventDefault();
+
+                // Check if a PR is selected
+                if ($("#editPOForm select[name='refn_numb']").val()) {
+                    alert("Cannot add new rows manually when a PR is selected.");
+                    return; // Exit if PR is selected
+                }
+
+                // Add a new row if no PR is selected
                 var itemId = Date.now();
-                addItemRowEdit({id: itemId});
+                addItemRowEdit({ id: itemId });
+
                 // Focus on the first input of the new row
                 $(this).closest("tr").next().find("input:first").focus();
             }
@@ -620,7 +680,7 @@
                     $("#po_id").val(header.id);
                     $("#tran_date").val(header.tran_date);
                     $("#tran_numb").val(header.tran_numb);
-                    $("#supl_code").val(header.supl_code);
+                    $("#offcanvas_edit select[name='supl_code']").val(header.supl_code).change();
                     $("#supl_name").val(header.supl_name);
                     $("#supl_add1").val(header.supl_add1);
                     $("#supl_add2").val(header.supl_add2);
