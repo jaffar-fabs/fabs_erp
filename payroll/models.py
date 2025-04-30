@@ -839,27 +839,27 @@ class GratuitySettlement(models.Model):
     designation = models.CharField(max_length=50)
     date_of_joining = models.DateField()
     date_of_exit = models.DateField()
-    total_years_of_service = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    total_years_of_service = models.CharField(max_length=5, blank=True, null=True)  # Auto-calculated
     accrued_date = models.DateField(blank=True, null=True)  # Auto-calculated
 
     # Salary & Gratuity
-    last_drawn_basic_salary = models.DecimalField(max_digits=12, decimal_places=2)
-    eligible_gratuity = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    last_drawn_basic_salary = models.CharField(max_length=12)
+    eligible_gratuity = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
     loss_of_pay_days = models.IntegerField(blank=True, null=True)
     gratuity_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Paid', 'Paid')])
-    leave_balance_days = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Auto/Enter
-    leave_encashment_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto/Enter
+    leave_balance_days = models.CharField(max_length=6, blank=True, null=True)  # Auto/Enter
+    leave_encashment_amount = models.CharField(max_length=12, blank=True, null=True)  # Auto/Enter
 
     # Allowances & Deductions
-    bonus_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    other_allowances = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    other_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    loan_recovery = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
-    notice_pay = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    bonus_amount = models.CharField(max_length=12, blank=True, null=True)
+    other_allowances = models.CharField(max_length=12, blank=True, null=True)
+    deductions = models.CharField(max_length=12, blank=True, null=True)
+    other_deductions = models.CharField(max_length=12, blank=True, null=True)
+    loan_recovery = models.CharField(max_length=12, blank=True, null=True)
+    notice_pay = models.CharField(max_length=12, blank=True, null=True)
 
     # Settlement
-    final_settlement_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    final_settlement_amount = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
     payment_mode = models.CharField(max_length=20, choices=[('Bank Transfer', 'Bank Transfer'), ('Cheque', 'Cheque'), ('Cash', 'Cash')])
     bank_name = models.CharField(max_length=100, blank=True, null=True)
     bank_account_no = models.CharField(max_length=50, blank=True, null=True)

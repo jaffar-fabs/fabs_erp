@@ -1,20 +1,60 @@
 {% extends "partials/base.html" %}
 {% load static %}
 {% block content %}
+
+<!-- Page Wrapper -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <div class="page-wrapper">
     <div class="content">
         <div class="row">
             <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Gratuity Settlements" count=result_cnt %}
+                {% endblock pagetitle %}
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title mb-0">Gratuity Settlements</h4>
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGratuityModal">
-                            <i class="ti ti-plus"></i> Add Gratuity
-                        </button>
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search Gratuity Settlements" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <div class="dropdown me-2">
+                                        <a href="javascript:void(0);" class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"><i
+                                                class="ti ti-package-export me-2"></i>Export</a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul>
+                                                <li>
+                                                    <a href="javascript:void(0);" class="dropdown-item"><i
+                                                            class="ti ti-file-type-pdf text-danger me-1"></i>Export
+                                                        as PDF</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0);" class="dropdown-item"><i
+                                                            class="ti ti-file-type-xls text-green me-1"></i>Export
+                                                        as Excel</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                        data-bs-target="#addGratuityModal">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Gratuity
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
                                 <thead>
                                     <tr>
                                         <th>Employee Code</th>
@@ -24,56 +64,103 @@
                                         <th>Last Drawn Salary</th>
                                         <th>Eligible Gratuity</th>
                                         <th>Status</th>
-                                        <th>Actions</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for record in gratuity_list %}
                                     <tr>
-                                        <td>{{ record.employee_code }}</td>
-                                        <td>{{ record.employee_name }}</td>
-                                        <td>{{ record.date_of_joining }}</td>
-                                        <td>{{ record.date_of_exit }}</td>
-                                        <td>{{ record.last_drawn_basic_salary }}</td>
-                                        <td>{{ record.eligible_gratuity }}</td>
                                         <td>
-                                            <span class="badge {% if record.gratuity_status == 'Paid' %}bg-success{% elif record.gratuity_status == 'Approved' %}bg-info{% else %}bg-warning{% endif %}">
-                                                {{ record.gratuity_status }}
+                                            <h2 class="d-flex align-items-center">
+                                                <a href="#">{{record.employee_code}}</a>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            <h2 class="d-flex align-items-center">
+                                                <a href="#">{{record.employee_name}}</a>
+                                            </h2>
+                                        </td>
+                                        <td>{{record.date_of_joining|date:"d-M-Y"}}</td>
+                                        <td>{{record.date_of_exit|date:"d-M-Y"}}</td>
+                                        <td>{{record.last_drawn_basic_salary}}</td>
+                                        <td>{{record.eligible_gratuity}}</td>
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if record.gratuity_status == 'Paid' %}bg-success
+                                                {% elif record.gratuity_status == 'Approved' %}bg-info
+                                                {% else %}bg-warning{% endif %}">
+                                                {{record.gratuity_status}}
                                             </span>
                                         </td>
                                         <td>
-                                            <button class="btn btn-sm btn-info edit-graduity-btn" data-id="{{ record.id }}">Edit</button>
-                                            <form method="post" action="{% url 'delete_gratuity' record.id %}" style="display:inline;">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this record?')">Delete</button>
-                                            </form>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-graduity-btn" href="#"
+                                                        data-id="{{ record.id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_gratuity"
+                                                        data-gratuity-id="{{ record.id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="8" class="text-center">No records found.</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Pagination if needed -->
+                        <!-- Pagination -->
                         {% if gratuity_list.has_other_pages %}
-                        <nav>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ gratuity_list.start_index }} to {{ gratuity_list.end_index }} of {{ result_cnt }}
+                                    entries</span>
+                            </div>
                             <ul class="pagination">
                                 {% if gratuity_list.has_previous %}
-                                <li class="page-item"><a class="page-link" href="?page={{ gratuity_list.previous_page_number }}">Previous</a></li>
-                                {% endif %}
-                                {% for num in gratuity_list.paginator.page_range %}
-                                <li class="page-item {% if gratuity_list.number == num %}active{% endif %}">
-                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ gratuity_list.previous_page_number }}">Previous</a>
                                 </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                {% for page in gratuity_list.paginator.page_range %}
+                                {% if gratuity_list.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
                                 {% endfor %}
+
                                 {% if gratuity_list.has_next %}
-                                <li class="page-item"><a class="page-link" href="?page={{ gratuity_list.next_page_number }}">Next</a></li>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ gratuity_list.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
                                 {% endif %}
                             </ul>
-                        </nav>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -81,49 +168,49 @@
         </div>
     </div>
 </div>
+
 <script>
-     $(".edit-graduity-btn").click(function (event) {
-        event.preventDefault();
-        var id = $(this).data("id");
-        
-        // Show the edit modal
-        var editModal = new bootstrap.Offcanvas(document.getElementById("editGratuityModal"));
-        editModal.show();
+    $(".edit-graduity-btn").click(function (event) {
+       event.preventDefault();
+       var id = $(this).data("id");
+       
+       // Show the edit modal
+       var editModal = new bootstrap.Offcanvas(document.getElementById("editGratuityModal"));
+       editModal.show();
 
-        // Fetch gratuity details via AJAX
-        $.ajax({
-            url: '/get_gratuity_details/' + id + '/',  // Update this URL to match your Django URL pattern
-            method: 'GET',
-            success: function(response) {
-                // Populate form fields with response data
-                $('#edit_id').val(response.id);
-                $('#edit_employee_code').val(response.employee_code);
-                $('#edit_employee_name').val(response.employee_name);
-                $('#edit_category').val(response.category);
-                $('#edit_designation').val(response.designation);
-                $('#edit_date_of_joining').val(response.date_of_joining);
-                $('#edit_date_of_exit').val(response.date_of_exit);
-                $('#edit_last_drawn_basic_salary').val(response.last_drawn_basic_salary);
-                $('#edit_eligible_gratuity').val(response.eligible_gratuity);
-                $('#edit_gratuity_status').val(response.gratuity_status);
-                $('#edit_settlement_status').val(response.settlement_status);
-                $('#edit_payment_mode').val(response.payment_mode);
-                $('#edit_bank_name').val(response.bank_name);
-                $('#edit_bank_account_no').val(response.bank_account_no);
-                $('#edit_remarks').val(response.remarks);
-                
-                // Update form action URL
-                $('#edit_gratuity_form').attr('action', '/update_gratuity/' + id + '/');
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching gratuity details:', error);
-                alert('Error loading gratuity details. Please try again.');
-            }
-        });
-    });
+       // Fetch gratuity details via AJAX
+       $.ajax({
+           url: '/get_gratuity_details/' + id + '/',  // Update this URL to match your Django URL pattern
+           method: 'GET',
+           success: function(response) {
+               // Populate form fields with response data
+               $('#edit_id').val(response.id);
+               $('#edit_employee_code').val(response.employee_code);
+               $('#edit_employee_name').val(response.employee_name);
+               $('#edit_category').val(response.category);
+               $('#edit_designation').val(response.designation);
+               $('#edit_date_of_joining').val(response.date_of_joining);
+               $('#edit_date_of_exit').val(response.date_of_exit);
+               $('#edit_last_drawn_basic_salary').val(response.last_drawn_basic_salary);
+               $('#edit_eligible_gratuity').val(response.eligible_gratuity);
+               $('#edit_gratuity_status').val(response.gratuity_status);
+               $('#edit_settlement_status').val(response.settlement_status);
+               $('#edit_payment_mode').val(response.payment_mode);
+               $('#edit_bank_name').val(response.bank_name);
+               $('#edit_bank_account_no').val(response.bank_account_no);
+               $('#edit_remarks').val(response.remarks);
+               
+               // Update form action URL
+               $('#edit_gratuity_form').attr('action', '/update_gratuity/' + id + '/');
+           },
+           error: function(xhr, status, error) {
+               console.error('Error fetching gratuity details:', error);
+               alert('Error loading gratuity details. Please try again.');
+           }
+       });
+   });
 </script>
-
 <!-- Add Modal -->
-{% include "pages/payroll/graduity/graduity_modal.html"%}
+{% include "pages/modal/payroll/graduity_modal.html"%}
 
-{% endblock %}
+{% endblock content %}

@@ -5268,34 +5268,6 @@ def save_attendance_correction(request):
             'message': str(e)
         })
 
-@csrf_exempt
-def get_gratuity_details(request, gratuity_id):
-    try:
-        gratuity = GratuitySettlement.objects.get(id=gratuity_id)
-        data = {
-            'id': gratuity.id,
-            'employee_code': gratuity.employee_code,
-            'employee_name': gratuity.employee_name,
-            'category': gratuity.category,
-            'designation': gratuity.designation,
-            'date_of_joining': gratuity.date_of_joining.strftime('%Y-%m-%d'),
-            'date_of_exit': gratuity.date_of_exit.strftime('%Y-%m-%d'),
-            'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
-            'eligible_gratuity': str(gratuity.eligible_gratuity),
-            'gratuity_status': gratuity.gratuity_status,
-            'settlement_status': gratuity.settlement_status,
-            'payment_mode': gratuity.payment_mode,
-            'bank_name': gratuity.bank_name,
-            'bank_account_no': gratuity.bank_account_no,
-            'remarks': gratuity.remarks
-        }
-        return JsonResponse(data)
-    except GratuitySettlement.DoesNotExist:
-        return JsonResponse({'error': 'Gratuity record not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
-
 def gratuity_list(request):
     """View to display list of gratuity settlements"""
     gratuity_list = GratuitySettlement.objects.all().order_by('-created_on')
@@ -5348,7 +5320,7 @@ def add_gratuity(request):
                 bank_name=bank_name,
                 bank_account_no=bank_account_no,
                 remarks=remarks,
-                created_by=request.user.id
+                created_by=1
             )
             
             # Handle file uploads if any
@@ -5358,10 +5330,8 @@ def add_gratuity(request):
                 gratuity.attachments = request.FILES['attachments']
             gratuity.save()
             
-            return JsonResponse({
-                'success': True,
-                'message': 'Gratuity settlement added successfully'
-            })
+            return redirect('gratuity_list')
+        
             
         except Exception as e:
             return JsonResponse({
@@ -5406,10 +5376,7 @@ def update_gratuity(request, gratuity_id):
             
             gratuity.save()
             
-            return JsonResponse({
-                'success': True,
-                'message': 'Gratuity settlement updated successfully'
-            })
+            return redirect('gratuity_list')
             
         except Exception as e:
             return JsonResponse({
@@ -5430,10 +5397,7 @@ def delete_gratuity(request, gratuity_id):
             gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
             gratuity.delete()
             
-            return JsonResponse({
-                'success': True,
-                'message': 'Gratuity settlement deleted successfully'
-            })
+            return redirect('gratuity_list')
             
         except Exception as e:
             return JsonResponse({
@@ -5447,7 +5411,6 @@ def delete_gratuity(request, gratuity_id):
     })
 
 @csrf_exempt
-@login_required
 def get_gratuity_details(request, gratuity_id):
     """View to get gratuity settlement details for editing"""
     try:
