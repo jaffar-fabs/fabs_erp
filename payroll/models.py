@@ -20,6 +20,10 @@ def party_documents_path(instance, filename):
     # Construct the path using the party's customer code
     return os.path.join('party_documents', instance.customer_code, filename)
 
+def gratuity_document_path(instance, filename):
+    # Store documents under a folder named by employee ID
+    return f'gratuity_docs/{instance.employee_id}/{filename}'
+
 # -------------------------------------------------------------------------------
 # Party Master
 class PartyMaster(models.Model):
@@ -821,4 +825,59 @@ class LeaveTransaction(models.Model):
 
     def __str__(self):
         return f"LeaveTransaction({self.employee.emp_code}, {self.start_date} to {self.end_date})"
+
+# ------------------------------------------------------------------------------------------------------------
+
+class GratuitySettlement(models.Model):
+    id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15)
+    
+    # EmployeeDetails
+    employee_code = models.CharField(max_length=50)
+    employee_name = models.CharField(max_length=100)
+    category = models.CharField(max_length=50)
+    designation = models.CharField(max_length=50)
+    date_of_joining = models.DateField()
+    date_of_exit = models.DateField()
+    total_years_of_service = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    accrued_date = models.DateField(blank=True, null=True)  # Auto-calculated
+
+    # Salary & Gratuity
+    last_drawn_basic_salary = models.DecimalField(max_digits=12, decimal_places=2)
+    eligible_gratuity = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    loss_of_pay_days = models.IntegerField(blank=True, null=True)
+    gratuity_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Paid', 'Paid')])
+    leave_balance_days = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)  # Auto/Enter
+    leave_encashment_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto/Enter
+
+    # Allowances & Deductions
+    bonus_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    other_allowances = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    other_deductions = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    loan_recovery = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    notice_pay = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+
+    # Settlement
+    final_settlement_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)  # Auto-calculated
+    payment_mode = models.CharField(max_length=20, choices=[('Bank Transfer', 'Bank Transfer'), ('Cheque', 'Cheque'), ('Cash', 'Cash')])
+    bank_name = models.CharField(max_length=100, blank=True, null=True)
+    bank_account_no = models.CharField(max_length=50, blank=True, null=True)
+    settlement_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Paid', 'Paid')])
+    settlement_date = models.DateField(blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
+    category_settlement = models.CharField(max_length=50, blank=True, null=True)
+
+    # Documents
+    supporting_docs = models.FileField(upload_to=gratuity_document_path, blank=True, null=True)
+    attachments = models.FileField(upload_to=gratuity_document_path, blank=True, null=True)
+
+    # Audit Fields
+    created_by = models.CharField(max_length=50)
+    created_on = models.DateTimeField(default=timezone.now)
+    last_modified_by = models.CharField(max_length=50, blank=True, null=True)
+    last_modified_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.employee_id} - {self.employee_name} - {self.settlement_status}"
 

@@ -181,6 +181,14 @@ urlpatterns = [
     path('save_attendance_correction/', views.save_attendance_correction, name='save_attendance_correction'),
     path('get_employee_process_cycle/', views.get_employee_process_cycle, name='get_employee_process_cycle'),
 
+    #Gratuity
+    path('gratuity_list/', views.gratuity_list, name='gratuity_list'),
+    path('add_gratuity/', views.add_gratuity, name='add_gratuity'),
+    path('get_gratuity_details/<int:gratuity_id>/', views.get_gratuity_details, name='get_gratuity_details'),
+    path('update_gratuity/<int:gratuity_id>/', views.update_gratuity, name='update_gratuity'),
+    path('delete_gratuity/<int:gratuity_id>/', views.delete_gratuity, name='delete_gratuity'),
+
+
     path('duty_roster/', views.duty_roster, name='duty_roster'),
 
     #enquiries

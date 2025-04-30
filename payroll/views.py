@@ -32,6 +32,9 @@ from io import BytesIO
 from django.db import transaction
 from django.utils import timezone
 import json
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from .models import GratuitySettlement
 
 
 PAGINATION_SIZE = 6
@@ -5264,3 +5267,208 @@ def save_attendance_correction(request):
             'success': False,
             'message': str(e)
         })
+
+@csrf_exempt
+def get_gratuity_details(request, gratuity_id):
+    try:
+        gratuity = GratuitySettlement.objects.get(id=gratuity_id)
+        data = {
+            'id': gratuity.id,
+            'employee_code': gratuity.employee_code,
+            'employee_name': gratuity.employee_name,
+            'category': gratuity.category,
+            'designation': gratuity.designation,
+            'date_of_joining': gratuity.date_of_joining.strftime('%Y-%m-%d'),
+            'date_of_exit': gratuity.date_of_exit.strftime('%Y-%m-%d'),
+            'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
+            'eligible_gratuity': str(gratuity.eligible_gratuity),
+            'gratuity_status': gratuity.gratuity_status,
+            'settlement_status': gratuity.settlement_status,
+            'payment_mode': gratuity.payment_mode,
+            'bank_name': gratuity.bank_name,
+            'bank_account_no': gratuity.bank_account_no,
+            'remarks': gratuity.remarks
+        }
+        return JsonResponse(data)
+    except GratuitySettlement.DoesNotExist:
+        return JsonResponse({'error': 'Gratuity record not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+def gratuity_list(request):
+    """View to display list of gratuity settlements"""
+    gratuity_list = GratuitySettlement.objects.all().order_by('-created_on')
+    
+    # Pagination
+    paginator = Paginator(gratuity_list, 10)  # Show 10 records per page
+    page = request.GET.get('page')
+    gratuity_list = paginator.get_page(page)
+    
+    return render(request, 'pages/payroll/graduity/graduity_list.html', {
+        'gratuity_list': gratuity_list
+    })
+
+@csrf_exempt
+
+def add_gratuity(request):
+    """View to add new gratuity settlement"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            employee_code = request.POST.get('employee_code')
+            employee_name = request.POST.get('employee_name')
+            category = request.POST.get('category')
+            designation = request.POST.get('designation')
+            date_of_joining = request.POST.get('date_of_joining')
+            date_of_exit = request.POST.get('date_of_exit')
+            last_drawn_basic_salary = request.POST.get('last_drawn_basic_salary')
+            eligible_gratuity = request.POST.get('eligible_gratuity')
+            gratuity_status = request.POST.get('gratuity_status')
+            settlement_status = request.POST.get('settlement_status')
+            payment_mode = request.POST.get('payment_mode')
+            bank_name = request.POST.get('bank_name')
+            bank_account_no = request.POST.get('bank_account_no')
+            remarks = request.POST.get('remarks')
+            
+            # Create new gratuity settlement
+            gratuity = GratuitySettlement.objects.create(
+                comp_code=request.session.get('comp_code', '1000'),
+                employee_code=employee_code,
+                employee_name=employee_name,
+                category=category,
+                designation=designation,
+                date_of_joining=date_of_joining,
+                date_of_exit=date_of_exit,
+                last_drawn_basic_salary=last_drawn_basic_salary,
+                eligible_gratuity=eligible_gratuity,
+                gratuity_status=gratuity_status,
+                settlement_status=settlement_status,
+                payment_mode=payment_mode,
+                bank_name=bank_name,
+                bank_account_no=bank_account_no,
+                remarks=remarks,
+                created_by=request.user.id
+            )
+            
+            # Handle file uploads if any
+            if 'supporting_docs' in request.FILES:
+                gratuity.supporting_docs = request.FILES['supporting_docs']
+            if 'attachments' in request.FILES:
+                gratuity.attachments = request.FILES['attachments']
+            gratuity.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Gratuity settlement added successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+@csrf_exempt
+
+def update_gratuity(request, gratuity_id):
+    """View to update existing gratuity settlement"""
+    if request.method == 'POST':
+        try:
+            gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
+            
+            # Update fields
+            gratuity.employee_name = request.POST.get('employee_name')
+            gratuity.category = request.POST.get('category')
+            gratuity.designation = request.POST.get('designation')
+            gratuity.date_of_joining = request.POST.get('date_of_joining')
+            gratuity.date_of_exit = request.POST.get('date_of_exit')
+            gratuity.last_drawn_basic_salary = request.POST.get('last_drawn_basic_salary')
+            gratuity.eligible_gratuity = request.POST.get('eligible_gratuity')
+            gratuity.gratuity_status = request.POST.get('gratuity_status')
+            gratuity.settlement_status = request.POST.get('settlement_status')
+            gratuity.payment_mode = request.POST.get('payment_mode')
+            gratuity.bank_name = request.POST.get('bank_name')
+            gratuity.bank_account_no = request.POST.get('bank_account_no')
+            gratuity.remarks = request.POST.get('remarks')
+            gratuity.modified_by = request.user.id
+            
+            # Handle file uploads if any
+            if 'supporting_docs' in request.FILES:
+                gratuity.supporting_docs = request.FILES['supporting_docs']
+            if 'attachments' in request.FILES:
+                gratuity.attachments = request.FILES['attachments']
+            
+            gratuity.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Gratuity settlement updated successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+@csrf_exempt
+def delete_gratuity(request, gratuity_id):
+    """View to delete gratuity settlement"""
+    if request.method == 'POST':
+        try:
+            gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
+            gratuity.delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Gratuity settlement deleted successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+@csrf_exempt
+@login_required
+def get_gratuity_details(request, gratuity_id):
+    """View to get gratuity settlement details for editing"""
+    try:
+        gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
+        data = {
+            'id': gratuity.id,
+            'employee_code': gratuity.employee_code,
+            'employee_name': gratuity.employee_name,
+            'category': gratuity.category,
+            'designation': gratuity.designation,
+            'date_of_joining': gratuity.date_of_joining.strftime('%Y-%m-%d'),
+            'date_of_exit': gratuity.date_of_exit.strftime('%Y-%m-%d'),
+            'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
+            'eligible_gratuity': str(gratuity.eligible_gratuity),
+            'gratuity_status': gratuity.gratuity_status,
+            'settlement_status': gratuity.settlement_status,
+            'payment_mode': gratuity.payment_mode,
+            'bank_name': gratuity.bank_name,
+            'bank_account_no': gratuity.bank_account_no,
+            'remarks': gratuity.remarks
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
