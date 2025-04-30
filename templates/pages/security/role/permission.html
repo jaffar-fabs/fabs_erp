@@ -56,9 +56,10 @@
                                 <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
                                 {% endfor %}
                             </select>
-                            <table class="table datatable">
-                                <thead class="thead-light">
-                                    <tr>
+                            <div class="table-responsive custom-table" style="max-height: calc(95vh - 300px); overflow-y: auto;">
+                                <table class="table datatable">
+                                    <thead class="thead-light">
+                                        <tr>
                                         <th>Menu Name</th>
                                         <th>Create</th>
                                         <th>Edit</th>
