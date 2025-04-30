@@ -1008,14 +1008,17 @@ def project(request):
                     })
 
                 # Process each row
-                success_count = 0
-                error_rows = []
+                valid_records = []
+                invalid_records = []
                 
                 for index, row in df.iterrows():
                     try:
                         # Validate required fields
                         if any(pd.isna(row[col]) for col in required_columns):
-                            error_rows.append(f"Row {index + 2}: Missing required fields")
+                            invalid_records.append({
+                                'row': index + 2,
+                                'error': 'Missing required fields'
+                            })
                             continue
 
                         # Validate dates
@@ -1023,53 +1026,87 @@ def project(request):
                             start_date = pd.to_datetime(row['Start Date* (YYYY-MM-DD)']).date()
                             end_date = pd.to_datetime(row['End Date* (YYYY-MM-DD)']).date()
                         except:
-                            error_rows.append(f"Row {index + 2}: Invalid date format")
+                            invalid_records.append({
+                                'row': index + 2,
+                                'error': 'Invalid date format'
+                            })
                             continue
 
                         # Validate project code
                         if projectMaster.objects.filter(prj_code=row['Project Code*']).exists():
-                            error_rows.append(f"Row {index + 2}: Project code already exists")
+                            invalid_records.append({
+                                'row': index + 2,
+                                'error': 'Project code already exists'
+                            })
                             continue
 
-                        # Create project
-                        project = projectMaster(
-                            comp_code=request.session.get('comp_code'),
-                            prj_code=row['Project Code*'],
-                            prj_name=row['Project Name*'],
-                            project_description=row['Project Description*'],
-                            project_type=row['Project Type*'],
-                            project_value=row['Project Value*'],
-                            timeline_from=start_date,
-                            timeline_to=end_date,
-                            prj_city=row.get('Project City', ''),
-                            service_type=row.get('Service Type', ''),
-                            service_category=row.get('Service Category', ''),
-                            pro_sub_location=row.get('Project Sub Location', ''),
-                            customer=row.get('Customer', ''),
-                            agreement_ref=row.get('Agreement Ref', ''),
-                            op_head=row.get('OP Head', ''),
-                            manager=row.get('Manager', ''),
-                            commercial_manager=row.get('Commercial Manager', ''),
-                            procurement_user=row.get('Procurement User', ''),
-                            indent_user=row.get('Indent User', ''),
-                            final_contract_value=row.get('Final Contract Value', 0),
-                            project_status=row.get('Project Status', ''),
-                            created_by=1
-                        )
-                        project.save()
-                        success_count += 1
+                        # Add to valid records
+                        valid_records.append({
+                            'row': index + 2,
+                            'project_code': row['Project Code*'],
+                            'project_name': row['Project Name*'],
+                            'project_type': row['Project Type*'],
+                            'start_date': start_date.strftime('%Y-%m-%d'),
+                            'end_date': end_date.strftime('%Y-%m-%d'),
+                            'project_value': row['Project Value*']
+                        })
 
                     except Exception as e:
-                        error_rows.append(f"Row {index + 2}: {str(e)}")
+                        invalid_records.append({
+                            'row': index + 2,
+                            'error': str(e)
+                        })
 
-                # Prepare response
-                if error_rows:
+                # If this is just a preview request
+                if request.POST.get('preview') == 'true':
                     return JsonResponse({
-                        'status': 'partial',
-                        'message': f'Successfully imported {success_count} projects. Errors in {len(error_rows)} rows.',
-                        'errors': error_rows
+                        'status': 'preview',
+                        'total_records': len(df),
+                        'valid_records': valid_records,
+                        'invalid_records': invalid_records
                     })
-                else:
+
+                # If this is the final upload
+                if request.POST.get('confirm_upload') == 'true':
+                    success_count = 0
+                    for record in valid_records:
+                        try:
+                            # Get the original row data
+                            row_data = df.iloc[record['row'] - 2]
+                            
+                            # Create project
+                            project = projectMaster(
+                                comp_code=request.session.get('comp_code'),
+                                prj_code=row_data['Project Code*'],
+                                prj_name=row_data['Project Name*'],
+                                project_description=row_data['Project Description*'],
+                                project_type=row_data['Project Type*'],
+                                project_value=row_data['Project Value*'],
+                                timeline_from=pd.to_datetime(row_data['Start Date* (YYYY-MM-DD)']).date(),
+                                timeline_to=pd.to_datetime(row_data['End Date* (YYYY-MM-DD)']).date(),
+                                prj_city=row_data.get('Project City', ''),
+                                service_type=row_data.get('Service Type', ''),
+                                service_category=row_data.get('Service Category', ''),
+                                pro_sub_location=row_data.get('Project Sub Location', ''),
+                                customer=row_data.get('Customer', ''),
+                                agreement_ref=row_data.get('Agreement Ref', ''),
+                                op_head=row_data.get('OP Head', ''),
+                                manager=row_data.get('Manager', ''),
+                                commercial_manager=row_data.get('Commercial Manager', ''),
+                                procurement_user=row_data.get('Procurement User', ''),
+                                indent_user=row_data.get('Indent User', ''),
+                                final_contract_value=row_data.get('Final Contract Value', 0),
+                                project_status=row_data.get('Project Status', ''),
+                                created_by=1
+                            )
+                            project.save()
+                            success_count += 1
+                        except Exception as e:
+                            invalid_records.append({
+                                'row': record['row'],
+                                'error': f'Error saving record: {str(e)}'
+                            })
+
                     return JsonResponse({
                         'status': 'success',
                         'message': f'Successfully imported {success_count} projects'
@@ -1085,7 +1122,7 @@ def project(request):
                 'status': 'error',
                 'message': str(e)
             })
-
+        
     # GET request handling
     # Your existing GET request code here
     set_comp_code(request)
