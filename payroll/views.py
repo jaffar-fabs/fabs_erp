@@ -31,6 +31,7 @@ import urllib.request
 from io import BytesIO
 from django.db import transaction
 from django.utils import timezone
+import json
 
 
 PAGINATION_SIZE = 6
@@ -647,7 +648,6 @@ def dashboard_view(request):
     try:
         role_id = request.session.get("role_id")
         permission_data = list(RoleMenu.objects.filter(role_id=role_id, is_active=True).values('menu_id', 'view', 'add', 'modify', 'delete'))
-        print(permission_data)
         menu_ids = RoleMenu.objects.filter(role_id=role_id, view=True).values_list('menu_id', flat=True)
         parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent', comp_code=COMP_CODE).order_by('display_order').values('menu_id', 'screen_name'))
         child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, comp_code=COMP_CODE).exclude(parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url', 'parent_menu_id'))
@@ -5093,3 +5093,174 @@ def download_party_template(request):
     response['Content-Disposition'] = 'attachment; filename=party_template.xlsx'
     
     return response
+
+def attendance_correction(request):
+    set_comp_code(request)
+    try:
+        comp_code = COMP_CODE
+        if not comp_code:
+            messages.error(request, 'Company code not found in session')
+            return redirect('index')
+
+        # Get all active employees
+        employees = Employee.objects.filter(
+            comp_code=comp_code,
+            emp_status='ACTIVE'
+        ).values('emp_code', 'emp_name', 'process_cycle')
+
+        if not employees.exists():
+            messages.error(request, 'No active employees found')
+            return redirect('index')
+
+        context = {
+            'employees': employees
+        }
+        return render(request, 'pages/payroll/attendance_upload/attendance_correction.html', context)
+    except Exception as e:
+        messages.error(request, f'Error in attendance correction: {str(e)}')
+        return redirect('index')
+
+@csrf_exempt
+def get_employee_process_cycle(request):
+    set_comp_code(request)
+    try:
+        comp_code = COMP_CODE
+        if not comp_code:
+            return JsonResponse({'success': False, 'message': 'Company code not found in session'})
+
+        employee = request.GET.get('employee')
+        if not employee:
+            return JsonResponse({'success': False, 'message': 'Employee code is required'})
+
+        # Get employee's process cycle
+        employee_data = Employee.objects.filter(
+            comp_code=comp_code,
+            emp_code=employee
+        ).values('process_cycle').first()
+
+        if not employee_data:
+            return JsonResponse({'success': False, 'message': 'Employee not found'})
+
+        print(f"Employee process cycle: {employee_data['process_cycle']}")  # Debug log
+
+        # Get pay process month from PaycycleMaster
+        paycycle = PaycycleMaster.objects.filter(
+            comp_code=comp_code,
+            process_cycle=employee_data['process_cycle'],  # Fixed typo in field name
+            is_active='Y'
+        ).order_by('-process_cycle_id').first()
+
+        if not paycycle:
+            return JsonResponse({'success': False, 'message': 'No active pay cycle found for this employee'})
+
+        print(f"Paycycle found: {paycycle.pay_process_month}")  # Debug log
+
+        # Format the month as YYYY-MM
+        pay_process_month = paycycle.pay_process_month
+
+        return JsonResponse({
+            'success': True,
+            'process_cycle': employee_data['process_cycle'],
+            'pay_process_month': pay_process_month
+        })
+
+    except Exception as e:
+        print(f"Error in get_employee_process_cycle: {str(e)}")  # Debug log
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@csrf_exempt
+def fetch_attendance_data(request):
+    try:
+        employee = request.GET.get('employee')
+        month = request.GET.get('month')
+        
+        if not employee or not month:
+            return JsonResponse({
+                'success': False,
+                'message': 'Employee and month are required'
+            })
+
+        # Fetch attendance records
+        attendance_records = WorkerAttendanceRegister.objects.filter(
+            employee_code=employee,
+            pay_process_month=month
+        ).order_by('date')
+
+        attendance_data = []
+        for record in attendance_records:
+            attendance_data.append({
+                'date': record.date.strftime('%Y-%m-%d'),
+                'day': record.date.strftime('%A'),
+                'project_code': record.project_code,
+                'morning': record.morning,
+                'afternoon': record.afternoon,
+                'ot1': record.ot1,
+                'ot2': record.ot2,
+                'in_time': record.in_time,
+                'out_time': record.out_time
+            })
+
+        return JsonResponse({
+            'success': True,
+            'attendance': attendance_data
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+@csrf_exempt
+def save_attendance_correction(request):
+    try:
+        data = json.loads(request.body)
+        employee = data.get('employee')
+        month = data.get('month')
+        attendance_data = data.get('attendance_data', [])
+
+        if not employee or not month or not attendance_data:
+            return JsonResponse({
+                'success': False,
+                'message': 'Required fields are missing'
+            })
+
+        for record in attendance_data:
+            date_obj = datetime.strptime(record['date'], '%Y-%m-%d').date()
+            in_time_obj = datetime.strptime(record['in_time'], '%H:%M').time() if record['in_time'] else None
+            out_time_obj = datetime.strptime(record['out_time'], '%H:%M').time() if record['out_time'] else None
+
+            # Calculate working hours if both times are provided
+            working_hours = None
+            if in_time_obj and out_time_obj:
+                in_datetime = datetime.combine(date.today(), in_time_obj)
+                out_datetime = datetime.combine(date.today(), out_time_obj)
+                time_diff = out_datetime - in_datetime
+                working_hours = time_diff.total_seconds() / 3600  # Convert to hours
+
+            # Update or create attendance record
+            WorkerAttendanceRegister.objects.update_or_create(
+                employee_code=employee,
+                pay_process_month=month,
+                date=date_obj,
+                defaults={
+                    'project_code': record['project_code'],
+                    'morning': record['morning'],
+                    'afternoon': record['afternoon'],
+                    'ot1': record['ot1'],
+                    'ot2': record['ot2'],
+                    'in_time': in_time_obj,
+                    'out_time': out_time_obj,
+                    'working_hours': working_hours
+                }
+            )
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Attendance updated successfully'
+        })
+    except Exception as e:
+        print(f"Error in save_attendance_correction: {str(e)}")  # Add debug logging
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })

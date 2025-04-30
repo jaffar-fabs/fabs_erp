@@ -1,0 +1,239 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="page-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Manual Attendance Correction</h4>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Employee</label>
+                                <select class="form-control select2" id="employee">
+                                    <option value="">Select Employee</option>
+                                    {% for emp in employees %}
+                                    <option value="{{ emp.emp_code }}">{{ emp.emp_code }} - {{ emp.emp_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Month</label>
+                                <input type="text" class="form-control" id="month" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" onclick="fetchAttendanceData()">Fetch Data</button>
+                                    <button class="btn btn-success" onclick="saveAllAttendance()" id="saveButton" style="display: none;">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive" style="height: 450px; overflow-y: auto;">
+                            <table class="table table-bordered" id="attendanceTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Day</th>
+                                        <th>Project Code</th>
+                                        <th>Morning</th>
+                                        <th>Afternoon</th>
+                                        <th>OT 1 Hrs</th>
+                                        <th>OT 2 Hrs</th>
+                                        <th>In Time</th>
+                                        <th>Out Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize select2
+    $('#employee').select2({
+        placeholder: 'Select Employee',
+        allowClear: true
+    });
+
+    // Handle Select2 change event
+    $('#employee').on('select2:select', function(e) {
+        const employee = e.target.value;
+        if (employee) {
+            console.log('Fetching process cycle for employee:', employee);
+            fetch("{% url 'get_employee_process_cycle' %}?employee=" + employee)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Process cycle response:', data);
+                    if (data.success) {
+                        document.getElementById('month').value = data.pay_process_month;
+                    } else {
+                        console.error('Error:', data.message);
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching process cycle:', error);
+                    alert('Error fetching process cycle');
+                });
+        } else {
+            document.getElementById('month').value = '';
+            document.getElementById('saveButton').style.display = 'none';
+        }
+    });
+
+    // Handle Select2 clear event
+    $('#employee').on('select2:clear', function() {
+        document.getElementById('month').value = '';
+        document.getElementById('saveButton').style.display = 'none';
+    });
+});
+
+function fetchAttendanceData() {
+    const employee = document.getElementById('employee').value;
+    const month = document.getElementById('month').value;
+    
+    if (!employee) {
+        alert('Please select an employee');
+        return;
+    }
+    if (!month) {
+        alert('Please select an employee to get the month');
+        return;
+    }
+
+    fetch("{% url 'fetch_attendance_data' %}?employee=" + employee + "&month=" + month)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tbody = document.querySelector('#attendanceTable tbody');
+                tbody.innerHTML = '';
+                
+                data.attendance.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${record.date}</td>
+                        <td>${record.day}</td>
+                        <td><input type="text" class="form-control" value="${record.project_code || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="text" class="form-control" value="${record.morning || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="text" class="form-control" value="${record.afternoon || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="text" class="form-control" value="${record.ot1 || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="text" class="form-control" value="${record.ot2 || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="time" class="form-control" value="${record.in_time || ''}" onchange="updateRow(this)"></td>
+                        <td><input type="time" class="form-control" value="${record.out_time || ''}" onchange="updateRow(this)"></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                // Show save button when data is loaded
+                document.getElementById('saveButton').style.display = 'inline-block';
+            } else {
+                alert(data.message);
+                document.getElementById('saveButton').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error fetching attendance data');
+            document.getElementById('saveButton').style.display = 'none';
+        });
+}
+
+function updateRow(input) {
+    // Mark the row as modified
+    input.closest('tr').classList.add('modified');
+}
+
+function saveAllAttendance() {
+    const employee = document.getElementById('employee').value;
+    const month = document.getElementById('month').value;
+    const modifiedRows = document.querySelectorAll('#attendanceTable tbody tr.modified');
+    
+    if (modifiedRows.length === 0) {
+        alert('No changes to save');
+        return;
+    }
+
+    const attendanceData = Array.from(modifiedRows).map(row => {
+        const cells = row.cells;
+        return {
+            date: cells[0].textContent,
+            project_code: cells[2].querySelector('input').value,
+            morning: cells[3].querySelector('input').value,
+            afternoon: cells[4].querySelector('input').value,
+            ot1: cells[5].querySelector('input').value,
+            ot2: cells[6].querySelector('input').value,
+            in_time: cells[7].querySelector('input').value,
+            out_time: cells[8].querySelector('input').value
+        };
+    });
+
+    fetch("{% url 'save_attendance_correction' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            'employee': employee,
+            'month': month,
+            'attendance_data': attendanceData
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Attendance updated successfully');
+            window.location.reload();
+            // Remove modified class from rows
+            modifiedRows.forEach(row => row.classList.remove('modified'));
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving attendance data');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.modified {
+    background-color: #fff3cd;
+}
+.form-control {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+.gap-2 {
+    gap: 0.5rem;
+}
+</style>
+{% endblock %}

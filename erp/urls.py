@@ -175,6 +175,12 @@ urlpatterns = [
     path('camp_transaction_approval/', views.camp_transaction_approval, name='camp_transaction_approval'),
     path('camp_transaction_approval_submit/', views.camp_transaction_approval_submit, name='camp_transaction_approval_submit'),
 
+    #Attendance Correction
+    path('attendance_correction/', views.attendance_correction, name='attendance_correction'),
+    path('fetch_attendance_data/', views.fetch_attendance_data, name='fetch_attendance_data'),
+    path('save_attendance_correction/', views.save_attendance_correction, name='save_attendance_correction'),
+    path('get_employee_process_cycle/', views.get_employee_process_cycle, name='get_employee_process_cycle'),
+
     path('duty_roster/', views.duty_roster, name='duty_roster'),
 
     #enquiries
