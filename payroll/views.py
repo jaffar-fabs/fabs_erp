@@ -67,6 +67,8 @@ def employee_master(request):
 
     # Initialize the query
     query = Employee.objects.filter(comp_code=COMP_CODE, process_cycle__in=PAY_CYCLES)
+    user = request.session.get("username")
+    user_master = UserMaster.objects.filter(comp_code=COMP_CODE, is_active=True, user_id = user).values_list('view_emp_salary', flat=True)
 
     # Apply search filter if a keyword is provided
     if keyword:
@@ -102,6 +104,7 @@ def employee_master(request):
     # Prepare the context for the template
     context = {
         'employees': employees_page,
+        'user_master': user_master,
         'current_url': current_url,
         'keyword': keyword,
         'result_cnt': query.count()
@@ -1614,6 +1617,7 @@ from django.urls import reverse
 
 class UserMasterCreate(View):
     def post(self, request):
+        set_comp_code(request)
         user_id = request.POST.get('user_id', '').strip()
 
         if not user_id:
@@ -1646,7 +1650,8 @@ class UserMasterCreate(View):
                 created_by=request.POST.get('created_by'),
                 modified_by=request.POST.get('modified_by'),
                 emp_code=request.POST.get('emp_code'),
-                user_paycycles=user_paycycles_str  # Save as colon-separated string
+                user_paycycles=user_paycycles_str,  # Save as colon-separated string
+                view_emp_salary=request.POST.get('view_emp_salary')
             )
 
             user.full_clean()
@@ -1658,6 +1663,7 @@ class UserMasterCreate(View):
 
 class UserMasterUpdate(View):
     def post(self, request, user_master_id):
+        set_comp_code(request)
         try:
             user = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
     
@@ -1678,7 +1684,7 @@ class UserMasterUpdate(View):
             user.user_paycycles = ':'.join(user_paycycles)  # Convert list to colon-separated string
             
             user.is_active = request.POST.get('is_active') == 'on'
-            
+            user.view_emp_salary = request.POST.get('view_emp_salary')
             user.full_clean()
             user.save()
 
@@ -1689,7 +1695,7 @@ class UserMasterUpdate(View):
         
 class UserMasterDelete(View):
     def post(self, request, user_master_id):
-        
+        set_comp_code(request)
         user = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
         
         user.is_active = False
