@@ -628,10 +628,6 @@ def my_login_view(request):
                 request.session["role_id"] = role_id
 
                 set_comp_code(request)
-
-                # Execute the sync_current_campallocations function
-                # with connection.cursor() as cursor:
-                #     cursor.execute("SELECT sync_current_campallocations();")
                 
                 # messages.success(request, "Login successful!")
                 return redirect("/index")
@@ -650,6 +646,8 @@ def dashboard_view(request):
     set_comp_code(request)
     try:
         role_id = request.session.get("role_id")
+        permission_data = list(RoleMenu.objects.filter(role_id=role_id, is_active=True).values('menu_id', 'view', 'add', 'modify', 'delete'))
+        print(permission_data)
         menu_ids = RoleMenu.objects.filter(role_id=role_id, view=True).values_list('menu_id', flat=True)
         parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent', comp_code=COMP_CODE).order_by('display_order').values('menu_id', 'screen_name'))
         child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, comp_code=COMP_CODE).exclude(parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url', 'parent_menu_id'))
@@ -1016,13 +1014,14 @@ def project(request):
                 
                 for index, row in df.iterrows():
                     try:
-                        # Validate required fields
-                        if any(pd.isna(row[col]) for col in required_columns):
+                        missing_fields = [col for col in required_columns if pd.isna(row[col])]
+                        if missing_fields:
                             invalid_records.append({
                                 'row': index + 2,
-                                'error': 'Missing required fields'
+                                'error': f'Missing required fields: {", ".join(missing_fields)}'
                             })
                             continue
+
 
                         # Validate dates
                         try:
@@ -1091,13 +1090,13 @@ def project(request):
                                 service_type=row_data.get('Service Type', ''),
                                 service_category=row_data.get('Service Category', ''),
                                 pro_sub_location=row_data.get('Project Sub Location', ''),
-                                customer=row_data.get('Customer', ''),
+                                customer=row_data.get('Customer Code', ''),
                                 agreement_ref=row_data.get('Agreement Ref', ''),
-                                op_head=row_data.get('OP Head', ''),
-                                manager=row_data.get('Manager', ''),
-                                commercial_manager=row_data.get('Commercial Manager', ''),
-                                procurement_user=row_data.get('Procurement User', ''),
-                                indent_user=row_data.get('Indent User', ''),
+                                op_head=row_data.get('OP Head Code', ''),
+                                manager=row_data.get('Manager Code', ''),
+                                commercial_manager=row_data.get('Commercial Manager Code', ''),
+                                procurement_user=row_data.get('Procurement User Code', ''),
+                                indent_user=row_data.get('Indent User Code', ''),
                                 final_contract_value=row_data.get('Final Contract Value', 0),
                                 project_status=row_data.get('Project Status', ''),
                                 created_by=1
@@ -4155,28 +4154,112 @@ def check_employee_allocation(request):
 
 def party_master_list(request):
     set_comp_code(request)
-    keyword = request.GET.get('keyword', '').strip()
-    page_number = request.GET.get('page', 1)
-
-    # Filter parties based on keyword
-    parties_query = PartyMaster.objects.filter(comp_code=COMP_CODE)
+    # Get search keyword
+    keyword = request.GET.get('keyword', '')
+    
+    # Get all parties or filter by keyword
     if keyword:
-        parties_query = parties_query.filter(customer_name__icontains=keyword)
+        parties = PartyMaster.objects.filter(
+            Q(customer_code__icontains=keyword) |
+            Q(customer_name__icontains=keyword) |
+            Q(contact_person__icontains=keyword)
+        ).order_by('-party_id')
+    else:
+        parties = PartyMaster.objects.filter(comp_code=COMP_CODE).order_by('-party_id')
 
-    # Paginate the results
-    paginator = Paginator(parties_query.order_by('-party_id'), PAGINATION_SIZE)
+    # Handle Excel upload
+    if request.method == 'POST' and 'excel_file' in request.FILES:
+        try:
+            df = pd.read_excel(request.FILES['excel_file'])
+            valid_records = []
+            invalid_records = []
+            
+            for index, row in df.iterrows():
+                try:
+                    # Validate required fields
+                    required_fields = ['Customer Code*', 'Customer Name*', 'Telephone*', 'Contact Person*', 'Party Type*', 'Status*']
+                    for field in required_fields:
+                        if pd.isna(row[field]) or str(row[field]).strip() == '':
+                            raise ValueError(f"Required field '{field}' is empty")
+                    
+                    # Validate status
+                    status = str(row['Status*']).strip().upper()
+                    if status not in ['ACTIVE', 'INACTIVE']:
+                        raise ValueError(f"Invalid status '{status}'. Must be 'Active' or 'Inactive'")
+                    
+                    # Validate party type
+                    party_type = str(row['Party Type*']).strip().upper()
+                    if party_type not in ['CUSTOMER', 'VENDOR', 'BOTH']:
+                        raise ValueError(f"Invalid party type '{party_type}'. Must be 'Customer', 'Vendor', or 'Both'")
+                    
+                    # Check if customer code already exists
+                    if PartyMaster.objects.filter(customer_code=row['Customer Code*']).exists():
+                        raise ValueError(f"Customer code '{row['Customer Code*']}' already exists")
+                    
+                    # Prepare record for preview
+                    record = {
+                        'row': index + 2,  # Excel rows start at 1, and we have a header
+                        'customer_code': row['Customer Code*'],
+                        'customer_name': row['Customer Name*'],
+                        'contact_person': row['Contact Person*'],
+                        'telephone': row['Telephone*'],
+                        'email': row['Email'] if not pd.isna(row['Email']) else '',
+                        'status': row['Status*']
+                    }
+                    valid_records.append(record)
+                    
+                except Exception as e:
+                    invalid_records.append({
+                        'row': index + 2,
+                        'error': str(e)
+                    })
+            
+            if request.POST.get('preview'):
+                return JsonResponse({
+                    'status': 'preview',
+                    'total_records': len(df),
+                    'valid_records': valid_records,
+                    'invalid_records': invalid_records
+                })
+            
+            if request.POST.get('confirm_upload'):
+                # Create parties in database
+                for record in valid_records:
+                    PartyMaster.objects.create(
+                        comp_code=COMP_CODE,
+                        customer_code=record['customer_code'],
+                        customer_name=record['customer_name'],
+                        contact_person=record['contact_person'],
+                        telephone=record['telephone'],
+                        email=record['email'],
+                        status=record['status']
+                    )
+                return JsonResponse({'status': 'success', 'message': 'Parties uploaded successfully'})
+                
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    # Pagination
+    paginator = Paginator(parties, 10)  # Show 10 parties per page
+    page = request.GET.get('page', 1)
     try:
-        parties = paginator.get_page(page_number)
-    except PageNotAnInteger:
+        parties = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
         parties = paginator.page(1)
-    except EmptyPage:
-        parties = paginator.page(paginator.num_pages)
-
-    return render(request, 'pages/payroll/party_master/party_master.html', {
+    
+    # Calculate start and end indices for the current page
+    start_index = (parties.number - 1) * paginator.per_page + 1
+    end_index = min(start_index + paginator.per_page - 1, paginator.count)
+    parties.start_index = start_index
+    parties.end_index = end_index
+    
+    context = {
         'parties': parties,
         'keyword': keyword,
-    })
-
+        'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else request.path + '?'
+    }
+    
+    return render(request, 'pages/payroll/party_master/party_master.html', context)
 
 def create_party(request):
     set_comp_code(request)
@@ -4584,13 +4667,13 @@ def download_project_template(request):
         'Service Type',
         'Service Category',
         'Project Sub Location',
-        'Customer',
+        'Customer Code',
         'Agreement Ref',
-        'OP Head',
-        'Manager',
-        'Commercial Manager',
-        'Procurement User',
-        'Indent User',
+        'OP Head Code',
+        'Manager Code',
+        'Commercial Manager Code',
+        'Procurement User Code',
+        'Indent User Code',
         'Final Contract Value',
         'Project Status'
     ])
@@ -4603,23 +4686,23 @@ def download_project_template(request):
         'Project Code*': 'PRJ001',
         'Project Name*': 'Example Project',
         'Project Description*': 'This is an example project description',
-        'Project Type*': 'Construction',
+        'Project Type*': 'CONSTRUCTION',
         'Project Value*': '100000.00',
         'Start Date* (YYYY-MM-DD)': current_date,
         'End Date* (YYYY-MM-DD)': next_year_date,
-        'Project City': 'Dubai',
-        'Service Type': 'Construction',
-        'Service Category': 'Commercial',
-        'Project Sub Location': 'Downtown',
-        'Customer': 'CUST001',
+        'Project City': 'DUBAI:ABU DHABI',
+        'Service Type': 'CONSTRUCTION',
+        'Service Category': 'COMMERCIAL',
+        'Project Sub Location': 'DOWNTOWN',
+        'Customer Code': 'CUST001',
         'Agreement Ref': 'AGR001',
-        'OP Head': 'EMP001',
-        'Manager': 'EMP002',
-        'Commercial Manager': 'EMP003',
-        'Procurement User': 'EMP004',
-        'Indent User': 'EMP005',
+        'OP Head Code': 'EMP001:E001',
+        'Manager Code': 'EMP002:E002',
+        'Commercial Manager Code': 'EMP003:E003',
+        'Procurement User Code': 'EMP004:E004',
+        'Indent User Code': 'EMP005:E005',
         'Final Contract Value': '100000.00',
-        'Project Status': 'Active'
+        'Project Status': 'ACTIVE'
     }
     df = pd.concat([df, pd.DataFrame([example_data])], ignore_index=True)
 
@@ -4924,3 +5007,89 @@ def leave_approval(request):
         'status': 'error',
         'message': 'Invalid request method'
     })
+
+def download_party_template(request):
+    # Create a DataFrame with the required columns
+    df = pd.DataFrame(columns=[
+        'Customer Code*',
+        'Customer Name*',
+        'Trade License',
+        'Physical Address',
+        'PO Box',
+        'Telephone*',
+        'Email',
+        'Contact Person*',
+        'Contact Person Phone',
+        'Contact Person Email',
+        'VAT No',
+        'Emirates',
+        'Country',
+        'Tax Treatment',
+        'Currency',
+        'Payment Terms',
+        'Party Type*',
+        'Status*'
+    ])
+
+    # Add example row
+    example_data = {
+        'Customer Code*': 'CUST001',
+        'Customer Name*': 'Example Company',
+        'Trade License': 'TL123456',
+        'Physical Address': '123 Business Street',
+        'PO Box': '12345',
+        'Telephone*': '+971501234567',
+        'Email': 'contact@example.com',
+        'Contact Person*': 'John Doe',
+        'Contact Person Phone': '+971501234568',
+        'Contact Person Email': 'john@example.com',
+        'VAT No': '123456789012345',
+        'Emirates': 'DUBAI',
+        'Country': 'UAE',
+        'Tax Treatment': 'STANDARD',
+        'Currency': 'AED',
+        'Payment Terms': '30 DAYS',
+        'Party Type*': 'CUSTOMER',
+        'Status*': 'Active'
+    }
+    df = pd.concat([df, pd.DataFrame([example_data])], ignore_index=True)
+
+    # Create Excel writer
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, sheet_name='Parties', index=False)
+        
+        # Get workbook and worksheet objects
+        workbook = writer.book
+        worksheet = writer.sheets['Parties']
+        
+        # Add formatting
+        header_format = workbook.add_format({
+            'bold': True,
+            'bg_color': '#D9E1F2',
+            'border': 1
+        })
+        
+        # Format headers
+        for col_num, value in enumerate(df.columns.values):
+            worksheet.write(0, col_num, value, header_format)
+            worksheet.set_column(col_num, col_num, 20)  # Set column width
+        
+        # Add data validation for required fields
+        required_cols = [col for col in df.columns if '*' in col]
+        for col in required_cols:
+            col_num = df.columns.get_loc(col)
+            worksheet.data_validation(1, col_num, 1000, col_num, {
+                'validate': 'not_blank',
+                'error_message': 'This field is required'
+            })
+
+    # Set up the response
+    output.seek(0)
+    response = HttpResponse(
+        output.read(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=party_template.xlsx'
+    
+    return response
