@@ -61,12 +61,73 @@
             url: '/sidebar',
             success: function (response) {
                 if (response.status == "success" && response.parent_menu_data.length > 0) {
-                    console.log(response);
-
                     var parent_menu_data = response.parent_menu_data;
                     var child_menu_data = response.child_menu_data;
+                    var permission_data = response.permission_data;
+                    let menu_ids = response.menu_ids;
+                    console.log("--------------------------------")
+                    console.log(menu_ids)
+                    console.log(permission_data)
                     // console.log(child_menu_data)
-                    var menu_html = '';
+                    let screen_name = '';
+                    let menu_html = '';
+
+                    screen_name = window.location.pathname.split('/')[1];
+                    screen_name = '/' + screen_name;
+                    console.log(screen_name)
+                    
+                    let menu_id = 0;
+                    child_menu_data.forEach(function(item) {
+                        if (item.url == screen_name) {
+                            menu_id = item.menu_id;
+                        }
+                    });
+                    console.log(menu_id)
+
+                    let permission = [];
+                    permission_data.forEach(function(item) {
+                        if (item.menu_id == menu_id) {
+                            permission.push(item)
+                        }
+                    });
+                    console.log(permission)
+                    console.log("--------------------------------")
+
+                    let add = false;
+                    let view = false;
+                    let edit = false;
+                    let deletee = false;
+                    let execute = false;
+
+                    permission.forEach(function(item) {
+                        if (item.add) {
+                            add = true;
+                        }
+                        if (item.view) {
+                            view = true;
+                        }
+                        if (item.edit) {
+                            edit = true;
+                        }
+                        if (item.deletee) {
+                            deletee = true;
+                        }
+                        if (item.execute) {
+                            execute = true;
+                        }
+                    });
+                    
+                    if (!add) {
+                        $('.add-btn').detach();
+                    }
+                    if (!edit) {
+                        $('form :input').prop('disabled', true);
+                        $('.edit-btn').detach();
+                    }
+                    if (!deletee){
+                      $('.delete-btn').detach();
+                    }
+                    
 
                     $('ul.menu').empty(); // Clear existing menu
 
