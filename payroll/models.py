@@ -381,7 +381,7 @@ class RoleMenu(models.Model):
     add = models.BooleanField(null=True, blank=True)
     view = models.BooleanField(null=True, blank=True)
     delete = models.BooleanField(null=True, blank=True)
-    modify = models.BooleanField(null=True, blank=True)
+    edit = models.BooleanField(null=True, blank=True)
     instance_id = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
     created_by = models.BigIntegerField(null=True, blank=True)

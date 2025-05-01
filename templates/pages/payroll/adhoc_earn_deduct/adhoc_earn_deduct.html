@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center justify-content-sm-end">
-                                    <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                    <button class="btn btn-primary add-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
                                         <i class="ti ti-square-rounded-plus me-2"></i>Add Record
                                     </button>
                                 </div>
@@ -80,7 +80,7 @@
                                                         {% csrf_token %}
                                                         <input type="hidden" name="pay_process_month" value="{{ group.pay_process_month }}">
                                                         <input type="hidden" name="pay_process_cycle" value="{{ group.pay_process_cycle }}">
-                                                        <button type="submit" class="dropdown-item text-danger">
+                                                        <button type="submit" class="dropdown-item text-danger delete-btn">
                                                             <i class="ti ti-trash"></i> Delete
                                                         </button>
                                                     </form>
@@ -323,7 +323,7 @@
             </div>
 
             <div class="text-end">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary edit-btn">
                     <i class="ti ti-check me-1"></i> Save Changes
                 </button>
             </div>
