@@ -1,7 +1,7 @@
 {% load static %}
 
 <!-- Add Gratuity Settlement Modal -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="addGratuityModal">
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="addGratuityModal" style="width: 1000px !important;">
     <div class="offcanvas-header border-bottom">
         <h4>Add Gratuity Settlement</h4>
         <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
@@ -16,7 +16,12 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <input class="form-control" name="employee_code" type="text" required>
+                        <select class="form-control select2" name="employee_code" required>
+                            <option value="">Select Employee Code</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <!-- Employee Name -->
@@ -164,7 +169,12 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code</label>
-                        <input class="form-control" name="employee_code" id="edit_employee_code" type="text" readonly>
+                        <select class="form-control select2" name="employee_code" id="edit_employee_code" required>
+                            <option value="">Select Employee Code</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <!-- Employee Name -->
@@ -294,3 +304,24 @@
     </div>
 </div>
 <!-- /Edit Gratuity Settlement Modal -->
+
+
+<script>
+    // fetch employee name category designation date of joing and basic salary for the feilds
+    $(document).ready(function() {
+        $('.employee_code').on('change', function() {
+            var employee_code = $(this).val();
+            var employee_name = $(this).find('option:selected').text();
+            fetch_employee_details(employee_code, employee_name);
+        }); 
+        function fetch_employee_details(employee_code, employee_name) {
+            $.ajax({
+                url: '{% url "get_employee_details" %}',
+                type: 'GET',
+                data: { employee_code: employee_code },
+            });
+        }
+    });
+</script>
+
+

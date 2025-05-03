@@ -2241,7 +2241,7 @@ def get_menus_by_module(request, module_id):
                 'is_view_enabled': menu.is_view,
                 'is_delete_enabled': menu.is_delete,
                 'is_add_checked': role_menu.add if role_menu else False,
-                'is_edit_checked': role_menu.modify if role_menu else False,
+                'is_edit_checked': role_menu.edit if role_menu else False,
                 'is_view_checked': role_menu.view if role_menu else False,
                 'is_delete_checked': role_menu.delete if role_menu else False,
             })
