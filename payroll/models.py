@@ -880,4 +880,53 @@ class GratuitySettlement(models.Model):
 
     def __str__(self):
         return f"{self.employee_id} - {self.employee_name} - {self.settlement_status}"
+class LeaveMaster(models.Model):
+    comp_code = models.CharField(max_length=15)
+    leave_id = models.BigAutoField(primary_key=True)
+    leave_code = models.CharField(max_length=20, unique=True)
+    description = models.CharField(max_length=100)
+    work_month = models.IntegerField(default=365)  # Default to 365 days
+    eligible_days = models.IntegerField()
+    eligible_day_type = models.CharField(max_length=20, choices=[
+        ('Calendar', 'Calendar'),
+        ('Working', 'Working')
+    ])
+    payment_type = models.CharField(max_length=20, choices=[
+        ('Paid', 'Paid'),
+        ('Unpaid', 'Unpaid'),
+        ('Half Paid', 'Half Paid')
+    ])
+    frequency = models.CharField(max_length=20, choices=[
+        ('Annual', 'Annual'),
+        ('One-Time', 'One-Time'),
+        ('Monthly', 'Monthly'),
+        ('Lifetime', 'Lifetime')
+    ])
+    gender = models.CharField(max_length=10, choices=[
+        ('Both', 'Both'),
+        ('Male', 'Male'),
+        ('Female', 'Female')
+    ])
+    grade = models.CharField(max_length=500, null=True, blank=True)  # Store as comma-separated values
+    carry_forward = models.CharField(max_length=5, choices=[
+        ('Yes', 'Yes'),
+        ('No', 'No')
+    ])
+    carry_forward_period = models.IntegerField(null=True, blank=True)
+    encashment = models.CharField(max_length=5, choices=[
+        ('Yes', 'Yes'),
+        ('No', 'No')
+    ])
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.leave_code} - {self.description}"
+
+    class Meta:
+        db_table = 'payroll_leavemaster'
+        ordering = ['leave_code']
 

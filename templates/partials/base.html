@@ -72,9 +72,16 @@
                     let screen_name = '';
                     let menu_html = '';
 
-                    screen_name = window.location.pathname.split('/')[1];
-                    screen_name = '/' + screen_name;
-                    console.log(screen_name)
+                    const pathParts = window.location.pathname.split('/');
+                    screen_name = '/' + (pathParts[1] || '');
+
+                    if (pathParts[2]) {
+                    screen_name += '/' + pathParts[2];
+                    }
+
+                    console.log(screen_name);
+
+
                     
                     let menu_id = 0;
                     child_menu_data.forEach(function(item) {
@@ -121,7 +128,7 @@
                         $('.add-btn').detach();
                     }
                     if (!edit) {
-                        $('form :input').prop('disabled', true);
+                        // $('form :input').prop('disabled', true);
                         $('.edit-btn').detach();
                     }
                     if (!deletee){

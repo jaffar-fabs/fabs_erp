@@ -47,7 +47,7 @@
                     <select class="form-control" name="leave_type" id="add_leave_type" required>
                         <option value="">Select Leave Type</option>
                         {% for leave in leave_types %}
-                        <option value="{{ leave.base_value }}">{{ leave.base_value }} - {{ leave.base_description }}</option>
+                        <option value="{{ leave.leave_code }}">{{ leave.leave_code }} - {{ leave.description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -151,7 +151,7 @@
                     <select class="form-control" name="leave_type" id="edit_leave_type" required>
                         <option value="">Select Leave Type</option>
                         {% for leave in leave_types %}
-                        <option value="{{ leave.base_value }}">{{ leave.base_value }} - {{ leave.base_description }}</option>
+                        <option value="{{ leave.leave_code }}">{{ leave.leave_code }} - {{ leave.description }}</option>
                         {% endfor %}
                     </select>
                 </div>

@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!-- Add Employee Offcanvas -->
@@ -1507,236 +1506,206 @@ function removeLicenseRow_add(button) {
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
         <h4>Edit Employee</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
     </div>
     <div class="offcanvas-body">
-        <form id="editEmployeeForm" method="post" action="" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="editEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
             {% csrf_token %}
+            <input type="hidden" name="employee_id" id="employee_id">
 
             <!-- Collapsible Sections -->
-            <div class="accordion" id="employeeAccordion" style="width: 1350px;">
-
+            <div class="accordion" id="employeeAccordion_edit" style="width: 1350px;">
                 <!-- Personal Details -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingPersonalDetails">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails" aria-expanded="true" aria-controls="collapsePersonalDetails">
+                    <h2 class="accordion-header" id="headingPersonalDetails_edit">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails_edit" aria-expanded="true" aria-controls="collapsePersonalDetails_edit">
                             Employee Details
                         </button>
                     </h2>
-                    <div id="collapsePersonalDetails" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails" data-bs-parent="#employeeAccordion">
+                    <div id="collapsePersonalDetails_edit" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails_edit" data-bs-parent="#employeeAccordion_edit">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <div class="mt-2">
-                            <strong>Current Picture:</strong>
-                            <a href="" target="_blank" download="">
-                                Download
-                            </a>
-                        </div>
-                        
-                        <div class="mt-2">
-                            <strong>Preview:</strong>
-                            <img src="" alt="Profile Picture Preview" style="max-width: 100px; height: 100px; border: 1px solid #ccc; margin-top: 10px;">
-                        </div>
-                        <label class="col-form-label">Profile Picture</label>
-                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_code" class="form-control" id="emp_code" required readonly>
-                        <div class="invalid-feedback">Please provide an employee code.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_name_passport" id="emp_name_passport" class="form-control" required>
-                        <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                        <input type="text" name="surname" id="surname" class="form-control" required>
-                        <div class="invalid-feedback">Please provide a surname.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                        <input type="date" name="dob" class="form-control" id="dob" required>
-                        <div class="invalid-feedback">Please provide a date of birth.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                        <select name="emp_sex" id="emp_sex" class="form-select" required>
-                            <option value="">Select</option>
-                            {% for gender in gender_data %}
-                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a gender.</div>
-                    </div>                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
-                        <select name="nationality" id = "nationality" class="form-select" required>
-                            <option value="">Select</option>
-                            {% for nationality in nationality_data %}
-                            <option value="{{ nationality.base_value }}">{{ nationality.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a Nationality</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
-                        <select name="designation" id="designation" class="form-control" required>
-                            <option value="">Select</option>
-                            {% for designation in desig_data %}
-                            <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a designation.</div>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
-                        <input type="date" name="date_of_join" class="form-control" required id="date_of_join">
-                        <div class="invalid-feedback">Please provide a date of joining.</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Date of Rejoin</label>
-                        <input type="date" name="date_of_rejoin" class="form-control" id="date_of_rejoin">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Qualification</label>
-                        <input type="text" name="qualification" class="form-control" id="qualification">
-                    </div>
-                </div>
-                <div class="col-md-6">
-    <div class="mb-3">
-        <label class="col-form-label">Marital Status</label>
-        <select name="emp_marital_status" class="form-select" id="emp_marital_status">
-            <option value="">Select</option>
-            {% for status in mar_status_data %}
-                            <option value="{{ status.base_value }}">
-                                {{ status.base_description }}
-                            </option>
-                            {% endfor %}
-        </select>
-    </div>
-</div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Spouse Name</label>
-                        <input type="text" name="spouse_name" class="form-control" id="spouse_name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Father's Name</label>
-                        <input type="text" name="father_name" class="form-control" id="father_name">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Mother's Name</label>
-                        <input type="text" name="mother_name" class="form-control" id="mother_name">
-                    </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Religion</label>
-                        <input type="text" name="religion" class="form-control" id="religion">
-                    </div>
-                </div>               
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Status <span class="text-danger">*</span></label>
-                        <input type="text" name="emp_status" id="emp_status" class="form-control">
-                        <div class="invalid-feedback">Please select a status.</div>
-                    </div>
-                </div>
-                
-                <!-- Sub Status (Same row as Status) -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Sub Status</label>
-                        <input type="text" name="sub_status" id="sub_status" class="form-control">
-                    </div>
-                </div>
-                
-                <!-- passport Release and Reason (Next line) -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Control</label>
-                        <select name="passport_release" class="form-select" id="passport_release">
-                            <option value="">Select</option>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Release Reason</label>
-                        <input type="text" name="release_reason" class="form-control" id="release_reason">
-                    </div>
-                </div> 
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Department <span class="text-danger">*</span></label>
-                        <select name="department" class="form-control" required id="department">
-                            <option value="">Select</option>
-                            {% for statuses in dept_data %}
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Profile Picture</label>
+                                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
+                                        <div class="invalid-feedback">Please upload a profile picture.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Code </label>
+                                        <input type="text" name="emp_code" id="emp_code" class="form-control" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
+                                        <input type="text" name="emp_name_passport" id="emp_name_passport" class="form-control" required>
+                                        <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
+                                        <input type="text" name="surname" id="surname" class="form-control" required>
+                                        <div class="invalid-feedback">Please provide a surname.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" name="dob" id="dob" class="form-control" required>
+                                        <div class="invalid-feedback">Please provide a date of birth.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                                        <select name="emp_sex" id="emp_sex" class="form-select" required>
+                                            <option value="">Select</option>
+                                            {% for gender in gender_data %}
+                                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a gender.</div>
+                                    </div>                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
+                                        <select name="nationality" id="nationality" class="form-select" required>
+                                            <option value="">Select</option>
+                                            {% for nation in nationality_data %}
+                                            <option value="{{ nation.base_value }}">{{ nation.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a Nationality</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                                        <select name="designation" id="designation" class="form-control" required>
+                                            <option value="">Select</option>
+                                            {% for designation in desig_data %}
+                                            <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a designation.</div>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Join <span class="text-danger">*</span> </label>
+                                        <input type="date" name="date_of_join" id="date_of_join" class="form-control" required>
+                                        <div class="invalid-feedback">Please Select Date of Join</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" id="date_of_rejoin" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Qualification</label>
+                                        <input type="text" name="qualification" id="qualification" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Marital Status</label>
+                                        <select name="emp_marital_status" id="emp_marital_status" class="form-select">
+                                            <option value="">Select</option>
+                                            {% for status in mar_status_data %}
+                                            <option value="{{ status.base_value }}">
+                                                {{ status.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Spouse Name</label>
+                                        <input type="text" name="spouse_name" id="spouse_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Father Name</label>
+                                        <input type="text" name="father_name" id="father_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Mother Name</label>
+                                        <input type="text" name="mother_name" id="mother_name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Religion</label>
+                                        <input type="text" name="religion" id="religion" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Passport Control</label>
+                                        <select name="passport_release" id="passport_release" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Release Reason</label>
+                                        <input type="text" name="release_reason" id="release_reason" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Department <span class="text-danger">*</span> </label>
+                                        <select name="department" id="department" class="form-control" required>
+                                            <option value="">Select</option>
+                                            {% for statuses in dept_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a department.</div>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Category</label>
-                        <select name="staff_category" class="form-select" id="categorySelect">
-                            <option value="">Select</option>
-                            <option value="staff">Staff</option>
-                            <option value="field-staff">Field Staff</option>
-                            <option value="management">Management</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Dependent Count -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Dependent Count</label>
-                        <input type="number" name="depend_count" class="form-control" id="dependCount">
-                    </div>
-                </div>
-                
-                <!-- Child Count -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Child Count</label>
-                        <input type="number" name="child_count" class="form-control" id="childCount">
-                    </div>
-                </div>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a department.</div>
+                                    </div>                                    
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Category</label>
+                                        <select name="staff_category" id="categorySelect_edit" class="form-select">
+                                            <option value="">Select</option>
+                                            <option value="staff">Staff</option>
+                                            <option value="field-staff">Field Staff</option>
+                                            <option value="management">Management</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Dependent Count</label>
+                                        <input type="number" name="depend_count" id="dependCount_edit" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Child Count</label>
+                                        <input type="number" name="child_count" id="childCount_edit" class="form-control">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1744,43 +1713,46 @@ function removeLicenseRow_add(button) {
 
                 <!-- Contact Information -->
                 <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingContactInfo">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContactInfo" aria-expanded="false" aria-controls="collapseContactInfo">
+                    <h2 class="accordion-header" id="headingContactInfo_edit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseContactInfo_edit" aria-expanded="false" aria-controls="collapseContactInfo_edit">
                             Contact Information
                         </button>
                     </h2>
-                    <div id="collapseContactInfo" class="accordion-collapse collapse" aria-labelledby="headingContactInfo" data-bs-parent="#employeeAccordion">
+                    <div id="collapseContactInfo_edit" class="accordion-collapse collapse" aria-labelledby="headingContactInfo_edit"
+                        data-bs-parent="#employeeAccordion_edit">
                         <div class="accordion-body">
                             <div class="shadow p-4 rounded bg-light">
                                 <div class="row">
+                                    <!-- Left Side: Residential Address -->
                                     <div class="col-md-6">
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_addr_line1" class="form-control" required id="res_addr_line1">
+                                            <input type="text" name="res_addr_line1" id="res_addr_line1" class="form-control" required>
                                             <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="res_addr_line2" class="form-control" id="res_addr_line2">
+                                            <input type="text" name="res_addr_line2" id="res_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_city" class="form-control" required id="res_city">
+                                            <input type="text" name="res_city" id="res_city" class="form-control" required>
                                             <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_state" class="form-control" required id="res_state">
+                                            <input type="text" name="res_state" id="res_state" class="form-control" required>
                                             <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control" id="res_country_code">
+                                            <input type="text" name="res_country_code" id="res_country_code" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control" id="res_phone_no">
+                                            <input type="text" name="res_phone_no" id="res_phone_no" class="form-control">
                                         </div>
                                     </div>
 
@@ -1788,33 +1760,31 @@ function removeLicenseRow_add(button) {
                                     <div class="col-md-6">
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1 </label>
-                                            <input type="text" name="local_addr_line1" class="form-control" id="local_addr_line1">
-                                            
+                                            <label class="col-form-label">Address Line 1</label>
+                                            <input type="text" name="local_addr_line1" id="local_addr_line1" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="local_addr_line2" class="form-control" id="local_addr_line2">
+                                            <input type="text" name="local_addr_line2" id="local_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City </label>
-                                            <input type="text" name="local_city" class="form-control" id="local_city">
+                                            <input type="text" name="local_city" id="local_city" class="form-control">
                                         
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State </label>
-                                            <input type="text" name="local_state" class="form-control" id="local_state">
+                                            <input type="text" name="local_state" id="local_state" class="form-control">
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code </label>
-                                            <input type="text" name="local_country_code" class="form-control" id="local_country_code">
+                                            <input type="text" name="local_country_code" id="local_country_code" class="form-control">
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number </label>
-                                            <input type="text" name="local_phone_no" class="form-control" id="local_phone_no">
-                                            
+                                            <input type="text" name="local_phone_no" id="local_phone_no" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -1823,397 +1793,111 @@ function removeLicenseRow_add(button) {
                     </div>
                 </div>
 
-                <!-- Payment Details -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingPaymentDetails">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-            data-bs-target="#collapsePaymentDetails" aria-expanded="false" aria-controls="collapsePaymentDetails">
-            Salary Details
-        </button>
-    </h2>
-    <div id="collapsePaymentDetails" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails"
-        data-bs-parent="#employeeAccordion">
-        <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Process Cycle</label>
-                        <select name="process_cycle" class="form-control" id="process_cycle">
-                            <option value="">Select</option>
-                            {% for paycycle in paycycle_data %}
-                            <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
-                        {% endfor %}
-                        </select>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
-                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicpay">
-                        <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Grade</label>
-                        <select name="grade_code" class="form-control" id="grade_code">
-                            <option value="">Select</option>
-                        </select>
-                    </div>                                    
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
-                        <select name="prj_code" class="form-control" required id="prj_code">
-                            <option value="">Select</option>
-                            {% for statuses in project_data %}
-                                <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="invalid-feedback">Please select a project.</div>
-                    </div>                                    
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label class="col-form-label">Project Sub Location</label>
-                    <select name="sub_location" id="locationDropdown" class="form-control" id = "sub_location">
-                        <option value="">Select</option>
-                        {% for statuses in pro_sub_location_data %}
-                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                            {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <!-- Multi Entry Section for Earnings/Deductions -->
-<div class="mt-4" id="multiEntryContainer">
-    <h5>Additional Earnings/Deductions</h5>
-    
-    <!-- Headings for Static Entry Fields -->
-<div class="row fw-bold px-3">
-    <div class="col-md-3">Type</div>
-    <div class="col-md-3">Code</div>
-    <div class="col-md-3">Amount</div>
-    <div class="col-md-2">Prorated Flag</div>
-    <div class="col-md-1 text-end">Action</div>
-</div>
-
-<!-- Static Entry Fields (Always Visible) -->
-<div class="card p-3 mb-2 shadow-sm" id="staticEntryFields">
-    <div class="row align-items-center">
-        <div class="col-md-3">
-            <select id="static_entry_type" class="form-control"
-                onchange="handleTypeChange()">
-                <option value="">Select Type</option>
-                <option value="EARNINGS">Earning</option>
-                <option value="DEDUCTION">Deduction</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select id="static_entry_code" class="form-control code-dropdown">
-                <option value="">Select Code</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <input type="number" id="static_entry_amount" class="form-control" placeholder="Amount" min="0" step="0.01">
-        </div>
-        <div class="col-md-2">
-            <select id="static_entry_proated_flag" class="form-control">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-            </select>
-        </div>
-        <div class="col-md-1 text-end">
-            <button type="button" class="btn btn-primary" onclick="addEntry()">
-                <i class="fas fa-plus"></i> Add
-            </button>
-        </div>
-    </div>
-</div>
-
-    <!-- Container for Dynamic Entries -->
-    <div id="entriesContainer">
-    </div>
-</div>
-        </div>
-    </div>
-</div>
-<script>
-    function handleTypeChange() {
-        const typeSelect = document.getElementById(`static_entry_type`);
-        const selectedType = typeSelect.value;
-        const codeDropdown = document.getElementById(`static_entry_code`);
-
-        // Clear existing options
-        codeDropdown.innerHTML = '<option value="">Select Code</option>';
-
-        if (selectedType) {
-            fetch(`/fetch_codes?type=${selectedType}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        data.codes.forEach(code => {
-                            const option = document.createElement('option');
-                            option.value = code[0]; // base_value
-                            option.textContent = code[1]; // base_description
-                            codeDropdown.appendChild(option);
-                        });
-                    }
-                })
-                .catch(error => console.error('Error fetching codes:', error));
-        }
-    }
-</script>
-
-    
-<script>
-    function addEntry() {
-        const type = document.getElementById(`static_entry_type`).value;
-        const code = document.getElementById(`static_entry_code`).value;
-        const amount = document.getElementById(`static_entry_amount`).value;
-        const proatedFlag = document.getElementById(`static_entry_proated_flag`).value;
-    
-        if (!type || !code || !amount) {
-            alert('Please fill all required fields');
-            return;
-        }
-    
-        const newEntry = document.createElement('div');
-        newEntry.className = 'card p-3 mb-2 shadow-sm entry-row';
-        newEntry.innerHTML = `
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <input type="text" name="entry_type_edit[]" class="form-control" value="${type}" placeholder="Type" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="entry_code_edit[]" class="form-control" value="${code}" placeholder="Code" required>
-                </div>
-                <div class="col-md-3">
-                    <input type="number" name="entry_amount_edit[]" class="form-control" value="${amount}" placeholder="Amount" required min="0" step="0.01">
-                </div>
-                <div class="col-md-2">
-                    <select name="entry_proated_flag[]_edit" class="form-control">
-                        <option value="Yes" ${proatedFlag === 'Yes' ? 'selected' : ''}>Yes</option>
-                        <option value="No" ${proatedFlag === 'No' ? 'selected' : ''}>No</option>
-                    </select>
-                </div>
-                <div class="col-md-1 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removeEntry(this)">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    
-        document.getElementById(`entriesContainer`).appendChild(newEntry);
-    
-        document.getElementById(`static_entry_type`).value = '';
-        document.getElementById(`static_entry_code`).value = '';
-        document.getElementById(`static_entry_amount`).value = '';
-        document.getElementById(`static_entry_proated_flag`).selectedIndex = 0;
-    }
-    
-    function removeEntry(button) {
-        const row = button.closest('.entry-row');
-        if (row) row.remove();
-    }
-    </script>
-    <!-- Account Details -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingAccountDetails">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAccountDetails" aria-expanded="false" aria-controls="collapseAccountDetails">
-            Account Details
-        </button>
-    </h2>
-    <div id="collapseAccountDetails" class="accordion-collapse collapse" aria-labelledby="headingAccountDetails" data-bs-parent="#employeeAccordion">
-        <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Bank Name</label>
-                        <select name="employee_bank" class="form-control">
-                            <option value="">Select Bank</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Branch Name</label>
-                        <select name="bank_branch" class="form-control">
-                            <option value="">Select Branch</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Account No</label>
-                        <input type="text" name="account_no" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">IBAN Number</label>
-                        <input type="text" name="bank_loan" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Accommodation Details -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingCampDetailsEdit">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#collapseCampDetailsEdit" 
-                aria-expanded="false" 
-                aria-controls="collapseCampDetailsEdit">
-            Accommodation Details
-        </button>
-    </h2>
-    <div id="collapseCampDetailsEdit" 
-         class="accordion-collapse collapse" 
-         aria-labelledby="headingCampDetailsEdit" 
-         data-bs-parent="#employeeAccordion">
-        <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <!-- Left side fields -->
-                    <div class="mb-3">
-                        <label for="campTypeEdit" class="col-form-label">Select Type</label>
-                        <select id="campTypeEdit" 
-                                class="form-control" 
-                                name="camp_type" 
-                                onchange="handleCampTypeChangeEdit()">
-                            <option value="">Select</option>
-                            <option value="self">Self</option>
-                            <option value="by_company">By Company</option>
-                        </select>
-                    </div>
-                    <div id="campDetailsEdit" 
-                         style="display: none;">
-                        <div class="mb-3">
-                            <label for="campInsideOutsideEdit" class="col-form-label">Accommodation Detail</label>
-                            <select id="campInsideOutsideEdit" 
-                                    class="form-control" 
-                                    name="camp_inside_outside"
-                                    onchange="handleInsideOutsideChangeEdit()">
-                                <option value="">Select</option>
-                                <option value="camp">Camp</option>
-                                <option value="client_accommodation">Client Accommodation</option>
-                                <option value="outside">Outside</option>
-                            </select>
+                <!-- Salary Details -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingPaymentDetails_edit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                            data-bs-target="#collapsePaymentDetails_edit" aria-expanded="false" aria-controls="collapsePaymentDetails_edit">
+                            Salary Details
+                        </button>
+                    </h2>
+                    <div id="collapsePaymentDetails_edit" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails_edit"
+                        data-bs-parent="#employeeAccordion_edit">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Process Cycle</label>
+                                        <select name="process_cycle" id="process_cycle" class="form-control">
+                                            <option value="">Select</option>
+                                            {% for paycycle in paycycle_data %}
+                                                <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
+                                        <input type="number" name="basic_pay" id="basicpay" class="form-control" required min="0" step="0.01">
+                                        <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Grade</label>
+                                        <select name="grade_code" id="grade_code" class="form-control">
+                                            <option value="">Select</option>
+                                            {% for statuses in grade_code_data %}
+                                                <option value="{{ statuses.grade_code }}">{{ statuses.grade_code }} - {{ statuses.grade_desc }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
+                                        <select name="prj_code" id="projectDropdown_edit" class="form-control" required>
+                                            <option value="">Select</option>
+                                            {% for statuses in project_data %}
+                                                <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="invalid-feedback">Please select a project.</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="col-form-label">Project Sub Location</label>
+                                        <select name="sub_location" id="locationDropdown_edit" class="form-control">
+                                            <option value="">Select</option>
+                                            {% for statuses in pro_sub_location_data %}
+                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <!-- Right side fields -->
-                    <div id="inCampDetailsEdit" 
-                         style="display: none;">
-                        <div class="mb-3">
-                            <label for="selectCampEdit" class="col-form-label">Select Camp</label>
-                            <select id="selectCampEdit" 
-                                    name="select_camp" 
-                                    class="form-control">
-                                <option value="">Select Camp</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="roomNoEdit" class="col-form-label">Room No</label>
-                            <input type="text" id="roomNoEdit" 
-                                   name="room_no" 
-                                   class="form-control">
-                        </div>
-                    </div>
-                    <div id="clientAccommodationDetailsEdit" 
-                         style="display: none;">
-                        <div class="mb-3">
-                            <label for="clientNameEdit" class="col-form-label">Client Name</label>
-                            <input type="text" id="clientNameEdit" 
-                                   name="client_name" 
-                                   class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="clientLocationEdit" class="col-form-label">Location</label>
-                            <input type="text" id="clientLocationEdit" 
-                                   name="client_location" 
-                                   class="form-control">
-                        </div>
-                    </div>
-                    <div id="outsideDetailsEdit" 
-                         style="display: none;">
-                        <div class="mb-3">
-                            <label for="outsideLocationEdit" class="col-form-label">Location</label>
-                            <input type="text" id="outsideLocationEdit" 
-                                   name="outside_location" 
-                                   class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="roomRentEdit" class="col-form-label">Room Rent</label>
-                            <input type="text" id="roomRentEdit" 
-                                   name="room_rent" 
-                                   class="form-control">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
-    function handleCampTypeChangeEdit() {
-        const campType = document.getElementById(`campTypeEdit`).value;
-        const campDetails = document.getElementById(`campDetailsEdit`);
-        const inCampDetails = document.getElementById(`inCampDetailsEdit`);
-        const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit`);
-        const outsideDetails = document.getElementById(`outsideDetailsEdit`);
-
-        if (campType === 'by_company') {
-            campDetails.style.display = 'block';
-            handleInsideOutsideChangeEdit();
-        } else {
-            campDetails.style.display = 'none';
-            inCampDetails.style.display = 'none';
-            clientAccommodationDetails.style.display = 'none';
-            outsideDetails.style.display = 'none';
+    // Add event listener for category select in edit form
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelectEdit = document.getElementById('categorySelect_edit');
+        const dependCountEdit = document.getElementById('dependCount_edit');
+        const childCountEdit = document.getElementById('childCount_edit');
+    
+        categorySelectEdit.addEventListener('change', function() {
+            if (this.value === 'field-staff') {
+                dependCountEdit.disabled = true;
+                childCountEdit.disabled = true;
+                dependCountEdit.value = '';
+                childCountEdit.value = '';
+            } else {
+                dependCountEdit.disabled = false;
+                childCountEdit.disabled = false;
+            }
+        });
+    
+        // Initialize state on page load
+        if (categorySelectEdit.value === 'field-staff') {
+            dependCountEdit.disabled = true;
+            childCountEdit.disabled = true;
         }
-    }
-
-    function handleInsideOutsideChangeEdit() {
-        const insideOutside = document.getElementById(`campInsideOutsideEdit`).value;
-        const inCampDetails = document.getElementById(`inCampDetailsEdit`);
-        const clientAccommodationDetails = document.getElementById(`clientAccommodationDetailsEdit`);
-        const outsideDetails = document.getElementById(`outsideDetailsEdit`);
-
-        inCampDetails.style.display = 'none';
-        clientAccommodationDetails.style.display = 'none';
-        outsideDetails.style.display = 'none';
-
-        if (insideOutside === 'camp') {
-            inCampDetails.style.display = 'block';
-        } else if (insideOutside === 'client_accommodation') {
-            clientAccommodationDetails.style.display = 'block';
-        } else if (insideOutside === 'outside') {
-            outsideDetails.style.display = 'block';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        handleCampTypeChangeEdit();
     });
 </script>
 
 <!-- Travel Document Detail -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTravelDocumentDetail">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail" aria-expanded="false" aria-controls="collapseTravelDocumentDetail">
+    <h2 class="accordion-header" id="headingTravelDocumentDetail_edit">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail_edit" aria-expanded="false" aria-controls="collapseTravelDocumentDetail_edit">
             Travel Document Detail
         </button>
     </h2>
-    <div id="collapseTravelDocumentDetail" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail" data-bs-parent="#employeeAccordion">
+    <div id="collapseTravelDocumentDetail_edit" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail_edit" data-bs-parent="#employeeAccordion_edit">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
@@ -2269,12 +1953,12 @@ function removeLicenseRow_add(button) {
 
 <!-- Visa Details -->
 <div class="accordion-item">
-    <h2 class="accordion-header" id="headingVisaDetails">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails" aria-expanded="false" aria-controls="collapseVisaDetails">
+    <h2 class="accordion-header" id="headingVisaDetails_edit">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails_edit" aria-expanded="false" aria-controls="collapseVisaDetails_edit">
             Visa Details
         </button>
     </h2>
-    <div id="collapseVisaDetails" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails" data-bs-parent="#employeeAccordion">
+    <div id="collapseVisaDetails_edit" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails_edit" data-bs-parent="#employeeAccordion_edit">
         <div class="accordion-body">
             <div class="row">
                 <div class="col-md-6">
@@ -2477,7 +2161,7 @@ function removeLicenseRow_add(button) {
             Document Uploads
         </button>
     </h2>
-    <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion">
+    <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion_edit">
         <div class="accordion-body">
             <!-- Static Upload Fields -->
             <div class="card p-3 mb-2 shadow-sm">
@@ -2566,7 +2250,7 @@ function removeLicenseRow_add(button) {
         </button>
     </h2>
     <div id="collapseDependentDetails" class="accordion-collapse collapse" 
-         aria-labelledby="headingDependentDetails" data-bs-parent="#employeeAccordion">
+         aria-labelledby="headingDependentDetails" data-bs-parent="#employeeAccordion_edit">
         <div class="accordion-body">
             <div id="dependentsContainer">
                 <!-- Button to Add New Dependent -->
@@ -2691,7 +2375,7 @@ function removeLicenseRow_add(button) {
         </button>
     </h2>
     <div id="collapseLicensePasses" class="accordion-collapse collapse"
-     aria-labelledby="headingLicensePasses" data-bs-parent="#employeeAccordion">
+     aria-labelledby="headingLicensePasses" data-bs-parent="#employeeAccordion_edit">
     <div class="accordion-body">
         <div id="licensesContainer">
             <!-- Add New License/Pass -->
@@ -2865,7 +2549,7 @@ function removeLicenseRow_add(button) {
     </h2>
     <div id="collapseRecruitmentInfo_edit" class="accordion-collapse collapse"
         aria-labelledby="headingRecruitmentInfo_edit"
-        data-bs-parent="#employeeAccordion">
+        data-bs-parent="#employeeAccordion_edit">
         <div class="accordion-body">
             <div id="recruitmentInfoContainer_edit">
                 <!-- Add New Recruitment Entry -->
@@ -2985,7 +2669,6 @@ function removeLicenseRow_add(button) {
     <button type="submit" class="btn btn-primary edit-btn">Update Employee</button>
 </div>
 </form>
-</div>
 </div>
 <!-- /Edit Employee Offcanvas -->
 

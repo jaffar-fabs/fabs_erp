@@ -188,6 +188,14 @@ urlpatterns = [
     path('update_gratuity/<int:gratuity_id>/', views.update_gratuity, name='update_gratuity'),
     path('delete_gratuity/<int:gratuity_id>/', views.delete_gratuity, name='delete_gratuity'),
 
+    #Leave Master
+    path('leave-master/', views.leave_master_list, name='leave_master_list'),
+    path('leave-master/create/', views.leave_master_create, name='leave_master_create'),
+    path('check-leave-code/', views.check_leave_code, name='check_leave_code'),
+    path('get-leave-details/', views.get_leave_details, name='get_leave_details'),
+    path('update-leave-details/', views.update_leave_details, name='update_leave_details'),
+    path('delete-leave-type/', views.delete_leave_type, name='delete_leave_type'),
+
 
     path('duty_roster/', views.duty_roster, name='duty_roster'),
 

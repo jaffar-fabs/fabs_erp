@@ -88,7 +88,7 @@ def employee_master(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
-    paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
+    paginator = Paginator(query.order_by('emp_code'), 25)
 
     try:
         employees_page = paginator.get_page(page_number)
@@ -2045,26 +2045,41 @@ class MenuMaster(View):
             exists = Menu.objects.filter(menu_name=menu_name).exists()
             return JsonResponse({'exists': exists})
 
-        # Prepare data for rendering the template
-        menu_to_edit = None
-        if menu_id:
-            menu_to_edit = Menu.objects.filter(menu_id=menu_id).first()
-
-        menu_list = Menu.objects.filter(parent_menu_id="No Parent").order_by('-created_on').values('menu_name', 'menu_id')
-        parent_menus = Menu.objects.values_list('menu_name', flat=True).distinct()
-        fetch_details = Menu.objects.all().order_by('display_order')
-
+        # Get search keyword
+        keyword = request.GET.get('keyword', '')
+        
+        # Base query
+        menus = Menu.objects.filter(comp_code=COMP_CODE).order_by('display_order')
+        
+        # Apply search filter if keyword exists
+        if keyword:
+            menus = menus.filter(
+                Q(menu_name__icontains=keyword) |
+                Q(screen_name__icontains=keyword) |
+                Q(url__icontains=keyword)
+            )
+        
+        # Get total count for pagination
+        result_cnt = menus.count()
+        
+        # Pagination
+        page = request.GET.get('page', 1)
+        paginator = Paginator(menus, PAGINATION_SIZE)  # Show 10 items per page
+        
+        try:
+            menus = paginator.page(page)
+        except PageNotAnInteger:
+            menus = paginator.page(1)
+        except EmptyPage:
+            menus = paginator.page(paginator.num_pages)
+        
         context = {
-            "menus": menus_page,
-            "menu_list": menu_list,
-            "parent_menus": parent_menus,
-            "fetch_details": fetch_details,
-            "parent_menu_id": menu_to_edit.parent_menu_id if menu_to_edit else None,
-            "current_url": current_url,
-            "keyword": keyword,
-            "result_cnt": query.count(),
+            'menus': menus,
+            'result_cnt': result_cnt,
+            'keyword': keyword,
+            'current_url': request.path
         }
-
+        
         return render(request, self.template_name, context)
 
     
@@ -4790,11 +4805,14 @@ def leave_transaction_list(request):
         'date_of_join',
         'date_of_rejoin'
     )
+
+    leave_types = LeaveMaster.objects.filter(comp_code=COMP_CODE).order_by('leave_code')
     context = {
         'leaves': leaves,
         'keyword': keyword,
         'result_cnt': leaves.count(),
-        'employees': employees
+        'employees': employees,
+        'leave_types': leave_types
     }
     
     return render(request, 'pages/payroll/leave_master/leave_transaction_list.html', context)
@@ -5435,3 +5453,223 @@ def get_gratuity_details(request, gratuity_id):
         return JsonResponse(data)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def leave_master_list(request):
+    set_comp_code(request)
+    try:
+        # Get search parameters
+        keyword = request.GET.get('keyword', '')
+        
+        # Base query
+        leaves = LeaveMaster.objects.filter(comp_code=COMP_CODE).order_by('leave_code')
+        
+        # Apply search filter if keyword exists
+        if keyword:
+            leaves = leaves.filter(
+                Q(leave_code__icontains=keyword) |
+                Q(description__icontains=keyword)
+            )
+        
+        # Get total count for pagination
+        result_cnt = leaves.count()
+        
+        # Pagination
+        page = request.GET.get('page', 1)
+        paginator = Paginator(leaves, 10)  # Show 10 items per page
+        
+        try:
+            leaves = paginator.page(page)
+        except PageNotAnInteger:
+            leaves = paginator.page(1)
+        except EmptyPage:
+            leaves = paginator.page(paginator.num_pages)
+        
+        # Get grade data for dropdown
+        grade_data = GradeMaster.objects.filter(
+            comp_code=COMP_CODE,
+            is_active='Y'
+        ).order_by('grade_code')
+        
+        context = {
+            'leaves': leaves,
+            'result_cnt': result_cnt,
+            'keyword': keyword,
+            'grade_data': grade_data,
+            'current_url': request.path
+        }
+        
+        return render(request, 'pages/payroll/leave_master/leave_master_list.html', context)
+    except Exception as e:
+        messages.error(request, f'Error loading leave master: {str(e)}')
+        return redirect('leave_master_list')
+
+def leave_master_create(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            # Get form data
+            # leave_code = request.POST.get('leave_code')
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'LT'])
+                    result = cursor.fetchone()
+                    leave_code = result[0] if result else None
+                    print(leave_code)
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+            leave_code = leave_code
+            description = request.POST.get('description')
+            work_month = request.POST.get('work_month')
+            eligible_days = request.POST.get('eligible_days')
+            eligible_day_type = request.POST.get('eligible_day_type')
+            payment_type = request.POST.get('payment_type')
+            frequency = request.POST.get('frequency')
+            gender = request.POST.get('gender')
+            grade = request.POST.getlist('grade')  # Get list of selected grades
+            carry_forward = request.POST.get('carry_forward')
+            carry_forward_period = request.POST.get('carry_forward_period')
+            encashment = request.POST.get('encashment')
+            is_active = request.POST.get('is_active') == 'Active'
+            print(leave_code, description, work_month, eligible_days, eligible_day_type, payment_type, frequency, gender, grade, carry_forward, carry_forward_period, encashment, is_active)
+            
+            # Validate required fields
+            # if not all([leave_code, description, work_month, eligible_days, eligible_day_type, 
+            #            payment_type, frequency, gender, carry_forward, encashment]):
+            #     messages.error(request, 'All required fields must be filled')
+            #     return redirect('leave_master_list')
+            
+            # Create new leave type
+            leave = LeaveMaster(
+                comp_code=COMP_CODE,
+                leave_code=leave_code,
+                description=description,
+                work_month=work_month,
+                eligible_days=eligible_days,
+                eligible_day_type=eligible_day_type,
+                payment_type=payment_type,
+                frequency=frequency,
+                gender=gender,
+                grade=','.join(grade) if grade else None,
+                carry_forward=carry_forward,
+                carry_forward_period=carry_forward_period if carry_forward == 'Yes' else None,
+                encashment=encashment,
+                is_active=is_active,
+                created_by=1
+            )
+            print(leave)
+            leave.save()
+            
+            messages.success(request, 'Leave type created successfully!')
+            return redirect('leave_master_list')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating leave type: {str(e)}')
+            return redirect('leave_master_list')
+    return redirect('leave_master_list')
+
+@csrf_exempt
+def check_leave_code(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            leave_code = request.POST.get('leave_code')
+            exists = LeaveMaster.objects.filter(
+                comp_code=COMP_CODE,
+                leave_code=leave_code
+            ).exists()
+            return JsonResponse({'exists': exists})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def get_leave_details(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        try:
+            leave_id = request.GET.get('leave_id')
+            leave = LeaveMaster.objects.get(
+                comp_code=COMP_CODE,
+                leave_id=leave_id
+            )
+            
+            # Convert grade string to list
+            grade_list = leave.grade.split(',') if leave.grade else []
+            
+            data = {
+                'leave_id': leave.leave_id,
+                'leave_code': leave.leave_code,
+                'description': leave.description,
+                'work_month': leave.work_month,
+                'eligible_days': leave.eligible_days,
+                'eligible_day_type': leave.eligible_day_type,
+                'payment_type': leave.payment_type,
+                'frequency': leave.frequency,
+                'gender': leave.gender,
+                'grade': grade_list,
+                'carry_forward': leave.carry_forward,
+                'carry_forward_period': leave.carry_forward_period,
+                'encashment': leave.encashment,
+                'is_active': leave.is_active
+            }
+            return JsonResponse(data)
+        except LeaveMaster.DoesNotExist:
+            return JsonResponse({'error': 'Leave type not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def update_leave_details(request):
+    set_comp_code(request)
+    leave_id = request.POST.get('leave_id')
+    if request.method == 'POST':
+        try:
+            leave = LeaveMaster.objects.get(
+                comp_code=COMP_CODE,
+                leave_id=leave_id
+            )
+            
+            # Update fields
+            leave.description = request.POST.get('description')
+            leave.work_month = request.POST.get('work_month')
+            leave.eligible_days = request.POST.get('eligible_days')
+            leave.eligible_day_type = request.POST.get('eligible_day_type')
+            leave.payment_type = request.POST.get('payment_type')
+            leave.frequency = request.POST.get('frequency')
+            leave.gender = request.POST.get('gender')
+            leave.grade = ','.join(request.POST.getlist('grade'))
+            leave.carry_forward = request.POST.get('carry_forward')
+            leave.carry_forward_period = request.POST.get('carry_forward_period') if request.POST.get('carry_forward') == 'Yes' else None
+            leave.encashment = request.POST.get('encashment')
+            leave.is_active = request.POST.get('is_active') == 'Active'
+            leave.modified_by = request.session.get('user_id')
+            print(leave.leave_id)
+            leave.save()
+            messages.success(request, 'Leave type updated successfully!')
+            return redirect('leave_master_list')
+            
+        except LeaveMaster.DoesNotExist:
+            return JsonResponse({'error': 'Leave type not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def delete_leave_type(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            leave_id = request.POST.get('leave_id')
+            leave = LeaveMaster.objects.get(
+                comp_code=COMP_CODE,
+                leave_id=leave_id
+            )
+            leave.delete()
+            messages.success(request, 'Leave type deleted successfully!')
+            return JsonResponse({'status': 'success'})
+        except LeaveMaster.DoesNotExist:
+            return JsonResponse({'error': 'Leave type not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

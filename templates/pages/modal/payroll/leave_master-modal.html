@@ -1,0 +1,359 @@
+{% load static %}
+
+<!-- Add New Leave Type -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Leave Type</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'leave_master_create' %}" method="POST" onsubmit="return checkLeaveCode(event)">
+            {% csrf_token %}
+
+            <div class="row">
+                <!-- Leave Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Leave Code</label>
+                        <input class="form-control" id="leave_code" name="leave_code" type="text" readonly>
+                        <span id="leave_code_error" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Description <span class="text-danger">*</span></label>
+                        <input type="text" name="description" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Work Month -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Month <span class="text-danger">*</span></label>
+                        <input type="number" name="work_month" class="form-control" value="365" required>
+                    </div>
+                </div>
+
+                <!-- Eligible Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Eligible Days <span class="text-danger">*</span></label>
+                        <input type="number" name="eligible_days" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Eligible Day Type -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Eligible Day Type <span class="text-danger">*</span></label>
+                        <select name="eligible_day_type" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Calendar">Calendar</option>
+                            <option value="Working">Working</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Payment Type -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Payment Type <span class="text-danger">*</span></label>
+                        <select name="payment_type" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Half Paid">Half Paid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Frequency -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Frequency <span class="text-danger">*</span></label>
+                        <select name="frequency" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Annual">Annual</option>
+                            <option value="One-Time">One-Time</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Lifetime">Lifetime</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gender -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                        <select name="gender" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Both">Both</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grade -->
+                <!-- <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Grade</label>
+                        <select name="grade" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for grade in grade_data %}
+                                <option value="{{ grade.grade_code }}">
+                                    {{ grade.grade_code }} - {{ grade.grade_desc }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div> -->
+
+                <!-- Carry Forward -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Carry Forward <span class="text-danger">*</span></label>
+                        <select name="carry_forward" class="form-control select" required onchange="toggleCarryForwardPeriod(this)">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Carry Forward Period -->
+                <div class="col-md-6" id="carry_forward_period_div" style="display: none;">
+                    <div class="mb-3">
+                        <label class="col-form-label">Carry Forward Period (days) <span class="text-danger">*</span></label>
+                        <input type="number" name="carry_forward_period" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Encashment -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Encashment <span class="text-danger">*</span></label>
+                        <select name="encashment" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Status -->
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="col-form-label me-2" for="is_active">Active</label>
+                    <input type="hidden" name="is_active" value="false">
+                    <input type="checkbox" class="form-check-input" name="is_active" value="Active" id="is_active"
+                        checked>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Leave Type -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Leave Type</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'update_leave_details' %}" id="editLeaveForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="leave_id" id="leave_id">
+            
+            <div class="row">
+                <!-- Leave Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Leave Code</label>
+                        <input class="form-control" id="edit_leave_code" name="leave_code" type="text" readonly>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Description <span class="text-danger">*</span></label>
+                        <input type="text" id="edit_description" name="description" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Work Month -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Work Month <span class="text-danger">*</span></label>
+                        <input type="number" id="edit_work_month" name="work_month" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Eligible Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Eligible Days <span class="text-danger">*</span></label>
+                        <input type="number" id="edit_eligible_days" name="eligible_days" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Eligible Day Type -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Eligible Day Type <span class="text-danger">*</span></label>
+                        <select name="eligible_day_type" id="edit_eligible_day_type" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Calendar">Calendar</option>
+                            <option value="Working">Working</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Payment Type -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Payment Type <span class="text-danger">*</span></label>
+                        <select name="payment_type" id="edit_payment_type" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Half Paid">Half Paid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Frequency -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Frequency <span class="text-danger">*</span></label>
+                        <select name="frequency" id="edit_frequency" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Annual">Annual</option>
+                            <option value="One-Time">One-Time</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Lifetime">Lifetime</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gender -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
+                        <select name="gender" id="edit_gender" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Both">Both</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grade -->
+                <!-- <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Grade</label>
+                        <select name="grade" id="edit_grade" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for grade in grade_data %}
+                                <option value="{{ grade.grade_code }}">
+                                    {{ grade.grade_code }} - {{ grade.grade_desc }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div> -->
+
+                <!-- Carry Forward -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Carry Forward <span class="text-danger">*</span></label>
+                        <select name="carry_forward" id="edit_carry_forward" class="form-control select" required onchange="toggleCarryForwardPeriod(this)">
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Carry Forward Period -->
+                <div class="col-md-6" id="edit_carry_forward_period_div" style="display: none;">
+                    <div class="mb-3">
+                        <label class="col-form-label">Carry Forward Period (days) <span class="text-danger">*</span></label>
+                        <input type="number" id="edit_carry_forward_period" name="carry_forward_period" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Encashment -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Encashment <span class="text-danger">*</span></label>
+                        <select name="encashment" id="edit_encashment" class="form-control select" required>
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Status -->
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="mb-3 d-flex align-items-center">
+                    <label class="col-form-label me-2" for="edit_is_active">Active</label>
+                    <input type="hidden" name="is_active" value="false">
+                    <input type="checkbox" class="form-check-input" id="edit_is_active" name="is_active" value="Active">
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary edit-btn">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete Leave Type -->
+<div class="modal fade" id="delete_leave" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Leave Type?</h4>
+                    <p class="mb-0">Are you sure you want to remove this leave type?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_leave_type' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="leave_id" id="delete_leave_id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,272 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Leave Types" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search Leave Types" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <div class="dropdown me-2">
+                                        <a href="javascript:void(0);" class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"><i
+                                                class="ti ti-package-export me-2"></i>Export</a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul>
+                                                <li>
+                                                    <a href="javascript:void(0);" class="dropdown-item"><i
+                                                            class="ti ti-file-type-pdf text-danger me-1"></i>Export
+                                                        as PDF</a>
+                                                </li>
+                                                <li>
+                                                    <a href="javascript:void(0);" class="dropdown-item"><i
+                                                            class="ti ti-file-type-xls text-green me-1"></i>Export
+                                                        as Excel</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-primary add-btn" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvas_add"><i
+                                            class="ti ti-square-rounded-plus me-2"></i>Add New Leave Type</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Leave Code</th>
+                                        <th>Description</th>
+                                        <th>Work Month</th>
+                                        <th>Eligible Days</th>
+                                        <th>Eligible Day Type</th>
+                                        <th>Payment Type</th>
+                                        <th>Frequency</th>
+                                        <th>Gender</th>
+                                        <!-- <th>Carry Forward</th>
+                                        <th>Encashment</th> -->
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leave in leaves %}
+                                    <tr>
+                                        <td>{{ leave.leave_code }}</td>
+                                        <td>{{ leave.description }}</td>
+                                        <td>{{ leave.work_month }}</td>
+                                        <td>{{ leave.eligible_days }}</td>
+                                        <td>{{ leave.eligible_day_type }}</td>
+                                        <td>{{ leave.payment_type }}</td>
+                                        <td>{{ leave.frequency }}</td>
+                                        <td>{{ leave.gender }}</td>
+                                        <!-- <td>{{ leave.carry_forward }}</td>
+                                        <td>{{ leave.encashment }}</td> -->
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if leave.is_active %} bg-success {% else %} bg-danger {% endif %}">
+                                                {% if leave.is_active %} Active {% else %} Inactive {% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-leave-btn" href="#"
+                                                        data-id="{{ leave.leave_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_leave"
+                                                        data-leave-id="{{ leave.leave_id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        {% if leave_types.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ leave_types.start_index }} to {{ leave_types.end_index }} of {{ result_cnt }}
+                                    entries</span>
+                            </div>
+                            <ul class="pagination">
+                                {% if leave_types.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ leave_types.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                {% for page in leave_types.paginator.page_range %}
+                                {% if leave_types.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if leave_types.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ leave_types.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this in the <head> or before your script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function checkLeaveCode(event) {
+        event.preventDefault();
+        let form = event.target;
+        let leaveCode = document.getElementById("leave_code").value;
+        let leaveCodeError = document.getElementById("leave_code_error");
+
+        leaveCodeError.innerText = "";
+
+        fetch("{% url 'check_leave_code' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams({leave_code: leaveCode})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                leaveCodeError.innerText = "Leave Code already exists. Please enter a different one.";
+            } else {
+                form.submit();
+            }
+        })
+        .catch(error => {
+            console.error("Error checking leave code:", error);
+        });
+
+        return false;
+    }
+
+    function toggleCarryForwardPeriod(select) {
+        const periodDiv = select.closest('form').querySelector(select.id.includes('edit') ? '#edit_carry_forward_period_div' : '#carry_forward_period_div');
+        const periodInput = periodDiv.querySelector('input');
+        
+        if (select.value === 'Yes') {
+            periodDiv.style.display = 'block';
+            periodInput.required = true;
+        } else {
+            periodDiv.style.display = 'none';
+            periodInput.required = false;
+            periodInput.value = '';
+        }
+    }
+
+    // Edit Leave Type
+    $(".edit-leave-btn").click(function (event) {
+        event.preventDefault();
+        var leave_id = $(this).data("id");
+
+        // Open Offcanvas immediately
+        var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+        offcanvasElement.show();
+
+        // Clear form fields
+        $("#edit_leave_code, #edit_description, #edit_work_month, #edit_eligible_days, #edit_eligible_day_type, #edit_payment_type, #edit_frequency, #edit_gender, #edit_grade, #edit_carry_forward, #edit_carry_forward_period, #edit_encashment").val("");
+        $("#edit_is_active").prop("checked", false);
+
+        $.ajax({
+            url: "{% url 'get_leave_details' %}",
+            type: "GET",
+            data: { 'leave_id': leave_id },
+            success: function (response) {
+                $("#edit_leave_code").val(response.leave_code);
+                $("#edit_description").val(response.description);
+                $("#edit_work_month").val(response.work_month);
+                $("#edit_eligible_days").val(response.eligible_days);
+                $("#edit_eligible_day_type").val(response.eligible_day_type).trigger("change");
+                $("#edit_payment_type").val(response.payment_type).trigger("change");
+                $("#edit_frequency").val(response.frequency).trigger("change");
+                $("#edit_gender").val(response.gender).trigger("change");
+                $("#edit_grade").val(response.grade).trigger("change");
+                $("#edit_carry_forward").val(response.carry_forward).trigger("change");
+                $("#edit_carry_forward_period").val(response.carry_forward_period);
+                $("#edit_encashment").val(response.encashment).trigger("change");
+                $("#edit_is_active").prop("checked", response.is_active);
+                $("#leave_id").val(response.leave_id);
+
+                // Toggle carry forward period visibility
+                toggleCarryForwardPeriod(document.getElementById("edit_carry_forward"));
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+            }
+        });
+    });
+
+    // Delete Leave Type
+    $(document).ready(function () {
+        $(".delete-btn").on("click", function () {
+            let leaveId = $(this).data("leave-id");
+            $("#delete_leave_id").val(leaveId);
+        });
+    });
+</script> 
+
+{% block leave_modal %}
+{% include "pages/modal/payroll/leave_master-modal.html" %}
+{% endblock %}
+
+{% endblock content %} 
