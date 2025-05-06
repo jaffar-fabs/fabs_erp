@@ -203,6 +203,22 @@ urlpatterns = [
     path('rejoin_approval_submit/', views.rejoin_approval_submit, name='rejoin_approval_submit'),
     path('get-rejoin-notifications/', views.get_rejoin_notifications, name='get_rejoin_notifications'),
 
+    #Recruitment
+    path('ao_entry/', views.ao_entry_list, name='ao_entry_list'),
+    path('ao_entry/create/', views.ao_entry_create, name='ao_entry_create'),
+    path('ao_entry/edit/', views.ao_entry_edit, name='ao_entry_edit'),
+    path('ao_entry/update/', views.ao_entry_update, name='ao_entry_update'),
+    path('recruitment_list/', views.recruitment_list, name='recruitment_list'),
+    path('recruitment_update/', views.recruitment_update, name='recruitment_update'),
+    path('recruitment_edit/', views.recruitment_edit, name='recruitment_edit'),
+
+    #Employee PP
+    path('employee_pp/', views.employee_pp_list, name='employee_pp_list'),
+    path('employee_pp/create/', views.employee_pp_create, name='employee_pp_create'),
+    path('employee_pp/edit/', views.employee_pp_edit, name='employee_pp_edit'),
+    path('employee_pp/update/', views.employee_pp_update, name='employee_pp_update'),
+    path('employee_pp/delete/', views.employee_pp_delete, name='employee_pp_delete'),
+    path('get_employee_details_by_code/', views.get_employee_details_by_code, name='get_employee_details_by_code'),
 
     path('duty_roster/', views.duty_roster, name='duty_roster'),
 

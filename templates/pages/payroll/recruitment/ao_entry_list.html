@@ -1,0 +1,214 @@
+{% extends "partials/base.html" %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="AO Entry" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search AO Entries" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8 d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvas_add">
+                                    <i class="ti ti-square-rounded-plus me-2"></i>Add AO Entry
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>AO Issued Date</th>
+                                        <th>Department</th>
+                                        <th>Project</th>
+                                        <th>AO Ref No</th>
+                                        <th>Name as per PP</th>
+                                        <th>Nationality</th>
+                                        <th>Designation</th>
+                                        <th>Basic</th>
+                                        <th>Total</th>
+                                        <th>AO Acceptance</th>
+                                        <th>Acceptance Date</th>
+                                        <th>Document Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in entries %}
+                                    <tr>
+                                        <td>{{ entry.ao_issued_date|date:"d-M-Y" }}</td>
+                                        <td>{{ entry.dep }}</td>
+                                        <td>{{ entry.project }}</td>
+                                        <td>{{ entry.ao_ref_no }}</td>
+                                        <td>{{ entry.name_as_per_pp }}</td>
+                                        <td>{{ entry.nationality }}</td>
+                                        <td>{{ entry.designation }}</td>
+                                        <td>{{ entry.basic }}</td>
+                                        <td>{{ entry.total }}</td>
+                                        <td>{{ entry.ao_acceptance }}</td>
+                                        <td>{{ entry.acceptance_date|date:"d-M-Y" }}</td>
+                                        <td>{{ entry.document_status }}</td>
+                                        <td>    
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-ao-entry" href="#"
+                                                        data-id="{{ entry.recr_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-ao-entry" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_ao_entry"
+                                                        data-ao-entry-id="{{ entry.recr_id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if entries.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ entries.start_index }} to {{ entries.end_index }} of {{ result_cnt }} entries</span>
+                            </div>
+                            <ul class="pagination">
+                                {% if entries.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+                                {% for page in entries.paginator.page_range %}
+                                {% if entries.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                                {% if entries.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        // Edit functionality
+        $('.edit-ao-entry').click(function(e){
+            e.preventDefault();
+            var ao_entry_id = $(this).data('id');
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+            
+            $.ajax({
+                url: "{% url 'ao_entry_edit' %}",
+                type: "GET",
+                data: {
+                    'ao_entry_id': ao_entry_id
+                },
+                success: function(response){
+                    // Add hidden input for ao_entry_id
+                    if (!$('#ao_entry_id').length) {
+                        $('form[action="{% url "ao_entry_update" %}"]').prepend(
+                            '<input type="hidden" name="ao_entry_id" id="ao_entry_id">'
+                        );
+                    }
+                    
+                    // Set the ao_entry_id
+                    $('#ao_entry_id').val(response.recr_id);
+                    
+                    // Set all form fields using the new IDs
+                    $('#edit_ao_issued_date').val(response.ao_issued_date);
+                    $('#edit_dep').val(response.dep);
+                    $('#edit_project').val(response.project);
+                    $('#edit_ao_ref_no').val(response.ao_ref_no);
+                    $('#edit_name_as_per_pp').val(response.name_as_per_pp);
+                    $('#edit_pp_number').val(response.pp_number);
+                    $('#edit_pp_exp_date').val(response.pp_exp_date);
+                    $('#edit_pp_validity_days').val(response.pp_validity_days);
+                    $('#edit_dob').val(response.dob);
+                    $('#edit_age').val(response.age);
+                    $('#edit_nationality').val(response.nationality);
+                    $('#edit_agent').val(response.agent);
+                    $('#edit_designation').val(response.designation);
+                    $('#edit_gender').val(response.gender);
+                    $('#edit_employee_status').val(response.employee_status);
+                    $('#edit_grade').val(response.grade);
+                    $('#edit_basic').val(response.basic);
+                    $('#edit_hra').val(response.hra);
+                    $('#edit_transportation_allowance').val(response.transportation_allowance);
+                    $('#edit_accommodation').val(response.accommodation);
+                    $('#edit_telephone').val(response.telephone);
+                    $('#edit_additional_duty_allowance').val(response.additional_duty_allowance);
+                    $('#edit_other_allowance').val(response.other_allowance);
+                    $('#edit_total').val(response.total);
+                    $('#edit_in_words').val(response.in_words);
+                    $('#edit_ao_acceptance').val(response.ao_acceptance);
+                    $('#edit_acceptance_date').val(response.acceptance_date);
+                    $('#edit_document_status').val(response.document_status);
+                },
+                error: function(xhr, status, error){
+                    console.error('Error fetching AO Entry:', error);
+                    alert('Error fetching AO Entry details. Please try again.');
+                }
+            });
+        });
+
+        // Delete confirmation
+        $('.delete-ao-entry').click(function(e){
+            e.preventDefault();
+            var deleteUrl = $(this).attr('href');
+            
+            if (confirm('Are you sure you want to delete this AO Entry?')) {
+                window.location.href = deleteUrl;
+            }
+        });
+
+        // Clear form validation on input
+        $('input, select').on('input change', function(){
+            $(this).removeClass('is-invalid');
+        });
+    });
+</script>
+{% include 'pages/modal/recruitment/ao_entry_modal.html' %}
+{% endblock %}

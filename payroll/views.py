@@ -35,6 +35,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import GratuitySettlement
+from .models import EmployeePPDetails
 
 
 PAGINATION_SIZE = 6
@@ -366,6 +367,7 @@ def save_employee(request, employee_id=None):
         employee.iloe_expiry = request.POST.get("iloe_expiry") or None
         employee.iloe_document = request.FILES.get("iloe_document") or employee.iloe_document
         employee.visa_location = request.POST.get("visa_location")
+        employee.change_status = request.FILES.get("change_status_file") or employee.change_status
         employee.visa_no = request.POST.get("visa_no")
         employee.emirates_no = request.POST.get("emirates_no")
         employee.visa_issued = request.POST.get("visa_issued") or None
@@ -5865,3 +5867,502 @@ def get_emp_code(request):
         'message': 'Invalid request method'
     }, status=400)
     
+
+def ao_entry_list(request):
+    keyword = request.GET.get('keyword', '')
+    entries = Recruitment.objects.all().order_by('-ao_issued_date')
+    
+    if keyword:
+        entries = entries.filter(
+            Q(name_as_per_pp__icontains=keyword) |
+            Q(ao_ref_no__icontains=keyword) |
+            Q(project__icontains=keyword) |
+            Q(dep__icontains=keyword)
+        )
+    
+    # Pagination
+    paginator = Paginator(entries, 10)  # Show 10 entries per page
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        entries = paginator.page(1)
+    except EmptyPage:
+        entries = paginator.page(paginator.num_pages)
+    
+    context = {
+        'entries': entries,
+        'result_cnt': entries.paginator.count if entries else 0,
+        'keyword': keyword
+    }
+    return render(request, 'pages/payroll/recruitment/ao_entry_list.html', context)
+
+def ao_entry_create(request):
+    if request.method == 'POST':
+        try:
+            # Validate passport expiry date
+            pp_exp_date = request.POST.get('pp_exp_date')
+            if pp_exp_date:
+                expiry_date = datetime.strptime(pp_exp_date, '%Y-%m-%d').date()
+                six_months_later = datetime.now().date() + timedelta(days=180)
+                if expiry_date < six_months_later:
+                    messages.error(request, 'Passport expiry date must be at least 6 months from today!')
+                    return redirect('ao_entry_list')
+
+            # Validate date of birth
+            dob = request.POST.get('dob')
+            if dob:
+                birth_date = datetime.strptime(dob, '%Y-%m-%d').date()
+                today = datetime.now().date()
+                age = (today - birth_date).days / 365.25
+                if age < 16:
+                    messages.error(request, 'Age must be at least 16 years!')
+                    return redirect('ao_entry_list')
+
+            # Create new recruitment entry
+            recruitment = Recruitment.objects.create(
+                comp_code=request.session.get('comp_code', '1000'),
+                ao_issued_date=request.POST.get('ao_issued_date'),
+                dep=request.POST.get('dep'),
+                project=request.POST.get('project'),
+                ao_ref_no=request.POST.get('ao_ref_no'),
+                name_as_per_pp=request.POST.get('name_as_per_pp'),
+                pp_number=request.POST.get('pp_number'),
+                pp_exp_date=pp_exp_date,
+                pp_validity_days=request.POST.get('pp_validity_days'),
+                dob=dob,
+                age=request.POST.get('age'),
+                nationality=request.POST.get('nationality'),
+                agent=request.POST.get('agent'),
+                designation=request.POST.get('designation'),
+                gender=request.POST.get('gender'),
+                employee_status=request.POST.get('employee_status'),
+                grade=request.POST.get('grade'),
+                basic=request.POST.get('basic'),
+                hra=request.POST.get('hra'),
+                transportation_allowance=request.POST.get('transportation_allowance'),
+                accommodation=request.POST.get('accommodation'),
+                telephone=request.POST.get('telephone'),
+                additional_duty_allowance=request.POST.get('additional_duty_allowance'),
+                other_allowance=request.POST.get('other_allowance'),
+                total=request.POST.get('total'),
+                in_words=request.POST.get('in_words'),
+                ao_acceptance=request.POST.get('ao_acceptance'),
+                acceptance_date=request.POST.get('acceptance_date'),
+                document_status=request.POST.get('document_status'),
+                created_by=request.user.id
+            )
+            messages.success(request, 'AO Entry created successfully!')
+            return redirect('ao_entry_list')
+        except Exception as e:
+            messages.error(request, f'Error creating AO Entry: {str(e)}')
+            return redirect('ao_entry_list')
+    return redirect('ao_entry_list')
+
+def ao_entry_edit(request):
+    if request.method == 'GET':
+        try:
+            ao_entry_id = request.GET.get('ao_entry_id')
+            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id)
+            data = {
+                'recr_id': ao_entry.recr_id,
+                'ao_issued_date': ao_entry.ao_issued_date.strftime('%Y-%m-%d') if ao_entry.ao_issued_date else None,
+                'dep': ao_entry.dep,
+                'project': ao_entry.project,
+                'ao_ref_no': ao_entry.ao_ref_no,
+                'name_as_per_pp': ao_entry.name_as_per_pp,
+                'pp_number': ao_entry.pp_number,
+                'pp_exp_date': ao_entry.pp_exp_date.strftime('%Y-%m-%d') if ao_entry.pp_exp_date else None,
+                'pp_validity_days': ao_entry.pp_validity_days,
+                'dob': ao_entry.dob.strftime('%Y-%m-%d') if ao_entry.dob else None,
+                'age': ao_entry.age,
+                'nationality': ao_entry.nationality,
+                'agent': ao_entry.agent,
+                'designation': ao_entry.designation,
+                'gender': ao_entry.gender,
+                'employee_status': ao_entry.employee_status,
+                'grade': ao_entry.grade,
+                'basic': float(ao_entry.basic) if ao_entry.basic else None,
+                'hra': float(ao_entry.hra) if ao_entry.hra else None,
+                'transportation_allowance': float(ao_entry.transportation_allowance) if ao_entry.transportation_allowance else None,
+                'accommodation': float(ao_entry.accommodation) if ao_entry.accommodation else None,
+                'telephone': float(ao_entry.telephone) if ao_entry.telephone else None,
+                'additional_duty_allowance': float(ao_entry.additional_duty_allowance) if ao_entry.additional_duty_allowance else None,
+                'other_allowance': float(ao_entry.other_allowance) if ao_entry.other_allowance else None,
+                'total': float(ao_entry.total) if ao_entry.total else None,
+                'in_words': ao_entry.in_words,
+                'ao_acceptance': ao_entry.ao_acceptance,
+                'acceptance_date': ao_entry.acceptance_date.strftime('%Y-%m-%d') if ao_entry.acceptance_date else None,
+                'document_status': ao_entry.document_status
+            }
+            return JsonResponse(data)
+        except Recruitment.DoesNotExist:
+            return JsonResponse({'error': 'AO Entry not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def ao_entry_update(request):
+    if request.method == 'POST':
+        try:
+            ao_entry_id = request.POST.get('ao_entry_id')
+            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id)
+            
+            # Validate passport expiry date
+            pp_exp_date = request.POST.get('pp_exp_date')
+            if pp_exp_date:
+                expiry_date = datetime.strptime(pp_exp_date, '%Y-%m-%d').date()
+                six_months_later = datetime.now().date() + timedelta(days=180)
+                if expiry_date < six_months_later:
+                    messages.error(request, 'Passport expiry date must be at least 6 months from today!')
+                    return redirect('ao_entry_list')
+
+            # Validate date of birth
+            dob = request.POST.get('dob')
+            if dob:
+                birth_date = datetime.strptime(dob, '%Y-%m-%d').date()
+                today = datetime.now().date()
+                age = (today - birth_date).days / 365.25
+                if age < 16:
+                    messages.error(request, 'Age must be at least 16 years!')
+                    return redirect('ao_entry_list')
+
+            # Update fields
+            ao_entry.ao_issued_date = request.POST.get('ao_issued_date')
+            ao_entry.dep = request.POST.get('dep')
+            ao_entry.project = request.POST.get('project')
+            ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
+            ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
+            ao_entry.pp_number = request.POST.get('pp_number')
+            ao_entry.pp_exp_date = pp_exp_date
+            ao_entry.pp_validity_days = request.POST.get('pp_validity_days')
+            ao_entry.dob = dob
+            ao_entry.age = request.POST.get('age')
+            ao_entry.nationality = request.POST.get('nationality')
+            ao_entry.agent = request.POST.get('agent')
+            ao_entry.designation = request.POST.get('designation')
+            ao_entry.gender = request.POST.get('gender')
+            ao_entry.employee_status = request.POST.get('employee_status')
+            ao_entry.grade = request.POST.get('grade')
+            ao_entry.basic = request.POST.get('basic')
+            ao_entry.hra = request.POST.get('hra')
+            ao_entry.transportation_allowance = request.POST.get('transportation_allowance')
+            ao_entry.accommodation = request.POST.get('accommodation')
+            ao_entry.telephone = request.POST.get('telephone')
+            ao_entry.additional_duty_allowance = request.POST.get('additional_duty_allowance')
+            ao_entry.other_allowance = request.POST.get('other_allowance')
+            ao_entry.total = request.POST.get('total')
+            ao_entry.in_words = request.POST.get('in_words')
+            ao_entry.ao_acceptance = request.POST.get('ao_acceptance')
+            ao_entry.acceptance_date = request.POST.get('acceptance_date')
+            ao_entry.document_status = request.POST.get('document_status')
+            ao_entry.modified_by = request.user.id
+            ao_entry.modified_on = datetime.now()
+            
+            ao_entry.save()
+            messages.success(request, 'AO Entry updated successfully!')
+            return redirect('ao_entry_list')
+        except Recruitment.DoesNotExist:
+            messages.error(request, 'AO Entry not found!')
+            return redirect('ao_entry_list')
+        except Exception as e:
+            messages.error(request, f'Error updating AO Entry: {str(e)}')
+            return redirect('ao_entry_list')
+    return redirect('ao_entry_list')
+
+def ao_entry_delete(request, recr_id):
+    try:
+        ao_entry = Recruitment.objects.get(recr_id=recr_id)
+        ao_entry.delete()
+        messages.success(request, 'AO Entry deleted successfully!')
+    except Recruitment.DoesNotExist:
+        messages.error(request, 'AO Entry not found!')
+    except Exception as e:
+        messages.error(request, f'Error deleting AO Entry: {str(e)}')
+    return redirect('ao_entry_list')
+
+def recruitment_list(request):
+    keyword = request.GET.get('keyword', '')
+    entries = Recruitment.objects.filter(ao_acceptance='Yes').order_by('-ao_issued_date')
+    if keyword:
+        entries = entries.filter(
+            Q(name_as_per_pp__icontains=keyword) |
+            Q(ao_ref_no__icontains=keyword) |
+            Q(project__icontains=keyword) |
+            Q(dep__icontains=keyword)
+        )
+    paginator = Paginator(entries, 10)
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        entries = paginator.page(1)
+    except EmptyPage:
+        entries = paginator.page(paginator.num_pages)
+    context = {
+        'entries': entries,
+        'result_cnt': entries.paginator.count if entries else 0,
+        'keyword': keyword
+    }
+    return render(request, 'pages/payroll/recruitment/recruitment_list.html', context)
+
+@csrf_exempt
+def recruitment_edit(request):
+    if request.method == 'GET':
+        try:
+            recruitment_id = request.GET.get('recr_id')
+            print(recruitment_id)
+            rec = Recruitment.objects.get(recr_id=recruitment_id)
+            data = {
+                'recr_id': rec.recr_id,
+                'ao_ref_no': rec.ao_ref_no,
+                'name_as_per_pp': rec.name_as_per_pp,
+                'dep': rec.dep,
+                'project': rec.project,
+                'designation': rec.designation,
+                'nationality': rec.nationality,
+                'employee_status': rec.employee_status,
+                'gender': rec.gender,
+                'agency_name': rec.agency_name,
+                'doc_status': rec.doc_status,
+                # Editable fields:
+                'interview_date': rec.interview_date.strftime('%Y-%m-%d') if rec.interview_date else '',
+                'availability': rec.availability,
+                'agent_charges': float(rec.agent_charges) if rec.agent_charges else '',
+                'charges_paid_date': rec.charges_paid_date.strftime('%Y-%m-%d') if rec.charges_paid_date else '',
+                'pcc_certificate': rec.pcc_certificate,
+                'doc_status': rec.doc_status,
+                'pre_approval': rec.pre_approval,
+                'work_offer_letter': rec.work_offer_letter,
+                'insurance': rec.insurance,
+                'wp_payment': rec.wp_payment,
+                'visa_submission': rec.visa_submission,
+                'change_status': rec.change_status,
+                'visa_issued_date': rec.visa_issued_date.strftime('%Y-%m-%d') if rec.visa_issued_date else '',
+                'arrival_date': rec.arrival_date.strftime('%Y-%m-%d') if rec.arrival_date else '',
+                'airport': rec.airport,
+                'flight_no': rec.flight_no,
+                'eta': rec.eta.strftime('%Y-%m-%dT%H:%M') if rec.eta else '',
+                'arrived_or_not': rec.arrived_or_not,
+            }
+            return JsonResponse(data)
+        except Recruitment.DoesNotExist:
+            return JsonResponse({'error': 'Recruitment entry not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@csrf_exempt
+def recruitment_update(request):
+    if request.method == 'POST':
+        try:
+            recruitment_id = request.POST.get('recr_id')
+            rec = Recruitment.objects.get(recr_id=recruitment_id)
+            # Only update editable fields
+            rec.interview_date = request.POST.get('interview_date') or None
+            rec.agency_name = request.POST.get('agency_name')
+            rec.availability = request.POST.get('availability')
+            rec.agent_charges = request.POST.get('agent_charges') or None
+            rec.charges_paid_date = request.POST.get('charges_paid_date') or None
+            rec.pcc_certificate = request.POST.get('pcc_certificate')
+            rec.doc_status = request.POST.get('doc_status')
+            rec.pre_approval = request.POST.get('pre_approval')
+            rec.work_offer_letter = request.POST.get('work_offer_letter')
+            rec.insurance = request.POST.get('insurance')
+            rec.wp_payment = request.POST.get('wp_payment')
+            rec.visa_submission = request.POST.get('visa_submission')
+            rec.change_status = request.POST.get('change_status')
+            rec.visa_issued_date = request.POST.get('visa_issued_date') or None
+            rec.arrival_date = request.POST.get('arrival_date') or None
+            rec.airport = request.POST.get('airport')
+            rec.flight_no = request.POST.get('flight_no')
+            rec.eta = request.POST.get('eta') or None
+            rec.arrived_or_not = request.POST.get('arrived_or_not')
+            rec.save()
+            return redirect('recruitment_list')
+        except Recruitment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Recruitment entry not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+def employee_pp_list(request):
+    keyword = request.GET.get('keyword', '')
+    entries = EmployeePPDetails.objects.all()
+    if keyword:
+        entries = entries.filter(
+            Q(name__icontains=keyword) |
+            Q(pp_number__icontains=keyword) |
+            Q(emp_code__icontains=keyword) |
+            Q(in_outside__icontains=keyword) |
+            Q(status__icontains=keyword) |
+            Q(sub_status__icontains=keyword) |
+            Q(work_location__icontains=keyword) |
+            Q(designation__icontains=keyword) |
+            Q(nationality__icontains=keyword) |
+            Q(pp_control__icontains=keyword) |
+            Q(no_of_days__icontains=keyword) |
+            Q(medical__icontains=keyword) |
+            Q(medical_result_date__icontains=keyword) |
+            Q(remedical_result_date__icontains=keyword) |
+            Q(eid__icontains=keyword) |
+            Q(rp_stamping__icontains=keyword) |
+            Q(fine_amount__icontains=keyword) |
+            Q(tawjeeh_payment__icontains=keyword) |
+            Q(tawjeeh_class__icontains=keyword) |
+            Q(iloe_status__icontains=keyword)
+        )
+    paginator = Paginator(entries, 10)
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        entries = paginator.page(1)
+    except EmptyPage:
+        entries = paginator.page(paginator.num_pages)
+    context = {
+        'entries': entries,
+        'result_cnt': entries.paginator.count if entries else 0,
+        'keyword': keyword
+    }
+    return render(request, 'pages/payroll/employee_pp/employee_pp_list.html', context)
+
+def employee_pp_create(request):
+    if request.method == 'POST':
+        # Create new record
+        EmployeePPDetails.objects.create(
+            pp_number=request.POST.get('pp_number'),
+            emp_code=request.POST.get('emp_code'),
+            name=request.POST.get('name'),
+            in_outside=request.POST.get('in_outside'),
+            status=request.POST.get('status'),
+            sub_status=request.POST.get('sub_status'),
+            work_location=request.POST.get('work_location'),
+            doj=request.POST.get('doj') or None,
+            gender=request.POST.get('gender'),
+            designation=request.POST.get('designation'),
+            nationality=request.POST.get('nationality'),
+            pp_control=request.POST.get('pp_control'),
+            date_of_landing=request.POST.get('date_of_landing') or None,
+            no_of_days=request.POST.get('no_of_days') or None,
+            medical=request.POST.get('medical'),
+            medical_result_date=request.POST.get('medical_result_date') or None,
+            remedical_result_date=request.POST.get('remedical_result_date') or None,
+            eid=request.POST.get('eid'),
+            rp_stamping=request.POST.get('rp_stamping'),
+            fine_amount=request.POST.get('fine_amount') or None,
+            tawjeeh_payment=request.POST.get('tawjeeh_payment') or None,
+            tawjeeh_class=request.POST.get('tawjeeh_class'),
+            iloe_status=request.POST.get('iloe_status'),
+        )
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+def employee_pp_edit(request):
+    # Return JSON for the given id
+    id = request.GET.get('id')
+    try:
+        obj = EmployeePPDetails.objects.get(id=id)
+        data = {
+            'id': obj.id,
+            'pp_number': obj.pp_number,
+            'emp_code': obj.emp_code,
+            'name': obj.name,
+            'in_outside': obj.in_outside,
+            'status': obj.status,
+            'sub_status': obj.sub_status,
+            'work_location': obj.work_location,
+            'doj': obj.doj,
+            'gender': obj.gender,
+            'designation': obj.designation,
+            'nationality': obj.nationality,
+            'pp_control': obj.pp_control,
+            'date_of_landing': obj.date_of_landing,
+            'no_of_days': obj.no_of_days,
+            'medical': obj.medical,
+            'medical_result_date': obj.medical_result_date,
+            'remedical_result_date': obj.remedical_result_date,
+            'eid': obj.eid,
+            'rp_stamping': obj.rp_stamping,
+            'fine_amount': obj.fine_amount,
+            'tawjeeh_payment': obj.tawjeeh_payment,
+            'tawjeeh_class': obj.tawjeeh_class,
+            'iloe_status': obj.iloe_status,
+        }
+        # Convert dates to string if needed
+        for k in ['doj', 'medical_result_date', 'remedical_result_date']:
+            if data[k]:
+                data[k] = data[k].strftime('%Y-%m-%d')
+        return JsonResponse(data)
+    except EmployeePPDetails.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Not found'})
+
+@csrf_exempt
+def employee_pp_update(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        try:
+            obj = EmployeePPDetails.objects.get(id=id)
+            obj.pp_number = request.POST.get('pp_number')
+            obj.emp_code = request.POST.get('emp_code')
+            obj.name = request.POST.get('name')
+            obj.in_outside = request.POST.get('in_outside')
+            obj.status = request.POST.get('status')
+            obj.sub_status = request.POST.get('sub_status')
+            obj.work_location = request.POST.get('work_location')
+            obj.doj = request.POST.get('doj') or None
+            obj.gender = request.POST.get('gender')
+            obj.designation = request.POST.get('designation')
+            obj.nationality = request.POST.get('nationality')
+            obj.pp_control = request.POST.get('pp_control')
+            obj.date_of_landing = request.POST.get('date_of_landing') or None
+            obj.no_of_days = request.POST.get('no_of_days') or None
+            obj.medical = request.POST.get('medical')
+            obj.medical_result_date = request.POST.get('medical_result_date') or None
+            obj.remedical_result_date = request.POST.get('remedical_result_date') or None
+            obj.eid = request.POST.get('eid')
+            obj.rp_stamping = request.POST.get('rp_stamping')
+            obj.fine_amount = request.POST.get('fine_amount') or None
+            obj.tawjeeh_payment = request.POST.get('tawjeeh_payment') or None
+            obj.tawjeeh_class = request.POST.get('tawjeeh_class')
+            obj.iloe_status = request.POST.get('iloe_status')
+            obj.save()
+            return JsonResponse({'status': 'success'})
+        except EmployeePPDetails.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+@csrf_exempt
+def employee_pp_delete(request):
+    if request.method == 'POST':
+        id = request.POST.get('id')
+        try:
+            obj = EmployeePPDetails.objects.get(id=id)
+            obj.delete()
+            return JsonResponse({'status': 'success'})
+        except EmployeePPDetails.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
+@csrf_exempt
+def get_employee_details_by_code(request):
+    emp_code = request.GET.get('emp_code')
+    try:
+        from .models import Employee
+        emp = Employee.objects.get(emp_code=emp_code)
+        data = {
+            'pp_number': emp.passport_details or '',
+            'name': emp.emp_name or '',
+            'in_outside': emp.visa_location or '',
+            'status': emp.emp_status or '',
+            'sub_status': emp.emp_sub_status or '',
+            'work_location': emp.select_camp or '',
+            'doj': emp.date_of_join.strftime('%Y-%m-%d') if emp.date_of_join else '',
+            'gender': emp.emp_sex or '',
+            'designation': emp.designation or '',
+            'nationality': emp.nationality or '',
+        }
+        return JsonResponse({'success': True, 'data': data})
+    except Employee.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Not found'})

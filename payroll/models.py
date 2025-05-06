@@ -257,6 +257,7 @@ class Employee(models.Model):
 
     # New fields for Visa Details
     visa_location = models.CharField(max_length=50, blank=True, null=True)  # Visa location
+    change_status = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Change status
     visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
@@ -278,6 +279,7 @@ class Employee(models.Model):
     emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
     work_permit_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Work permit document upload
     profile_picture = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Profile pictur
+    date_of_landing = models.DateField(blank=True, null=True)  # Date of landing
 
     # Fields with additional date inputs
     passport_issued_date = models.DateField(blank=True, null=True)
@@ -860,6 +862,7 @@ class GratuitySettlement(models.Model):
     last_drawn_basic_salary = models.CharField(max_length=12)
     eligible_gratuity = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
     loss_of_pay_days = models.IntegerField(blank=True, null=True)
+    loss_of_pay_amount = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
     gratuity_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Paid', 'Paid')])
     leave_balance_days = models.CharField(max_length=6, blank=True, null=True)  # Auto/Enter
     leave_encashment_amount = models.CharField(max_length=12, blank=True, null=True)  # Auto/Enter
@@ -894,6 +897,7 @@ class GratuitySettlement(models.Model):
 
     def __str__(self):
         return f"{self.employee_id} - {self.employee_name} - {self.settlement_status}"
+
 class LeaveMaster(models.Model):
     comp_code = models.CharField(max_length=15)
     leave_id = models.BigAutoField(primary_key=True)
@@ -944,3 +948,99 @@ class LeaveMaster(models.Model):
         db_table = 'payroll_leavemaster'
         ordering = ['leave_code']
 
+class Recruitment(models.Model):
+    comp_code = models.CharField(max_length=15, null=True, blank=True)
+    recr_id = models.BigAutoField(primary_key=True)
+    ao_issued_date = models.DateField("AO Issued Date", null=True, blank=True)
+    dep = models.CharField("Department", max_length=100, null=True, blank=True)
+    project = models.CharField("Project", max_length=255, null=True, blank=True)
+    ao_ref_no = models.CharField("AO Ref No", max_length=100, null=True, blank=True)
+    name_as_per_pp = models.CharField("Name as per PP", max_length=255, null=True, blank=True)
+    pp_number = models.CharField("PP Number", max_length=50, null=True, blank=True)
+    pp_exp_date = models.DateField("PP Expiry Date", null=True, blank=True)
+    pp_validity_days = models.IntegerField("PP Validity Days", null=True, blank=True)
+    dob = models.DateField("Date of Birth", null=True, blank=True)
+    age = models.IntegerField("Age", null=True, blank=True)
+    nationality = models.CharField("Nationality", max_length=100, null=True, blank=True)
+    agent = models.CharField("Agent", max_length=255, null=True, blank=True)
+    designation = models.CharField("Designation", max_length=255, null=True, blank=True)
+    gender = models.CharField("Gender", max_length=50, null=True, blank=True)
+    employee_status = models.CharField("Employee Status", max_length=100, null=True, blank=True)
+    grade = models.CharField("Grade", max_length=50, null=True, blank=True)
+    basic = models.DecimalField("Basic", max_digits=12, decimal_places=2, null=True, blank=True)
+    hra = models.DecimalField("HRA", max_digits=12, decimal_places=2, null=True, blank=True)
+    transportation_allowance = models.DecimalField("Transportation Allowance", max_digits=12, decimal_places=2, null=True, blank=True)
+    accommodation = models.DecimalField("Accommodation", max_digits=12, decimal_places=2, null=True, blank=True)
+    telephone = models.DecimalField("Telephone", max_digits=12, decimal_places=2, null=True, blank=True)
+    additional_duty_allowance = models.DecimalField("Additional duty Allowance", max_digits=12, decimal_places=2, null=True, blank=True)
+    other_allowance = models.DecimalField("Other Allowance", max_digits=12, decimal_places=2, null=True, blank=True)
+    total = models.DecimalField("Total", max_digits=14, decimal_places=2, null=True, blank=True)
+    in_words = models.TextField("In Words", null=True, blank=True)
+    ao_acceptance = models.CharField("AO Acceptance", max_length=100, null=True, blank=True)
+    acceptance_date = models.DateField("Acceptance Date", null=True, blank=True)
+    document_status = models.CharField("Document Status", max_length=100, null=True, blank=True)
+    
+    interview_date = models.DateField("Interview Date", null=True, blank=True)
+    agency_name = models.CharField("Agency Name", max_length=255, null=True, blank=True)
+    availability = models.CharField("Availability", max_length=100, null=True, blank=True)
+    agent_charges = models.DecimalField("Agent Charges", max_digits=12, decimal_places=2, null=True, blank=True)
+    charges_paid_date = models.DateField("Charges Paid Date", null=True, blank=True)
+    pcc_certificate = models.CharField("PCC Certificate", max_length=255, null=True, blank=True)
+    doc_status = models.CharField("Doc Status", max_length=100, null=True, blank=True)
+    pre_approval = models.CharField("Pre-approval", max_length=100, null=True, blank=True)
+    work_offer_letter = models.CharField("Work Offer Letter", max_length=255, null=True, blank=True)
+    insurance = models.CharField("Insurance", max_length=255, null=True, blank=True)
+    wp_payment = models.CharField("WP Payment", max_length=255, null=True, blank=True)
+    visa_submission = models.CharField("Visa Submission", max_length=255, null=True, blank=True)
+    change_status = models.CharField("Change Status", max_length=255, null=True, blank=True)
+    visa_issued_date = models.DateField("Visa Issued Date", null=True, blank=True)
+    arrival_date = models.DateField("Arrival Date", null=True, blank=True)
+    airport = models.CharField("Airport", max_length=255, null=True, blank=True)
+    flight_no = models.CharField("Flight No", max_length=100, null=True, blank=True)
+    eta = models.DateTimeField("ETA", null=True, blank=True)
+    arrived_or_not = models.CharField("Arrived/ Not", max_length=50, null=True, blank=True)
+    
+    # pp_hash = models.CharField("PP#", max_length=100, null=True, blank=True)
+    # emp_id = models.CharField("Emp ID", max_length=100, null=True, blank=True)
+    # in_outside = models.CharField("In /Outside", max_length=50, null=True, blank=True)
+    # status = models.CharField("Status", max_length=100, null=True, blank=True)
+    # sub_status = models.CharField("Sub Status", max_length=100, null=True, blank=True)
+    # work_location = models.CharField("Work Location", max_length=255, null=True, blank=True)
+    # doj = models.DateField("DOJ", null=True, blank=True)
+    # no_of_days = models.IntegerField("No of days", null=True, blank=True)
+    # medical = models.CharField("Medical", max_length=100, null=True, blank=True)
+    # medical_result_date = models.DateField("Medical Result Date", null=True, blank=True)
+    # remedical_result_date = models.DateField("Remedical Result Date", null=True, blank=True)
+    # eid = models.CharField("EID", max_length=100, null=True, blank=True)
+    # rp_stamping = models.CharField("RP Stamping", max_length=100, null=True, blank=True)
+    # fine_amount = models.DecimalField("Fine Amount", max_digits=12, decimal_places=2, null=True, blank=True)
+    # tawjeeh_payment = models.DecimalField("Tawjeeh Payment", max_digits=12, decimal_places=2, null=True, blank=True)
+    # tawjeeh_class = models.CharField("Tawjeeh Class", max_length=100, null=True, blank=True)
+    # iloe_status = models.CharField("ILOE Status", max_length=100, null=True, blank=True)
+
+
+class EmployeePPDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=50, null=True, blank=True)
+    pp_number = models.CharField(max_length=50, unique=True)
+    emp_code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255)
+    in_outside = models.CharField(max_length=50, null=True, blank=True)
+    status = models.CharField(max_length=100, null=True, blank=True)
+    sub_status = models.CharField(max_length=100, null=True, blank=True)
+    work_location = models.CharField(max_length=255, null=True, blank=True)
+    doj = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, null=True, blank=True)
+    designation = models.CharField(max_length=255, null=True, blank=True)
+    nationality = models.CharField(max_length=100, null=True, blank=True)
+    pp_control = models.CharField(max_length=100, null=True, blank=True)
+    no_of_days = models.IntegerField(null=True, blank=True)
+    medical = models.CharField(max_length=100, null=True, blank=True)
+    medical_result_date = models.DateField(null=True, blank=True)
+    remedical_result_date = models.DateField(null=True, blank=True)
+    eid = models.CharField(max_length=100, null=True, blank=True)
+    rp_stamping = models.CharField(max_length=100, null=True, blank=True)
+    fine_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    tawjeeh_payment = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    tawjeeh_class = models.CharField(max_length=100, null=True, blank=True)
+    iloe_status = models.CharField(max_length=100, null=True, blank=True)

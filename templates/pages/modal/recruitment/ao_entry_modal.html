@@ -1,0 +1,593 @@
+<!-- Add AO Entry Modal -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1000px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="offcanvas_add_label">Add/Edit AO Entry</h5>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'ao_entry_create' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Issued Date</label>
+                    <input type="date" name="ao_issued_date" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Department</label>
+                    <select name="dep" class="form-control">
+                        <option value="">Select Department</option>
+                        {% for department in dept_data %}
+                        <option value="{{ department.base_value }}">{{ department.base_value }} - {{ department.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Project</label>
+                    <select name="project" class="form-control">
+                        <option value="">Select Project</option>
+                        {% for project in project_data %}
+                        <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Ref No</label>
+                    <input type="text" name="ao_ref_no" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Name as per PP</label>
+                    <input type="text" name="name_as_per_pp" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Number</label>
+                    <input type="text" name="pp_number" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Expiry Date</label>
+                    <input type="date" name="pp_exp_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Validity Days</label>
+                    <input type="number" name="pp_validity_days" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Date of Birth</label>
+                    <input type="date" name="dob" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Age</label>
+                    <input type="number" name="age" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Nationality</label>
+                    <select name="nationality" class="form-control">
+                        <option value="">Select Nationality</option>
+                        {% for nationality in nation_data %}
+                        <option value="{{ nationality.base_value }}">{{ nationality.base_value }} - {{ nationality.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Agent</label>
+                    <select name="agent" class="form-control">
+                        <option value="">Select Agent</option>
+                        {% for agent in agent_data %}
+                        <option value="{{ agent.base_value }}">{{ agent.base_value }} - {{ agent.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Designation</label>
+                    <select name="designation" class="form-control">
+                        <option value="">Select Designation</option>
+                        {% for designation in desig_data %}
+                        <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Gender</label>
+                    <select name="gender" class="form-control">
+                        <option value="">Select Gender</option>
+                        {% for gender in gender_data %}
+                        <option value="{{ gender.base_value }}">{{ gender.base_value }} - {{ gender.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Employee Status</label>
+                    <select name="employee_status" class="form-control">
+                        <option value="">Select Employee Status</option>
+                        <option value="Inside">Inside</option>
+                        <option value="Outside">Outside</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Grade</label>
+                    <select name="grade" class="form-control">
+                        <option value="">Select Grade</option>
+                        {% for grade in grade_code_data %}
+                        <option value="{{ grade.grade_code }}">{{ grade.grade_code }} - {{ grade.grade_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Basic</label>
+                    <input type="number" step="0.01" name="basic" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">HRA</label>
+                    <input type="number" step="0.01" name="hra" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Transportation Allowance</label>
+                    <input type="number" step="0.01" name="transportation_allowance" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Accommodation</label>
+                    <input type="number" step="0.01" name="accommodation" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Telephone</label>
+                    <input type="number" step="0.01" name="telephone" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Additional Duty Allowance</label>
+                    <input type="number" step="0.01" name="additional_duty_allowance" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Other Allowance</label>
+                    <input type="number" step="0.01" name="other_allowance" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Total</label>
+                    <input type="number" step="0.01" name="total" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">In Words</label>
+                    <input type="text" name="in_words" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Acceptance</label>
+                    <select name="ao_acceptance" class="form-control">
+                        <option value="">Select AO Acceptance</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Acceptance Date</label>
+                    <input type="date" name="acceptance_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Document Status</label>
+                    <input type="text" name="document_status" class="form-control">
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit AO Entry Modal -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1000px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="offcanvas_edit_label">Edit AO Entry</h5>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="post" action="{% url 'ao_entry_update' %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Issued Date</label>
+                    <input type="date" name="ao_issued_date" id="edit_ao_issued_date" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Department</label>
+                    <select name="dep" id="edit_dep" class="form-control">
+                        <option value="">Select Department</option>
+                        {% for department in dept_data %}
+                        <option value="{{ department.base_value }}">{{ department.base_value }} - {{ department.base_description }}</option>
+                        {% endfor %}    
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Project</label>
+                    <select name="project" id="edit_project" class="form-control">
+                        <option value="">Select Project</option>    
+                        {% for project in project_data %}
+                        <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3"> 
+                    <label class="col-form-label">AO Ref No</label>
+                    <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Name as per PP</label>
+                    <input type="text" name="name_as_per_pp" id="edit_name_as_per_pp" class="form-control">      
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Number</label>
+                    <input type="text" name="pp_number" id="edit_pp_number" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Expiry Date</label>
+                    <input type="date" name="pp_exp_date" id="edit_pp_exp_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">PP Validity Days</label>
+                    <input type="number" name="pp_validity_days" id="edit_pp_validity_days" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Date of Birth</label>
+                    <input type="date" name="dob" id="edit_dob" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Age</label>
+                    <input type="number" name="age" id="edit_age" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Nationality</label>
+                    <select name="nationality" id="edit_nationality" class="form-control">
+                        <option value="">Select Nationality</option>
+                        {% for nationality in nation_data %}
+                        <option value="{{ nationality.base_value }}">{{ nationality.base_value }} - {{ nationality.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Agent</label>
+                    <select name="agent" id="edit_agent" class="form-control">
+                        <option value="">Select Agent</option>
+                        {% for agent in agent_data %}
+                        <option value="{{ agent.base_value }}">{{ agent.base_value }} - {{ agent.base_description }}</option>   
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Designation</label>
+                    <select name="designation" id="edit_designation" class="form-control">
+                        <option value="">Select Designation</option>
+                        {% for designation in desig_data %}
+                        <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Gender</label>
+                    <select name="gender" id="edit_gender" class="form-control">
+                        <option value="">Select Gender</option>
+                        {% for gender in gender_data %}
+                        <option value="{{ gender.base_value }}">{{ gender.base_value }} - {{ gender.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Employee Status</label>
+                    <select name="employee_status" id="edit_employee_status" class="form-control">
+                        <option value="">Select Employee Status</option>
+                        <option value="Inside">Inside</option>
+                        <option value="Outside">Outside</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Grade</label>
+                    <select name="grade" id="edit_grade" class="form-control">
+                        <option value="">Select Grade</option>
+                        {% for grade in grade_code_data %}
+                        <option value="{{ grade.grade_code }}">{{ grade.grade_code }} - {{ grade.grade_description }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Basic</label>
+                    <input type="number" step="0.01" name="basic" id="edit_basic" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">HRA</label>   
+                    <input type="number" step="0.01" name="hra" id="edit_hra" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Transportation Allowance</label>
+                    <input type="number" step="0.01" name="transportation_allowance" id="edit_transportation_allowance" class="form-control">
+                </div>  
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Accommodation</label>
+                    <input type="number" step="0.01" name="accommodation" id="edit_accommodation" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Telephone</label>
+                    <input type="number" step="0.01" name="telephone" id="edit_telephone" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Additional Duty Allowance</label>
+                    <input type="number" step="0.01" name="additional_duty_allowance" id="edit_additional_duty_allowance" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Other Allowance</label>
+                    <input type="number" step="0.01" name="other_allowance" id="edit_other_allowance" class="form-control">
+                </div>  
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Total</label>
+                    <input type="number" step="0.01" name="total" id="edit_total" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">In Words</label>
+                    <input type="text" name="in_words" id="edit_in_words" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Acceptance</label>
+                    <select name="ao_acceptance" id="edit_ao_acceptance" class="form-control">
+                        <option value="">Select AO Acceptance</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Acceptance Date</label>
+                    <input type="date" name="acceptance_date" id="edit_acceptance_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Document Status</label>
+                    <input type="text" name="document_status" id="edit_document_status" class="form-control">
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Age calculation
+    function calculateAge(dateOfBirth) {
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // Function to validate date of birth
+    function validateDOB(dateOfBirth) {
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        const age = calculateAge(dateOfBirth);
+        
+        // Check if date is in future
+        if (birthDate > today) {
+            return {
+                isValid: false,
+                message: 'Date of birth cannot be in the future!'
+            };
+        }
+        
+        // Check if age is less than 16
+        if (age < 16) {
+            return {
+                isValid: false,
+                message: 'Age must be at least 16 years!'
+            };
+        }
+        
+        return {
+            isValid: true,
+            message: ''
+        };
+    }
+
+    // Function to calculate days between dates
+    function calculateDaysBetween(date1, date2) {
+        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        const firstDate = new Date(date1);
+        const secondDate = new Date(date2);
+        return Math.round(Math.abs((firstDate - secondDate) / oneDay));
+    }
+
+    // Function to check if passport is valid (minimum 6 months)
+    function isPassportValid(expiryDate) {
+        const today = new Date();
+        const expiry = new Date(expiryDate);
+        const sixMonthsFromNow = new Date();
+        sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
+        
+        return expiry > sixMonthsFromNow;
+    }
+
+    // Function to convert number to words
+    function numberToWords(num) {
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+
+        function convertLessThanThousand(n) {
+            if (n === 0) return '';
+            
+            let words = '';
+            
+            // Handle hundreds
+            if (n >= 100) {
+                words += ones[Math.floor(n / 100)] + ' Hundred ';
+                n %= 100;
+            }
+            
+            // Handle tens and ones
+            if (n >= 10) {
+                if (n < 20) {
+                    words += teens[n - 10];
+                    return words;
+                } else {
+                    words += tens[Math.floor(n / 10)];
+                    if (n % 10 > 0) {
+                        words += ' ' + ones[n % 10];
+                    }
+                }
+            } else if (n > 0) {
+                words += ones[n];
+            }
+            
+            return words;
+        }
+
+        if (num === 0) return 'Zero';
+
+        let words = '';
+        const decimalPart = Math.round((num % 1) * 100);
+        let wholePart = Math.floor(num);
+
+        // Handle whole part
+        if (wholePart > 0) {
+            // Handle billions
+            if (wholePart >= 1000000000) {
+                const billions = Math.floor(wholePart / 1000000000);
+                words += convertLessThanThousand(billions) + ' Billion ';
+                wholePart %= 1000000000;
+            }
+            
+            // Handle millions
+            if (wholePart >= 1000000) {
+                const millions = Math.floor(wholePart / 1000000);
+                words += convertLessThanThousand(millions) + ' Million ';
+                wholePart %= 1000000;
+            }
+            
+            // Handle thousands
+            if (wholePart >= 1000) {
+                const thousands = Math.floor(wholePart / 1000);
+                words += convertLessThanThousand(thousands) + ' Thousand ';
+                wholePart %= 1000;
+            }
+            
+            // Handle remaining hundreds, tens, and ones
+            if (wholePart > 0) {
+                words += convertLessThanThousand(wholePart);
+            }
+        }
+
+        // Handle decimal part
+        if (decimalPart > 0) {
+            if (words) words += ' and ';
+            words += convertLessThanThousand(decimalPart) + ' Cents';
+        }
+
+        return words.trim();
+    }
+
+    // Function to calculate total and update in words
+    function calculateTotalAndWords(formPrefix = '') {
+        const amountFields = [
+            'basic',
+            'hra',
+            'transportation_allowance',
+            'accommodation',
+            'additional_duty_allowance',
+            'other_allowance'
+        ];
+
+        let total = 0;
+        amountFields.forEach(fieldName => {
+            const field = document.querySelector(`#${formPrefix} input[name="${fieldName}"]`);
+            if (field && field.value) {
+                total += parseFloat(field.value) || 0;
+            }
+        });
+
+        // Update total field
+        const totalField = document.querySelector(`#${formPrefix} input[name="total"]`);
+        if (totalField) {
+            totalField.value = total.toFixed(2);
+            
+            // Update in words field
+            const inWordsField = document.querySelector(`#${formPrefix} input[name="in_words"]`);
+            if (inWordsField) {
+                inWordsField.value = numberToWords(total);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add form event listeners
+        const addAmountFields = document.querySelectorAll('#offcanvas_add input[type="number"]');
+        addAmountFields.forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+                calculateTotalAndWords('offcanvas_add');
+            });
+        });
+
+        // Edit form event listeners
+        const editAmountFields = document.querySelectorAll('#offcanvas_edit input[type="number"]');
+        editAmountFields.forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+                calculateTotalAndWords('offcanvas_edit');
+            });
+        });
+
+        // Add event listener for date of birth
+        const dobFields = document.querySelectorAll('input[name="dob"]');
+        dobFields.forEach(dobField => {
+            dobField.addEventListener('change', function() {
+                const validation = validateDOB(this.value);
+                if (!validation.isValid) {
+                    alert(validation.message);
+                    this.value = ''; // Clear the invalid date
+                    const ageField = this.closest('form').querySelector('input[name="age"]');
+                    if (ageField) {
+                        ageField.value = '';
+                    }
+                    return;
+                }
+
+                const ageField = this.closest('form').querySelector('input[name="age"]');
+                if (ageField && this.value) {
+                    ageField.value = calculateAge(this.value);
+                }
+            });
+        });
+
+        // Add event listener for passport expiry date
+        const ppExpDateFields = document.querySelectorAll('input[name="pp_exp_date"]');
+        ppExpDateFields.forEach(ppExpDateField => {
+            ppExpDateField.addEventListener('change', function() {
+                const today = new Date();
+                const expiryDate = new Date(this.value);
+                const validityDaysField = this.closest('form').querySelector('input[name="pp_validity_days"]');
+                
+                if (validityDaysField) {
+                    const days = calculateDaysBetween(today, expiryDate);
+                    validityDaysField.value = days;
+                }
+
+                // Validate passport expiry
+                if (!isPassportValid(this.value)) {
+                    alert('Warning: Passport expiry date must be at least 6 months from today!');
+                    this.value = ''; // Clear the invalid date
+                    if (validityDaysField) {
+                        validityDaysField.value = '';
+                    }
+                }
+            });
+        });
+    });
+</script>

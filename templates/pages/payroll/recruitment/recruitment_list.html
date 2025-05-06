@@ -1,0 +1,175 @@
+{% extends "partials/base.html" %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Recruitment (AO Accepted Only)" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search Recruitment" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8 d-flex justify-content-end">
+                                <!-- No Add button for Recruitment -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>AO Ref No</th>
+                                        <th>Name as per PP</th>
+                                        <th>Department</th>
+                                        <th>Project</th>
+                                        <th>Designation</th>
+                                        <th>Nationality</th>
+                                        <th>Employee Status</th>
+                                        <th>AO Acceptance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in entries %}
+                                    <tr>
+                                        <td>{{ entry.ao_ref_no }}</td>
+                                        <td>{{ entry.name_as_per_pp }}</td>
+                                        <td>{{ entry.dep }}</td>
+                                        <td>{{ entry.project }}</td>
+                                        <td>{{ entry.designation }}</td>
+                                        <td>{{ entry.nationality }}</td>
+                                        <td>{{ entry.employee_status }}</td>
+                                        <td>{{ entry.ao_acceptance }}</td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-recruitment-entry" href="#"
+                                                        data-id="{{ entry.recr_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr><td colspan="9" class="text-center">No entries found.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if entries.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ entries.start_index }} to {{ entries.end_index }} of {{ result_cnt }} entries</span>
+                            </div>
+                            <ul class="pagination">
+                                {% if entries.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+                                {% for page in entries.paginator.page_range %}
+                                {% if entries.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                                {% if entries.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Edit functionality
+        $('.edit-recruitment-entry').click(function(e) {
+            e.preventDefault();
+            var recr_id = $(this).data('id');
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit_recruitment"));
+            offcanvasElement.show();    
+            
+            $.ajax({
+                url: "{% url 'recruitment_edit' %}",
+                type: "GET",
+                data: {
+                    'recr_id': recr_id
+                },
+                success: function(response){
+                    // Populate AO fields (readonly)
+                    $('#edit_recr_id').val(response.recr_id || ''); 
+                    $('#edit_ao_ref_no').val(response.ao_ref_no || '');
+                    $('#edit_name_as_per_pp').val(response.name_as_per_pp || '');
+                    $('#edit_dep').val(response.dep || '');
+                    $('#edit_project').val(response.project || '');
+                    $('#edit_designation').val(response.designation || '');
+                    $('#edit_nationality').val(response.nationality || '');
+                    $('#edit_employee_status').val(response.employee_status || '');
+                    $('#edit_gender').val(response.gender || '');
+                    $('#edit_agency_name').val(response.agenct_name || '');
+                    $('#edit_doc_status').val(response.doc_status || '');
+                    // Editable fields
+                    $('#edit_interview_date').val(response.interview_date || '');
+                    $('#edit_agency_name').val(response.agency_name || '');
+                    $('#edit_availability').val(response.availability || '');
+                    $('#edit_agent_charges').val(response.agent_charges || '');
+                    $('#edit_charges_paid_date').val(response.charges_paid_date || '');
+                    $('#edit_pcc_certificate').val(response.pcc_certificate || '');
+                    $('#edit_doc_status').val(response.doc_status || '');  
+                    $('#edit_pre_approval').val(response.pre_approval || '');
+                    $('#edit_work_offer_letter').val(response.work_offer_letter || '');
+                    $('#edit_insurance').val(response.insurance || '');
+                    $('#edit_wp_payment').val(response.wp_payment || '');
+                    $('#edit_visa_submission').val(response.visa_submission || '');
+                    $('#edit_change_status').val(response.change_status || '');
+                    $('#edit_visa_issued_date').val(response.visa_issued_date || '');
+                    $('#edit_arrival_date').val(response.arrival_date || '');
+                    $('#edit_airport').val(response.airport || '');
+                    $('#edit_flight_no').val(response.flight_no || '');
+                    $('#edit_eta').val(response.eta || '');
+                    $('#edit_arrived_or_not').val(response.arrived_or_not || '');
+                }
+            });
+        });
+});
+</script>
+{% include 'pages/modal/recruitment/recruitment_edit_modal.html' %}
+{% endblock %} 
+

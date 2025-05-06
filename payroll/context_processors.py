@@ -364,3 +364,9 @@ def get_leave_types(request):
         'leave_types': leave_types_data
     }
 
+def get_agent(request):
+    comp_code = get_comp_code(request)
+    agent_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'AGENT')
+    return {
+        'agent_data': agent_data
+        }
