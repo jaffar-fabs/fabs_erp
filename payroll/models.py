@@ -289,6 +289,8 @@ class Employee(models.Model):
     labor_contract_issued_date = models.DateField(blank=True, null=True)
     labor_contract_expiry_date = models.DateField(blank=True, null=True)
 
+    category = models.CharField(max_length=50, blank=True, null=True)
+
     # Camp Details
     camp_type = models.CharField(
         max_length=50, 
@@ -818,13 +820,25 @@ class LeaveTransaction(models.Model):
     hr_approval_date = models.DateField(blank=True, null=True)
     hr_comments = models.TextField(blank=True, null=True)
     remarks_notes = models.TextField(blank=True, null=True)  # Optional
+    is_cancelled = models.BooleanField(default=False)
+    cancellation_date = models.DateField(blank=True, null=True)
+    cancellation_comments = models.TextField(blank=True, null=True)
+
+    # Rejoin Approval
+    actual_rejoin_date = models.DateField(blank=True, null=True)
+    rejoin_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')], default='Pending')
+    notification_status = models.CharField(max_length=20, choices=[('Not Sent', 'Not Sent'), ('Sent', 'Sent')], default='Not Sent')
+    rejoin_remarks = models.TextField(blank=True, null=True)
+    approval_by = models.CharField(max_length=20, blank=True, null=True)
+    modified_by = models.CharField(max_length=20, blank=True, null=True)
+    modified_on = models.DateTimeField(auto_now=True)
 
     # Audit Fields
     created_on = models.DateTimeField(auto_now_add=True)
     modified_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"LeaveTransaction({self.employee.emp_code}, {self.start_date} to {self.end_date})"
+        return f"LeaveTransaction({self.employee}, {self.start_date} to {self.end_date})"
 
 # ------------------------------------------------------------------------------------------------------------
 

@@ -1,0 +1,282 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block title %}Rejoin Approval List{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content" style="flex: 1; overflow-y: auto; padding: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Rejoin Approvals" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                <div class="icon-form mb-3 mb-sm-0">
+                                    <span class="form-icon"><i class="ti ti-search"></i></span>
+                                    <input type="text" name="keyword" class="form-control" placeholder="Search Rejoins" value="{{ keyword }}">
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Leave Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actual Rejoin Date</th>
+                                        <th>Rejoin Status</th>
+                                        <th>Approval By</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leave in leaves %}
+                                    <tr>
+                                        <td>{{ leave.employee_name }}</td>
+                                        <td>{{ leave.department }}</td>
+                                        <td>{{ leave.leave_type }}</td>
+                                        <td>{{ leave.start_date|date:"d-M-Y" }}</td>
+                                        <td>{{ leave.end_date|date:"d-M-Y" }}</td>
+                                        <td>{{ leave.actual_rejoin_date|date:"d-M-Y"|default:"-" }}</td>
+                                        <td>
+                                            <span class="badge badge-pill badge-status 
+                                                {% if leave.rejoin_status == 'Confirmed' %} bg-success 
+                                                {% elif leave.rejoin_status == 'Delayed' %} bg-warning 
+                                                {% else %} bg-danger {% endif %}">
+                                                {{ leave.rejoin_status|default:"Pending" }}
+                                            </span>
+                                        </td>
+                                        <td>{{ leave.approval_by|default:"-" }}</td>
+                                        <td>
+                                            <a href="#" class="action-icon view-rejoin-btn" data-id="{{ leave.tran_id }}">
+                                                <i class="ti ti-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Rejoin Offcanvas -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="view_rejoin">
+    <div class="offcanvas-header border-bottom">
+        <h4>Rejoin Details</h4>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">Employee</label>
+                <p id="view_employee_name"></p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">Department</label>
+                <p id="view_department"></p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">Leave Type</label>
+                <p id="view_leave_type"></p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">Start Date</label>
+                <p id="view_start_date"></p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">End Date</label>
+                <p id="view_end_date"></p>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="col-form-label">Actual Rejoin Date</label>
+                <p id="view_actual_rejoin_date"></p>
+            </div>
+        </div>
+
+        <!-- Rejoin Approval Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <form id="rejoinApprovalForm">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Rejoin Approval</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Actual Rejoin Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="approval_rejoin_date" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Rejoin Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="approval_notification_status" required>
+                                        <!-- <option value="Pending" selected>Pending</option> -->
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Delayed">Delayed</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Comments <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="approval_comments" rows="3" placeholder="Enter your comments" required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Current Status -->
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="alert alert-info">
+                                        <h6 class="mb-2">Current Status</h6>
+                                        <div id="rejoin_status"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                                        <button type="button" class="btn btn-primary save-btn">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var currentLeaveId = null;
+
+    // Handle view button click
+    $('.view-rejoin-btn').click(function(e) {
+        e.preventDefault();
+        currentLeaveId = $(this).data('id');
+        
+        // Open Offcanvas
+        var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("view_rejoin"));
+        offcanvasElement.show();
+        
+        $.ajax({
+            url: '{% url "get_rejoin_details" %}',
+            type: 'GET',
+            data: {
+                leave_id: currentLeaveId
+            },
+            success: function(response) {
+                if (response) {
+                    $('#view_employee_name').text(response.employee_name);
+                    $('#view_department').text(response.department);
+                    $('#view_leave_type').text(response.leave_type);
+                    $('#view_start_date').text(response.start_date);
+                    $('#view_end_date').text(response.end_date);
+                    $('#view_actual_rejoin_date').text(response.actual_rejoin_date || '-');
+                    
+                    // Update approval status display
+                    updateApprovalStatus('rejoin', response.rejoin_status, response.remarks);
+                    
+                    // Pre-fill form if there's existing data
+                    if (response.actual_rejoin_date) {
+                        $('#approval_rejoin_date').val(response.actual_rejoin_date);
+                    }
+                    if (response.rejoin_status) {
+                        $('#approval_notification_status').val(response.rejoin_status);
+                    }
+                    if (response.remarks) {
+                        $('#approval_comments').val(response.remarks);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred while fetching rejoin details');
+            }
+        });
+    });
+
+    // Handle submit button click
+    $('.save-btn').click(function() {
+        var rejoinDate = $('#approval_rejoin_date').val();
+        var notificationStatus = $('#approval_notification_status').val();
+        var comments = $('#approval_comments').val();
+        
+        if (!rejoinDate) {
+            alert('Please enter actual rejoin date');
+            return;
+        }
+        
+        if (!comments) {
+            alert('Please enter comments');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('leave_id', currentLeaveId);
+        formData.append('actual_rejoin_date', rejoinDate);
+        formData.append('rejoin_status', notificationStatus);  // Default status
+        formData.append('remarks', comments);
+        
+        $.ajax({
+            url: '{% url "rejoin_approval_submit" %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred while processing your request');
+            }
+        });
+    });
+
+    // Function to update approval status display
+    function updateApprovalStatus(role, status, comments) {
+        var statusDiv = $('#rejoin_status');
+        var actionsDiv = $('#rejoin_actions');
+        
+        if (status === 'Confirmed') {
+            statusDiv.html(`<span class="badge bg-success">Confirmed</span>`);
+            actionsDiv.hide();
+        } else if (status === 'Delayed') {
+            statusDiv.html(`<span class="badge bg-warning">Delayed</span>`);
+            actionsDiv.hide();
+        } else {
+            statusDiv.html(`<span class="badge bg-warning">Pending</span>`);
+            actionsDiv.show();
+        }
+
+        // if (comments) {
+        //     statusDiv.append(`<div class="mt-1"><small>${comments}</small></div>`);
+        // }
+    }
+});
+</script>
+{% endblock content %} 

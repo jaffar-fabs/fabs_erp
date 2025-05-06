@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <select class="form-control select2" name="employee_code" required>
+                        <select class="form-control select2 employee_code" name="employee_code" required>
                             <option value="">Select Employee Code</option>
                             {% for employee in employee_data %}
                                 <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
@@ -24,53 +24,67 @@
                         </select>
                     </div>
                 </div>
-                <!-- Employee Name -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Name <span class="text-danger">*</span></label>
-                        <input class="form-control" name="employee_name" type="text" required>
-                    </div>
-                </div>
                 <!-- Category -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Category</label>
-                        <input class="form-control" name="category" type="text">
+                        <input class="form-control category" name="category" type="text" readonly>
                     </div>
                 </div>
                 <!-- Designation -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
-                        <input class="form-control" name="designation" type="text">
+                        <input class="form-control designation" name="designation" type="text" readonly>
                     </div>
                 </div>
                 <!-- Date of Joining -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
-                        <input class="form-control" name="date_of_joining" type="date" required>
+                        <input class="form-control date_of_joining" name="date_of_joining" type="date" readonly>
                     </div>
                 </div>
                 <!-- Date of Exit -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Exit <span class="text-danger">*</span></label>
-                        <input class="form-control" name="date_of_exit" type="date" required>
+                        <input class="form-control date_of_exit" name="exit_date" type="date" required>
+                    </div>
+                </div>
+                <!-- Total Years of Service -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total Years of Service</label>
+                        <input class="form-control total_years_of_service" name="total_years_of_service" type="text" readonly>
+                    </div>
+                </div>
+                <!-- Acrude Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Acrude Days</label>
+                        <input class="form-control acrude_days" name="acrude_days" type="number" readonly>
                     </div>
                 </div>
                 <!-- Last Drawn Basic Salary -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Last Drawn Basic Salary <span class="text-danger">*</span></label>
-                        <input class="form-control" name="last_drawn_basic_salary" type="number" step="0.01" required>
+                        <input class="form-control last_drawn_basic_salary" name="last_drawn_basic_salary" type="number" step="0.01" required>
                     </div>
                 </div>
                 <!-- Eligible Gratuity -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Eligible Gratuity</label>
-                        <input class="form-control" name="eligible_gratuity" type="number" step="0.01">
+                        <input class="form-control eligible_gratuity" name="eligible_gratuity" type="number" step="0.01" readonly>
+                    </div>
+                </div>
+                <!-- Loss of Pay Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Loss of Pay Days</label>
+                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" type="number" readonly>
                     </div>
                 </div>
                 <!-- Gratuity Status -->
@@ -84,15 +98,67 @@
                         </select>
                     </div>
                 </div>
-                <!-- Settlement Status -->
+                <!-- Leave Balance (Days) -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Settlement Status</label>
-                        <select class="form-control" name="settlement_status">
-                            <option value="Pending">Pending</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Paid">Paid</option>
-                        </select>
+                        <label class="col-form-label">Leave Balance (Days)</label>
+                        <input class="form-control leave_balance" name="leave_balance" type="number">
+                    </div>
+                </div>  
+                <!-- Leave Encashment Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Leave Encashment Amount</label>
+                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" type="number">
+                    </div>
+                </div>
+                <!-- Bonus Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Bonus Amount</label>
+                        <input class="form-control bonus_amount" name="bonus_amount" type="number">
+                    </div>
+                </div>
+                <!-- Other Allowances -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Other Allowances</label>
+                        <input class="form-control other_allowances" name="other_allowances" type="number">
+                    </div>
+                </div>  
+                <!-- Deduction Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Deduction Amount</label>
+                        <input class="form-control deduction" name="deduction" type="number">
+                    </div>
+                </div>
+                <!-- Other Deduction -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Other Deduction</label>
+                        <input class="form-control other_deduction" name="other_deduction" type="number">
+                    </div>
+                </div>  
+                <!-- Loan Recovery -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Loan Recovery</label>
+                        <input class="form-control loan_recovery" name="loan_recovery" type="number">
+                    </div>
+                </div>
+                <!-- Notice Pay -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Notice Pay</label>
+                        <input class="form-control notice_pay" name="notice_pay" type="number">
+                    </div>
+                </div>
+                <!-- Final Settlement Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Final Settlement Amount</label>
+                        <input class="form-control final_settlement_amount" name="final_settlement_amount" type="number">
                     </div>
                 </div>
                 <!-- Payment Mode -->
@@ -118,6 +184,24 @@
                     <div class="mb-3">
                         <label class="col-form-label">Bank Account No.</label>
                         <input class="form-control" name="bank_account_no" type="text">
+                    </div>
+                </div>
+                <!-- Settlement Status -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Settlement Status</label>
+                        <select class="form-control" name="settlement_status">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Settlement Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Settlement Date</label>
+                        <input class="form-control" name="settlement_date" type="date">
                     </div>
                 </div>
                 <!-- Supporting Docs -->
@@ -153,7 +237,7 @@
 <!-- /Add Gratuity Settlement Modal -->
 
 <!-- Edit Gratuity Settlement Modal -->
-<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="editGratuityModal">
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="editGratuityModal" style="width: 1000px !important;">
     <div class="offcanvas-header border-bottom">
         <h4>Edit Gratuity Settlement</h4>
         <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
@@ -165,11 +249,11 @@
             {% csrf_token %}
             <input type="hidden" name="edit_id" id="edit_id">
             <div class="row">
-                <!-- Employee Code (read-only) -->
+                <!-- Employee Code -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Employee Code</label>
-                        <select class="form-control select2" name="employee_code" id="edit_employee_code" required>
+                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
+                        <select class="form-control select2 employee_code" name="employee_code" required>
                             <option value="">Select Employee Code</option>
                             {% for employee in employee_data %}
                                 <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
@@ -177,82 +261,148 @@
                         </select>
                     </div>
                 </div>
-                <!-- Employee Name -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Employee Name</label>
-                        <input class="form-control" name="employee_name" id="edit_employee_name" type="text">
-                    </div>
-                </div>
                 <!-- Category -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Category</label>
-                        <input class="form-control" name="category" id="edit_category" type="text">
+                        <input class="form-control category" name="category" type="text" readonly>
                     </div>
                 </div>
                 <!-- Designation -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
-                        <input class="form-control" name="designation" id="edit_designation" type="text">
+                        <input class="form-control designation" name="designation" type="text" readonly>
                     </div>
                 </div>
                 <!-- Date of Joining -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Date of Joining</label>
-                        <input class="form-control" name="date_of_joining" id="edit_date_of_joining" type="date">
+                        <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
+                        <input class="form-control date_of_joining" name="date_of_joining" type="date" readonly>
                     </div>
                 </div>
                 <!-- Date of Exit -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Date of Exit</label>
-                        <input class="form-control" name="date_of_exit" id="edit_date_of_exit" type="date">
+                        <label class="col-form-label">Date of Exit <span class="text-danger">*</span></label>
+                        <input class="form-control date_of_exit" name="exit_date" type="date" required>
+                    </div>
+                </div>
+                <!-- Total Years of Service -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Total Years of Service</label>
+                        <input class="form-control total_years_of_service" name="total_years_of_service" type="text" readonly>
+                    </div>
+                </div>
+                <!-- Acrude Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Acrude Days</label>
+                        <input class="form-control acrude_days" name="acrude_days" type="number" readonly>
                     </div>
                 </div>
                 <!-- Last Drawn Basic Salary -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Last Drawn Basic Salary</label>
-                        <input class="form-control" name="last_drawn_basic_salary" id="edit_last_drawn_basic_salary" type="number" step="0.01">
+                        <label class="col-form-label">Last Drawn Basic Salary <span class="text-danger">*</span></label>
+                        <input class="form-control last_drawn_basic_salary" name="last_drawn_basic_salary" type="number" step="0.01" required>
                     </div>
                 </div>
                 <!-- Eligible Gratuity -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Eligible Gratuity</label>
-                        <input class="form-control" name="eligible_gratuity" id="edit_eligible_gratuity" type="number" step="0.01">
+                        <input class="form-control eligible_gratuity" name="eligible_gratuity" type="number" step="0.01" readonly>
+                    </div>
+                </div>
+                <!-- Loss of Pay Days -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Loss of Pay Days</label>
+                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" type="number" readonly>
                     </div>
                 </div>
                 <!-- Gratuity Status -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Gratuity Status</label>
-                        <select class="form-control" name="gratuity_status" id="edit_gratuity_status">
+                        <select class="form-control" name="gratuity_status">
                             <option value="Pending">Pending</option>
                             <option value="Approved">Approved</option>
                             <option value="Paid">Paid</option>
                         </select>
                     </div>
                 </div>
-                <!-- Settlement Status -->
+                <!-- Leave Balance (Days) -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Settlement Status</label>
-                        <select class="form-control" name="settlement_status" id="edit_settlement_status">
-                            <option value="Pending">Pending</option>
-                            <option value="Approved">Approved</option>
-                            <option value="Paid">Paid</option>
-                        </select>
+                        <label class="col-form-label">Leave Balance (Days)</label>
+                        <input class="form-control leave_balance" name="leave_balance" type="number">
+                    </div>
+                </div>  
+                <!-- Leave Encashment Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Leave Encashment Amount</label>
+                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" type="number">
+                    </div>
+                </div>
+                <!-- Bonus Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Bonus Amount</label>
+                        <input class="form-control bonus_amount" name="bonus_amount" type="number">
+                    </div>
+                </div>
+                <!-- Other Allowances -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Other Allowances</label>
+                        <input class="form-control other_allowances" name="other_allowances" type="number">
+                    </div>
+                </div>  
+                <!-- Deduction Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Deduction Amount</label>
+                        <input class="form-control deduction" name="deduction" type="number">
+                    </div>
+                </div>
+                <!-- Other Deduction -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Other Deduction</label>
+                        <input class="form-control other_deduction" name="other_deduction" type="number">
+                    </div>
+                </div>  
+                <!-- Loan Recovery -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Loan Recovery</label>
+                        <input class="form-control loan_recovery" name="loan_recovery" type="number">
+                    </div>
+                </div>
+                <!-- Notice Pay -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Notice Pay</label>
+                        <input class="form-control notice_pay" name="notice_pay" type="number">
+                    </div>
+                </div>
+                <!-- Final Settlement Amount -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Final Settlement Amount</label>
+                        <input class="form-control final_settlement_amount" name="final_settlement_amount" type="number">
                     </div>
                 </div>
                 <!-- Payment Mode -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Payment Mode</label>
-                        <select class="form-control" name="payment_mode" id="edit_payment_mode">
+                        <select class="form-control" name="payment_mode">
                             <option value="Bank Transfer">Bank Transfer</option>
                             <option value="Cheque">Cheque</option>
                             <option value="Cash">Cash</option>
@@ -263,35 +413,53 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Name</label>
-                        <input class="form-control" name="bank_name" id="edit_bank_name" type="text">
+                        <input class="form-control" name="bank_name" type="text">
                     </div>
                 </div>
                 <!-- Bank Account No. -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Account No.</label>
-                        <input class="form-control" name="bank_account_no" id="edit_bank_account_no" type="text">
+                        <input class="form-control" name="bank_account_no" type="text">
+                    </div>
+                </div>
+                <!-- Settlement Status -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Settlement Status</label>
+                        <select class="form-control" name="settlement_status">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Settlement Date -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Settlement Date</label>
+                        <input class="form-control" name="settlement_date" type="date">
                     </div>
                 </div>
                 <!-- Supporting Docs -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Supporting Documents</label>
-                        <input class="form-control" name="supporting_docs" id="edit_supporting_docs" type="file" multiple>
+                        <input class="form-control" name="supporting_docs" type="file" multiple>
                     </div>
                 </div>
                 <!-- Attachments -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Attachments</label>
-                        <input class="form-control" name="attachments" id="edit_attachments" type="file" multiple>
+                        <input class="form-control" name="attachments" type="file" multiple>
                     </div>
                 </div>
                 <!-- Remarks -->
                 <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Remarks</label>
-                        <textarea class="form-control" name="remarks" id="edit_remarks" rows="2"></textarea>
+                        <textarea class="form-control" name="remarks" rows="2"></textarea>
                     </div>
                 </div>
             </div>
@@ -307,19 +475,114 @@
 
 
 <script>
-    // fetch employee name category designation date of joing and basic salary for the feilds
     $(document).ready(function() {
+        // Handle employee code selection
         $('.employee_code').on('change', function() {
             var employee_code = $(this).val();
-            var employee_name = $(this).find('option:selected').text();
-            fetch_employee_details(employee_code, employee_name);
-        }); 
-        function fetch_employee_details(employee_code, employee_name) {
+            if (employee_code) {
+                fetch_employee_details(employee_code);
+            } else {
+                clear_employee_fields();
+            }
+        });
+
+        // Handle exit date change
+        $('.date_of_exit').on('change', function() {
+            calculate_eligible_gratuity();
+        });
+
+        function calculate_eligible_gratuity() {
+            var dateOfJoining = $('.date_of_joining').val();
+            var exitDate = $('.date_of_exit').val();
+            var basicSalary = parseFloat($('.last_drawn_basic_salary').val()) || 0;
+
+            if (!dateOfJoining || !exitDate || !basicSalary) {
+                $('.eligible_gratuity').val('');
+                return;
+            }
+
+            // Calculate months of service
+            var joinDate = new Date(dateOfJoining);
+            var endDate = new Date(exitDate);
+            
+            // Calculate total months
+            var monthsOfService = (endDate.getFullYear() - joinDate.getFullYear()) * 12 + 
+                                (endDate.getMonth() - joinDate.getMonth());
+            
+            // Adjust for partial months
+            if (endDate.getDate() < joinDate.getDate()) {
+                monthsOfService--;
+            }
+
+            // Calculate eligible gratuity based on months of service
+            var eligibleGratuity = 0;
+            
+            if (monthsOfService >= 12) { // More than 1 year
+                // Skip first 12 months
+                var eligibleMonths = monthsOfService - 12;
+                
+                if (eligibleMonths > 0) {
+                    if (monthsOfService <= 60) { // 1-5 years (12-60 months)
+                        // Calculate for months 13-60 (21 days per year)
+                        eligibleGratuity = (basicSalary / 30) * (21/12) * eligibleMonths;
+                    } else {
+                        // For more than 5 years:
+                        // 1. Calculate months 13-60 (21 days per year)
+                        var initialMonths = 48; // Months 13-60
+                        var initialGratuity = (basicSalary / 30) * (21/12) * initialMonths;
+                        
+                        // 2. Calculate remaining months (30 days per year)
+                        var remainingMonths = eligibleMonths - 48;
+                        if (remainingMonths > 0) {
+                            var remainingGratuity = (basicSalary / 30) * (30/12) * remainingMonths;
+                            eligibleGratuity = initialGratuity + remainingGratuity;
+                        } else {
+                            eligibleGratuity = initialGratuity;
+                        }
+                    }
+                }
+            }
+
+            // Update the eligible gratuity field
+            $('.eligible_gratuity').val(eligibleGratuity.toFixed(2));
+        }
+
+        function fetch_employee_details(employee_code) {
             $.ajax({
-                url: '{% url "get_employee_details" %}',
+                url: '{% url "get_emp_code" %}',
                 type: 'GET',
-                data: { employee_code: employee_code },
+                data: { emp_code: employee_code },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Populate fields with employee data
+                        $('.category').val(response.data.category);
+                        $('.designation').val(response.data.designation);
+                        $('.date_of_joining').val(response.data.date_of_joining);
+                        $('.last_drawn_basic_salary').val(response.data.basic_salary);
+                        
+                        // Recalculate gratuity if exit date is already set
+                        if ($('.date_of_exit').val()) {
+                            calculate_eligible_gratuity();
+                        }
+                    } else {
+                        alert(response.message || 'Error loading employee details');
+                        clear_employee_fields();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching employee details:', error);
+                    alert('Error loading employee details. Please try again.');
+                    clear_employee_fields();
+                }
             });
+        }
+
+        function clear_employee_fields() {
+            $('.category').val('');
+            $('.designation').val('');
+            $('.date_of_joining').val('');
+            $('.last_drawn_basic_salary').val('');
+            $('.eligible_gratuity').val('');
         }
     });
 </script>

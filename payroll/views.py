@@ -2073,11 +2073,13 @@ class MenuMaster(View):
         except EmptyPage:
             menus = paginator.page(paginator.num_pages)
         
+        fetch_details = Menu.objects.filter(comp_code=COMP_CODE, parent_menu_id="No Parent")
         context = {
             'menus': menus,
             'result_cnt': result_cnt,
             'keyword': keyword,
-            'current_url': request.path
+            'current_url': request.path,
+            'fetch_details': fetch_details
         }
         
         return render(request, self.template_name, context)
@@ -4994,18 +4996,27 @@ def leave_approval(request):
         try:
             leave = LeaveTransaction.objects.get(id=leave_id)
             
-            if role == 'supervisor':
+            if role == 'supervisor' and action == 'approve':
                 leave.supervisor_status = 'Approved' if action == 'approve' else 'Rejected'
                 leave.supervisor_approval_date = timezone.now()
                 leave.supervisor_comments = comments
-            elif role == 'dept_head':
+            elif role == 'dept_head' and action == 'approve':
                 leave.dept_head_status = 'Approved' if action == 'approve' else 'Rejected'
                 leave.dept_head_approval_date = timezone.now()
                 leave.dept_head_comments = comments
-            elif role == 'hr':
+            elif role == 'hr' and action == 'approve':
                 leave.hr_status = 'Approved' if action == 'approve' else 'Rejected'
                 leave.hr_approval_date = timezone.now()
                 leave.hr_comments = comments
+            elif role == 'cancel' and action == 'cancel':
+                # Update all statuses to Cancelled
+                leave.supervisor_status = 'Cancelled'
+                leave.dept_head_status = 'Cancelled'
+                leave.hr_status = 'Cancelled'
+                # Add a flag to indicate the leave is cancelled
+                leave.is_cancelled = True
+                leave.cancellation_date = timezone.now()
+                leave.cancellation_comments = comments
             
             leave.save()
             
@@ -5673,3 +5684,184 @@ def delete_leave_type(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def rejoin_approval_list(request):
+    keyword = request.GET.get('keyword', '')
+    page = request.GET.get('page', 1)
+    
+    # Base query for approved leaves
+    leaves = LeaveTransaction.objects.filter(
+        comp_code=COMP_CODE,
+        supervisor_status='Approved',
+        dept_head_status='Approved',
+        hr_status='Approved'
+    ).order_by('-start_date')
+    
+    # Apply search filter if keyword exists
+    if keyword:
+        leaves = leaves.filter(
+            Q(employee__icontains=keyword) |
+            Q(employee_name__icontains=keyword) |
+            Q(leave_type__icontains=keyword)
+        )
+    
+    # Pagination
+    paginator = Paginator(leaves, 10)
+    try:
+        leaves = paginator.page(page)
+    except PageNotAnInteger:
+        leaves = paginator.page(1)
+    except EmptyPage:
+        leaves = paginator.page(paginator.num_pages)
+    
+    context = {
+        'leaves': leaves,
+        'keyword': keyword,
+        'result_cnt': leaves.paginator.count
+    }
+    
+    return render(request, 'pages/payroll/leave_master/rejoin_approval_list.html', context)
+
+def get_rejoin_details(request):
+    try:
+        leave_id = request.GET.get('leave_id')
+        leave = LeaveTransaction.objects.get(tran_id=leave_id, comp_code=COMP_CODE)
+        print(leave)
+        data = {
+            'employee_code': leave.employee,
+            'employee_name': leave.employee_name,
+            'leave_type': leave.leave_type,
+            'start_date': leave.start_date.strftime('%Y-%m-%d'),
+            'end_date': leave.end_date.strftime('%Y-%m-%d'),
+            'actual_rejoin_date': leave.actual_rejoin_date.strftime('%Y-%m-%d') if leave.actual_rejoin_date else None,
+            'rejoin_status': leave.rejoin_status,
+            'remarks': leave.rejoin_remarks
+        }
+        return JsonResponse(data)
+    except LeaveTransaction.DoesNotExist:
+        return JsonResponse({'error': 'Leave not found'}, status=404)
+
+@csrf_exempt
+def rejoin_approval_submit(request):
+    if request.method == 'POST':
+        try:
+            leave_id = request.POST.get('leave_id')
+            leave = LeaveTransaction.objects.get(tran_id=leave_id, comp_code=COMP_CODE)
+            print(leave)
+            
+            # Update rejoin details
+            leave.actual_rejoin_date = request.POST.get('actual_rejoin_date')
+            leave.rejoin_status = request.POST.get('rejoin_status')
+            leave.rejoin_remarks = request.POST.get('remarks')
+            leave.approval_by = request.session.get('username')
+            leave.modified_by = request.session.get('username')
+            leave.modified_on = now()
+            
+            leave.save()
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Rejoin approval updated successfully'
+            })
+        except LeaveTransaction.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Leave not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)
+
+@csrf_exempt
+def get_rejoin_notifications(request):
+    set_comp_code(request)
+    try:
+        # Get today's and tomorrow's dates
+        today = datetime.now().date()
+        tomorrow = today + timedelta(days=1)
+        
+        # Get all leaves where end_date is today
+        rejoin_notifications = LeaveTransaction.objects.filter(
+            comp_code=COMP_CODE,
+            end_date=today
+        )
+        
+        notifications = []
+        for leave in rejoin_notifications:
+            notifications.append({
+                'id': leave.tran_id,
+                'employee_name': leave.employee_name,
+                'department': leave.department,
+                'rejoin_date': tomorrow.strftime('%d-%b-%Y'),  # Show tomorrow as rejoin date
+                'leave_type': leave.leave_type,
+                'end_date': leave.end_date.strftime('%d-%b-%Y'),
+                'status': leave.rejoin_status or 'Pending'  # Show current status
+            })
+        
+        return JsonResponse({
+            'status': 'success',
+            'notifications': notifications,
+            'count': len(notifications)
+        })
+    except Exception as e:
+        print(e)
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+
+def get_emp_code(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        try:
+            emp_code = request.GET.get('emp_code')
+            if not emp_code:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Employee code is required'
+                }, status=400)
+
+            # Fetch employee details from EmployeeMaster
+            employee = Employee.objects.filter(
+                emp_code=emp_code,
+                comp_code=COMP_CODE
+            ).first()
+
+            if not employee:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Employee not found'
+                }, status=404)
+
+            # Format the response data
+            response_data = {
+                'status': 'success',
+                'data': {
+                    'emp_code': employee.emp_code,
+                    'category': employee.category,
+                    'designation': employee.designation,
+                    'date_of_joining': employee.date_of_join.strftime('%Y-%m-%d') if employee.date_of_join else None,
+                    'basic_salary': float(employee.basic_pay) if employee.basic_pay else 0.00
+                }
+            }
+            return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)
+    

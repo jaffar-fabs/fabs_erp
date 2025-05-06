@@ -364,72 +364,20 @@
 			<li class="nav-item dropdown nav-item-box">
 				<a href="javascript:void(0);" class="nav-link" data-bs-toggle="dropdown">
 					<i class="ti ti-bell"></i>
-					<span class="badge rounded-pill">13</span>
+					<span class="badge rounded-pill" id="notification-count">0</span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-end notification-dropdown">
 					<div class="topnav-dropdown-header">
-						<h4 class="notification-title">Notifications</h4>
+						<h4 class="notification-title">Rejoin Notifications</h4>
 					</div>
 					<div class="noti-content">
-						<ul class="notification-list">
-							<li class="notification-message">
-								<a href="activities">
-									<div class="media d-flex">
-										<span class="avatar flex-shrink-0">
-											<img src="{% static 'assets/img/profiles/avatar-02.jpg' %}" alt="Profile" />
-											<span class="badge badge-info rounded-pill"></span>
-										</span>
-										<div class="media-body flex-grow-1">
-											<p class="noti-details">Ray Arnold left 6 comments on Isla Nublar SOC2
-												compliance report</p>
-											<p class="noti-time">Last Wednesday at 9:42 am</p>
-										</div>
-									</div>
-								</a>
-							</li>
-							<li class="notification-message">
-								<a href="activities">
-									<div class="media d-flex">
-										<span class="avatar flex-shrink-0"><img
-												src="{% static 'assets/img/profiles/avatar-03.jpg' %}"
-												alt="Profile" /></span>
-										<div class="media-body flex-grow-1">
-											<p class="noti-details">Denise Nedry replied to Anna Srzand</p>
-											<p class="noti-sub-details">“Oh, I finished de-bugging the phones, but the
-												system's compiling for eighteen minutes, or twenty. So, some minor
-												systems may go on and off for a while.”</p>
-											<p class="noti-time">Last Wednesday at 9:42 am</p>
-										</div>
-									</div>
-								</a>
-							</li>
-							<li class="notification-message">
-								<a href="activities">
-									<div class="media d-flex">
-										<span class="avatar flex-shrink-0"><img alt=""
-												src="{% static 'assets/img/profiles/avatar-06.jpg' %}" /></span>
-										<div class="media-body flex-grow-1">
-											<p class="noti-details">John Hammond attached a file to Isla Nublar SOC2
-												compliance report</p>
-											<div class="noti-pdf">
-												<div class="noti-pdf-icon">
-													<span><i class="ti ti-chart-pie"></i></span>
-												</div>
-												<div class="noti-pdf-text">
-													<p>EY_review.pdf</p>
-													<span>2mb</span>
-												</div>
-											</div>
-											<p class="noti-time">Last Wednesday at 9:42 am</p>
-										</div>
-									</div>
-								</a>
-							</li>
+						<ul class="notification-list" id="rejoin-notification-list">
+							<!-- Notifications will be loaded here -->
 						</ul>
 					</div>
 					<div class="topnav-dropdown-footer">
-						<a href="activities" class="view-link">View all</a>
-						<a href="javascript:void(0);" class="clear-link">Clear all</a>
+						<a href="{% url 'rejoin_approval_list' %}" class="view-link">View all</a>
+						<a href="javascript:void(0);" class="clear-link" id="clear-notifications">Clear all</a>
 					</div>
 				</div>
 			</li>
@@ -470,3 +418,75 @@
 </div>
 <!-- /Header -->
 {% endblock header %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function loadRejoinNotifications() {
+    $.ajax({
+        url: '{% url "get_rejoin_notifications" %}',
+        type: 'GET',
+        success: function(response) {
+            if (response.status === 'success') {
+                const notificationList = $('#rejoin-notification-list');
+                const notificationCount = $('#notification-count');
+                
+                // Update notification count
+                notificationCount.text(response.count);
+                
+                // Clear existing notifications
+                notificationList.empty();
+                
+                // Add new notifications
+                response.notifications.forEach(notification => {
+                    const notificationHtml = `
+                        <li class="notification-message">
+                            <a href="{% url 'rejoin_approval_list' %}">
+                                <div class="media d-flex">
+                                    <span class="avatar flex-shrink-0">
+                                        <i class="ti ti-user-check"></i>
+                                    </span>
+                                    <div class="media-body flex-grow-1">
+                                        <p class="noti-details">
+                                            <strong>${notification.employee_name}</strong>'s leave ends today
+                                            <br>
+                                            <small>Department: ${notification.department}</small>
+                                            <br>
+                                            <small>Leave Type: ${notification.leave_type}</small>
+                                            <br>
+                                            <small>Leave End Date: ${notification.end_date}</small>
+                                            <br>
+                                            <small>Expected Rejoin: ${notification.rejoin_date}</small>
+                                            <br>
+                                            <small class="text-${notification.status === 'Approved' ? 'success' : notification.status === 'Rejected' ? 'danger' : 'warning'}">
+                                                Status: ${notification.status}
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    `;
+                    notificationList.append(notificationHtml);
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading notifications:', error);
+        }
+    });
+}
+
+// Load notifications when page loads
+$(document).ready(function() {
+    loadRejoinNotifications();
+    
+    // Refresh notifications every 5 minutes
+    setInterval(loadRejoinNotifications, 300000);
+    
+    // Handle clear notifications
+    $('#clear-notifications').click(function(e) {
+        e.preventDefault();
+        $('#rejoin-notification-list').empty();
+        $('#notification-count').text('0');
+    });
+});
+</script>

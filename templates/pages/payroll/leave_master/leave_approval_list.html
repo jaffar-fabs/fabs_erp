@@ -61,6 +61,7 @@
                                             <span class="badge badge-pill badge-status 
                                                 {% if record.supervisor_status == 'Approved' %} bg-success 
                                                 {% elif record.supervisor_status == 'Rejected' %} bg-danger 
+                                                {% elif record.supervisor_status == 'Cancelled' %} bg-danger
                                                 {% else %} bg-warning {% endif %}">
                                                 {{ record.supervisor_status }}
                                             </span>
@@ -69,6 +70,7 @@
                                             <span class="badge badge-pill badge-status 
                                                 {% if record.dept_head_status == 'Approved' %} bg-success 
                                                 {% elif record.dept_head_status == 'Rejected' %} bg-danger 
+                                                {% elif record.dept_head_status == 'Cancelled' %} bg-danger
                                                 {% else %} bg-warning {% endif %}">
                                                 {{ record.dept_head_status }}
                                             </span>
@@ -77,6 +79,7 @@
                                             <span class="badge badge-pill badge-status 
                                                 {% if record.hr_status == 'Approved' %} bg-success 
                                                 {% elif record.hr_status == 'Rejected' %} bg-danger 
+                                                {% elif record.hr_status == 'Cancelled' %} bg-danger
                                                 {% else %} bg-warning {% endif %}">
                                                 {{ record.hr_status }}
                                             </span>
@@ -203,6 +206,24 @@
                                 </div>
                                 <div class="approval-status mt-2" id="hr_status"></div>
                             </div>
+
+                            <!-- Cancel Leave -->
+                            <div class="approval-stage mb-3" id="cancel_section" style="display: none;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6>Cancel Leave</h6>
+                                    <div class="approval-actions" id="cancel_actions">
+                                        <button class="btn btn-sm btn-danger cancel-btn" data-role="cancel">Cancel Leave</button>
+                                    </div>
+                                </div>
+                                <div class="approval-comments mt-2" id="cancel_comments" style="display: none;">
+                                    <textarea class="form-control" rows="2" placeholder="Enter your comments"></textarea>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-primary submit-approval" data-role="cancel" data-action="cancel">Submit Cancellation</button>
+                                        <button class="btn btn-sm btn-secondary cancel-approval" data-role="cancel">Cancel</button>
+                                    </div>
+                                </div>
+                                <div class="approval-status mt-2" id="cancel_status"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -249,37 +270,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         $('#view_document').text('No document uploaded');
                     }
-                    // Debug logging
-                    console.log('Supervisor Status:', data.supervisor_status);
-                    console.log('Dept Head Status:', data.dept_head_status);
-                    console.log('HR Status:', data.hr_status);
-                    console.log('Supervisor Actions Element:', $('#supervisor_actions').length);
-                    console.log('Dept Head Actions Element:', $('#dept_head_actions').length);
-                    console.log('HR Actions Element:', $('#hr_actions').length);
 
                     // Hide actions if status is approved
-                    if (data.supervisor_status == 'Approved') {
-                        console.log('Hiding supervisor actions');
+                    if (data.supervisor_status == 'Approved' || data.supervisor_status == 'Rejected' || data.supervisor_status == 'Cancelled') {
                         $('#supervisor_actions').hide();
                     }
-                    else{
-                        console.log('Showing supervisor actions');
+                    else{   
                         $('#supervisor_actions').show();
                     }
-                    if (data.dept_head_status == 'Approved') {
-                        console.log('Hiding dept head actions');
+                    if (data.dept_head_status == 'Approved' || data.dept_head_status == 'Rejected' || data.dept_head_status == 'Cancelled') {
                         $('#dept_head_actions').hide();
                     }
                     else{
-                        console.log('Showing dept head actions');
                         $('#dept_head_actions').show();
                     }
-                    if (data.hr_status == 'Approved') {
-                        console.log('Hiding hr actions');
+                    if (data.hr_status == 'Approved' || data.hr_status == 'Rejected' || data.hr_status == 'Cancelled') {
                         $('#hr_actions').hide();
                     }
                     else{
-                        console.log('Showing hr actions');
                         $('#hr_actions').show();
                     }
 
@@ -287,6 +295,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     updateApprovalStatus('supervisor', data.supervisor_status, data.supervisor_comments);
                     updateApprovalStatus('dept_head', data.dept_head_status, data.dept_head_comments);
                     updateApprovalStatus('hr', data.hr_status, data.hr_comments);
+                    
+                    // Show cancel section if any status is Approved and none are Cancelled
+                    if ((data.hr_status === 'Approved' || data.dept_head_status === 'Approved' || data.supervisor_status === 'Approved') && 
+                        data.hr_status !== 'Cancelled' && 
+                        data.dept_head_status !== 'Cancelled' && 
+                        data.supervisor_status !== 'Cancelled') {
+                        $('#cancel_section').show();
+                        $('#cancel_actions').show();
+                    } else {
+                        $('#cancel_section').hide();
+                        $('#cancel_actions').hide();
+                    }
                     
                     $('#view_leave').modal('show');
                 } else {
@@ -315,9 +335,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle cancel button clicks
-    $('.cancel-approval').click(function() {
-        var role = $(this).data('role');
-        $(`#${role}_comments`).hide();
+    $('.cancel-btn').click(function() {
+        // Hide all comment sections first
+        $('.approval-comments').hide();
+        // Show cancel comments section
+        $('#cancel_comments').show();
     });
 
     // Handle approval submission
@@ -367,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
             actionsDiv.hide();
         } else if (status === 'Rejected') {
             statusDiv.html(`<span class="badge bg-danger">Rejected</span>`);
+            actionsDiv.hide();
+        } else if (status === 'Cancelled') {
+            statusDiv.html(`<span class="badge bg-danger">Cancelled</span>`);
             actionsDiv.hide();
         } else {
             statusDiv.html(`<span class="badge bg-warning">Pending</span>`);

@@ -187,14 +187,21 @@ urlpatterns = [
     path('get_gratuity_details/<int:gratuity_id>/', views.get_gratuity_details, name='get_gratuity_details'),
     path('update_gratuity/<int:gratuity_id>/', views.update_gratuity, name='update_gratuity'),
     path('delete_gratuity/<int:gratuity_id>/', views.delete_gratuity, name='delete_gratuity'),
+    path('get_emp_code/', views.get_emp_code, name='get_emp_code'),
 
     #Leave Master
-    path('leave-master/', views.leave_master_list, name='leave_master_list'),
-    path('leave-master/create/', views.leave_master_create, name='leave_master_create'),
-    path('check-leave-code/', views.check_leave_code, name='check_leave_code'),
-    path('get-leave-details/', views.get_leave_details, name='get_leave_details'),
-    path('update-leave-details/', views.update_leave_details, name='update_leave_details'),
-    path('delete-leave-type/', views.delete_leave_type, name='delete_leave_type'),
+    path('leave_master/', views.leave_master_list, name='leave_master_list'),
+    path('leave_master/create/', views.leave_master_create, name='leave_master_create'),
+    path('check_leave_code/', views.check_leave_code, name='check_leave_code'),
+    path('get_leave_details/', views.get_leave_details, name='get_leave_details'),
+    path('update_leave_details/', views.update_leave_details, name='update_leave_details'),
+    path('delete_leave_type/', views.delete_leave_type, name='delete_leave_type'),
+
+    #Rejoin Approval
+    path('rejoin_approval/', views.rejoin_approval_list, name='rejoin_approval_list'),
+    path('get_rejoin_details/', views.get_rejoin_details, name='get_rejoin_details'),
+    path('rejoin_approval_submit/', views.rejoin_approval_submit, name='rejoin_approval_submit'),
+    path('get-rejoin-notifications/', views.get_rejoin_notifications, name='get_rejoin_notifications'),
 
 
     path('duty_roster/', views.duty_roster, name='duty_roster'),
