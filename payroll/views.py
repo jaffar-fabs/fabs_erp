@@ -1145,7 +1145,6 @@ def project(request):
         return num - 1
 
     project_id = request.GET.get("project_id")
-    print(project_id, 'project_id')
     
     if request.method == "GET":
         if project_id:  # If `project_id` exists, return a JSON response with project data
