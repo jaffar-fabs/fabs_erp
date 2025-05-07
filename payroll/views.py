@@ -1184,9 +1184,6 @@ def project(request):
             page_number = request.GET.get('page', 1)
             get_url = request.get_full_path()
 
-            print(keyword, 'keyword')
-            print(page_number, 'page_number')
-
             # Adjust URL for pagination
             if '?keyword' in get_url:
                 get_url = get_url.split('&page=')[0]
