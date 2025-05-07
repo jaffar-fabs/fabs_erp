@@ -1255,8 +1255,6 @@ def project(request):
                 'result_cnt': query.count()
             }
 
-            print(context, 'context')
-
             # Render the template
             return render(request, template_name, context)
        
