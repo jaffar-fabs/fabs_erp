@@ -15,11 +15,11 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col-sm-4">
-                                <form method="get">
+                                <form method="get" id="searchForm">
                                     <div class="icon-form mb-3 mb-sm-0">
                                         <span class="form-icon"><i class="ti ti-search"></i></span>
                                         <input type="text" name="keyword" class="form-control"
-                                            placeholder="Search Gratuity Settlements" value="{{ keyword }}">
+                                            placeholder="Search by Employee Code/Name" value="{{ keyword }}">
                                     </div>
                                 </form>
                             </div>
@@ -136,17 +136,15 @@
                                 {% endif %}
 
                                 {% for page in gratuity_list.paginator.page_range %}
-                                {% if gratuity_list.number == page %}
-                                <li class="page-item active">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
-                                </li>
-                                {% else %}
-                                <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
-                                </li>
-                                {% endif %}
+                                    {% if page == gratuity_list.number %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                    </li>
+                                    {% elif page > gratuity_list.number|add:'-3' and page < gratuity_list.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                    </li>
+                                    {% endif %}
                                 {% endfor %}
 
                                 {% if gratuity_list.has_next %}
@@ -170,64 +168,72 @@
 </div>
 
 <script>
-    $(".edit-graduity-btn").click(function (event) {
-       event.preventDefault();
-       var id = $(this).data("id");
-       
-       // Show the edit modal
-       var editModal = new bootstrap.Offcanvas(document.getElementById("editGratuityModal"));
-       editModal.show();
+    $(document).ready(function() {
 
-       // Fetch gratuity details via AJAX
-       $.ajax({
-           url: '{% url "get_gratuity_details" %}',
-           method: 'GET',
-           data: {
-               id: id
-           },
-           success: function(response) {
-               if (response.status === 'success') {
-                   var data = response.data;
-                   // Populate form fields with response data
-                   $('#edit_id').val(data.id);
-                   $('#edit_employee_code').val(data.employee_code);
-                   $('#edit_employee_name').val(data.employee_name);
-                   $('#edit_category').val(data.category);
-                   $('#edit_designation').val(data.designation);
-                   $('#edit_date_of_joining').val(data.date_of_joining);
-                   $('#edit_date_of_exit').val(data.date_of_exit);
-                   $('#edit_total_years_of_service').val(data.total_years_of_service);
-                   $('#edit_acrude_days').val(data.accrude_days);
-                   $('#edit_last_drawn_basic_salary').val(data.last_drawn_basic_salary);
-                   $('#edit_eligible_gratuity').val(data.eligible_gratuity);
-                   $('#edit_loss_of_pay_days').val(data.loss_of_pay_days);
-                   $('#edit_gratuity_status').val(data.gratuity_status);
-                   $('#edit_leave_balance').val(data.leave_balance_days);
-                   $('#edit_leave_encashment_amount').val(data.leave_encashment_amount);
-                   $('#edit_bonus_amount').val(data.bonus_amount);
-                   $('#edit_other_allowances').val(data.other_allowances);
-                   $('#edit_deduction').val(data.deduction);
-                   $('#edit_other_deduction').val(data.other_deduction);
-                   $('#edit_loan_recovery').val(data.loan_recovery);
-                   $('#edit_notice_pay').val(data.notice_pay);
-                   $('#edit_final_settlement_amount').val(data.final_settlement_amount);
-                   $('#edit_settlement_status').val(data.settlement_status);
-                   $('#edit_payment_mode').val(data.payment_mode);
-                   $('#edit_bank_name').val(data.bank_name);
-                   $('#edit_bank_account_no').val(data.bank_account_no);
-                   $('#edit_settlement_date').val(data.settlement_date);
-                   $('#edit_remarks').val(data.remarks);
-                   
-               } else {
-                   alert('Error: ' + response.message);
+        // Handle edit button click
+        $(".edit-graduity-btn").click(function (event) {
+           event.preventDefault();
+           var id = $(this).data("id");
+           
+           // Show the edit modal
+           var editModal = new bootstrap.Offcanvas(document.getElementById("editGratuityModal"));
+           editModal.show();
+
+           // Fetch gratuity details via AJAX
+           $.ajax({
+               url: '{% url "get_gratuity_details" %}',
+               method: 'GET',
+               data: {
+                   id: id
+               },
+               success: function(response) {
+                   if (response.status === 'success') {
+                       var data = response.data;
+                       // Populate form fields with response data
+                       $('#edit_id').val(data.id);
+                       $('#edit_employee_code').val(data.employee_code);
+                       $('#edit_employee_name').val(data.employee_name);
+                       $('#edit_category').val(data.category);
+                       $('#edit_designation').val(data.designation);
+                       $('#edit_date_of_joining').val(data.date_of_joining);
+                       $('#edit_date_of_exit').val(data.date_of_exit);
+                       $('#edit_total_years_of_service').val(data.total_years_of_service);
+                       $('#edit_acrude_days').val(data.accrude_days);
+                       $('#edit_last_drawn_basic_salary').val(data.last_drawn_basic_salary);
+                       $('#edit_eligible_gratuity').val(data.eligible_gratuity);
+                       $('#edit_loss_of_pay_days').val(data.loss_of_pay_days);
+                       $('#edit_gratuity_status').val(data.gratuity_status);
+                       $('#edit_leave_balance_days').val(data.leave_balance_days);
+                       $('#edit_leave_encashment_amount').val(data.leave_encashment_amount);
+                       $('#edit_bonus_amount').val(data.bonus_amount);
+                       $('#edit_other_allowances').val(data.other_allowances);
+                       $('#edit_deduction').val(data.deduction);
+                       $('#edit_other_deduction').val(data.other_deduction);
+                       $('#edit_loan_recovery').val(data.loan_recovery);
+                       $('#edit_notice_pay').val(data.notice_pay);
+                       $('#edit_final_settlement_amount').val(data.final_settlement_amount);
+                       $('#edit_settlement_status').val(data.settlement_status);
+                       $('#edit_payment_mode').val(data.payment_mode);
+                       $('#edit_bank_name').val(data.bank_name);
+                       $('#edit_bank_account_no').val(data.bank_account_no);
+                       $('#edit_settlement_date').val(data.settlement_date);
+                       $('#edit_remarks').val(data.remarks);
+
+                       // Trigger calculations after data is loaded
+                       var editForm = $('#edit_gratuity_form');
+                       calculate_service_and_gratuity(editForm);
+                       calculate_final_settlement_amount(editForm);
+                   } else {
+                       alert('Error: ' + response.message);
+                   }
+               },
+               error: function(xhr, status, error) {
+                   console.error('Error fetching gratuity details:', error);
+                   alert('Error loading gratuity details. Please try again.');
                }
-           },
-           error: function(xhr, status, error) {
-               console.error('Error fetching gratuity details:', error);
-               alert('Error loading gratuity details. Please try again.');
-           }
+           });
        });
-   });
+    });
 </script>
 <!-- Add Modal -->
 {% include "pages/modal/payroll/graduity_modal.html"%}

@@ -130,14 +130,14 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Deduction Amount</label>
-                        <input class="form-control deduction" name="deductions" type="number" step="0.01">
+                        <input class="form-control deduction" name="deduction" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Deduction -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deductions" name="other_deductions" type="number" step="0.01">
+                        <input class="form-control other_deduction" name="other_deduction" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
@@ -374,7 +374,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deductions" name="other_deduction" id="edit_other_deduction" type="number" step="0.01">
+                        <input class="form-control other_deduction" name="other_deduction" id="edit_other_deduction" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
@@ -476,75 +476,91 @@
 
 <script>
     $(document).ready(function() {
-        // Handle employee code selection
+        // Handle employee code selection for both add and edit modals
         $('.employee_code').on('change', function() {
             var employee_code = $(this).val();
             if (employee_code) {
-                fetch_employee_details(employee_code);
+                fetch_employee_details(employee_code, $(this).closest('form'));
             } else {
-                clear_employee_fields();
+                clear_employee_fields($(this).closest('form'));
             }
         });
 
-        function fetch_employee_details(employee_code) {
+        function fetch_employee_details(employee_code, form) {
             $.ajax({
                 url: '{% url "get_emp_code" %}',
                 type: 'GET',
                 data: { emp_code: employee_code },
                 success: function(response) {
                     if (response.status === 'success') {
-                        $('.category').val(response.data.category);
-                        $('.designation').val(response.data.designation);
-                        $('.date_of_joining').val(response.data.date_of_joining);
-                        $('.last_drawn_basic_salary').val(response.data.basic_salary);
-                        if ($('.date_of_exit').val()) {
-                            calculate_service_and_gratuity();
+                        form.find('.category').val(response.data.category);
+                        form.find('.designation').val(response.data.designation);
+                        form.find('.date_of_joining').val(response.data.date_of_joining);
+                        form.find('.last_drawn_basic_salary').val(response.data.basic_salary);
+                        if (form.find('.date_of_exit').val()) {
+                            calculate_service_and_gratuity(form);
                         }
                     } else {
                         alert(response.message || 'Error loading employee details');
-                        clear_employee_fields();
+                        clear_employee_fields(form);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching employee details:', error);
                     alert('Error loading employee details. Please try again.');
-                    clear_employee_fields();
+                    clear_employee_fields(form);
                 }
             });
         }
 
-        // Trigger calculation when exit date or basic salary changes
-        $('.date_of_exit, .last_drawn_basic_salary').on('change', function() {
-            calculate_service_and_gratuity();
+        function clear_employee_fields(form) {
+            form.find('.category').val('');
+            form.find('.designation').val('');
+            form.find('.date_of_joining').val('');
+            form.find('.last_drawn_basic_salary').val('');
+            form.find('.total_years_of_service').val('');
+            form.find('.acrude_days').val('');
+            form.find('.eligible_gratuity').val('');
+            form.find('.final_settlement_amount').val('');
+        }
+
+        // Bind calculation events for both add and edit forms
+        $('form').on('change', '.date_of_exit, .last_drawn_basic_salary', function() {
+            calculate_service_and_gratuity($(this).closest('form'));
         });
 
-        // Trigger calculation when any field affecting final settlement amount changes
-        $('.date_of_exit, .last_drawn_basic_salary, .loss_of_pay_days, .leave_balance, .bonus_amount, .other_allowances, .deduction, .other_deduction, .loan_recovery, .notice_pay').on('change', function() {
-            calculate_final_settlement_amount();
+        // Bind calculation events for all fields that affect final settlement
+        $('form').on('change', '.loss_of_pay_days, .leave_balance_days, .bonus_amount, .other_allowances, .deduction, .other_deduction, .loan_recovery, .notice_pay', function() {
+            calculate_final_settlement_amount($(this).closest('form'));
         });
 
-        function calculate_service_and_gratuity() {
-            var joinDate = $('.date_of_joining').val();
-            var exitDate = $('.date_of_exit').val();
-            var basicSalary = parseFloat($('.last_drawn_basic_salary').val());
+        function calculate_service_and_gratuity(form) {
+            var joinDate = form.find('.date_of_joining').val();
+            var exitDate = form.find('.date_of_exit').val();
+            var basicSalary = parseFloat(form.find('.last_drawn_basic_salary').val()) || 0;
+
             if (!joinDate || !exitDate) {
-                $('.total_years_of_service').val('');
-                $('.acrude_days').val('');
-                $('.eligible_gratuity').val('');
+                form.find('.total_years_of_service').val('');
+                form.find('.acrude_days').val('');
+                form.find('.eligible_gratuity').val('');
                 return;
             }
+
             var start = new Date(joinDate);
             var end = new Date(exitDate);
+
             if (end <= start) {
-                $('.total_years_of_service').val('');
-                $('.acrude_days').val('');
-                $('.eligible_gratuity').val('');
+                form.find('.total_years_of_service').val('');
+                form.find('.acrude_days').val('');
+                form.find('.eligible_gratuity').val('');
                 return;
             }
+
             // Calculate total years, months, days
             var years = end.getFullYear() - start.getFullYear();
             var months = end.getMonth() - start.getMonth();
             var days = end.getDate() - start.getDate();
+
             if (days < 0) {
                 months -= 1;
                 days += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
@@ -553,8 +569,9 @@
                 years -= 1;
                 months += 12;
             }
+
             var totalService = years + (months / 12) + (days / 365);
-            $('.total_years_of_service').val(totalService.toFixed(2));
+            form.find('.total_years_of_service').val(totalService.toFixed(2));
 
             // Acrude Days Calculation
             var acrudeDays = 0;
@@ -570,7 +587,7 @@
                     acrudeDays += (years_above_5 / 12) * 30;
                 }
             }
-            $('.acrude_days').val(Math.floor(acrudeDays));
+            form.find('.acrude_days').val(Math.floor(acrudeDays));
 
             // Eligible Gratuity Calculation
             var eligibleGratuity = 0;
@@ -578,32 +595,34 @@
                 var perDayBasic = basicSalary / 30;
                 eligibleGratuity = perDayBasic * acrudeDays;
             }
-            $('.eligible_gratuity').val(eligibleGratuity.toFixed(2));
+            form.find('.eligible_gratuity').val(eligibleGratuity.toFixed(2));
             
-
+            // Trigger final settlement calculation after gratuity is calculated
+            calculate_final_settlement_amount(form);
         }
 
-        function calculate_final_settlement_amount() {
-            var eligibleGratuity = parseFloat($('.eligible_gratuity').val()) || 0;
-            var basicSalary = parseFloat($('.last_drawn_basic_salary').val()) || 0;
+        function calculate_final_settlement_amount(form) {
+            var eligibleGratuity = parseFloat(form.find('.eligible_gratuity').val()) || 0;
+            var basicSalary = parseFloat(form.find('.last_drawn_basic_salary').val()) || 0;
             var perDayBasic = basicSalary / 30;
 
-            var lossOfPayDays = parseFloat($('.loss_of_pay_days').val()) || 0;
+            var lossOfPayDays = parseFloat(form.find('.loss_of_pay_days').val()) || 0;
             var lossOfPayAmount = perDayBasic * lossOfPayDays;
 
-            var leaveBalanceDays = parseFloat($('.leave_balance_days').val()) || 0;
+            var leaveBalanceDays = parseFloat(form.find('.leave_balance_days').val()) || 0;
             var leaveEncashmentAmount = perDayBasic * leaveBalanceDays;
-            $('.leave_encashment_amount').val(leaveEncashmentAmount.toFixed(2));
+            form.find('.leave_encashment_amount').val(leaveEncashmentAmount.toFixed(2));
 
-            var bonusAmount = parseFloat($('.bonus_amount').val()) || 0;
-            var otherAllowances = parseFloat($('.other_allowances').val()) || 0;
-            var deduction = parseFloat($('.deductions').val()) || 0;
-            var otherDeduction = parseFloat($('.other_deductions').val()) || 0;
-            var loanRecovery = parseFloat($('.loan_recovery').val()) || 0;
-            var noticePay = parseFloat($('.notice_pay').val()) || 0;
+            var bonusAmount = parseFloat(form.find('.bonus_amount').val()) || 0;
+            var otherAllowances = parseFloat(form.find('.other_allowances').val()) || 0;
+            var deduction = parseFloat(form.find('.deduction').val()) || 0;
+            var otherDeduction = parseFloat(form.find('.other_deduction').val()) || 0;
+            var loanRecovery = parseFloat(form.find('.loan_recovery').val()) || 0;
+            var noticePay = parseFloat(form.find('.notice_pay').val()) || 0;
 
+            // Calculate total with deductions properly subtracted
             var total = eligibleGratuity - lossOfPayAmount + leaveEncashmentAmount + bonusAmount + otherAllowances - deduction - otherDeduction - loanRecovery + noticePay;
-            $('.final_settlement_amount').val(total.toFixed(2));
+            form.find('.final_settlement_amount').val(total.toFixed(2));
         }
     });
 </script>

@@ -5319,17 +5319,41 @@ def save_attendance_correction(request):
         })
 
 def gratuity_list(request):
+    set_comp_code(request)
     """View to display list of gratuity settlements"""
-    gratuity_list = GratuitySettlement.objects.all().order_by('-created_on')
+    # Get search keyword
+    keyword = request.GET.get('keyword', '').strip()
+    
+    # Base queryset
+    gratuity_list = GratuitySettlement.objects.filter(comp_code=COMP_CODE)
+    
+    # Apply search filter if keyword exists
+    if keyword:
+        gratuity_list = gratuity_list.filter(
+            Q(employee_code__icontains=keyword) |
+            Q(employee_name__icontains=keyword)
+        )
+    
+    # Order by created date
+    gratuity_list = gratuity_list.order_by('-created_on')
+    
+    # Get total count for pagination info
+    result_cnt = gratuity_list.count()
     
     # Pagination
-    paginator = Paginator(gratuity_list, 10)  # Show 10 records per page
+    paginator = Paginator(gratuity_list, PAGINATION_SIZE)  # Show 10 records per page
     page = request.GET.get('page')
     gratuity_list = paginator.get_page(page)
     
+    # Get current URL for pagination links
+    current_url = request.path
+    
     return render(request, 'pages/payroll/graduity/graduity_list.html', {
-        'gratuity_list': gratuity_list
-    })
+        'gratuity_list': gratuity_list,
+        'keyword': keyword,
+        'result_cnt': result_cnt,
+        'current_url': current_url
+    });
 
 @csrf_exempt
 def add_gratuity(request):
@@ -5343,11 +5367,11 @@ def add_gratuity(request):
             category = request.POST.get('category')
             designation = request.POST.get('designation')
             date_of_joining = request.POST.get('date_of_joining')
-            date_of_exit = request.POST.get('exit_date')
+            date_of_exit = request.POST.get('date_of_exit')
             total_years_of_service = request.POST.get('total_years_of_service')
             accrude_days = request.POST.get('acrude_days')
             loss_of_pay_days = request.POST.get('loss_of_pay_days')
-            leave_balance_days = request.POST.get('leave_balance')
+            leave_balance_days = request.POST.get('leave_balance_days')
             leave_encashment_amount = request.POST.get('leave_encashment_amount')
             bonus_amount = request.POST.get('bonus_amount')
             other_allowances = request.POST.get('other_allowances')
@@ -5426,7 +5450,7 @@ def update_gratuity(request):
             gratuity.category = request.POST.get('category')
             gratuity.designation = request.POST.get('designation')
             gratuity.date_of_joining = request.POST.get('date_of_joining')
-            gratuity.date_of_exit = request.POST.get('exit_date')
+            gratuity.date_of_exit = request.POST.get('date_of_exit')
             gratuity.total_years_of_service = request.POST.get('total_years_of_service')
             gratuity.accrude_days = request.POST.get('acrude_days')
             gratuity.loss_of_pay_days = request.POST.get('loss_of_pay_days')
@@ -5527,7 +5551,7 @@ def get_gratuity_details(request):
                 'settlement_date': gratuity.settlement_date,
                 'remarks': gratuity.remarks
             }
-        }
+        }        
         return JsonResponse(data)
     except Exception as e:
         return JsonResponse({
@@ -5916,7 +5940,7 @@ def get_emp_code(request):
                 'status': 'success',
                 'data': {
                     'emp_code': employee.emp_code,
-                    'category': employee.category,
+                    'category': employee.staff_category,
                     'designation': employee.designation,
                     'date_of_joining': employee.date_of_join.strftime('%Y-%m-%d') if employee.date_of_join else None,
                     'basic_salary': float(employee.basic_pay) if employee.basic_pay else 0.00
