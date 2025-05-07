@@ -49,7 +49,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Exit <span class="text-danger">*</span></label>
-                        <input class="form-control date_of_exit" name="exit_date" type="date" required>
+                        <input class="form-control date_of_exit" name="date_of_exit" type="date" required>
                     </div>
                 </div>
                 <!-- Total Years of Service -->
@@ -102,7 +102,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Balance (Days)</label>
-                        <input class="form-control leave_balance" name="leave_balance" type="number" step="0.01">
+                        <input class="form-control leave_balance_days" name="leave_balance_days" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Leave Encashment Amount -->
@@ -130,14 +130,14 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Deduction Amount</label>
-                        <input class="form-control deduction" name="deduction" type="number" step="0.01">
+                        <input class="form-control deduction" name="deductions" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Deduction -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deduction" name="other_deduction" type="number" step="0.01">
+                        <input class="form-control other_deductions" name="other_deductions" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
@@ -245,7 +245,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="edit_gratuity_form" action="#" method="POST" enctype="multipart/form-data">
+        <form id="edit_gratuity_form" action="{% url 'update_gratuity' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="edit_id" id="edit_id">
             <div class="row">
@@ -286,7 +286,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Exit <span class="text-danger">*</span></label>
-                        <input class="form-control date_of_exit" name="exit_date" id="edit_date_of_exit" type="date" required>
+                        <input class="form-control date_of_exit" name="date_of_exit" id="edit_date_of_exit" type="date" required>
                     </div>
                 </div>
                 <!-- Total Years of Service -->
@@ -339,7 +339,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Balance (Days)</label>
-                        <input class="form-control leave_balance" name="leave_balance" id="edit_leave_balance" type="number" step="0.01">
+                        <input class="form-control leave_balance" name="leave_balance_days" id="edit_leave_balance" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Leave Encashment Amount -->
@@ -367,14 +367,14 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Deduction Amount</label>
-                        <input class="form-control deduction" name="deduction" id="edit_deduction" type="number" step="0.01">
+                        <input class="form-control deduction" name="deductions" id="edit_deduction" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Deduction -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deduction" name="other_deduction" id="edit_other_deduction" type="number" step="0.01">
+                        <input class="form-control other_deductions" name="other_deductions" id="edit_other_deduction" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
@@ -591,14 +591,14 @@
             var lossOfPayDays = parseFloat($('.loss_of_pay_days').val()) || 0;
             var lossOfPayAmount = perDayBasic * lossOfPayDays;
 
-            var leaveBalanceDays = parseFloat($('.leave_balance').val()) || 0;
+            var leaveBalanceDays = parseFloat($('.leave_balance_days').val()) || 0;
             var leaveEncashmentAmount = perDayBasic * leaveBalanceDays;
             $('.leave_encashment_amount').val(leaveEncashmentAmount.toFixed(2));
 
             var bonusAmount = parseFloat($('.bonus_amount').val()) || 0;
             var otherAllowances = parseFloat($('.other_allowances').val()) || 0;
-            var deduction = parseFloat($('.deduction').val()) || 0;
-            var otherDeduction = parseFloat($('.other_deduction').val()) || 0;
+            var deduction = parseFloat($('.deductions').val()) || 0;
+            var otherDeduction = parseFloat($('.other_deductions').val()) || 0;
             var loanRecovery = parseFloat($('.loan_recovery').val()) || 0;
             var noticePay = parseFloat($('.notice_pay').val()) || 0;
 

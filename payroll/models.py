@@ -856,7 +856,7 @@ class GratuitySettlement(models.Model):
     date_of_joining = models.DateField(blank=True, null=True)
     date_of_exit = models.DateField(blank=True, null=True)
     total_years_of_service = models.CharField(max_length=5, blank=True, null=True)  # Auto-calculated
-    accrued_date = models.DateField(blank=True, null=True)  # Auto-calculated
+    accrude_days = models.CharField(max_length=5, blank=True, null=True)  # Auto-calculated
 
     # Salary & Gratuity
     last_drawn_basic_salary = models.CharField(max_length=12)

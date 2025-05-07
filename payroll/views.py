@@ -5337,18 +5337,30 @@ def gratuity_list(request):
     })
 
 @csrf_exempt
-
 def add_gratuity(request):
+    set_comp_code(request)
     """View to add new gratuity settlement"""
     if request.method == 'POST':
         try:
-            # Get form data
+            # Get all form data
             employee_code = request.POST.get('employee_code')
             employee_name = request.POST.get('employee_name')
             category = request.POST.get('category')
             designation = request.POST.get('designation')
             date_of_joining = request.POST.get('date_of_joining')
-            date_of_exit = request.POST.get('date_of_exit')
+            date_of_exit = request.POST.get('exit_date')
+            total_years_of_service = request.POST.get('total_years_of_service')
+            accrude_days = request.POST.get('acrude_days')
+            loss_of_pay_days = request.POST.get('loss_of_pay_days')
+            leave_balance_days = request.POST.get('leave_balance')
+            leave_encashment_amount = request.POST.get('leave_encashment_amount')
+            bonus_amount = request.POST.get('bonus_amount')
+            other_allowances = request.POST.get('other_allowances')
+            deductions = request.POST.get('deduction')
+            other_deductions = request.POST.get('other_deduction')
+            loan_recovery = request.POST.get('loan_recovery')
+            notice_pay = request.POST.get('notice_pay')
+            final_settlement_amount = request.POST.get('final_settlement_amount')
             last_drawn_basic_salary = request.POST.get('last_drawn_basic_salary')
             eligible_gratuity = request.POST.get('eligible_gratuity')
             gratuity_status = request.POST.get('gratuity_status')
@@ -5356,17 +5368,30 @@ def add_gratuity(request):
             payment_mode = request.POST.get('payment_mode')
             bank_name = request.POST.get('bank_name')
             bank_account_no = request.POST.get('bank_account_no')
+            settlement_date = request.POST.get('settlement_date') or None   
             remarks = request.POST.get('remarks')
             
             # Create new gratuity settlement
             gratuity = GratuitySettlement.objects.create(
-                comp_code=request.session.get('comp_code', '1000'),
+                comp_code=COMP_CODE,
                 employee_code=employee_code,
                 employee_name=employee_name,
                 category=category,
                 designation=designation,
                 date_of_joining=date_of_joining,
                 date_of_exit=date_of_exit,
+                total_years_of_service=total_years_of_service,
+                accrude_days=accrude_days,
+                loss_of_pay_days=loss_of_pay_days,
+                leave_balance_days=leave_balance_days,
+                leave_encashment_amount=leave_encashment_amount,
+                bonus_amount=bonus_amount,
+                other_allowances=other_allowances,
+                deductions=deductions,
+                other_deductions=other_deductions,
+                loan_recovery=loan_recovery,
+                notice_pay=notice_pay,
+                final_settlement_amount=final_settlement_amount,
                 last_drawn_basic_salary=last_drawn_basic_salary,
                 eligible_gratuity=eligible_gratuity,
                 gratuity_status=gratuity_status,
@@ -5374,45 +5399,52 @@ def add_gratuity(request):
                 payment_mode=payment_mode,
                 bank_name=bank_name,
                 bank_account_no=bank_account_no,
+                settlement_date=settlement_date,
                 remarks=remarks,
                 created_by=1
             )
             
-            # Handle file uploads if any
-            if 'supporting_docs' in request.FILES:
-                gratuity.supporting_docs = request.FILES['supporting_docs']
-            if 'attachments' in request.FILES:
-                gratuity.attachments = request.FILES['attachments']
-            gratuity.save()
-            
-            return redirect('gratuity_list')
-        
-            
+            messages.success(request, 'Gratuity settlement added successfully!')
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Gratuity settlement added successfully!'
+            })
         except Exception as e:
             return JsonResponse({
-                'success': False,
+                'status': 'error',
                 'message': str(e)
-            })
-    
+            }, status=500)
     return JsonResponse({
-        'success': False,
+        'status': 'error',
         'message': 'Invalid request method'
-    })
+    }, status=400)
 
 @csrf_exempt
-
-def update_gratuity(request, gratuity_id):
+def update_gratuity(request):
     """View to update existing gratuity settlement"""
     if request.method == 'POST':
         try:
-            gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
+            gratuity = get_object_or_404(GratuitySettlement, id=request.POST.get('id'))
             
-            # Update fields
+            # Update all fields
+            gratuity.employee_code = request.POST.get('employee_code')
             gratuity.employee_name = request.POST.get('employee_name')
             gratuity.category = request.POST.get('category')
             gratuity.designation = request.POST.get('designation')
             gratuity.date_of_joining = request.POST.get('date_of_joining')
-            gratuity.date_of_exit = request.POST.get('date_of_exit')
+            gratuity.date_of_exit = request.POST.get('exit_date')
+            gratuity.total_years_of_service = request.POST.get('total_years_of_service')
+            gratuity.accrude_days = request.POST.get('acrude_days')
+            gratuity.loss_of_pay_days = request.POST.get('loss_of_pay_days')
+            gratuity.leave_balance_days = request.POST.get('leave_balance')
+            gratuity.leave_encashment_amount = request.POST.get('leave_encashment_amount')
+            gratuity.bonus_amount = request.POST.get('bonus_amount')
+            gratuity.other_allowances = request.POST.get('other_allowances')
+            gratuity.deductions = request.POST.get('deduction')
+            gratuity.other_deductions = request.POST.get('other_deduction')
+            gratuity.loan_recovery = request.POST.get('loan_recovery')
+            gratuity.notice_pay = request.POST.get('notice_pay')
+            gratuity.final_settlement_amount = request.POST.get('final_settlement_amount')
             gratuity.last_drawn_basic_salary = request.POST.get('last_drawn_basic_salary')
             gratuity.eligible_gratuity = request.POST.get('eligible_gratuity')
             gratuity.gratuity_status = request.POST.get('gratuity_status')
@@ -5420,29 +5452,27 @@ def update_gratuity(request, gratuity_id):
             gratuity.payment_mode = request.POST.get('payment_mode')
             gratuity.bank_name = request.POST.get('bank_name')
             gratuity.bank_account_no = request.POST.get('bank_account_no')
+            gratuity.settlement_date = request.POST.get('settlement_date')
             gratuity.remarks = request.POST.get('remarks')
-            gratuity.modified_by = request.user.id
-            
-            # Handle file uploads if any
-            if 'supporting_docs' in request.FILES:
-                gratuity.supporting_docs = request.FILES['supporting_docs']
-            if 'attachments' in request.FILES:
-                gratuity.attachments = request.FILES['attachments']
+            gratuity.updated_by = request.user.id
+            gratuity.updated_at = timezone.now()
             
             gratuity.save()
             
-            return redirect('gratuity_list')
-            
+            messages.success(request, 'Gratuity settlement updated successfully!')
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Gratuity settlement updated successfully!'
+            })
         except Exception as e:
             return JsonResponse({
-                'success': False,
+                'status': 'error',
                 'message': str(e)
-            })
-    
+            }, status=500)
     return JsonResponse({
-        'success': False,
+        'status': 'error',
         'message': 'Invalid request method'
-    })
+    }, status=400)
 
 @csrf_exempt
 def delete_gratuity(request, gratuity_id):
@@ -5481,6 +5511,8 @@ def get_gratuity_details(request):
                 'designation': gratuity.designation,
                 'date_of_joining': gratuity.date_of_joining,
                 'date_of_exit': gratuity.date_of_exit,
+                'total_years_of_service': gratuity.total_years_of_service,
+                'accrude_days': gratuity.accrude_days,
                 'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
                 'eligible_gratuity': str(gratuity.eligible_gratuity),
                 'loss_of_pay_days': str(gratuity.loss_of_pay_days),
