@@ -184,9 +184,9 @@ urlpatterns = [
     #Gratuity
     path('gratuity_list/', views.gratuity_list, name='gratuity_list'),
     path('add_gratuity/', views.add_gratuity, name='add_gratuity'),
-    path('get_gratuity_details/<int:gratuity_id>/', views.get_gratuity_details, name='get_gratuity_details'),
-    path('update_gratuity/<int:gratuity_id>/', views.update_gratuity, name='update_gratuity'),
-    path('delete_gratuity/<int:gratuity_id>/', views.delete_gratuity, name='delete_gratuity'),
+    path('get_gratuity_details/', views.get_gratuity_details, name='get_gratuity_details'),
+    path('update_gratuity/', views.update_gratuity, name='update_gratuity'),
+    path('delete_gratuity/', views.delete_gratuity, name='delete_gratuity'),
     path('get_emp_code/', views.get_emp_code, name='get_emp_code'),
 
     #Leave Master

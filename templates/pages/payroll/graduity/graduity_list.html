@@ -180,28 +180,47 @@
 
        // Fetch gratuity details via AJAX
        $.ajax({
-           url: '/get_gratuity_details/' + id + '/',  // Update this URL to match your Django URL pattern
+           url: '{% url "get_gratuity_details" %}',
            method: 'GET',
+           data: {
+               id: id
+           },
            success: function(response) {
-               // Populate form fields with response data
-               $('#edit_id').val(response.id);
-               $('#edit_employee_code').val(response.employee_code);
-               $('#edit_employee_name').val(response.employee_name);
-               $('#edit_category').val(response.category);
-               $('#edit_designation').val(response.designation);
-               $('#edit_date_of_joining').val(response.date_of_joining);
-               $('#edit_date_of_exit').val(response.date_of_exit);
-               $('#edit_last_drawn_basic_salary').val(response.last_drawn_basic_salary);
-               $('#edit_eligible_gratuity').val(response.eligible_gratuity);
-               $('#edit_gratuity_status').val(response.gratuity_status);
-               $('#edit_settlement_status').val(response.settlement_status);
-               $('#edit_payment_mode').val(response.payment_mode);
-               $('#edit_bank_name').val(response.bank_name);
-               $('#edit_bank_account_no').val(response.bank_account_no);
-               $('#edit_remarks').val(response.remarks);
-               
-               // Update form action URL
-               $('#edit_gratuity_form').attr('action', '/update_gratuity/' + id + '/');
+               if (response.status === 'success') {
+                   var data = response.data;
+                   // Populate form fields with response data
+                   $('#edit_id').val(data.id);
+                   $('#edit_employee_code').val(data.employee_code);
+                   $('#edit_employee_name').val(data.employee_name);
+                   $('#edit_category').val(data.category);
+                   $('#edit_designation').val(data.designation);
+                   $('#edit_date_of_joining').val(data.date_of_joining);
+                   $('#edit_date_of_exit').val(data.date_of_exit);
+                   $('#edit_last_drawn_basic_salary').val(data.last_drawn_basic_salary);
+                   $('#edit_eligible_gratuity').val(data.eligible_gratuity);
+                   $('#edit_loss_of_pay_days').val(data.loss_of_pay_days);
+                   $('#edit_gratuity_status').val(data.gratuity_status);
+                   $('#edit_leave_balance').val(data.leave_balance);
+                   $('#edit_leave_encashment_amount').val(data.leave_encashment_amount);
+                   $('#edit_bonus_amount').val(data.bonus_amount);
+                   $('#edit_other_allowances').val(data.other_allowances);
+                   $('#edit_deduction').val(data.deduction);
+                   $('#edit_other_deduction').val(data.other_deduction);
+                   $('#edit_loan_recovery').val(data.loan_recovery);
+                   $('#edit_notice_pay').val(data.notice_pay);
+                   $('#edit_final_settlement_amount').val(data.final_settlement_amount);
+                   $('#edit_settlement_status').val(data.settlement_status);
+                   $('#edit_payment_mode').val(data.payment_mode);
+                   $('#edit_bank_name').val(data.bank_name);
+                   $('#edit_bank_account_no').val(data.bank_account_no);
+                   $('#edit_settlement_date').val(data.settlement_date);
+                   $('#edit_remarks').val(data.remarks);
+                   
+                   // Update form action URL
+                   $('#edit_gratuity_form').attr('action', '/update_gratuity/' + id + '/');
+               } else {
+                   alert('Error: ' + response.message);
+               }
            },
            error: function(xhr, status, error) {
                console.error('Error fetching gratuity details:', error);

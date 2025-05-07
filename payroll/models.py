@@ -850,11 +850,11 @@ class GratuitySettlement(models.Model):
     
     # EmployeeDetails
     employee_code = models.CharField(max_length=50)
-    employee_name = models.CharField(max_length=100)
-    category = models.CharField(max_length=50)
-    designation = models.CharField(max_length=50)
-    date_of_joining = models.DateField()
-    date_of_exit = models.DateField()
+    employee_name = models.CharField(max_length=100, blank=True, null=True)
+    category = models.CharField(max_length=50, blank=True, null=True)
+    designation = models.CharField(max_length=50, blank=True, null=True)
+    date_of_joining = models.DateField(blank=True, null=True)
+    date_of_exit = models.DateField(blank=True, null=True)
     total_years_of_service = models.CharField(max_length=5, blank=True, null=True)  # Auto-calculated
     accrued_date = models.DateField(blank=True, null=True)  # Auto-calculated
 

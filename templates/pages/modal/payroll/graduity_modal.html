@@ -16,7 +16,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <select class="form-control select2 employee_code" name="employee_code" required>
+                        <select class="form-control employee_code" name="employee_code" required>
                             <option value="">Select Employee Code</option>
                             {% for employee in employee_data %}
                                 <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
@@ -84,7 +84,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Loss of Pay Days</label>
-                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" type="number">
+                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Gratuity Status -->
@@ -102,63 +102,63 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Balance (Days)</label>
-                        <input class="form-control leave_balance" name="leave_balance" type="number">
+                        <input class="form-control leave_balance" name="leave_balance" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Leave Encashment Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Encashment Amount</label>
-                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" type="number">
+                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Bonus Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bonus Amount</label>
-                        <input class="form-control bonus_amount" name="bonus_amount" type="number">
+                        <input class="form-control bonus_amount" name="bonus_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Allowances -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Allowances</label>
-                        <input class="form-control other_allowances" name="other_allowances" type="number">
+                        <input class="form-control other_allowances" name="other_allowances" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Deduction Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Deduction Amount</label>
-                        <input class="form-control deduction" name="deduction" type="number">
+                        <input class="form-control deduction" name="deduction" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Deduction -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deduction" name="other_deduction" type="number">
+                        <input class="form-control other_deduction" name="other_deduction" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Loan Recovery</label>
-                        <input class="form-control loan_recovery" name="loan_recovery" type="number">
+                        <input class="form-control loan_recovery" name="loan_recovery" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Notice Pay -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Notice Pay</label>
-                        <input class="form-control notice_pay" name="notice_pay" type="number">
+                        <input class="form-control notice_pay" name="notice_pay" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Final Settlement Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Final Settlement Amount</label>
-                        <input class="form-control final_settlement_amount" name="final_settlement_amount" type="number">
+                        <input class="form-control final_settlement_amount" name="final_settlement_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Payment Mode -->
@@ -253,7 +253,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
-                        <select class="form-control select2 employee_code" name="employee_code" required>
+                        <select class="form-control employee_code" name="employee_code" id="edit_employee_code" required>
                             <option value="">Select Employee Code</option>
                             {% for employee in employee_data %}
                                 <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
@@ -265,70 +265,70 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Category</label>
-                        <input class="form-control category" name="category" type="text" readonly>
+                        <input class="form-control category" name="category" id="edit_category" type="text" readonly>
                     </div>
                 </div>
                 <!-- Designation -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
-                        <input class="form-control designation" name="designation" type="text" readonly>
+                        <input class="form-control designation" name="designation" id="edit_designation" type="text" readonly>
                     </div>
                 </div>
                 <!-- Date of Joining -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Joining <span class="text-danger">*</span></label>
-                        <input class="form-control date_of_joining" name="date_of_joining" type="date" readonly>
+                        <input class="form-control date_of_joining" name="date_of_joining" id="edit_date_of_joining" type="date" readonly>
                     </div>
                 </div>
                 <!-- Date of Exit -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Date of Exit <span class="text-danger">*</span></label>
-                        <input class="form-control date_of_exit" name="exit_date" type="date" required>
+                        <input class="form-control date_of_exit" name="exit_date" id="edit_date_of_exit" type="date" required>
                     </div>
                 </div>
                 <!-- Total Years of Service -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Total Years of Service</label>
-                        <input class="form-control total_years_of_service" name="total_years_of_service" type="text" readonly>
+                        <input class="form-control total_years_of_service" name="total_years_of_service" id="edit_total_years_of_service" type="text" readonly>
                     </div>
                 </div>
                 <!-- Acrude Days -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Acrude Days</label>
-                        <input class="form-control acrude_days" name="acrude_days" type="number" readonly>
+                        <input class="form-control acrude_days" name="acrude_days" id="edit_acrude_days" type="number" readonly>
                     </div>
                 </div>
                 <!-- Last Drawn Basic Salary -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Last Drawn Basic Salary <span class="text-danger">*</span></label>
-                        <input class="form-control last_drawn_basic_salary" name="last_drawn_basic_salary" type="number" step="0.01" required readonly>
+                        <input class="form-control last_drawn_basic_salary" name="last_drawn_basic_salary" id="edit_last_drawn_basic_salary" type="number" step="0.01" required readonly>
                     </div>
                 </div>
                 <!-- Eligible Gratuity -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Eligible Gratuity</label>
-                        <input class="form-control eligible_gratuity" name="eligible_gratuity" type="number" step="0.01" readonly>
+                        <input class="form-control eligible_gratuity" name="eligible_gratuity" id="edit_eligible_gratuity" type="number" step="0.01" readonly>
                     </div>
                 </div>
                 <!-- Loss of Pay Days -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Loss of Pay Days</label>
-                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" type="number">
+                        <input class="form-control loss_of_pay_days" name="loss_of_pay_days" id="edit_loss_of_pay_days" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Gratuity Status -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Gratuity Status</label>
-                        <select class="form-control" name="gratuity_status">
+                        <select class="form-control" name="gratuity_status" id="edit_gratuity_status">
                             <option value="Pending">Pending</option>
                             <option value="Approved">Approved</option>
                             <option value="Paid">Paid</option>
@@ -339,70 +339,70 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Balance (Days)</label>
-                        <input class="form-control leave_balance" name="leave_balance" type="number">
+                        <input class="form-control leave_balance" name="leave_balance" id="edit_leave_balance" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Leave Encashment Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Leave Encashment Amount</label>
-                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" type="number">
+                        <input class="form-control leave_encashment_amount" name="leave_encashment_amount" id="edit_leave_encashment_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Bonus Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bonus Amount</label>
-                        <input class="form-control bonus_amount" name="bonus_amount" type="number">
+                        <input class="form-control bonus_amount" name="bonus_amount" id="edit_bonus_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Allowances -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Allowances</label>
-                        <input class="form-control other_allowances" name="other_allowances" type="number">
+                        <input class="form-control other_allowances" name="other_allowances" id="edit_other_allowances" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Deduction Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Deduction Amount</label>
-                        <input class="form-control deduction" name="deduction" type="number">
+                        <input class="form-control deduction" name="deduction" id="edit_deduction" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Other Deduction -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Other Deduction</label>
-                        <input class="form-control other_deduction" name="other_deduction" type="number">
+                        <input class="form-control other_deduction" name="other_deduction" id="edit_other_deduction" type="number" step="0.01">
                     </div>
                 </div>  
                 <!-- Loan Recovery -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Loan Recovery</label>
-                        <input class="form-control loan_recovery" name="loan_recovery" type="number">
+                        <input class="form-control loan_recovery" name="loan_recovery" id="edit_loan_recovery" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Notice Pay -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Notice Pay</label>
-                        <input class="form-control notice_pay" name="notice_pay" type="number">
+                        <input class="form-control notice_pay" name="notice_pay" id="edit_notice_pay" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Final Settlement Amount -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Final Settlement Amount</label>
-                        <input class="form-control final_settlement_amount" name="final_settlement_amount" type="number">
+                        <input class="form-control final_settlement_amount" name="final_settlement_amount" id="edit_final_settlement_amount" type="number" step="0.01">
                     </div>
                 </div>
                 <!-- Payment Mode -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Payment Mode</label>
-                        <select class="form-control" name="payment_mode">
+                        <select class="form-control" name="payment_mode" id="edit_payment_mode">
                             <option value="Bank Transfer">Bank Transfer</option>
                             <option value="Cheque">Cheque</option>
                             <option value="Cash">Cash</option>
@@ -413,21 +413,21 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Name</label>
-                        <input class="form-control" name="bank_name" type="text">
+                        <input class="form-control" name="bank_name" id="edit_bank_name" type="text">
                     </div>
                 </div>
                 <!-- Bank Account No. -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Account No.</label>
-                        <input class="form-control" name="bank_account_no" type="text">
+                        <input class="form-control" name="bank_account_no" id="edit_bank_account_no" type="text">
                     </div>
                 </div>
                 <!-- Settlement Status -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Settlement Status</label>
-                        <select class="form-control" name="settlement_status">
+                        <select class="form-control" name="settlement_status" id="edit_settlement_status">
                             <option value="Pending">Pending</option>
                             <option value="Approved">Approved</option>
                             <option value="Paid">Paid</option>
@@ -438,28 +438,28 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Settlement Date</label>
-                        <input class="form-control" name="settlement_date" type="date">
+                        <input class="form-control" name="settlement_date" id="edit_settlement_date" type="date">
                     </div>
                 </div>
                 <!-- Supporting Docs -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Supporting Documents</label>
-                        <input class="form-control" name="supporting_docs" type="file" multiple>
+                        <input class="form-control" name="supporting_docs" id="edit_supporting_docs" type="file" multiple>
                     </div>
                 </div>
                 <!-- Attachments -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Attachments</label>
-                        <input class="form-control" name="attachments" type="file" multiple>
+                        <input class="form-control" name="attachments" id="edit_attachments" type="file" multiple>
                     </div>
                 </div>
                 <!-- Remarks -->
                 <div class="col-md-12">
                     <div class="mb-3">
                         <label class="col-form-label">Remarks</label>
-                        <textarea class="form-control" name="remarks" rows="2"></textarea>
+                        <textarea class="form-control" name="remarks" id="edit_remarks" rows="2"></textarea>
                     </div>
                 </div>
             </div>
@@ -588,10 +588,10 @@
             var basicSalary = parseFloat($('.last_drawn_basic_salary').val()) || 0;
             var perDayBasic = basicSalary / 30;
 
-            var lossOfPayDays = parseInt($('.loss_of_pay_days').val()) || 0;
+            var lossOfPayDays = parseFloat($('.loss_of_pay_days').val()) || 0;
             var lossOfPayAmount = perDayBasic * lossOfPayDays;
 
-            var leaveBalanceDays = parseInt($('.leave_balance').val()) || 0;
+            var leaveBalanceDays = parseFloat($('.leave_balance').val()) || 0;
             var leaveEncashmentAmount = perDayBasic * leaveBalanceDays;
             $('.leave_encashment_amount').val(leaveEncashmentAmount.toFixed(2));
 

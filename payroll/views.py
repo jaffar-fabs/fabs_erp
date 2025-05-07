@@ -89,7 +89,7 @@ def employee_master(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
-    paginator = Paginator(query.order_by('emp_code'), 25)
+    paginator = Paginator(query.order_by('emp_code'), 6)
 
     try:
         employees_page = paginator.get_page(page_number)
@@ -5466,30 +5466,48 @@ def delete_gratuity(request, gratuity_id):
     })
 
 @csrf_exempt
-def get_gratuity_details(request, gratuity_id):
+def get_gratuity_details(request):
     """View to get gratuity settlement details for editing"""
     try:
+        gratuity_id = request.GET.get('id')
         gratuity = get_object_or_404(GratuitySettlement, id=gratuity_id)
         data = {
-            'id': gratuity.id,
-            'employee_code': gratuity.employee_code,
-            'employee_name': gratuity.employee_name,
-            'category': gratuity.category,
-            'designation': gratuity.designation,
-            'date_of_joining': gratuity.date_of_joining.strftime('%Y-%m-%d'),
-            'date_of_exit': gratuity.date_of_exit.strftime('%Y-%m-%d'),
-            'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
-            'eligible_gratuity': str(gratuity.eligible_gratuity),
-            'gratuity_status': gratuity.gratuity_status,
-            'settlement_status': gratuity.settlement_status,
-            'payment_mode': gratuity.payment_mode,
-            'bank_name': gratuity.bank_name,
-            'bank_account_no': gratuity.bank_account_no,
-            'remarks': gratuity.remarks
+            'status': 'success',
+            'data': {
+                'id': gratuity.id,
+                'employee_code': gratuity.employee_code,
+                'employee_name': gratuity.employee_name,
+                'category': gratuity.category,
+                'designation': gratuity.designation,
+                'date_of_joining': gratuity.date_of_joining,
+                'date_of_exit': gratuity.date_of_exit,
+                'last_drawn_basic_salary': str(gratuity.last_drawn_basic_salary),
+                'eligible_gratuity': str(gratuity.eligible_gratuity),
+                'loss_of_pay_days': str(gratuity.loss_of_pay_days),
+                'gratuity_status': gratuity.gratuity_status,
+                'leave_balance_days': str(gratuity.leave_balance_days),
+                'leave_encashment_amount': str(gratuity.leave_encashment_amount),
+                'bonus_amount': str(gratuity.bonus_amount),
+                'other_allowances': str(gratuity.other_allowances),
+                'deduction': str(gratuity.deductions),
+                'other_deduction': str(gratuity.other_deductions),
+                'loan_recovery': str(gratuity.loan_recovery),
+                'notice_pay': str(gratuity.notice_pay),
+                'final_settlement_amount': str(gratuity.final_settlement_amount),
+                'settlement_status': gratuity.settlement_status,
+                'payment_mode': gratuity.payment_mode,
+                'bank_name': gratuity.bank_name,
+                'bank_account_no': gratuity.bank_account_no,
+                'settlement_date': gratuity.settlement_date,
+                'remarks': gratuity.remarks
+            }
         }
         return JsonResponse(data)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 def leave_master_list(request):
     set_comp_code(request)
