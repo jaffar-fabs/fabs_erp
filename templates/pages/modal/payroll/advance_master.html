@@ -54,8 +54,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Reference Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control datetimepicker" name="reference_date"
-                            placeholder="DD-MM-YYYY" required>
+                        <input type="date" class="form-control" name="reference_date" required>
                     </div>
                 </div>
 {% comment %} 
@@ -144,8 +143,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Repayment From <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control datetimepicker" name="repayment_from"
-                            placeholder="DD-MM-YYYY" required>
+                        <input type="date" class="form-control" name="repayment_from" required>
                     </div>
                 </div>
 
@@ -153,8 +151,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Next Repayment Date <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control datetimepicker" name="next_repayment_date"
-                            placeholder="DD-MM-YYYY" required>
+                        <input type="date" class="form-control" name="next_repayment_date" required>
                     </div>
                 </div>
 
@@ -257,7 +254,7 @@
                         <label class="form-label">Reference Date <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-check"></i></span>
-                            <input type="date" class="form-control datetimepicker" name="reference_date"
+                            <input type="date" class="form-control datetimepicker" id="reference_date" name="reference_date"
                                 placeholder="DD/MM/YYYY" required>
                         </div>
                     </div>
@@ -351,7 +348,7 @@
                         <label class="form-label">Repayment From <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-check"></i></span>
-                            <input type="date" class="form-control datetimepicker" name="repayment_from"
+                            <input type="date" class="form-control datetimepicker" id="repayment_from" name="repayment_from"
                                 placeholder="DD/MM/YYYY" required>
                         </div>
                     </div>
@@ -363,7 +360,7 @@
                         <label class="form-label">Next Repayment Date <span class="text-danger">*</span></label>
                         <div class="icon-form">
                             <span class="form-icon"><i class="ti ti-calendar-check"></i></span>
-                            <input type="date" class="form-control datetimepicker" name="next_repayment_date"
+                            <input type="date" class="form-control datetimepicker" id="next_repayment_date" name="next_repayment_date"
                                 placeholder="DD/MM/YYYY" required>
                         </div>
                     </div>
@@ -663,30 +660,39 @@
     
         // Function to populate fields with server data
         function populateEditModal(advanceId) {
-            fetch(`/get-advance-details/${advanceId}/`) // Replace with your endpoint
+            fetch(`/get-advance-details/${advanceId}/`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
                         console.error('Error fetching advance details:', data.error);
                     } else {
+                        // Format dates before setting values
+                        const formatDate = (dateString) => {
+                            if (!dateString) return '';
+                            const date = new Date(dateString);
+                            return date.toISOString().split('T')[0];
+                        };
+
+                        // Populate all form fields
                         for (const [key, value] of Object.entries(data)) {
                             const field = editModal.querySelector(`[name="${key}"]`);
                             if (field) {
-                                if (field.tagName === 'SELECT') {
-                                    // Match the value to one of the options
-                                    const option = Array.from(field.options).find(opt => opt.value === value);
-                                    if (option) {
-                                        field.value = value; // Set the selected value
-                                        $(field).trigger('change'); // Required for select2 fields
-                                    }
+                                if (field.type === 'date') {
+                                    field.value = formatDate(value);
                                 } else if (field.type === 'checkbox') {
                                     field.checked = value;
+                                } else if (field.tagName === 'SELECT') {
+                                    const option = Array.from(field.options).find(opt => opt.value === value);
+                                    if (option) {
+                                        field.value = value;
+                                        $(field).trigger('change');
+                                    }
                                 } else {
-                                    field.value = value;
+                                    field.value = value || '';
                                 }
                             }
                         }
-                        updateFields(); // Recalculate fields when data loads
+                        updateFields();
                     }
                 })
                 .catch(error => console.error('Error fetching advance details:', error));
@@ -703,7 +709,7 @@
                 const balanceInstallments = totalInstallments - Math.floor(paidAmount / installmentAmount);
     
                 totalInstallmentsInput.value = totalInstallments || 0;
-                balanceInstallmentsInput.value = Math.max(balanceInstallments, 0); // Avoid negative balance
+                balanceInstallmentsInput.value = Math.max(balanceInstallments, 0);
             } else {
                 totalInstallmentsInput.value = 0;
                 balanceInstallmentsInput.value = 0;
@@ -717,7 +723,7 @@
         // Trigger modal population on edit button click
         document.querySelectorAll('.edit-button').forEach(button => {
             button.addEventListener('click', function () {
-                const advanceId = this.getAttribute('data-id'); // Replace with the appropriate attribute
+                const advanceId = this.getAttribute('data-id');
                 editModal.querySelector('#edit-advance-id').value = advanceId;
                 populateEditModal(advanceId);
             });
@@ -725,20 +731,19 @@
     
         // Clear modal fields on close
         $(editModal).on('hidden.bs.offcanvas', function () {
-            editForm.reset(); // Reset form fields
-            $(editModal).find('.select2').val(null).trigger('change'); // Clear select2 dropdowns
-            $(editModal).find('.is-invalid').removeClass('is-invalid'); // Clear validation states
+            editForm.reset();
+            $(editModal).find('.select2').val(null).trigger('change');
+            $(editModal).find('.is-invalid').removeClass('is-invalid');
         });
     
         // Initialize datepickers and select2
         $(document).on('shown.bs.offcanvas', '#offcanvas_edit', function () {
             $('.select2', this).select2({ dropdownParent: $(this), width: '100%' });
-            $('.datetimepicker', this).datepicker({ format: 'dd/mm/yyyy', autoclose: true });
         });
     
         // Form submission handler
         editForm.addEventListener('submit', function (e) {
-            e.preventDefault(); // Prevent form submission
+            e.preventDefault();
             const formData = new FormData(editForm);
             const advanceId = formData.get('advance_id');
     
@@ -750,24 +755,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        location.reload(); // Reload the page after successful update
+                        location.reload();
                     } else {
                         console.error('Error updating record:', data.message);
                     }
                 })
                 .catch(error => console.error('Error updating record:', error));
         });
-    
-        // Add Input Validation
-        function validateInput() {
-            const totalAmount = parseFloat(totalAmountInput.value) || 0;
-            const installmentAmount = parseFloat(installmentAmountInput.value) || 0;
-            if (installmentAmount > totalAmount) {
-                alert('Installment Amount cannot exceed Total Amount!');
-                installmentAmountInput.value = '';
-            }
-        }
-        installmentAmountInput.addEventListener('input', validateInput);
     });
 </script>
 <script>
@@ -781,5 +775,13 @@
         }
     }
     )
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Remove any date restrictions
+        $('input[type="date"]').removeAttr('max');
+        $('input[type="date"]').removeAttr('min');
+    });
 </script>
 
