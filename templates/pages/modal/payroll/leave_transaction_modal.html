@@ -39,6 +39,14 @@
                     <input class="form-control" name="designation" id="add_designation" type="text" readonly>
                 </div>
                 <div class="col-md-6 mb-3">
+                    <label class="col-form-label">Date of Join</label>
+                    <input class="form-control" name="date_of_join" id="add_date_of_join" type="text" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="col-form-label">Date of Rejoin</label>
+                    <input class="form-control" name="date_of_rejoin" id="add_date_of_rejoin" type="text" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Date of Application <span class="text-danger">*</span></label>
                     <input class="form-control" name="date_of_application" id="add_date_of_application" type="date" required>
                 </div>
@@ -143,6 +151,14 @@
                     <input class="form-control" name="designation" id="edit_designation" type="text" readonly>
                 </div>
                 <div class="col-md-6 mb-3">
+                    <label class="col-form-label">Date of Join</label>
+                    <input class="form-control" name="date_of_join" id="edit_date_of_join" type="text" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="col-form-label">Date of Rejoin</label>
+                    <input class="form-control" name="date_of_rejoin" id="edit_date_of_rejoin" type="text" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Date of Application <span class="text-danger">*</span></label>
                     <input class="form-control" name="date_of_application" id="edit_date_of_application" type="date" required>
                 </div>
@@ -239,16 +255,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Function to calculate eligible leave days
-    function calculateEligibleDays(joinDate, rejoinDate) {
-        var startDate = rejoinDate || joinDate;
-        var today = new Date();
-        var diffTime = Math.abs(today - new Date(startDate));
-        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        var months = Math.floor(diffDays / 30);
-        return Math.floor(months * 2.5); // 2.5 days per month (30 days per year)
-    }
-
     // Function to validate dates and total days
     function validateDates(startDate, endDate, eligibleDays, totalDaysInput) {
         var start = new Date(startDate);
@@ -286,28 +292,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to handle employee selection
-    function handleEmployeeSelection(employeeSelect, nameInput, departmentInput, designationInput, eligibleDaysInput) {
+    function handleEmployeeSelection(employeeSelect, nameInput, departmentInput, designationInput, eligibleDaysInput, dateOfJoinInput, dateOfRejoinInput) {
         var selectedOption = $(employeeSelect).find('option:selected');
         var joinDate = selectedOption.data('join-date');
         var rejoinDate = selectedOption.data('rejoin-date');
-        
-        // Debug log to check data
-        console.log('Selected Option:', selectedOption);
-        console.log('Data:', {
-            name: selectedOption.data('name'),
-            department: selectedOption.data('department'),
-            designation: selectedOption.data('designation'),
-            joinDate: joinDate,
-            rejoinDate: rejoinDate
-        });
         
         // Set the values
         $(nameInput).val(selectedOption.data('name') || '');
         $(departmentInput).val(selectedOption.data('department') || '');
         $(designationInput).val(selectedOption.data('designation') || '');
         
-        var eligibleDays = calculateEligibleDays(joinDate, rejoinDate);
-        $(eligibleDaysInput).val(eligibleDays);
+        // Format and set dates
+        if (joinDate) {
+            var joinDateObj = new Date(joinDate);
+            $(dateOfJoinInput).val(joinDateObj.toLocaleDateString());
+        } else {
+            $(dateOfJoinInput).val('');
+        }
+        
+        if (rejoinDate) {
+            var rejoinDateObj = new Date(rejoinDate);
+            $(dateOfRejoinInput).val(rejoinDateObj.toLocaleDateString());
+        } else {
+            $(dateOfRejoinInput).val('');
+        }
     }
 
     // Handle employee selection for add form
@@ -317,7 +325,9 @@ document.addEventListener('DOMContentLoaded', function() {
             '#add_employee_name',
             '#add_department',
             '#add_designation',
-            '#add_eligible_leave_days'
+            '#add_eligible_leave_days',
+            '#add_date_of_join',
+            '#add_date_of_rejoin'
         );
     });
 
@@ -328,7 +338,9 @@ document.addEventListener('DOMContentLoaded', function() {
             '#edit_employee_name',
             '#edit_department',
             '#edit_designation',
-            '#edit_eligible_leave_days'
+            '#edit_eligible_leave_days',
+            '#edit_date_of_join',
+            '#edit_date_of_rejoin'
         );
     });
 
@@ -547,6 +559,152 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#offcanvas_leave_edit').on('hidden.bs.offcanvas', function() {
         $('#leave_edit_form')[0].reset();
         $('#edit_document_preview').hide();
+    });
+
+    // Handle leave type selection for both add and edit forms
+    $('#add_leave_type, #edit_leave_type').change(function() {
+        var formId = $(this).closest('form').attr('id');
+        var leaveType = $(this).val();
+        var eligibleDaysInput = formId === 'leave_add_form' ? $('#add_eligible_leave_days') : $('#edit_eligible_leave_days');
+        var employeeSelect = formId === 'leave_add_form' ? $('#add_employee_code') : $('#edit_employee_code');
+        var employeeCode = $(employeeSelect).val();
+        
+        if (leaveType && employeeCode) {
+            // First check if employee has already taken this type of leave in current year
+            $.ajax({
+                url: '{% url "check_leave_exists" %}',
+                type: 'GET',
+                data: {
+                    employee_code: employeeCode,
+                    leave_type: leaveType,
+                    year: new Date().getFullYear()
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        var takenDays = response.taken_days || 0;
+                        
+                        // Now get leave master details
+                        $.ajax({
+                            url: '{% url "get_leave_master_details" %}',
+                            type: 'GET',
+                            data: { leave_type: leaveType },
+                            success: function(masterResponse) {
+                                if (masterResponse.status === 'success') {
+                                    var data = masterResponse.data;
+                                    var selectedOption = $(employeeSelect).find('option:selected');
+                                    var joinDate = selectedOption.data('join-date');
+                                    var rejoinDate = selectedOption.data('rejoin-date');
+                                    
+                                    if (joinDate) {
+                                        var today = new Date();
+                                        var joinDateObj = new Date(joinDate);
+                                        var monthsSinceJoin = (today.getFullYear() - joinDateObj.getFullYear()) * 12 + 
+                                                           (today.getMonth() - joinDateObj.getMonth());
+                                        
+                                        var eligibleDays = 0;
+                                        
+                                        // Annual Leave calculation
+                                        if (data.description === 'Annual Leave' && data.eligible_day_type === 'Calendar') {
+                                            var startDate = rejoinDate || joinDate;
+                                            var serviceStart = new Date(startDate);
+                                            var months = (today.getFullYear() - serviceStart.getFullYear()) * 12 + 
+                                                       (today.getMonth() - serviceStart.getMonth());
+                                            
+                                            if (months >= 6) {
+                                                eligibleDays = months * 2;
+                                            }
+                                        }
+                                        // Sick Leave-Paid calculation
+                                        else if (data.description === 'Sick Leave-Paid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Paid') {
+                                            if (monthsSinceJoin >= 6) {
+                                                eligibleDays = 15;
+                                            }
+                                        }
+                                        // Sick Leave-halfpaid calculation
+                                        else if (data.description === 'Sick Leave-halfpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
+                                            if (monthsSinceJoin >= 6) {
+                                                eligibleDays = 30;
+                                            }
+                                        }
+                                        // Sick Leave-Unpaid calculation
+                                        else if (data.description === 'Sick Leave-Unpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            if (monthsSinceJoin >= 6) {
+                                                eligibleDays = 45;
+                                            }
+                                        }
+                                        // Maternity Leave calculation Full Paid
+                                        else if (data.description === 'Maternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Paid') {
+                                            if (monthsSinceJoin >= 12) {
+                                                eligibleDays = 45;
+                                            }
+                                        }
+                                        // Maternity Leave calculation Half Paid
+                                        else if (data.description === 'Maternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
+                                            if (monthsSinceJoin >= 12) {
+                                                eligibleDays = 15;
+                                            }
+                                        }
+                                        // Paternity Leave calculation
+                                        else if (data.description === 'Paternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            eligibleDays = 5;
+                                        }
+                                        // Bereavement Leave calculation
+                                        else if (data.description === 'Bereavement Leave Spouse' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            eligibleDays = 5;
+                                        }
+                                        // Bereavement Leave calculation
+                                        else if (data.description === 'Bereavement Leave Others' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            eligibleDays = 5;
+                                        }
+                                        // Hajj Leave calculation
+                                        else if (data.description === 'Hajj Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            eligibleDays = 30;
+                                        }
+                                        // Skill Improvement Leave calculation
+                                        else if (data.description === 'Skill Improvement Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                            if (monthsSinceJoin >= 24) {
+                                                eligibleDays = 10;
+                                            }
+                                        }
+                                        // Default case for other leave types
+                                        else {
+                                            eligibleDays = data.eligible_days;
+                                        }
+                                        
+                                        // Calculate remaining days
+                                        var remainingDays = eligibleDays - takenDays;
+                                        
+                                        if (remainingDays > 0) {
+                                            eligibleDaysInput.val(remainingDays);
+                                            if (takenDays > 0) {
+                                                alert(`You have already taken ${takenDays} days of ${data.description} this year. Remaining days: ${remainingDays}`);
+                                            }
+                                        } else {
+                                            eligibleDaysInput.val(0);
+                                            alert(`You have already used all ${eligibleDays} days of ${data.description} for this year.`);
+                                        }
+                                    } else {
+                                        eligibleDaysInput.val(0);
+                                    }
+                                } else {
+                                    alert('Error fetching leave details');
+                                }
+                            },
+                            error: function() {
+                                alert('Error fetching leave details');
+                            }
+                        });
+                    } else {
+                        alert('Error checking leave history');
+                    }
+                },
+                error: function() {
+                    alert('Error checking leave history');
+                }
+            });
+        } else {
+            eligibleDaysInput.val('');
+        }
     });
 });
 </script>

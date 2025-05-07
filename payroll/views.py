@@ -4938,6 +4938,30 @@ def leave_transaction_delete(request):
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+@csrf_exempt
+def get_leave_master_details(request):
+    if request.method == 'GET':
+        leave_type = request.GET.get('leave_type')
+        try:
+            leave_master = LeaveMaster.objects.filter(leave_code=leave_type).first()
+            if leave_master:
+                data = {
+                    'leave_code': leave_master.leave_code,
+                    'description': leave_master.description,
+                    'eligible_days': leave_master.eligible_days,
+                    'eligible_day_type': leave_master.eligible_day_type,
+                    'payment_type': leave_master.payment_type,
+                    'frequency': leave_master.frequency,
+                    'gender': leave_master.gender,
+                    'carry_forward': leave_master.carry_forward,
+                    'encashment': leave_master.encashment,
+                }
+                return JsonResponse({'status': 'success', 'data': data})
+            return JsonResponse({'status': 'error', 'message': 'Leave type not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 def generate_transaction_id(prefix):
     # Get the current date in YYMM format
     current_date = timezone.now().strftime('%y%m')
@@ -6366,3 +6390,49 @@ def get_employee_details_by_code(request):
         return JsonResponse({'success': True, 'data': data})
     except Employee.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Not found'})
+
+@csrf_exempt
+def check_leave_exists(request):
+    if request.method == 'GET':
+        try:
+            employee_code = request.GET.get('employee_code')
+            leave_type = request.GET.get('leave_type')
+            year = request.GET.get('year')
+            
+            # Get all approved leaves for this employee and leave type in the current year
+            from .models import LeaveTransaction
+            from django.db.models import Sum
+            
+            # Get the start and end dates for the year
+            start_date = f"{year}-01-01"
+            end_date = f"{year}-12-31"
+            
+            # Query for approved leaves
+            taken_leaves = LeaveTransaction.objects.filter(
+                employee=employee_code,
+                leave_type=leave_type,
+                start_date__gte=start_date,
+                end_date__lte=end_date,
+                hr_status='Approved'  # Only count approved leaves
+            ).aggregate(total_days=Sum('total_leave_days'))
+            
+            # Get the total days taken (default to 0 if none found)
+            taken_days = taken_leaves['total_days'] or 0
+            
+            return JsonResponse({
+                'status': 'success',
+                'taken_days': taken_days
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    })
+
+

@@ -196,6 +196,8 @@ urlpatterns = [
     path('get_leave_details/', views.get_leave_details, name='get_leave_details'),
     path('update_leave_details/', views.update_leave_details, name='update_leave_details'),
     path('delete_leave_type/', views.delete_leave_type, name='delete_leave_type'),
+    path('get_leave_master_details/', views.get_leave_master_details, name='get_leave_master_details'),
+    path('check_leave_exists/', views.check_leave_exists, name='check_leave_exists'),
 
     #Rejoin Approval
     path('rejoin_approval/', views.rejoin_approval_list, name='rejoin_approval_list'),
