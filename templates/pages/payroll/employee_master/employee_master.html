@@ -359,9 +359,11 @@
                         <label class="col-form-label">Category</label>
                         <select name="staff_category" class="form-select" id="categorySelect">
                             <option value="">Select</option>
-                            <option value="staff" {% if employee.staff_category == 'staff' %}selected{% endif %}>Staff</option>
-                            <option value="field-staff" {% if employee.staff_category == 'field-staff' %}selected{% endif %}>Field Staff</option>
-                            <option value="management" {% if employee.staff_category == 'management' %}selected{% endif %}>Management</option>
+                            {% for category in staff_category_data %}
+                            <option value="{{ category.base_value }}" {% if employee.staff_category == category.base_value %}selected{% endif %}>
+                                {{ category.base_description }}
+                            </option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -2974,9 +2976,9 @@ function removeRecruitmentEntry(button) {
                                         <label class="col-form-label">Category</label>
                                         <select name="staff_category" class="form-select" id="categorySelect">
                                             <option value="">Select</option>
-                                            <option value="staff">Staff</option>
-                                            <option value="field-staff">Field Staff</option>
-                                            <option value="management">Management</option>
+                                            {% for statuses in staff_category_data %}
+                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>

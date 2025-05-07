@@ -109,7 +109,8 @@ TEMPLATES = [
                 'payroll.context_processors.get_item_sub_categories',
                 'payroll.context_processors.get_warehouse_types',
                 'payroll.context_processors.get_party_type',
-                'payroll.context_processors.get_leave_types'
+                'payroll.context_processors.get_leave_types',
+                'payroll.context_processors.get_staff_category'
             ],
         },
     },

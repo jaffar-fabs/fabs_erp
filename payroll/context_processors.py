@@ -172,7 +172,7 @@ def project(request):
 
 def employee(request):
     comp_code = get_comp_code(request)
-    employee_data = Employee.objects.filter(comp_code=comp_code, process_cycle__in = PAY_CYCLES)
+    employee_data = Employee.objects.filter(comp_code=comp_code, staff_category__in = PAY_CYCLES)
     return {
         'employee_data': employee_data
         }
@@ -369,4 +369,11 @@ def get_agent(request):
     agent_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'AGENT')
     return {
         'agent_data': agent_data
+        }
+
+def get_staff_category(request):
+    comp_code = get_comp_code(request)
+    staff_category_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'STAFF_CATEGORY')
+    return {
+        'staff_category_data': staff_category_data
         }

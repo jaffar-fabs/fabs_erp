@@ -202,7 +202,7 @@
                    $('#edit_eligible_gratuity').val(data.eligible_gratuity);
                    $('#edit_loss_of_pay_days').val(data.loss_of_pay_days);
                    $('#edit_gratuity_status').val(data.gratuity_status);
-                   $('#edit_leave_balance').val(data.leave_balance);
+                   $('#edit_leave_balance').val(data.leave_balance_days);
                    $('#edit_leave_encashment_amount').val(data.leave_encashment_amount);
                    $('#edit_bonus_amount').val(data.bonus_amount);
                    $('#edit_other_allowances').val(data.other_allowances);
@@ -218,8 +218,6 @@
                    $('#edit_settlement_date').val(data.settlement_date);
                    $('#edit_remarks').val(data.remarks);
                    
-                   // Update form action URL
-                   $('#edit_gratuity_form').attr('action', '/update_gratuity/' + id + '/');
                } else {
                    alert('Error: ' + response.message);
                }

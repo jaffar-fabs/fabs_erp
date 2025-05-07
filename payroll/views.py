@@ -71,7 +71,8 @@ def employee_master(request):
         current_url = f"{get_url}?"
 
     # Initialize the query
-    query = Employee.objects.filter(comp_code=COMP_CODE, process_cycle__in=PAY_CYCLES)
+    query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES)
+    print(query)
     user = request.session.get("username")
     user_master = UserMaster.objects.filter(comp_code=COMP_CODE, is_active=True, user_id = user).values_list('view_emp_salary', flat=True)
 
@@ -5405,10 +5406,7 @@ def add_gratuity(request):
             )
             
             messages.success(request, 'Gratuity settlement added successfully!')
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Gratuity settlement added successfully!'
-            })
+            return redirect('gratuity_list')
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
@@ -5422,9 +5420,11 @@ def add_gratuity(request):
 @csrf_exempt
 def update_gratuity(request):
     """View to update existing gratuity settlement"""
+    set_comp_code(request)
+    id = request.POST.get('id')
     if request.method == 'POST':
         try:
-            gratuity = get_object_or_404(GratuitySettlement, id=request.POST.get('id'))
+            gratuity = get_object_or_404(GratuitySettlement, id=id)
             
             # Update all fields
             gratuity.employee_code = request.POST.get('employee_code')
@@ -5459,7 +5459,7 @@ def update_gratuity(request):
             
             gratuity.save()
             
-            messages.success(request, 'Gratuity settlement updated successfully!')
+            return redirect('gratuity_list')
             return JsonResponse({
                 'status': 'success',
                 'message': 'Gratuity settlement updated successfully!'
