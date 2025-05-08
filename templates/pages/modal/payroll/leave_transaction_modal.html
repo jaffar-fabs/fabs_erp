@@ -639,13 +639,13 @@ document.addEventListener('DOMContentLoaded', function() {
                                             }
                                         }
                                         // Maternity Leave calculation Half Paid
-                                        else if (data.description === 'Maternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
+                                        else if (data.description === 'Maternity Leave-halfpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
                                             if (monthsSinceJoin >= 12) {
                                                 eligibleDays = 15;
                                             }
                                         }
                                         // Paternity Leave calculation
-                                        else if (data.description === 'Paternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
+                                        else if (data.description === 'Paternity Leave-Unpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
                                             eligibleDays = 5;
                                         }
                                         // Bereavement Leave calculation
