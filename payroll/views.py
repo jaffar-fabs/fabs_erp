@@ -5619,7 +5619,6 @@ def leave_master_create(request):
                     cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'LT'])
                     result = cursor.fetchone()
                     leave_code = result[0] if result else None
-                    print(leave_code)
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=500)
             leave_code = leave_code
@@ -5661,7 +5660,6 @@ def leave_master_create(request):
                 is_active=is_active,
                 created_by=1
             )
-            print(leave)
             leave.save()
             
             messages.success(request, 'Leave type created successfully!')
