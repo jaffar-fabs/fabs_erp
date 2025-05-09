@@ -113,17 +113,15 @@
                             </table>
                         </div>
                         <!-- Pagination -->
-                        {% if leave_types.has_other_pages %}
+                        {% if leaves.has_other_pages %}
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div class="showing-entries">
-                                <span>Showing {{ leave_types.start_index }} to {{ leave_types.end_index }} of {{ result_cnt }}
-                                    entries</span>
+                                <span>Showing {{ leaves.start_index }} to {{ leaves.end_index }} of {{ result_cnt }} entries</span>
                             </div>
                             <ul class="pagination">
-                                {% if leave_types.has_previous %}
+                                {% if leaves.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ leave_types.previous_page_number }}">Previous</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ leaves.previous_page_number }}">Previous</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
@@ -131,24 +129,21 @@
                                 </li>
                                 {% endif %}
 
-                                {% for page in leave_types.paginator.page_range %}
-                                {% if leave_types.number == page %}
+                                {% for page in leaves.paginator.page_range %}
+                                {% if leaves.number == page %}
                                 <li class="page-item active">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
                                 </li>
                                 {% endif %}
                                 {% endfor %}
 
-                                {% if leave_types.has_next %}
+                                {% if leaves.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link"
-                                        href="{{ current_url }}?keyword={{ keyword }}&page={{ leave_types.next_page_number }}">Next</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ leaves.next_page_number }}">Next</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">

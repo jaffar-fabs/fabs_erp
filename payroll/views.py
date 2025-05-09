@@ -5580,7 +5580,7 @@ def leave_master_list(request):
         
         # Pagination
         page = request.GET.get('page', 1)
-        paginator = Paginator(leaves, 10)  # Show 10 items per page
+        paginator = Paginator(leaves, PAGINATION_SIZE)  # Show 10 items per page
         
         try:
             leaves = paginator.page(page)
