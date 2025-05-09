@@ -12,83 +12,47 @@
             <input type="hidden" name="recr_id" id="edit_recr_id">
             <div class="row">
                 <!-- AO Fields (readonly) -->
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">AO Ref No</label>
-                    <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control" readonly>
+                <div class="col-md-3 mb-3">
+                    <label class="col-form-label fw-bold">AO Ref No</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_ao_ref_no"></div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="col-form-label fw-bold">Name as per PP</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_name_as_per_pp"></div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="col-form-label fw-bold">Department</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_dep"></div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="col-form-label fw-bold">Project</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_project"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Name as per PP</label>
-                    <input type="text" name="name_as_per_pp" id="edit_name_as_per_pp" class="form-control" readonly>
+                    <label class="col-form-label fw-bold">Designation</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_designation"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Department</label>
-                    <select name="dep" id="edit_dep" class="form-control" readonly>
-                        <option value="">Select Department</option>
-                        {% for department in dept_data %}
-                        <option value="{{ department.base_value }}">{{ department.base_value }} - {{ department.base_description }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="col-form-label fw-bold">Nationality</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_nationality"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Project</label>
-                    <select name="project" id="edit_project" class="form-control" readonly>
-                        <option value="">Select Project</option>
-                        {% for project in project_data %}
-                        <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="col-form-label fw-bold">Employee Status</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_employee_status"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Designation</label>
-                    <select name="designation" id="edit_designation" class="form-control" readonly>
-                        <option value="">Select Designation</option>
-                        {% for designation in designation_data %}
-                        <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="col-form-label fw-bold">Agenct Name</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_agency_name"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Nationality</label>
-                    <select name="nationality" id="edit_nationality" class="form-control" readonly>
-                        <option value="">Select Nationality</option>
-                        {% for nationality in nation_data %}
-                        <option value="{{ nationality.base_value }}">{{ nationality.base_value }} - {{ nationality.base_description }}</option>
-                        {% endfor %}
-                    </select>
+                    <label class="col-form-label fw-bold">Gender</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_gender"></div>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Employee Status</label>
-                    <select name="employee_status" id="edit_employee_status" class="form-control" readonly>
-                        <option value="">Select Employee Status</option>
-                        <option value="Inside">Inside</option>
-                        <option value="Outside">Outside</option>
-                    </select>
+                    <label class="col-form-label fw-bold">Doc Status</label>
+                    <div class="form-control-plaintext border rounded p-2 bg-light" id="edit_doc_status"></div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Agenct Name</label>
-                    <select name="agency_name" id="edit_agency_name" class="form-control" readonly>
-                        <option value="">Select Agent Name</option>
-                        {% for agent in agent_data %}
-                        <option value="{{ agent.base_value }}">{{ agent.base_value }} - {{ agent.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Gender</label>
-                    <select name="gender" id="edit_gender" class="form-control" readonly>
-                        <option value="">Select Gender</option>
-                        {% for gender in gender_data %}
-                        <option value="{{ gender.base_value }}">{{ gender.base_value }} - {{ gender.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Doc Status</label>
-                    <select name="doc_status" id="edit_doc_status" class="form-control" readonly>
-                        <option value="">Select Doc Status</option>
-                    </select>
-                </div>
-                
+                <br>
                 <!-- Add more AO fields as needed, all readonly -->
                 <!-- Recruitment Editable Fields -->
                 <div class="col-md-4 mb-3">

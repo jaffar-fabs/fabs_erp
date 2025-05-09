@@ -62,6 +62,10 @@
                                                         data-id="{{ entry.recr_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
+                                                    <a class="dropdown-item delete-recruitment-entry" href="#"
+                                                        data-id="{{ entry.recr_id }}">
+                                                        <i class="ti ti-trash text-red"></i> Delete
+                                                    </a>
                                                 </div>
                                             </div>
                                         </td>
@@ -135,16 +139,16 @@
                 success: function(response){
                     // Populate AO fields (readonly)
                     $('#edit_recr_id').val(response.recr_id || ''); 
-                    $('#edit_ao_ref_no').val(response.ao_ref_no || '');
-                    $('#edit_name_as_per_pp').val(response.name_as_per_pp || '');
-                    $('#edit_dep').val(response.dep || '');
-                    $('#edit_project').val(response.project || '');
-                    $('#edit_designation').val(response.designation || '');
-                    $('#edit_nationality').val(response.nationality || '');
-                    $('#edit_employee_status').val(response.employee_status || '');
-                    $('#edit_gender').val(response.gender || '');
-                    $('#edit_agency_name').val(response.agenct_name || '');
-                    $('#edit_doc_status').val(response.doc_status || '');
+                    $('#edit_ao_ref_no').text(response.ao_ref_no || '');
+                    $('#edit_name_as_per_pp').text(response.name_as_per_pp || '');
+                    $('#edit_dep').text(response.dep || '');
+                    $('#edit_project').text(response.project || '');
+                    $('#edit_designation').text(response.designation || '');
+                    $('#edit_nationality').text(response.nationality || '');
+                    $('#edit_employee_status').text(response.employee_status || '');
+                    $('#edit_gender').text(response.gender || '');
+                    $('#edit_agency_name').text(response.agenct_name || '');
+                    $('#edit_doc_status').text(response.doc_status || '');
                     // Editable fields
                     $('#edit_interview_date').val(response.interview_date || '');
                     $('#edit_agency_name').val(response.agency_name || '');

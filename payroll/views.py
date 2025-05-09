@@ -5634,7 +5634,6 @@ def leave_master_create(request):
             carry_forward_period = request.POST.get('carry_forward_period')
             encashment = request.POST.get('encashment')
             is_active = request.POST.get('is_active') == 'Active'
-            print(leave_code, description, work_month, eligible_days, eligible_day_type, payment_type, frequency, gender, grade, carry_forward, carry_forward_period, encashment, is_active)
             
             # Validate required fields
             # if not all([leave_code, description, work_month, eligible_days, eligible_day_type, 
@@ -5959,8 +5958,9 @@ def get_emp_code(request):
     
 
 def ao_entry_list(request):
+    set_comp_code(request)
     keyword = request.GET.get('keyword', '')
-    entries = Recruitment.objects.all().order_by('-ao_issued_date')
+    entries = Recruitment.objects.filter(comp_code=COMP_CODE).order_by('-ao_issued_date')
     
     if keyword:
         entries = entries.filter(
@@ -5987,73 +5987,92 @@ def ao_entry_list(request):
     }
     return render(request, 'pages/payroll/recruitment/ao_entry_list.html', context)
 
+@csrf_exempt
 def ao_entry_create(request):
+    set_comp_code(request)
     if request.method == 'POST':
-        try:
-            # Validate passport expiry date
-            pp_exp_date = request.POST.get('pp_exp_date')
-            if pp_exp_date:
-                expiry_date = datetime.strptime(pp_exp_date, '%Y-%m-%d').date()
-                six_months_later = datetime.now().date() + timedelta(days=180)
-                if expiry_date < six_months_later:
-                    messages.error(request, 'Passport expiry date must be at least 6 months from today!')
-                    return redirect('ao_entry_list')
-
-            # Validate date of birth
-            dob = request.POST.get('dob')
-            if dob:
-                birth_date = datetime.strptime(dob, '%Y-%m-%d').date()
-                today = datetime.now().date()
-                age = (today - birth_date).days / 365.25
-                if age < 16:
-                    messages.error(request, 'Age must be at least 16 years!')
-                    return redirect('ao_entry_list')
-
-            # Create new recruitment entry
-            recruitment = Recruitment.objects.create(
-                comp_code=request.session.get('comp_code', '1000'),
-                ao_issued_date=request.POST.get('ao_issued_date'),
-                dep=request.POST.get('dep'),
-                project=request.POST.get('project'),
-                ao_ref_no=request.POST.get('ao_ref_no'),
-                name_as_per_pp=request.POST.get('name_as_per_pp'),
-                pp_number=request.POST.get('pp_number'),
-                pp_exp_date=pp_exp_date,
-                pp_validity_days=request.POST.get('pp_validity_days'),
-                dob=dob,
-                age=request.POST.get('age'),
-                nationality=request.POST.get('nationality'),
-                agent=request.POST.get('agent'),
-                designation=request.POST.get('designation'),
-                gender=request.POST.get('gender'),
-                employee_status=request.POST.get('employee_status'),
-                grade=request.POST.get('grade'),
-                basic=request.POST.get('basic'),
-                hra=request.POST.get('hra'),
-                transportation_allowance=request.POST.get('transportation_allowance'),
-                accommodation=request.POST.get('accommodation'),
-                telephone=request.POST.get('telephone'),
-                additional_duty_allowance=request.POST.get('additional_duty_allowance'),
-                other_allowance=request.POST.get('other_allowance'),
-                total=request.POST.get('total'),
-                in_words=request.POST.get('in_words'),
-                ao_acceptance=request.POST.get('ao_acceptance'),
-                acceptance_date=request.POST.get('acceptance_date'),
-                document_status=request.POST.get('document_status'),
-                created_by=request.user.id
-            )
-            messages.success(request, 'AO Entry created successfully!')
-            return redirect('ao_entry_list')
-        except Exception as e:
-            messages.error(request, f'Error creating AO Entry: {str(e)}')
-            return redirect('ao_entry_list')
+            ao_issued_date = request.POST.get('ao_issued_date') or None
+            dep = request.POST.get('dep')
+            project = request.POST.get('project')
+            ao_ref_no = request.POST.get('ao_ref_no')
+            name_as_per_pp = request.POST.get('name_as_per_pp')
+            pp_number = request.POST.get('pp_number')
+            pp_exp_date = request.POST.get('pp_exp_date') or None
+            pp_validity_days = request.POST.get('pp_validity_days')
+            dob = request.POST.get('dob') or None
+            age = request.POST.get('age')
+            nationality = request.POST.get('nationality')
+            agent = request.POST.get('agent')
+            designation = request.POST.get('designation')
+            gender = request.POST.get('gender')
+            employee_status = request.POST.get('employee_status')
+            grade = request.POST.get('grade')
+            basic = request.POST.get('basic')
+            hra = request.POST.get('hra')
+            transportation_allowance = request.POST.get('transportation_allowance')
+            accommodation = request.POST.get('accommodation')
+            telephone = request.POST.get('telephone')
+            additional_duty_allowance = request.POST.get('additional_duty_allowance')
+            other_allowance = request.POST.get('other_allowance')
+            total = request.POST.get('total')
+            in_words = request.POST.get('in_words')
+            ao_acceptance = request.POST.get('ao_acceptance')
+            acceptance_date = request.POST.get('acceptance_date') or None
+            document_status = request.POST.get('document_status')
+            
+            try:
+                # Print received data for debugging
+                print("Received POST data:", request.POST)
+                
+                recruitment = Recruitment.objects.create(
+                    comp_code=COMP_CODE,
+                    ao_issued_date=ao_issued_date,
+                    dep=dep,
+                    project=project,
+                    ao_ref_no=ao_ref_no,
+                    name_as_per_pp=name_as_per_pp,
+                    pp_number=pp_number,
+                    pp_exp_date=pp_exp_date,
+                    pp_validity_days=pp_validity_days,
+                    dob=dob,
+                    age=age,
+                    nationality=nationality,
+                    agent=agent,
+                    designation=designation,
+                    gender=gender,
+                    employee_status=employee_status,
+                    grade=grade,
+                    basic=basic,
+                    hra=hra,
+                    transportation_allowance=transportation_allowance,
+                    accommodation=accommodation,
+                    telephone=telephone,
+                    additional_duty_allowance=additional_duty_allowance,
+                    other_allowance=other_allowance,
+                    total=total,
+                    in_words=in_words,
+                    ao_acceptance=ao_acceptance,
+                    acceptance_date=acceptance_date,
+                    document_status=document_status
+                    # created_by=request.session.get('username'),
+                    # created_on=now()
+                )
+                messages.success(request, 'AO Entry created successfully!')
+                print("Created recruitment object:", recruitment)
+                return redirect('ao_entry_list')
+            
+            except Exception as e:
+                print("Error creating AO Entry:", str(e))
+                messages.error(request, f'Error creating AO Entry: {str(e)}')
+                return redirect('ao_entry_list')
     return redirect('ao_entry_list')
 
 def ao_entry_edit(request):
+    set_comp_code(request)
     if request.method == 'GET':
         try:
             ao_entry_id = request.GET.get('ao_entry_id')
-            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id)
+            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id, comp_code=COMP_CODE)
             data = {
                 'recr_id': ao_entry.recr_id,
                 'ao_issued_date': ao_entry.ao_issued_date.strftime('%Y-%m-%d') if ao_entry.ao_issued_date else None,
@@ -6093,29 +6112,11 @@ def ao_entry_edit(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def ao_entry_update(request):
+    set_comp_code(request)
     if request.method == 'POST':
         try:
             ao_entry_id = request.POST.get('ao_entry_id')
-            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id)
-            
-            # Validate passport expiry date
-            pp_exp_date = request.POST.get('pp_exp_date')
-            if pp_exp_date:
-                expiry_date = datetime.strptime(pp_exp_date, '%Y-%m-%d').date()
-                six_months_later = datetime.now().date() + timedelta(days=180)
-                if expiry_date < six_months_later:
-                    messages.error(request, 'Passport expiry date must be at least 6 months from today!')
-                    return redirect('ao_entry_list')
-
-            # Validate date of birth
-            dob = request.POST.get('dob')
-            if dob:
-                birth_date = datetime.strptime(dob, '%Y-%m-%d').date()
-                today = datetime.now().date()
-                age = (today - birth_date).days / 365.25
-                if age < 16:
-                    messages.error(request, 'Age must be at least 16 years!')
-                    return redirect('ao_entry_list')
+            ao_entry = Recruitment.objects.get(recr_id=ao_entry_id, comp_code=COMP_CODE)
 
             # Update fields
             ao_entry.ao_issued_date = request.POST.get('ao_issued_date')
@@ -6124,9 +6125,9 @@ def ao_entry_update(request):
             ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
             ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
             ao_entry.pp_number = request.POST.get('pp_number')
-            ao_entry.pp_exp_date = pp_exp_date
+            ao_entry.pp_exp_date = request.POST.get('pp_exp_date')
             ao_entry.pp_validity_days = request.POST.get('pp_validity_days')
-            ao_entry.dob = dob
+            ao_entry.dob = request.POST.get('dob')
             ao_entry.age = request.POST.get('age')
             ao_entry.nationality = request.POST.get('nationality')
             ao_entry.agent = request.POST.get('agent')
@@ -6146,8 +6147,8 @@ def ao_entry_update(request):
             ao_entry.ao_acceptance = request.POST.get('ao_acceptance')
             ao_entry.acceptance_date = request.POST.get('acceptance_date')
             ao_entry.document_status = request.POST.get('document_status')
-            ao_entry.modified_by = request.user.id
-            ao_entry.modified_on = datetime.now()
+            # ao_entry.modified_by = request.user.id
+            # ao_entry.modified_on = datetime.now()
             
             ao_entry.save()
             messages.success(request, 'AO Entry updated successfully!')
@@ -6161,8 +6162,9 @@ def ao_entry_update(request):
     return redirect('ao_entry_list')
 
 def ao_entry_delete(request, recr_id):
+    set_comp_code(request)
     try:
-        ao_entry = Recruitment.objects.get(recr_id=recr_id)
+        ao_entry = Recruitment.objects.get(recr_id=recr_id, comp_code=COMP_CODE)
         ao_entry.delete()
         messages.success(request, 'AO Entry deleted successfully!')
     except Recruitment.DoesNotExist:
@@ -6218,7 +6220,7 @@ def recruitment_edit(request):
                 # Editable fields:
                 'interview_date': rec.interview_date.strftime('%Y-%m-%d') if rec.interview_date else '',
                 'availability': rec.availability,
-                'agent_charges': float(rec.agent_charges) if rec.agent_charges else '',
+                'agent_charges': rec.agent_charges,
                 'charges_paid_date': rec.charges_paid_date.strftime('%Y-%m-%d') if rec.charges_paid_date else '',
                 'pcc_certificate': rec.pcc_certificate,
                 'doc_status': rec.doc_status,
@@ -6239,6 +6241,7 @@ def recruitment_edit(request):
         except Recruitment.DoesNotExist:
             return JsonResponse({'error': 'Recruitment entry not found'}, status=404)
         except Exception as e:
+            print(e)
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 

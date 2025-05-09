@@ -8,7 +8,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form method="post" action="{% url 'ao_entry_create' %}">
+        <form action="{% url 'ao_entry_create' %}" method="POST">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -184,8 +184,9 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form method="post" action="{% url 'ao_entry_update' %}">
+        <form method="POST" action="{% url 'ao_entry_update' %}">
             {% csrf_token %}
+            <input type="hidden" name="ao_entry_id" id="ao_entry_id">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
@@ -352,7 +353,164 @@
 </div>
 
 <script>
-    // Age calculation
+    // Form validation functions
+    function validateForm(formId) {
+        const form = document.getElementById(formId);
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        // Check required fields
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Validate passport expiry date
+        const ppExpDate = form.querySelector('input[name="pp_exp_date"]');
+        if (ppExpDate && ppExpDate.value) {
+            const expiryDate = new Date(ppExpDate.value);
+            const sixMonthsLater = new Date();
+            sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+            
+            if (expiryDate < sixMonthsLater) {
+                alert('Warning: Passport expiry date must be at least 6 months from today!');
+                ppExpDate.classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+
+        // Validate date of birth
+        const dob = form.querySelector('input[name="dob"]');
+        if (dob && dob.value) {
+            const birthDate = new Date(dob.value);
+            const today = new Date();
+            const age = calculateAge(dob.value);
+            
+            if (birthDate > today) {
+                alert('Error: Date of birth cannot be in the future!');
+                dob.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            if (age < 18) {
+                alert('Warning: Age must be at least 18 years!');
+                dob.classList.add('is-invalid');
+                isValid = false;
+            }
+        }
+
+        // Validate numeric fields
+        const numericFields = form.querySelectorAll('input[type="number"]');
+        numericFields.forEach(field => {
+            if (field.value && parseFloat(field.value) < 0) {
+                field.classList.add('is-invalid');
+                field.value = '0';
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear validation on input
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        });
+
+        // Age calculation and validation
+        const dobFields = document.querySelectorAll('input[name="dob"]');
+        dobFields.forEach(dobField => {
+            dobField.addEventListener('change', function() {
+                if (!this.value) return;
+                
+                const ageField = this.closest('form').querySelector('input[name="age"]');
+                if (ageField) {
+                    const age = calculateAge(this.value);
+                    ageField.value = age;
+                    
+                    const birthDate = new Date(this.value);
+                    const today = new Date();
+                    
+                    if (birthDate > today) {
+                        alert('Error: Date of birth cannot be in the future!');
+                        this.classList.add('is-invalid');
+                        this.value = '';
+                        ageField.value = '';
+                    } else if (age < 18) {
+                        alert('Warning: Age must be at least 18 years!');
+                        this.classList.add('is-invalid');
+                        this.value = '';
+                        ageField.value = '';
+                    }
+                }
+            });
+        });
+
+        // Passport expiry validation and validity days calculation
+        const ppExpDateFields = document.querySelectorAll('input[name="pp_exp_date"]');
+        ppExpDateFields.forEach(ppExpDateField => {
+            ppExpDateField.addEventListener('change', function() {
+                if (!this.value) return;
+                
+                const validityDaysField = this.closest('form').querySelector('input[name="pp_validity_days"]');
+                if (validityDaysField) {
+                    const today = new Date();
+                    const expiryDate = new Date(this.value);
+                    const sixMonthsLater = new Date();
+                    sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6);
+                    
+                    if (expiryDate < sixMonthsLater) {
+                        alert('Warning: Passport expiry date must be at least 6 months from today!');
+                        this.classList.add('is-invalid');
+                        this.value = '';
+                        validityDaysField.value = '';
+                    } else {
+                        const days = calculateDaysBetween(today, expiryDate);
+                        validityDaysField.value = days;
+                    }
+                }
+            });
+        });
+
+        // Calculate total and update in words for both forms
+        const amountFields = [
+            'basic',
+            'hra',
+            'transportation_allowance',
+            'accommodation',
+            'additional_duty_allowance',
+            'other_allowance'
+        ];
+
+        // Add event listeners to both forms
+        ['offcanvas_add', 'offcanvas_edit'].forEach(formId => {
+            const form = document.getElementById(formId);
+            if (form) {
+                amountFields.forEach(fieldName => {
+                    const field = form.querySelector(`input[name="${fieldName}"]`);
+                    if (field) {
+                        field.addEventListener('input', function() {
+                            // Prevent negative values
+                            if (this.value < 0) {
+                                this.value = '0';
+                            }
+                            calculateTotalAndWords(formId);
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    // Helper functions
     function calculateAge(dateOfBirth) {
         const today = new Date();
         const birthDate = new Date(dateOfBirth);
@@ -364,53 +522,41 @@
         return age;
     }
 
-    // Function to validate date of birth
-    function validateDOB(dateOfBirth) {
-        const today = new Date();
-        const birthDate = new Date(dateOfBirth);
-        const age = calculateAge(dateOfBirth);
-        
-        // Check if date is in future
-        if (birthDate > today) {
-            return {
-                isValid: false,
-                message: 'Date of birth cannot be in the future!'
-            };
-        }
-        
-        // Check if age is less than 16
-        if (age < 16) {
-            return {
-                isValid: false,
-                message: 'Age must be at least 16 years!'
-            };
-        }
-        
-        return {
-            isValid: true,
-            message: ''
-        };
-    }
-
-    // Function to calculate days between dates
     function calculateDaysBetween(date1, date2) {
-        const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        const firstDate = new Date(date1);
-        const secondDate = new Date(date2);
-        return Math.round(Math.abs((firstDate - secondDate) / oneDay));
+        const oneDay = 24 * 60 * 60 * 1000;
+        return Math.round(Math.abs((date1 - date2) / oneDay));
     }
 
-    // Function to check if passport is valid (minimum 6 months)
-    function isPassportValid(expiryDate) {
-        const today = new Date();
-        const expiry = new Date(expiryDate);
-        const sixMonthsFromNow = new Date();
-        sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
-        
-        return expiry > sixMonthsFromNow;
+    function calculateTotalAndWords(formId) {
+        const form = document.getElementById(formId);
+        const amountFields = [
+            'basic',
+            'hra',
+            'transportation_allowance',
+            'accommodation',
+            'additional_duty_allowance',
+            'other_allowance'
+        ];
+
+        let total = 0;
+        amountFields.forEach(fieldName => {
+            const field = form.querySelector(`input[name="${fieldName}"]`);
+            if (field && field.value) {
+                total += parseFloat(field.value) || 0;
+            }
+        });
+
+        const totalField = form.querySelector('input[name="total"]');
+        if (totalField) {
+            totalField.value = total.toFixed(2);
+            
+            const inWordsField = form.querySelector('input[name="in_words"]');
+            if (inWordsField) {
+                inWordsField.value = numberToWords(total);
+            }
+        }
     }
 
-    // Function to convert number to words
     function numberToWords(num) {
         const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
         const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
@@ -421,13 +567,11 @@
             
             let words = '';
             
-            // Handle hundreds
             if (n >= 100) {
                 words += ones[Math.floor(n / 100)] + ' Hundred ';
                 n %= 100;
             }
             
-            // Handle tens and ones
             if (n >= 10) {
                 if (n < 20) {
                     words += teens[n - 10];
@@ -451,36 +595,30 @@
         const decimalPart = Math.round((num % 1) * 100);
         let wholePart = Math.floor(num);
 
-        // Handle whole part
         if (wholePart > 0) {
-            // Handle billions
             if (wholePart >= 1000000000) {
                 const billions = Math.floor(wholePart / 1000000000);
                 words += convertLessThanThousand(billions) + ' Billion ';
                 wholePart %= 1000000000;
             }
             
-            // Handle millions
             if (wholePart >= 1000000) {
                 const millions = Math.floor(wholePart / 1000000);
                 words += convertLessThanThousand(millions) + ' Million ';
                 wholePart %= 1000000;
             }
             
-            // Handle thousands
             if (wholePart >= 1000) {
                 const thousands = Math.floor(wholePart / 1000);
                 words += convertLessThanThousand(thousands) + ' Thousand ';
                 wholePart %= 1000;
             }
             
-            // Handle remaining hundreds, tens, and ones
             if (wholePart > 0) {
                 words += convertLessThanThousand(wholePart);
             }
         }
 
-        // Handle decimal part
         if (decimalPart > 0) {
             if (words) words += ' and ';
             words += convertLessThanThousand(decimalPart) + ' Cents';
@@ -488,106 +626,4 @@
 
         return words.trim();
     }
-
-    // Function to calculate total and update in words
-    function calculateTotalAndWords(formPrefix = '') {
-        const amountFields = [
-            'basic',
-            'hra',
-            'transportation_allowance',
-            'accommodation',
-            'additional_duty_allowance',
-            'other_allowance'
-        ];
-
-        let total = 0;
-        amountFields.forEach(fieldName => {
-            const field = document.querySelector(`#${formPrefix} input[name="${fieldName}"]`);
-            if (field && field.value) {
-                total += parseFloat(field.value) || 0;
-            }
-        });
-
-        // Update total field
-        const totalField = document.querySelector(`#${formPrefix} input[name="total"]`);
-        if (totalField) {
-            totalField.value = total.toFixed(2);
-            
-            // Update in words field
-            const inWordsField = document.querySelector(`#${formPrefix} input[name="in_words"]`);
-            if (inWordsField) {
-                inWordsField.value = numberToWords(total);
-            }
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add form event listeners
-        const addAmountFields = document.querySelectorAll('#offcanvas_add input[type="number"]');
-        addAmountFields.forEach(field => {
-            field.addEventListener('input', function() {
-                if (this.value < 0) {
-                    this.value = 0;
-                }
-                calculateTotalAndWords('offcanvas_add');
-            });
-        });
-
-        // Edit form event listeners
-        const editAmountFields = document.querySelectorAll('#offcanvas_edit input[type="number"]');
-        editAmountFields.forEach(field => {
-            field.addEventListener('input', function() {
-                if (this.value < 0) {
-                    this.value = 0;
-                }
-                calculateTotalAndWords('offcanvas_edit');
-            });
-        });
-
-        // Add event listener for date of birth
-        const dobFields = document.querySelectorAll('input[name="dob"]');
-        dobFields.forEach(dobField => {
-            dobField.addEventListener('change', function() {
-                const validation = validateDOB(this.value);
-                if (!validation.isValid) {
-                    alert(validation.message);
-                    this.value = ''; // Clear the invalid date
-                    const ageField = this.closest('form').querySelector('input[name="age"]');
-                    if (ageField) {
-                        ageField.value = '';
-                    }
-                    return;
-                }
-
-                const ageField = this.closest('form').querySelector('input[name="age"]');
-                if (ageField && this.value) {
-                    ageField.value = calculateAge(this.value);
-                }
-            });
-        });
-
-        // Add event listener for passport expiry date
-        const ppExpDateFields = document.querySelectorAll('input[name="pp_exp_date"]');
-        ppExpDateFields.forEach(ppExpDateField => {
-            ppExpDateField.addEventListener('change', function() {
-                const today = new Date();
-                const expiryDate = new Date(this.value);
-                const validityDaysField = this.closest('form').querySelector('input[name="pp_validity_days"]');
-                
-                if (validityDaysField) {
-                    const days = calculateDaysBetween(today, expiryDate);
-                    validityDaysField.value = days;
-                }
-
-                // Validate passport expiry
-                if (!isPassportValid(this.value)) {
-                    alert('Warning: Passport expiry date must be at least 6 months from today!');
-                    this.value = ''; // Clear the invalid date
-                    if (validityDaysField) {
-                        validityDaysField.value = '';
-                    }
-                }
-            });
-        });
-    });
 </script>

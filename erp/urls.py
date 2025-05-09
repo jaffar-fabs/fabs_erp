@@ -210,6 +210,7 @@ urlpatterns = [
     path('ao_entry/create/', views.ao_entry_create, name='ao_entry_create'),
     path('ao_entry/edit/', views.ao_entry_edit, name='ao_entry_edit'),
     path('ao_entry/update/', views.ao_entry_update, name='ao_entry_update'),
+    path('ao_entry/delete/', views.ao_entry_delete, name='ao_entry_delete'),
     path('recruitment_list/', views.recruitment_list, name='recruitment_list'),
     path('recruitment_update/', views.recruitment_update, name='recruitment_update'),
     path('recruitment_edit/', views.recruitment_edit, name='recruitment_edit'),
