@@ -214,6 +214,7 @@ urlpatterns = [
     path('recruitment_list/', views.recruitment_list, name='recruitment_list'),
     path('recruitment_update/', views.recruitment_update, name='recruitment_update'),
     path('recruitment_edit/', views.recruitment_edit, name='recruitment_edit'),
+    path('recruitment/convert-to-employee/', views.convert_to_employee, name='convert_to_employee'),
 
     #Employee PP
     path('employee_pp/', views.employee_pp_list, name='employee_pp_list'),

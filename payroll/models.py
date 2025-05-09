@@ -999,6 +999,7 @@ class Recruitment(models.Model):
     flight_no = models.CharField(max_length=100, null=True, blank=True)
     eta = models.DateTimeField(null=True, blank=True)
     arrived_or_not = models.CharField(max_length=50, null=True, blank=True)
+    convert_to_employee_flag = models.CharField(max_length=50, null=True, blank=True)
     
     # pp_hash = models.CharField("PP#", max_length=100, null=True, blank=True)
     # emp_id = models.CharField("Emp ID", max_length=100, null=True, blank=True)

@@ -5769,7 +5769,7 @@ def delete_leave_type(request):
             )
             leave.delete()
             messages.success(request, 'Leave type deleted successfully!')
-            return JsonResponse({'status': 'success'})
+            return redirect('leave_master_list')
         except LeaveMaster.DoesNotExist:
             return JsonResponse({'error': 'Leave type not found'}, status=404)
         except Exception as e:
@@ -5994,7 +5994,7 @@ def ao_entry_create(request):
             ao_issued_date = request.POST.get('ao_issued_date') or None
             dep = request.POST.get('dep')
             project = request.POST.get('project')
-            ao_ref_no = request.POST.get('ao_ref_no')
+            # ao_ref_no = request.POST.get('ao_ref_no')
             name_as_per_pp = request.POST.get('name_as_per_pp')
             pp_number = request.POST.get('pp_number')
             pp_exp_date = request.POST.get('pp_exp_date') or None
@@ -6019,6 +6019,15 @@ def ao_entry_create(request):
             ao_acceptance = request.POST.get('ao_acceptance')
             acceptance_date = request.POST.get('acceptance_date') or None
             document_status = request.POST.get('document_status')
+
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'AO'])
+                    result = cursor.fetchone()
+                    ao_ref_no = result[0] if result else None
+                    print(ao_ref_no)
+            except Exception as e:
+                print(e)
             
             try:
                 # Print received data for debugging
@@ -6236,6 +6245,7 @@ def recruitment_edit(request):
                 'flight_no': rec.flight_no,
                 'eta': rec.eta.strftime('%Y-%m-%dT%H:%M') if rec.eta else '',
                 'arrived_or_not': rec.arrived_or_not,
+                'convert_to_employee_flag': rec.convert_to_employee_flag
             }
             return JsonResponse(data)
         except Recruitment.DoesNotExist:
@@ -6505,3 +6515,53 @@ def check_leave_exists(request):
     })
 
 
+@csrf_exempt
+def recruitment_update(request):
+    if request.method == 'POST':
+        try:
+            recruitment_id = request.POST.get('recr_id')
+            rec = Recruitment.objects.get(recr_id=recruitment_id)
+            # Only update editable fields
+            rec.interview_date = request.POST.get('interview_date') or None
+            rec.agency_name = request.POST.get('agency_name')
+            rec.availability = request.POST.get('availability')
+            rec.agent_charges = request.POST.get('agent_charges') or None
+            rec.charges_paid_date = request.POST.get('charges_paid_date') or None
+            rec.pcc_certificate = request.POST.get('pcc_certificate')
+            rec.doc_status = request.POST.get('doc_status')
+            rec.pre_approval = request.POST.get('pre_approval')
+            rec.work_offer_letter = request.POST.get('work_offer_letter')
+            rec.insurance = request.POST.get('insurance')
+            rec.wp_payment = request.POST.get('wp_payment')
+            rec.visa_submission = request.POST.get('visa_submission')
+            rec.change_status = request.POST.get('change_status')
+            rec.visa_issued_date = request.POST.get('visa_issued_date') or None
+            rec.arrival_date = request.POST.get('arrival_date') or None
+            rec.airport = request.POST.get('airport')
+            rec.flight_no = request.POST.get('flight_no')
+            rec.eta = request.POST.get('eta') or None
+            rec.arrived_or_not = request.POST.get('arrived_or_not')
+            rec.save()
+            return redirect('recruitment_list')
+        except Recruitment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Recruitment entry not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@csrf_exempt
+def convert_to_employee(request):
+    if request.method == 'POST':
+        try:
+            recr_id = request.POST.get('recr_id')
+            rec = Recruitment.objects.get(recr_id=recr_id)
+            rec.convert_to_employee_flag = 'Y'
+            rec.save()
+            with connection.cursor() as cursor:
+                cursor.execute("CALL insert_employee_and_allowances_by_recr_id(%s)", [recr_id])
+                messages.success(request, 'Successfully converted to employee!')
+                return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"Error converting to employee: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

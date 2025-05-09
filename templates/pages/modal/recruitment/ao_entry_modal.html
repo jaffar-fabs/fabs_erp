@@ -12,6 +12,10 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 mb-3">
+                    <label class="col-form-label">AO Ref No</label>
+                    <input type="text" name="ao_ref_no" class="form-control" readonly>
+                </div>
+                <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
                     <input type="date" name="ao_issued_date" class="form-control" required>
                 </div>
@@ -32,10 +36,6 @@
                         <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
                         {% endfor %}
                     </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">AO Ref No</label>
-                    <input type="text" name="ao_ref_no" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Name as per PP</label>
@@ -187,6 +187,10 @@
         <form method="POST" action="{% url 'ao_entry_update' %}">
             {% csrf_token %}
             <input type="hidden" name="ao_entry_id" id="ao_entry_id">
+            <div class="col-md-4 mb-3"> 
+                <label class="col-form-label">AO Ref No</label>
+                <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control" readonly>
+            </div>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
@@ -209,10 +213,6 @@
                         <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
                         {% endfor %}
                     </select>
-                </div>
-                <div class="col-md-4 mb-3"> 
-                    <label class="col-form-label">AO Ref No</label>
-                    <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Name as per PP</label>
