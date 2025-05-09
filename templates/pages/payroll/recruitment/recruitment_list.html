@@ -149,9 +149,9 @@
                     $('#edit_gender').text(response.gender || '');
                     $('#edit_agency_name').text(response.agency_name || '');
                     $('#edit_doc_status').text(response.doc_status || '');
+                    $('#edit_interview_date').text(response.interview_date || '');
                     
                     // Editable fields
-                    $('#edit_interview_date').val(response.interview_date || '');
                     $('#edit_agency_name').val(response.agency_name || '');
                     $('#edit_availability').val(response.availability || '');
                     $('#edit_agent_charges').val(response.agent_charges || '');
@@ -174,14 +174,14 @@
                     // Handle convert to employee flag
                     if (response.convert_to_employee_flag === 'Y') {
                         // Disable all form inputs
-                        $('#editRecruitmentForm input, #editRecruitmentForm select').prop('disabled', true);
+                        $('form :input').prop('disabled', true);
                         // Hide the convert button
                         $('#convert_to_employee').hide();
                         // Hide the save button
                         $('#editRecruitmentForm button[type="submit"]').hide();
                     } else {
                         // Enable all form inputs
-                        $('#editRecruitmentForm input, #editRecruitmentForm select').prop('disabled', false);
+                        $('form :input').prop('disabled', false);
                         // Show the convert button
                         $('#convert_to_employee').show();
                         // Show the save button
@@ -202,14 +202,52 @@
                 return;
             }
 
+            // Get all required field values
+            const preApproval = $('#edit_pre_approval').val();
+            const workOfferLetter = $('#edit_work_offer_letter').val();
+            const insurance = $('#edit_insurance').val();
+            const wpPayment = $('#edit_wp_payment').val();
+            const visaSubmission = $('#edit_visa_submission').val();
+            const changeStatus = $('#edit_change_status').val();
+
+            // Validate all required fields
+            if (preApproval !== 'Verified') {
+                alert('Pre-approval must be "Verified" to convert to employee');
+                return;
+            }
+            if (workOfferLetter !== 'Mol Approved') {
+                alert('Work Offer Letter must be "Mol Approved" to convert to employee');
+                return;
+            }
+            if (insurance !== 'Done') {
+                alert('Insurance must be "Done" to convert to employee');
+                return;
+            }
+            if (wpPayment !== 'Done') {
+                alert('WP Payment must be "Done" to convert to employee');
+                return;
+            }
+            if (visaSubmission !== 'Done') {
+                alert('Visa Submission must be "Done" to convert to employee');
+                return;
+            }
+            if (changeStatus !== 'Done') {
+                alert('Change Status must be "Done" to convert to employee');
+                return;
+            }
+
             if (confirm('Are you sure you want to convert this recruitment to an employee? This action cannot be undone.')) {
+                // Get all form data
+                const formData = new FormData($('#editRecruitmentForm')[0]);
+                formData.append('recr_id', recr_id);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
                 $.ajax({
                     url: '{% url "convert_to_employee" %}',
                     method: 'POST',
-                    data: {
-                        'recr_id': recr_id,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
                         if (response.success) {
                             alert('Successfully converted to employee!');
@@ -231,27 +269,29 @@
             }
         });
 
-        // Handle form submission
-        $('#editRecruitmentForm').submit(function(e) {
-            e.preventDefault();
-            const formData = $(this).serialize();
-            
-            $.ajax({
-                url: '{% url "recruitment_update" %}',
-                method: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        alert('Recruitment updated successfully!');
-                        location.reload();
-                    } else {
-                        alert('Error: ' + (response.error || 'Unknown error occurred'));
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert('Error: ' + error);
-                }
-            });
+        // Add validation on field changes
+        $('#edit_pre_approval, #edit_work_offer_letter, #edit_insurance, #edit_wp_payment, #edit_visa_submission, #edit_change_status').change(function() {
+            const preApproval = $('#edit_pre_approval').val();
+            const workOfferLetter = $('#edit_work_offer_letter').val();
+            const insurance = $('#edit_insurance').val();
+            const wpPayment = $('#edit_wp_payment').val();
+            const visaSubmission = $('#edit_visa_submission').val();
+            const changeStatus = $('#edit_change_status').val();
+
+            // Check if all required fields are in the correct state
+            const canConvert = preApproval === 'Verified' &&
+                             workOfferLetter === 'Mol Approved' &&
+                             insurance === 'Done' &&
+                             wpPayment === 'Done' &&
+                             visaSubmission === 'Done' &&
+                             changeStatus === 'Done';
+
+            // Enable/disable convert button based on validation
+            if (canConvert) {
+                $('#convert_to_employee').prop('disabled', false);
+            } else {
+                $('#convert_to_employee').prop('disabled', true);
+            }
         });
     });
 </script>

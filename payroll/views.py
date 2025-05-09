@@ -6019,6 +6019,7 @@ def ao_entry_create(request):
             ao_acceptance = request.POST.get('ao_acceptance')
             acceptance_date = request.POST.get('acceptance_date') or None
             document_status = request.POST.get('document_status')
+            interview_date = request.POST.get('interview_date') or None
 
             try:
                 with connection.cursor() as cursor:
@@ -6062,7 +6063,8 @@ def ao_entry_create(request):
                     in_words=in_words,
                     ao_acceptance=ao_acceptance,
                     acceptance_date=acceptance_date,
-                    document_status=document_status
+                    document_status=document_status,
+                    interview_date=interview_date,
                     # created_by=request.session.get('username'),
                     # created_on=now()
                 )
@@ -6111,7 +6113,8 @@ def ao_entry_edit(request):
                 'in_words': ao_entry.in_words,
                 'ao_acceptance': ao_entry.ao_acceptance,
                 'acceptance_date': ao_entry.acceptance_date.strftime('%Y-%m-%d') if ao_entry.acceptance_date else None,
-                'document_status': ao_entry.document_status
+                'document_status': ao_entry.document_status,
+                'interview_date': ao_entry.interview_date.strftime('%Y-%m-%d') if ao_entry.interview_date else None
             }
             return JsonResponse(data)
         except Recruitment.DoesNotExist:
@@ -6134,9 +6137,9 @@ def ao_entry_update(request):
             ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
             ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
             ao_entry.pp_number = request.POST.get('pp_number')
-            ao_entry.pp_exp_date = request.POST.get('pp_exp_date')
+            ao_entry.pp_exp_date = request.POST.get('pp_exp_date') or None
             ao_entry.pp_validity_days = request.POST.get('pp_validity_days')
-            ao_entry.dob = request.POST.get('dob')
+            ao_entry.dob = request.POST.get('dob') or None
             ao_entry.age = request.POST.get('age')
             ao_entry.nationality = request.POST.get('nationality')
             ao_entry.agent = request.POST.get('agent')
@@ -6154,8 +6157,9 @@ def ao_entry_update(request):
             ao_entry.total = request.POST.get('total')
             ao_entry.in_words = request.POST.get('in_words')
             ao_entry.ao_acceptance = request.POST.get('ao_acceptance')
-            ao_entry.acceptance_date = request.POST.get('acceptance_date')
+            ao_entry.acceptance_date = request.POST.get('acceptance_date') or None
             ao_entry.document_status = request.POST.get('document_status')
+            ao_entry.interview_date = request.POST.get('interview_date') or None
             # ao_entry.modified_by = request.user.id
             # ao_entry.modified_on = datetime.now()
             
@@ -6226,8 +6230,8 @@ def recruitment_edit(request):
                 'gender': rec.gender,
                 'agency_name': rec.agency_name,
                 'doc_status': rec.doc_status,
-                # Editable fields:
                 'interview_date': rec.interview_date.strftime('%Y-%m-%d') if rec.interview_date else '',
+                # Editable fields:
                 'availability': rec.availability,
                 'agent_charges': rec.agent_charges,
                 'charges_paid_date': rec.charges_paid_date.strftime('%Y-%m-%d') if rec.charges_paid_date else '',
@@ -6262,7 +6266,6 @@ def recruitment_update(request):
             recruitment_id = request.POST.get('recr_id')
             rec = Recruitment.objects.get(recr_id=recruitment_id)
             # Only update editable fields
-            rec.interview_date = request.POST.get('interview_date') or None
             rec.agency_name = request.POST.get('agency_name')
             rec.availability = request.POST.get('availability')
             rec.agent_charges = request.POST.get('agent_charges') or None
@@ -6359,7 +6362,7 @@ def employee_pp_create(request):
             tawjeeh_class=request.POST.get('tawjeeh_class'),
             iloe_status=request.POST.get('iloe_status'),
         )
-        return JsonResponse({'status': 'success'})
+        return redirect('employee_pp_list')
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 def employee_pp_edit(request):
@@ -6431,7 +6434,7 @@ def employee_pp_update(request):
             obj.tawjeeh_class = request.POST.get('tawjeeh_class')
             obj.iloe_status = request.POST.get('iloe_status')
             obj.save()
-            return JsonResponse({'status': 'success'})
+            return redirect('employee_pp_list')
         except EmployeePPDetails.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Not found'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
@@ -6555,6 +6558,26 @@ def convert_to_employee(request):
         try:
             recr_id = request.POST.get('recr_id')
             rec = Recruitment.objects.get(recr_id=recr_id)
+            # Only update editable fields
+            rec.interview_date = request.POST.get('interview_date') or None
+            rec.agency_name = request.POST.get('agency_name')
+            rec.availability = request.POST.get('availability')
+            rec.agent_charges = request.POST.get('agent_charges') or None
+            rec.charges_paid_date = request.POST.get('charges_paid_date') or None
+            rec.pcc_certificate = request.POST.get('pcc_certificate')
+            rec.doc_status = request.POST.get('doc_status')
+            rec.pre_approval = request.POST.get('pre_approval')
+            rec.work_offer_letter = request.POST.get('work_offer_letter')
+            rec.insurance = request.POST.get('insurance')
+            rec.wp_payment = request.POST.get('wp_payment')
+            rec.visa_submission = request.POST.get('visa_submission')
+            rec.change_status = request.POST.get('change_status')
+            rec.visa_issued_date = request.POST.get('visa_issued_date') or None
+            rec.arrival_date = request.POST.get('arrival_date') or None
+            rec.airport = request.POST.get('airport')
+            rec.flight_no = request.POST.get('flight_no')
+            rec.eta = request.POST.get('eta') or None
+            rec.arrived_or_not = request.POST.get('arrived_or_not')
             rec.convert_to_employee_flag = 'Y'
             rec.save()
             with connection.cursor() as cursor:

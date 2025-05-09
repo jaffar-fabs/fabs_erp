@@ -32,36 +32,24 @@
                             <table class="table datatable">
                                 <thead>
                                     <tr>
-                                        <th>AO Issued Date</th>
-                                        <th>Department</th>
-                                        <th>Project</th>
                                         <th>AO Ref No</th>
                                         <th>Name as per PP</th>
-                                        <th>Nationality</th>
+                                        <th>AO Issued Date</th>
+                                        <th>Project</th>
                                         <th>Designation</th>
-                                        <th>Basic</th>
-                                        <th>Total</th>
-                                        <th>AO Acceptance</th>
-                                        <th>Acceptance Date</th>
-                                        <th>Document Status</th>
+                                        <th>Department</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for entry in entries %}
                                     <tr>
-                                        <td>{{ entry.ao_issued_date|date:"d-M-Y" }}</td>
-                                        <td>{{ entry.dep }}</td>
-                                        <td>{{ entry.project }}</td>
                                         <td>{{ entry.ao_ref_no }}</td>
                                         <td>{{ entry.name_as_per_pp }}</td>
-                                        <td>{{ entry.nationality }}</td>
+                                        <td>{{ entry.ao_issued_date|date:"d-M-Y" }}</td>
+                                        <td>{{ entry.project }}</td>
                                         <td>{{ entry.designation }}</td>
-                                        <td>{{ entry.basic }}</td>
-                                        <td>{{ entry.total }}</td>
-                                        <td>{{ entry.ao_acceptance }}</td>
-                                        <td>{{ entry.acceptance_date|date:"d-M-Y" }}</td>
-                                        <td>{{ entry.document_status }}</td>
+                                        <td>{{ entry.dep }}</td>
                                         <td>    
                                             <div class="dropdown table-action">
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown"

@@ -75,7 +75,7 @@ class CampMaster(models.Model):
     rental_contract_end_date = models.DateField(null=True, blank=True)
     rental_agreement_start_date = models.DateField(null=True, blank=True)
     rental_agreement_end_date = models.DateField(null=True, blank=True)
-    camp_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    camp_value = models.CharField(max_length=50, null=True, blank=True)
     cheque_details = models.CharField(max_length=50, null=True, blank=True)
     created_by = models.BigIntegerField( null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -93,16 +93,16 @@ class CampDetails(models.Model):
     type = models.CharField(max_length=50, null=True, blank=True)
     
     room_no = models.CharField(null=True, blank=True)  # renamed from no_of_rooms
-    as_per_mohre = models.IntegerField(null=True, blank=True)
-    allocated = models.IntegerField(null=True, blank=True)
-    as_per_rental = models.IntegerField(null=True, blank=True)
+    as_per_mohre = models.CharField(max_length=50, null=True, blank=True)
+    allocated = models.CharField(max_length=50, null=True, blank=True)
+    as_per_rental = models.CharField(max_length=50, null=True, blank=True)
     allocation_building = models.CharField(max_length=100, null=True, blank=True)
     
-    lower_bed = models.IntegerField(null=True, blank=True)
-    upper_bed = models.IntegerField(null=True, blank=True)
-    total_beds = models.IntegerField(null=True, blank=True)
-    occupied_beds = models.IntegerField(null=True, blank=True)
-    available_beds = models.IntegerField(null=True, blank=True)
+    lower_bed = models.CharField(max_length=50, null=True, blank=True)
+    upper_bed = models.CharField(max_length=50, null=True, blank=True)
+    total_beds = models.CharField(max_length=50, null=True, blank=True)
+    occupied_beds = models.CharField(max_length=50, null=True, blank=True)
+    available_beds = models.CharField(max_length=50, null=True, blank=True)
 
 class CampBeds(models.Model):
     comp_code = models.CharField(max_length=15)
@@ -110,8 +110,8 @@ class CampBeds(models.Model):
     camp_code = models.CharField(max_length=50)
     block = models.CharField(max_length=50, null=True, blank=True)
     floor = models.CharField(max_length=50, null=True, blank=True)
-    room_no = models.IntegerField(null=True, blank=True)
-    bed_no = models.CharField(null=True, blank=True)
+    room_no = models.CharField(max_length=50, null=True, blank=True)
+    bed_no = models.CharField(max_length=50, null=True, blank=True)
     bed_status = models.CharField(max_length=50, null=True, blank=True)
     emp_code = models.CharField(max_length=50, null=True, blank=True)
     
@@ -130,7 +130,7 @@ class CampCheque(models.Model):
     bank_name = models.CharField(max_length=50, null=True, blank=True)
     cheque_no = models.CharField(max_length=50, null=True, blank=True)
     cheque_date = models.DateField(null=True, blank=True)
-    cheque_amount = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    cheque_amount = models.CharField(max_length=50, null=True, blank=True)
 
 
 class CampAllocation(models.Model):
@@ -1045,3 +1045,4 @@ class EmployeePPDetails(models.Model):
     tawjeeh_payment = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     tawjeeh_class = models.CharField(max_length=100, null=True, blank=True)
     iloe_status = models.CharField(max_length=100, null=True, blank=True)
+    date_of_landing = models.DateField(null=True, blank=True)
