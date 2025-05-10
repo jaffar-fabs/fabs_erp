@@ -61,8 +61,6 @@
                                         <th>Employee Name</th>
                                         <th>Date of Joining</th>
                                         <th>Date of Exit</th>
-                                        <th>Last Drawn Salary</th>
-                                        <th>Eligible Gratuity</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -76,14 +74,16 @@
                                             </h2>
                                         </td>
                                         <td>
-                                            <h2 class="d-flex align-items-center">
-                                                <a href="#">{{record.employee_name}}</a>
-                                            </h2>
+                                            {% for employee in employee_data%}
+                                                {% if employee.emp_code == record.employee_code %}
+                                                    <h2 class="d-flex align-items-center">
+                                                        <a href="#">{{employee.emp_name}}</a>
+                                                    </h2>
+                                                {% endif %}
+                                            {% endfor %}
                                         </td>
                                         <td>{{record.date_of_joining|date:"d-M-Y"}}</td>
                                         <td>{{record.date_of_exit|date:"d-M-Y"}}</td>
-                                        <td>{{record.last_drawn_basic_salary}}</td>
-                                        <td>{{record.eligible_gratuity}}</td>
                                         <td>
                                             <span class="badge badge-pill badge-status 
                                                 {% if record.gratuity_status == 'Paid' %}bg-success
@@ -169,7 +169,6 @@
 
 <script>
     $(document).ready(function() {
-
         // Handle edit button click
         $(".edit-graduity-btn").click(function (event) {
            event.preventDefault();
@@ -191,7 +190,7 @@
                        var data = response.data;
                        // Populate form fields with response data
                        $('#edit_id').val(data.id);
-                       $('#edit_employee_code').val(data.employee_code);
+                       $('#edit_employee_code').val(data.employee_code).change();
                        $('#edit_employee_name').val(data.employee_name);
                        $('#edit_category').val(data.category);
                        $('#edit_designation').val(data.designation);
@@ -219,10 +218,40 @@
                        $('#edit_settlement_date').val(data.settlement_date);
                        $('#edit_remarks').val(data.remarks);
 
+                       // Handle supporting documents
+                       if (data.supporting_docs) {
+                           var supportingDocsHtml = '<div class="current-files mt-2">';
+                           supportingDocsHtml += '<strong>Current Supporting Documents:</strong><br>';
+                           supportingDocsHtml += '<div class="d-flex align-items-center mt-1">';
+                           supportingDocsHtml += '<a href="' + data.supporting_docs + '" class="btn btn-sm btn-info me-2" target="_blank">';
+                           supportingDocsHtml += '<i class="ti ti-eye me-1"></i>Preview</a>';
+                           supportingDocsHtml += '<a href="' + data.supporting_docs + '" class="btn btn-sm btn-primary" download>';
+                           supportingDocsHtml += '<i class="ti ti-download me-1"></i>Download</a>';
+                           supportingDocsHtml += '</div></div>';
+                           $('#current_supporting_docs').html(supportingDocsHtml);
+                       } else {
+                           $('#current_supporting_docs').html('');
+                       }
+
+                       // Handle attachments
+                       if (data.attachments) {
+                           var attachmentsHtml = '<div class="current-files mt-2">';
+                           attachmentsHtml += '<strong>Current Attachments:</strong><br>';
+                           attachmentsHtml += '<div class="d-flex align-items-center mt-1">';
+                           attachmentsHtml += '<a href="' + data.attachments + '" class="btn btn-sm btn-info me-2" target="_blank">';
+                           attachmentsHtml += '<i class="ti ti-eye me-1"></i>Preview</a>';
+                           attachmentsHtml += '<a href="' + data.attachments + '" class="btn btn-sm btn-primary" download>';
+                           attachmentsHtml += '<i class="ti ti-download me-1"></i>Download</a>';
+                           attachmentsHtml += '</div></div>';
+                           $('#current_attachments').html(attachmentsHtml);
+                       } else {
+                           $('#current_attachments').html('');
+                       }
+
                        // Trigger calculations after data is loaded
-                       var editForm = $('#edit_gratuity_form');
-                       calculate_service_and_gratuity(editForm);
-                       calculate_final_settlement_amount(editForm);
+                    //    var editForm = $('#edit_gratuity_form');
+                    //    calculate_service_and_gratuity(editForm);
+                    //    calculate_final_settlement_amount(editForm);
                    } else {
                        alert('Error: ' + response.message);
                    }

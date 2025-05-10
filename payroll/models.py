@@ -22,7 +22,7 @@ def party_documents_path(instance, filename):
 
 def gratuity_document_path(instance, filename):
     # Store documents under a folder named by employee ID
-    return f'gratuity_docs/{instance.employee_id}/{filename}'
+    return os.path.join('gratuity_docs', instance.employee_code, filename)
 
 # -------------------------------------------------------------------------------
 # Party Master
@@ -861,7 +861,7 @@ class GratuitySettlement(models.Model):
     # Salary & Gratuity
     last_drawn_basic_salary = models.CharField(max_length=12)
     eligible_gratuity = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
-    loss_of_pay_days = models.IntegerField(blank=True, null=True)
+    loss_of_pay_days = models.CharField(max_length=12, blank=True, null=True)
     loss_of_pay_amount = models.CharField(max_length=12, blank=True, null=True)  # Auto-calculated
     gratuity_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Paid', 'Paid')])
     leave_balance_days = models.CharField(max_length=6, blank=True, null=True)  # Auto/Enter

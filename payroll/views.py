@@ -72,7 +72,6 @@ def employee_master(request):
 
     # Initialize the query
     query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES)
-    print(query)
     user = request.session.get("username")
     user_master = UserMaster.objects.filter(comp_code=COMP_CODE, is_active=True, user_id = user).values_list('view_emp_salary', flat=True)
 
@@ -86,7 +85,6 @@ def employee_master(request):
                 Q(department__icontains=keyword)
             )
         except Exception as e:
-            print(f"Error in keyword search: {e}")
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
@@ -193,7 +191,6 @@ def get_employee_details(request):
                 item['earn_deduct_amt'] = str(item['earn_deduct_amt']) if item['earn_deduct_amt'] is not None else None
         except Exception as e:
             earn_deducts = []
-            print(f"Error fetching earn_deducts: {str(e)}")
 
         try:
             documents = list(EmployeeDocument.objects.filter(
@@ -205,7 +202,6 @@ def get_employee_details(request):
             ))
         except Exception as e:
             documents = []
-            print(f"Error fetching documents: {str(e)}")
 
         try:
             dependents = list(EmployeeDocument.objects.filter(
@@ -221,7 +217,6 @@ def get_employee_details(request):
                 dep['expiry_date'] = format_date(dep['expiry_date'])
         except Exception as e:
             dependents = []
-            print(f"Error fetching dependents: {str(e)}")
 
         try:
             license_and_passes = list(EmployeeDocument.objects.filter(
@@ -236,7 +231,6 @@ def get_employee_details(request):
                 lic['expiry_date'] = format_date(lic['expiry_date'])
         except Exception as e:
             license_and_passes = []
-            print(f"Error fetching license_and_passes: {str(e)}")
 
         try:
             recruitment_details = list(EmployeeRecruitmentDetails.objects.filter(
@@ -250,7 +244,6 @@ def get_employee_details(request):
                 rec['date'] = format_date(rec['date'])
         except Exception as e:
             recruitment_details = []
-            print(f"Error fetching recruitment_details: {str(e)}")
 
         response_data = {
             'success': True,
@@ -292,7 +285,6 @@ def save_employee(request, employee_id=None):
                     cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'EMP'])
                     result = cursor.fetchone()
                     emp_code = result[0] if result else None
-                    print(emp_code)
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=500)
             employee = Employee()
@@ -458,7 +450,6 @@ def save_employee(request, employee_id=None):
         # Save new documents to the database
         for doc_type, doc_file in zip(document_types, document_files):
             if doc_type and doc_file:  # Ensure both type and file are provided
-                print(doc_type,doc_file)
                 EmployeeDocument.objects.create(
                     comp_code=COMP_CODE,
                     emp_code=employee.emp_code,
@@ -481,7 +472,6 @@ def save_employee(request, employee_id=None):
         for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip_longest(
                 dependent_relationships, dependent_doc_types, dependent_doc_numbers,
                 dependent_issued_dates, dependent_expiry_dates, dependent_doc_files):
-            print(relationship, doc_type, doc_number, issued_date, expiry_date, doc_file)
 
             
             if relationship and doc_type and doc_number:  # Ensure required fields are provided
@@ -512,7 +502,6 @@ def save_employee(request, employee_id=None):
                 license_work_locations, license_emirates_issued,
                 license_expiry_dates, license_categories, license_comments):
 
-            print(doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments)
 
             if doc_type and doc_number:
                 # Create document entry (adjust model and field names as needed)
@@ -698,7 +687,6 @@ def create_seed(request):
                 Q(seed_type__icontains=keyword)
             )
         except Exception as e:
-            print(f"Error in keyword search: {e}")
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
@@ -853,7 +841,6 @@ class Paycycle(View):
                     Q(pay_process_month__icontains=keyword)
                 )
             except Exception as e:
-                print(f"Error in keyword search: {e}")
                 return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
         # Apply pagination
@@ -1205,7 +1192,6 @@ def project(request):
                         Q(prj_city__icontains=keyword)
                     )
                 except Exception as e:
-                    print(f"Error in keyword search: {e}")
                     return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
             # Apply pagination
@@ -1409,7 +1395,6 @@ class CodeMasterList(View):
                     Q(base_description__icontains=keyword)
                 )
             except Exception as e:
-                print(f"Error in keyword search: {e}")
                 return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
         # Apply pagination
@@ -1584,7 +1569,6 @@ class UserMasterList(View):
                     Q(email__icontains=keyword)
                 )
             except Exception as e:
-                print(f"Error in keyword search: {e}")
                 return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
         # Apply pagination
@@ -1737,7 +1721,6 @@ class GradeMasterList(View):
     #         data = {
     #             'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
     #         }
-    #         print(data)
     #         return JsonResponse(data)
 
     #     datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
@@ -1862,7 +1845,6 @@ def holidayList(request):
                 Q(holiday_description__icontains=keyword)
             )
         except Exception as e:
-            print(f"Error in keyword search: {e}")
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
@@ -1916,7 +1898,6 @@ def holidayEdit(request):
         uniqe_id = request.GET.get("holiday_id")
     try:
             holiday = get_object_or_404(HolidayMaster, unique_id=int(uniqe_id), comp_code=COMP_CODE)
-            # print(holiday.holiday_day,"DAY")
             return JsonResponse({
                 "holiday_id":holiday.unique_id,
                 "holiday": holiday.holiday,
@@ -1929,7 +1910,7 @@ def holidayEdit(request):
             })
                     
     except Exception as e:
-            print(f" Error project Edit: {str(e)}")  
+            pass
 
     if request.method == "POST":
             holiday_id=request.POST.get("holiday_id")
@@ -2000,7 +1981,6 @@ class MenuMaster(View):
                     Q(url__icontains=keyword)
                 )
             except Exception as e:
-                print(f"Error in keyword search: {e}")
                 return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
         # Apply pagination
@@ -2213,7 +2193,6 @@ def update_role_menu(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            print("Received Data:", data)  # Debugging
 
             changes = data.get('changes')
             if not changes:
@@ -2229,11 +2208,9 @@ def update_role_menu(request):
                     role_menu, created = RoleMenu.objects.get_or_create(role_id=role_id, menu_id=menu_id)
                     setattr(role_menu, permission, is_checked)
                     role_menu.save()
-                    print(f"Updated RoleMenu: {role_menu.menu_id} {permission}={is_checked}")  # Debugging
 
             return JsonResponse({'success': True})
         except Exception as e:
-            print(f"Error: {e}")  # Debugging
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
@@ -2296,7 +2273,6 @@ def company_master(request):
                 Q(company_name__icontains=keyword)
             )
         except Exception as e:
-            print(f"Error in keyword search: {e}")
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
     # Apply pagination
@@ -2355,7 +2331,6 @@ def add_company(request):
         expiry_date = request.POST.getlist("expiry_date[]")
         status = request.POST.getlist("status[]")
         remarks = request.POST.getlist("remarks[]")
-        print(document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks) 
 
         for document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks in zip(
             document_type, document_number, document_file, issued_by, issued_date, expiry_date, status, remarks):
@@ -2424,7 +2399,6 @@ def company_edit(request):
                 "documents": document_data
             })
         except Exception as e:
-            print(f"Error in company_edit: {str(e)}")
             return JsonResponse({"error": "Company data not found."}, status=404)
         
     if request.method == "POST":
@@ -2481,7 +2455,7 @@ def company_edit(request):
                         doc = CompanyDocument.objects.get(company_id=remove_ids[i], company_code=company.company_code)
                         doc.delete()
                     except CompanyDocument.DoesNotExist:
-                        print(f"Document with id {remove_ids[i]} not found.")
+                        pass
 
                 if doc_id and doc_id != "" and doc_id != "undefined":  # Update existing document
                     try:
@@ -2497,7 +2471,7 @@ def company_edit(request):
                             doc.document_file = file
                         doc.save()
                     except CompanyDocument.DoesNotExist:
-                        print(f"Document with id {doc_id} not found.")
+                        pass
                 else:  # New document
                     CompanyDocument.objects.create(
                         company_code=company.company_code,
@@ -2515,7 +2489,6 @@ def company_edit(request):
             return redirect('company_list')
 
         except Exception as e:
-            print(f"Error updating company data: {str(e)}")
             return JsonResponse({"error": "Error updating company data."}, status=500)
 
     return redirect('company_list')
@@ -2637,7 +2610,6 @@ def upload_attendance_data(request):
     if request.method == 'POST':
         paycycle = request.session.get('paycycle')
         table_data = request.session.get('table_data', [])
-        print('table', table_data)
 
         if not paycycle:
             messages.error(request, "Paycycle is mandatory.")
@@ -2736,7 +2708,6 @@ def payroll_processing(request):
 
             # Fetch employee data using paycycle
             employee_data = Employee.objects.filter(process_cycle=paycycle, comp_code=COMP_CODE)
-            print(employee_data)
             # Prepare payroll data
             payroll_data = []
             for employee in employee_data:
@@ -3447,7 +3418,6 @@ def update_adhoc_earn_deduct(request, emp_code):
         return redirect('adhoc_earn_deduct_list')
 
     except Exception as e:
-        print(f"Error updating records: {str(e)}")
         return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 def delete_adhoc_earn_deduct(request, emp_code):
@@ -3519,7 +3489,6 @@ def create_camp(request):
                 cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'CAMP'])
                 result = cursor.fetchone()
                 camp_code = result[0] if result else None
-                print(camp_code)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -3712,7 +3681,6 @@ def camp_master_edit(request):
         except CampMaster.DoesNotExist:
             return JsonResponse({"error": "Camp not found"}, status=404)
         except Exception as e:
-            print(f"Error fetching camp details: {str(e)}")
             return JsonResponse({"error": str(e)}, status=500)
         
     if request.method == "POST":
@@ -3763,18 +3731,15 @@ def camp_master_edit(request):
             occupied = request.POST.getlist('occupied[]')
             available = request.POST.getlist('available[]')
             delete_camp_detail_ids = request.POST.getlist('delete_camp_detail_id[]') 
-            print(delete_camp_detail_ids)           
             
             for cid, block, flr, typ, rooms, apm, alloc, apr, ab, low, up, total, occ, avail, rmid in zip_longest(
                 camp_detail_ids, block_name, floor, type, room_no, as_per_mohre, allocated, as_per_rental,
                 allocation_building, lower_bed_level, upper_bed_level, total_no_of_beds, occupied, available, delete_camp_detail_ids
             ):
                 if rmid:
-                    print(rmid)
                     camp_detail = CampDetails.objects.filter(camp_details_id=rmid)
 
                 if cid:
-                    print(flr,typ,'u')
                     camp_detail = CampDetails.objects.get(camp_details_id=cid)
                     camp_detail.block = block
                     camp_detail.floor = flr
@@ -3835,7 +3800,6 @@ def camp_master_edit(request):
                             # Create CampBeds for the new CampDetails
                             lower_beds = int(low) if low else 0
                             upper_beds = int(up) if up else 0
-                            print(flr)
                             for j in range(1, lower_beds + 1):
                                 CampBeds.objects.create(
                                     comp_code=COMP_CODE,
@@ -3868,7 +3832,6 @@ def camp_master_edit(request):
             delete_cheque_detail_id = request.POST.getlist('delete_cheque_detail_id[]')
 
             for cid, bank, no, date, amount, rmid in zip_longest(cheque_detail_ids, bank_name, cheque_no, cheque_date, cheque_amount, delete_cheque_detail_id):
-                print(cid, bank, no, date, amount, rmid)
 
                 if rmid:
                     cheque = CampCheque.objects.filter(camp_cheque_id=rmid)
@@ -3895,7 +3858,6 @@ def camp_master_edit(request):
         except CampMaster.DoesNotExist:
             return JsonResponse({"error": "Camp not found"}, status=404)
         except Exception as e:
-            print(f"Error updating camp details: {str(e)}")
             return JsonResponse({"error": str(e)}, status=500)
     return redirect('camp_master')
 
@@ -3943,7 +3905,6 @@ def fetch_buildings(request):
     camp_code = request.GET.get('camp_code')
     if camp_code:
         buildings = CampDetails.objects.filter(camp_code=camp_code).values_list('block', flat=True).distinct()
-        print(buildings)
         return JsonResponse({'success': True, 'buildings': list(buildings)})
     return JsonResponse({'success': False, 'message': 'Invalid camp code.'}, status=400)
 
@@ -4021,7 +3982,6 @@ def camp_allocation_create(request):
                 cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'REQCA'])
                 result = cursor.fetchone()
                 request_id = result[0] if result else None
-                print("Generated request_id:", request_id)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -4103,7 +4063,6 @@ def camp_transaction_approval_submit(request):
             if key.startswith('approval_'):  # Check for approval fields
                 transaction_id = key.split('_')[1]  # Extract transaction ID
                 approval_status = value  # Get the approval value ('Yes' or 'No')
-                print(f"Transaction ID: {transaction_id}, Approval Status: {approval_status}")
 
                 # Update the operational_approval field
                 camp_allow = CampAllocation.objects.filter(transaction_id=transaction_id)
@@ -4288,7 +4247,6 @@ def create_party(request):
                 cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'PARTY'])
                 result = cursor.fetchone()
                 customer_code = result[0] if result else None
-                print(customer_code)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -4314,7 +4272,6 @@ def create_party(request):
 
         if upload_document:
             for file in upload_document:
-                print(file.name)
                 PartyDocuments.objects.create(
                     comp_code=comp_code,
                     customer_code=customer_code,
@@ -4419,7 +4376,6 @@ def party_master_edit(request):
 
             if upload_document:
                 for file in upload_document:
-                    print(file.name)
                     PartyDocuments.objects.create(
                         comp_code=COMP_CODE,
                         customer_code=party.customer_code,
@@ -4432,7 +4388,6 @@ def party_master_edit(request):
         except PartyMaster.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Party not found.'}, status=404)
         except Exception as e:
-            print(f"Error updating party: {str(e)}")
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
     
     return redirect('party_master_list')
@@ -5194,7 +5149,6 @@ def get_employee_process_cycle(request):
         if not employee_data:
             return JsonResponse({'success': False, 'message': 'Employee not found'})
 
-        print(f"Employee process cycle: {employee_data['process_cycle']}")  # Debug log
 
         # Get pay process month from PaycycleMaster
         paycycle = PaycycleMaster.objects.filter(
@@ -5206,7 +5160,6 @@ def get_employee_process_cycle(request):
         if not paycycle:
             return JsonResponse({'success': False, 'message': 'No active pay cycle found for this employee'})
 
-        print(f"Paycycle found: {paycycle.pay_process_month}")  # Debug log
 
         # Format the month as YYYY-MM
         pay_process_month = paycycle.pay_process_month
@@ -5218,7 +5171,6 @@ def get_employee_process_cycle(request):
         })
 
     except Exception as e:
-        print(f"Error in get_employee_process_cycle: {str(e)}")  # Debug log
         return JsonResponse({'success': False, 'message': str(e)})
 
 @csrf_exempt
@@ -5312,7 +5264,6 @@ def save_attendance_correction(request):
             'message': 'Attendance updated successfully'
         })
     except Exception as e:
-        print(f"Error in save_attendance_correction: {str(e)}")  # Add debug logging
         return JsonResponse({
             'success': False,
             'message': str(e)
@@ -5389,6 +5340,8 @@ def add_gratuity(request):
             bank_account_no = request.POST.get('bank_account_no')
             settlement_date = request.POST.get('settlement_date') or None   
             remarks = request.POST.get('remarks')
+            supporting_docs = request.FILES.get('supporting_docs')
+            attachments = request.FILES.get('attachment')
             
             # Create new gratuity settlement
             gratuity = GratuitySettlement.objects.create(
@@ -5419,6 +5372,8 @@ def add_gratuity(request):
                 bank_name=bank_name,
                 bank_account_no=bank_account_no,
                 settlement_date=settlement_date,
+                supporting_docs=supporting_docs,
+                attachments=attachments,
                 remarks=remarks,
                 created_by=1
             )
@@ -5449,12 +5404,12 @@ def update_gratuity(request):
             gratuity.employee_name = request.POST.get('employee_name')
             gratuity.category = request.POST.get('category')
             gratuity.designation = request.POST.get('designation')
-            gratuity.date_of_joining = request.POST.get('date_of_joining')
-            gratuity.date_of_exit = request.POST.get('date_of_exit')
+            gratuity.date_of_joining = request.POST.get('date_of_joining') or None
+            gratuity.date_of_exit = request.POST.get('date_of_exit') or None
             gratuity.total_years_of_service = request.POST.get('total_years_of_service')
             gratuity.accrude_days = request.POST.get('acrude_days')
             gratuity.loss_of_pay_days = request.POST.get('loss_of_pay_days')
-            gratuity.leave_balance_days = request.POST.get('leave_balance')
+            gratuity.leave_balance_days = request.POST.get('leave_balance_days')
             gratuity.leave_encashment_amount = request.POST.get('leave_encashment_amount')
             gratuity.bonus_amount = request.POST.get('bonus_amount')
             gratuity.other_allowances = request.POST.get('other_allowances')
@@ -5470,18 +5425,16 @@ def update_gratuity(request):
             gratuity.payment_mode = request.POST.get('payment_mode')
             gratuity.bank_name = request.POST.get('bank_name')
             gratuity.bank_account_no = request.POST.get('bank_account_no')
-            gratuity.settlement_date = request.POST.get('settlement_date')
+            gratuity.settlement_date = request.POST.get('settlement_date') or None
             gratuity.remarks = request.POST.get('remarks')
-            gratuity.updated_by = request.user.id
-            gratuity.updated_at = timezone.now()
+            gratuity.supporting_docs = request.FILES.get('supporting_docs') or gratuity.supporting_docs
+            gratuity.attachments = request.FILES.get('attachments') or gratuity.attachments
+            # gratuity.updated_by = request.user.id
+            # gratuity.updated_at = timezone.now()
             
             gratuity.save()
             
             return redirect('gratuity_list')
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Gratuity settlement updated successfully!'
-            })
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
@@ -5549,7 +5502,9 @@ def get_gratuity_details(request):
                 'bank_name': gratuity.bank_name,
                 'bank_account_no': gratuity.bank_account_no,
                 'settlement_date': gratuity.settlement_date,
-                'remarks': gratuity.remarks
+                'remarks': gratuity.remarks,
+                'supporting_docs': gratuity.supporting_docs.url if gratuity.supporting_docs else None,
+                'attachments': gratuity.attachments.url if gratuity.attachments else None
             }
         }        
         return JsonResponse(data)
@@ -5836,7 +5791,6 @@ def rejoin_approval_submit(request):
         try:
             leave_id = request.POST.get('leave_id')
             leave = LeaveTransaction.objects.get(tran_id=leave_id, comp_code=COMP_CODE)
-            print(leave)
             
             # Update rejoin details
             leave.actual_rejoin_date = request.POST.get('actual_rejoin_date')
@@ -5900,7 +5854,6 @@ def get_rejoin_notifications(request):
             'count': len(notifications)
         })
     except Exception as e:
-        print(e)
         return JsonResponse({
             'status': 'error',
             'message': str(e)
@@ -6063,11 +6016,9 @@ def ao_entry_create(request):
                     # created_on=now()
                 )
                 messages.success(request, 'AO Entry created successfully!')
-                print("Created recruitment object:", recruitment)
                 return redirect('ao_entry_list')
             
             except Exception as e:
-                print("Error creating AO Entry:", str(e))
                 messages.error(request, f'Error creating AO Entry: {str(e)}')
                 return redirect('ao_entry_list')
     return redirect('ao_entry_list')
@@ -6210,7 +6161,6 @@ def recruitment_edit(request):
     if request.method == 'GET':
         try:
             recruitment_id = request.GET.get('recr_id')
-            print(recruitment_id)
             rec = Recruitment.objects.get(recr_id=recruitment_id)
             data = {
                 'recr_id': rec.recr_id,
@@ -6249,7 +6199,6 @@ def recruitment_edit(request):
         except Recruitment.DoesNotExist:
             return JsonResponse({'error': 'Recruitment entry not found'}, status=404)
         except Exception as e:
-            print(e)
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
@@ -6579,6 +6528,5 @@ def convert_to_employee(request):
                 messages.success(request, 'Successfully converted to employee!')
                 return JsonResponse({'success': True})
         except Exception as e:
-            print(f"Error converting to employee: {str(e)}")
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})

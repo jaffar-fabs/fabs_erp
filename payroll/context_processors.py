@@ -172,7 +172,7 @@ def project(request):
 
 def employee(request):
     comp_code = get_comp_code(request)
-    employee_data = Employee.objects.filter(comp_code=comp_code, staff_category__in = PAY_CYCLES)
+    employee_data = Employee.objects.filter(comp_code=comp_code, staff_category__in = PAY_CYCLES).order_by('emp_code')
     return {
         'employee_data': employee_data
         }
