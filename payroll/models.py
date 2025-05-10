@@ -1023,8 +1023,8 @@ class Recruitment(models.Model):
 class EmployeePPDetails(models.Model):
     id = models.AutoField(primary_key=True)
     comp_code = models.CharField(max_length=50, null=True, blank=True)
-    pp_number = models.CharField(max_length=50, unique=True)
-    emp_code = models.CharField(max_length=50, unique=True)
+    pp_number = models.CharField(max_length=50)
+    emp_code = models.CharField(max_length=50)
     name = models.CharField(max_length=255)
     in_outside = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)

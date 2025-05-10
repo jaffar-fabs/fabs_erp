@@ -145,7 +145,7 @@
                     $('#edit_id').val(response.id || '');
                     $('#edit_comp_code').val(response.comp_code || '');
                     $('#edit_pp_number').val(response.pp_number || '');
-                    $('#edit_emp_code').val(response.emp_code || '');
+                    $('#edit_emp_code').val(response.emp_code || '').trigger('change');
                     $('#edit_name').val(response.name || '');
                     $('#edit_in_outside').val(response.in_outside || '');
                     $('#edit_status').val(response.status || '');
