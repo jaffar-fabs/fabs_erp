@@ -6026,14 +6026,10 @@ def ao_entry_create(request):
                     cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'AO'])
                     result = cursor.fetchone()
                     ao_ref_no = result[0] if result else None
-                    print(ao_ref_no)
             except Exception as e:
-                print(e)
+                return JsonResponse({'error': str(e)}, status=500)
             
-            try:
-                # Print received data for debugging
-                print("Received POST data:", request.POST)
-                
+            try:                
                 recruitment = Recruitment.objects.create(
                     comp_code=COMP_CODE,
                     ao_issued_date=ao_issued_date,
