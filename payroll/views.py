@@ -5746,7 +5746,6 @@ def update_leave_details(request):
             leave.encashment = request.POST.get('encashment')
             leave.is_active = request.POST.get('is_active') == 'Active'
             leave.modified_by = request.session.get('user_id')
-            print(leave.leave_id)
             leave.save()
             messages.success(request, 'Leave type updated successfully!')
             return redirect('leave_master_list')
