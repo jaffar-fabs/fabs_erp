@@ -5816,7 +5816,6 @@ def get_rejoin_details(request):
     try:
         leave_id = request.GET.get('leave_id')
         leave = LeaveTransaction.objects.get(tran_id=leave_id, comp_code=COMP_CODE)
-        print(leave)
         data = {
             'employee_code': leave.employee,
             'employee_name': leave.employee_name,
