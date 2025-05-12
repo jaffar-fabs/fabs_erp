@@ -113,6 +113,19 @@
                     </div>
                 </div>
 
+                <!-- Category -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="category" id="category" required>
+                            <option value="">Select Category</option>
+                            {% for category in staff_category_data %}
+                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <!-- Quantity -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -277,6 +290,19 @@
                             <option value="">Select Status</option>
                             <option value="Open">Open</option>
                             <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="category" id="edit_category" required>
+                            <option value="">Select Category</option>
+                            {% for category in staff_category_data %}
+                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>

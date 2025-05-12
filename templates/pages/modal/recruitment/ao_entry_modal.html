@@ -26,8 +26,9 @@
                         {% for mrf in mrf_data %}
                         <option value="{{ mrf.id }}"
                         data-project-code="{{ mrf.project_code }}"
-                        data-designation-code="{{ mrf.designation_code }}">
-                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }}</option>
+                        data-designation-code="{{ mrf.designation_code }}"
+                        data-category="{{ mrf.category }}">
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }} - {{ mrf.category }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -46,6 +47,16 @@
                         <option value="">Select Project</option>
                         {% for project in project_data %}
                         <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- category -->
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Category</label>
+                    <select name="category" class="form-control" id="category">
+                        <option value="">Select Category</option>
+                        {% for category in staff_category_data %}
+                        <option value="{{ category.base_value }}">{{ category.base_value }} - {{ category.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -219,8 +230,9 @@
                         {% for mrf in mrf_data %}
                         <option value="{{ mrf.id }}"
                         data-project-code="{{ mrf.project_code }}"
-                        data-designation-code="{{ mrf.designation_code }}">
-                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }}</option>
+                        data-designation-code="{{ mrf.designation_code }}"
+                        data-category="{{ mrf.category }}">
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }} - {{ mrf.category }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -239,6 +251,16 @@
                         <option value="">Select Project</option>    
                         {% for project in project_data %}
                         <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- category -->
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Category</label>
+                    <select name="category" id="edit_category" class="form-control">
+                        <option value="">Select Category</option>
+                        {% for category in staff_category_data %}
+                        <option value="{{ category.base_value }}">{{ category.base_value }} - {{ category.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -390,8 +412,10 @@
             const selectedOption = $(this).find('option:selected');
             const projectCode = selectedOption.data('project-code');
             const designationCode = selectedOption.data('designation-code');
+            const category = selectedOption.data('category');
             $('#project').val(projectCode);
             $('#designation').val(designationCode);
+            $('#category').val(category);
         });
 
 
@@ -399,8 +423,10 @@
             const selectedOption = $(this).find('option:selected');
             const projectCode = selectedOption.data('project-code');
             const designationCode = selectedOption.data('designation-code');
+            const category = selectedOption.data('category');
             $('#edit_project').val(projectCode);
             $('#edit_designation').val(designationCode);
+            $('#edit_category').val(category);
         });
     });
 

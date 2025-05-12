@@ -5962,6 +5962,7 @@ def ao_entry_create(request):
             dep = request.POST.get('dep')
             project = request.POST.get('project')
             mrf = request.POST.get('mrf')
+            category = request.POST.get('category')
             # ao_ref_no = request.POST.get('ao_ref_no')
             name_as_per_pp = request.POST.get('name_as_per_pp')
             pp_number = request.POST.get('pp_number')
@@ -5998,13 +5999,13 @@ def ao_entry_create(request):
                 return JsonResponse({'error': str(e)}, status=500)
             
             try: 
-                print(mrf)
                 recruitment = Recruitment.objects.create(
                     comp_code=COMP_CODE,
                     ao_issued_date=ao_issued_date,
                     dep=dep,
                     project=project,
                     mrf=mrf,
+                    category=category,
                     ao_ref_no=ao_ref_no,
                     name_as_per_pp=name_as_per_pp,
                     pp_number=pp_number,
@@ -6058,6 +6059,7 @@ def ao_entry_edit(request):
                 'dep': ao_entry.dep,
                 'project': ao_entry.project,
                 'mrf': ao_entry.mrf,
+                'category': ao_entry.category,
                 'ao_ref_no': ao_entry.ao_ref_no,
                 'name_as_per_pp': ao_entry.name_as_per_pp,
                 'pp_number': ao_entry.pp_number,
@@ -6105,6 +6107,7 @@ def ao_entry_update(request):
             ao_entry.project = request.POST.get('project')
             ao_entry.mrf = request.POST.get('mrf')
             ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
+            ao_entry.category = request.POST.get('category')
             ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
             ao_entry.pp_number = request.POST.get('pp_number')
             ao_entry.pp_exp_date = request.POST.get('pp_exp_date') or None
@@ -6613,6 +6616,7 @@ def create_mrf(request):
                 comp_code=COMP_CODE,
                 project_code=request.POST.get('project_code'),
                 designation_code=request.POST.get('designation_code'),
+                category=request.POST.get('category'),
                 quantity=request.POST.get('quantity'),
                 remaining_quantity=request.POST.get('quantity'),
                 status='Open',
@@ -6640,6 +6644,7 @@ def edit_mrf(request):
             mrf_id = request.POST.get('mrf_id')
             mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
             mrf.remaining_quantity = request.POST.get('remaining_quantity')
+            mrf.category = request.POST.get('category')
             mrf.status = request.POST.get('status')
             mrf.remarks = request.POST.get('remarks')
             mrf.updated_by = request.user.username
@@ -6688,6 +6693,7 @@ def get_mrf_details(request):
         data = {
             'project_code': mrf.project_code,
             'designation_code': mrf.designation_code,
+            'category': mrf.category,
             'quantity': mrf.quantity,
             'remaining_quantity': mrf.remaining_quantity,
             'status': mrf.status,

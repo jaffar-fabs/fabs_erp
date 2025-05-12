@@ -982,6 +982,7 @@ class Recruitment(models.Model):
     ao_acceptance = models.CharField(max_length=100, null=True, blank=True)
     acceptance_date = models.DateField(null=True, blank=True)
     document_status = models.CharField(max_length=100, null=True, blank=True)
+    category = models.CharField(max_length=100, null=True, blank=True)
     
     interview_date = models.DateField(null=True, blank=True)
     agency_name = models.CharField(max_length=255, null=True, blank=True)
@@ -1062,6 +1063,7 @@ class MRFMaster(models.Model):
     remaining_quantity = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=50, null=True, blank=True)
     remarks = models.TextField(null=True, blank=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
     created_by = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_by = models.CharField(max_length=50)

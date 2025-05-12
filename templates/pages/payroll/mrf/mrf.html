@@ -145,6 +145,7 @@
                         $('#edit_remaining_quantity').val(response.remaining_quantity);
                         $('#edit_status').val(response.status).trigger('change');
                         $('#edit_remarks').val(response.remarks);
+                        $('#edit_category').val(response.category).trigger('change');
                         
                         // Set project details based on selected project
                         const selectedProject = $('#edit_project_code option:selected');
