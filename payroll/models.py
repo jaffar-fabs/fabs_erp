@@ -100,9 +100,9 @@ class CampDetails(models.Model):
     
     lower_bed = models.CharField(max_length=50, null=True, blank=True)
     upper_bed = models.CharField(max_length=50, null=True, blank=True)
-    total_beds = models.CharField(max_length=50, null=True, blank=True)
-    occupied_beds = models.CharField(max_length=50, null=True, blank=True)
-    available_beds = models.CharField(max_length=50, null=True, blank=True)
+    total_beds = models.IntegerField(null=True, blank=True)
+    occupied_beds = models.IntegerField(null=True, blank=True)
+    available_beds = models.IntegerField(null=True, blank=True)
 
 class CampBeds(models.Model):
     comp_code = models.CharField(max_length=15)

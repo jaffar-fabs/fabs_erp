@@ -53,7 +53,7 @@ def wait_until(target_time):
         time.sleep(30)  # Check every 30 seconds
 
 # Set target time to 20:38
-target_time = datetime.time(00, 17)
+target_time = datetime.time(14, 27)
 print(f"Scheduler running... waiting for {target_time}")
 
 while True:
