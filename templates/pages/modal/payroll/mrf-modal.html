@@ -1,0 +1,407 @@
+{% load static %}
+
+<!-- Add New MRF -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New MRF</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'create_mrf' %}" method="POST" id="mrfForm">
+            {% csrf_token %}
+            <div class="row">
+                <!-- Project Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="project_code" id="project_code" required>
+                            <option value="">Select Project</option>
+                            {% for project in projects %}
+                                <option value="{{ project.prj_code }}" 
+                                        data-name="{{ project.prj_name }}"
+                                        data-start="{{ project.timeline_from|date:'Y-m-d' }}"
+                                        data-end="{{ project.timeline_to|date:'Y-m-d' }}"
+                                        data-supervisor="{{ project.project_supervisor }}"
+                                        data-engineer="{{ project.project_engineer }}"
+                                        data-manager="{{ project.manager }}">
+                                    {{ project.prj_code }} - {{ project.prj_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Name (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Name</label>
+                        <input type="text" class="form-control" id="project_name" readonly>
+                    </div>
+                </div>
+
+                <!-- Project Engineer -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Engineer <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_engineer" id="project_engineer" required>
+                            <option value="">Select Project Engineer</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>   
+                    </div>
+                </div>
+
+                <!-- Project Manager -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Manager <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_manager" id="project_manager" required>
+                            <option value="">Select Project Manager</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Supervisor -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Supervisor <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_supervisor" id="project_supervisor" required>
+                            <option value="">Select Project Supervisor</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Start Date (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Start Date</label>
+                        <input type="date" class="form-control" id="start_date" readonly>
+                    </div>
+                </div>
+
+                <!-- End Date (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">End Date</label>
+                        <input type="date" class="form-control" id="end_date" readonly>
+                    </div>
+                </div>
+
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="designation_code" required>
+                            <option value="">Select Designation</option>
+                            {% for designation in designations %}
+                                <option value="{{ designation.base_value }}">
+                                    {{ designation.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Quantity <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="quantity" id="quantity" required min="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label class="col-form-label">Remarks</label>
+                    <textarea class="form-control" name="remarks" id="remarks"></textarea>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit MRF -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit MRF</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'edit_mrf' %}" method="POST" id="editMrfForm">
+            {% csrf_token %}
+            <input type="hidden" name="mrf_id" id="edit_mrf_id">
+            <div class="row">
+                <!-- Project Code -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="project_code" id="edit_project_code" disabled>
+                            <option value="">Select Project</option>
+                            {% for project in projects %}
+                                <option value="{{ project.prj_code }}" 
+                                        data-name="{{ project.prj_name }}"
+                                        data-start="{{ project.timeline_from|date:'Y-m-d' }}"
+                                        data-end="{{ project.timeline_to|date:'Y-m-d' }}"
+                                        data-supervisor="{{ project.project_supervisor }}"
+                                        data-engineer="{{ project.project_engineer }}"
+                                        data-manager="{{ project.manager }}">
+                                    {{ project.prj_code }} - {{ project.prj_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Name (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Name</label>
+                        <input type="text" class="form-control" id="edit_project_name" readonly>
+                    </div>
+                </div>
+
+                <!-- Project Engineer -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Engineer <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_engineer" id="edit_project_engineer" disabled>
+                            <option value="">Select Project Engineer</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Manager -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Manager <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_manager" id="edit_project_manager" disabled>
+                            <option value="">Select Project Manager</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Supervisor -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Supervisor <span class="text-danger">*</span></label>
+                        <select class="form-control select2" multiple="multiple" name="project_supervisor" id="edit_project_supervisor" disabled>
+                            <option value="">Select Project Supervisor</option>
+                            {% for employee in employee_data %}
+                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Start Date (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Start Date</label>
+                        <input type="date" class="form-control" id="edit_start_date" readonly>
+                    </div>
+                </div>
+
+                <!-- End Date (Read Only) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">End Date</label>
+                        <input type="date" class="form-control" id="edit_end_date" readonly>
+                    </div>
+                </div>
+
+                <!-- Designation -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="designation_code" id="edit_designation_code" disabled>
+                            <option value="">Select Designation</option>
+                            {% for designation in designations %}
+                                <option value="{{ designation.base_value }}">
+                                    {{ designation.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Quantity <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" name="quantity" id="edit_quantity" readonly>
+                    </div>
+                </div>
+
+                <!-- Remaining Quantity -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Remaining Quantity</label>
+                        <input type="number" class="form-control" name="remaining_quantity" id="edit_remaining_quantity" readonly>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Status</label>
+                        <select class="form-control select" name="status" id="edit_status" required>
+                            <option value="">Select Status</option>
+                            <option value="Open">Open</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Remarks -->
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label class="col-form-label">Remarks</label>
+                        <textarea class="form-control" name="remarks" id="edit_remarks" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete MRF Modal -->
+<div class="modal fade" id="delete_mrf" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove MRF?</h4>
+                    <p class="mb-0">Are you sure you want to remove this MRF?</p>
+                    <form id="delete-form" method="POST" action="{% url 'delete_mrf' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="mrf_id" id="delete_mrf_id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+<script>    
+    $(document).ready(function() {
+    // Initialize Select2 for the relevant fields
+    $('#project_engineer, #project_manager, #project_supervisor').select2({
+        width: '100%',
+        placeholder: 'Select options'
+    });
+
+    // Helper function to safely set element value
+    function setElementValue(elementId, value) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            if ($(element).hasClass('select2')) {
+                // For Select2 elements, handle multiple values
+                if (value) {
+                    const values = value.split(':'); // Assuming values are comma-separated
+                    $(element).val(values).trigger('change'); // Set values and trigger change
+                } else {
+                    $(element).val(null).trigger('change'); // Clear values
+                }
+            } else {
+                element.value = value || ''; // For regular inputs
+            }
+        }
+    }
+
+    // Handle project code selection for Add form
+    $('#project_code').on('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption && selectedOption.dataset) {
+            // Update project details
+            setElementValue('project_name', selectedOption.dataset.name);
+            setElementValue('start_date', selectedOption.dataset.start);
+            setElementValue('end_date', selectedOption.dataset.end);
+            
+            // Update project staff details
+            const engineer = selectedOption.dataset.engineer || '';
+            const manager = selectedOption.dataset.manager || '';
+            const supervisor = selectedOption.dataset.supervisor || '';
+            
+            // Set values for Select2 fields
+            setElementValue('project_engineer', engineer);
+            setElementValue('project_manager', manager);
+            setElementValue('project_supervisor', supervisor);
+        }
+    });
+
+    // Handle project code selection for Edit form
+    $('#edit_project_code').on('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption && selectedOption.dataset) {
+            // Update project details
+            setElementValue('edit_project_name', selectedOption.dataset.name);
+            setElementValue('edit_start_date', selectedOption.dataset.start);
+            setElementValue('edit_end_date', selectedOption.dataset.end);
+            
+            // Update project staff details
+            const engineer = selectedOption.dataset.engineer || '';
+            const manager = selectedOption.dataset.manager || '';
+            const supervisor = selectedOption.dataset.supervisor || '';
+            
+            // Set values for Select2 fields
+            setElementValue('edit_project_engineer', engineer);
+            setElementValue('edit_project_manager', manager);
+            setElementValue('edit_project_supervisor', supervisor);
+        }
+    });
+
+    // name = quantiy accept only postive value
+    $('#quantity').on('input', function() {
+        const quantity = parseInt($(this).val()) || 0;
+        if (quantity < 0) {
+            $(this).val(0);
+            alert('Quantity cannot be negative or zero');
+        }
+    });
+    
+});
+
+</script>

@@ -20,6 +20,18 @@
                     <input type="date" name="ao_issued_date" class="form-control" required>
                 </div>
                 <div class="col-md-4 mb-3">
+                    <label class="col-form-label">MRF</label>
+                    <select name="mrf" id="mrf" class="form-control">
+                        <option value="">Select MRF</option>
+                        {% for mrf in mrf_data %}
+                        <option value="{{ mrf.id }}"
+                        data-project-code="{{ mrf.project_code }}"
+                        data-designation-code="{{ mrf.designation_code }}">
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
                     <label class="col-form-label">Department</label>
                     <select name="dep" class="form-control">
                         <option value="">Select Department</option>
@@ -30,7 +42,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Project</label>
-                    <select name="project" class="form-control">
+                    <select name="project" class="form-control" id="project">
                         <option value="">Select Project</option>
                         {% for project in project_data %}
                         <option value="{{ project.prj_code }}">{{ project.prj_code }} - {{ project.prj_name }}</option>
@@ -51,7 +63,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">PP Validity Days</label>
-                    <input type="number" name="pp_validity_days" class="form-control">
+                    <input type="number" name="pp_validity_days" class="form-control" readonly>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Date of Birth</label>
@@ -59,7 +71,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Age</label>
-                    <input type="number" name="age" class="form-control">
+                    <input type="number" name="age" class="form-control" readonly>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Telephone</label>
@@ -85,7 +97,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Designation</label>
-                    <select name="designation" class="form-control">
+                    <select name="designation" class="form-control" id="designation">
                         <option value="">Select Designation</option>
                         {% for designation in desig_data %}
                         <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
@@ -148,11 +160,11 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Total</label>
-                    <input type="number" step="0.01" name="total" class="form-control">
+                    <input type="number" step="0.01" name="total" class="form-control" readonly>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">In Words</label>
-                    <input type="text" name="in_words" class="form-control">
+                    <input type="text" name="in_words" class="form-control" readonly>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Acceptance</label>
@@ -199,6 +211,18 @@
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
                     <input type="date" name="ao_issued_date" id="edit_ao_issued_date" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">MRF</label>
+                    <select name="mrf" id="edit_mrf" class="form-control">
+                        <option value="">Select MRF</option>
+                        {% for mrf in mrf_data %}
+                        <option value="{{ mrf.id }}"
+                        data-project-code="{{ mrf.project_code }}"
+                        data-designation-code="{{ mrf.designation_code }}">
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Department</label>
@@ -361,6 +385,25 @@
 </div>
 
 <script>
+    $(document).ready(function() {
+        $('#mrf').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const projectCode = selectedOption.data('project-code');
+            const designationCode = selectedOption.data('designation-code');
+            $('#project').val(projectCode);
+            $('#designation').val(designationCode);
+        });
+
+
+        $('#edit_mrf').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const projectCode = selectedOption.data('project-code');
+            const designationCode = selectedOption.data('designation-code');
+            $('#edit_project').val(projectCode);
+            $('#edit_designation').val(designationCode);
+        });
+    });
+
     // Form validation functions
     function validateForm(formId) {
         const form = document.getElementById(formId);

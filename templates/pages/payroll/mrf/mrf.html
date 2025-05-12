@@ -1,0 +1,201 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Manpower Requisition Form" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search MRF" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvas_add"><i
+                                            class="ti ti-square-rounded-plus me-2"></i>Add New MRF</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>MRF Number</th>
+                                        <th>Project Code</th>
+                                        <th>Project Name</th>
+                                        <th>Designation</th>
+                                        <th>Quantity</th>
+                                        <th>Remaining Quantity</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for mrf in mrfs %}
+                                    <tr>
+                                        <td>{{ mrf.mrf_number }}</td>
+                                        <td>{{ mrf.project_code }}</td>
+                                        <td>
+                                            {% for project in projects %}
+                                                {% if project.prj_code == mrf.project_code %}
+                                                    {{ project.prj_name }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% for designation in designations %}
+                                                {% if designation.base_value == mrf.designation_code %}
+                                                    {{ designation.base_description }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ mrf.quantity }}</td>
+                                        <td>{{ mrf.remaining_quantity }}</td>
+                                        <td>
+                                            <span class="badge {% if mrf.status == 'Active' %}bg-success{% else %}bg-danger{% endif %}">
+                                                {{ mrf.status|default:"Active" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-mrf-btn" href="#"
+                                                        data-mrf-id="{{ mrf.id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                        data-bs-target="#delete_mrf"
+                                                        data-mrf-id="{{ mrf.id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block mrf_modal %}
+{% include "pages/modal/payroll/mrf-modal.html" %}
+{% endblock %}
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for all select elements
+        $('.select2').select2({
+            width: '100%',
+            placeholder: 'Select options'
+        });
+
+        // Handle delete button click
+        $('.delete-btn').on('click', function() {
+            const mrfId = $(this).data('mrf-id');
+            $('#delete_mrf_id').val(mrfId);
+        });
+
+        // Handle edit button click
+        $('.edit-mrf-btn').on('click', function(e) {
+            e.preventDefault();
+            const mrfId = $(this).data('mrf-id');
+            
+            // Open edit offcanvas
+            const offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Fetch MRF details and populate form
+            $.ajax({
+                url: "/get_mrf_details/",
+                type: "GET",
+                data: { 'mrf_id': mrfId },
+                success: function(response) {
+                    if (response) {
+                        // Set basic form fields
+                        $('#edit_mrf_id').val(mrfId);
+                        $('#edit_project_code').val(response.project_code).trigger('change');
+                        $('#edit_designation_code').val(response.designation_code).trigger('change');
+                        $('#edit_quantity').val(response.quantity);
+                        $('#edit_remaining_quantity').val(response.remaining_quantity);
+                        $('#edit_status').val(response.status).trigger('change');
+                        $('#edit_remarks').val(response.remarks);
+                        
+                        // Set project details based on selected project
+                        const selectedProject = $('#edit_project_code option:selected');
+                        if (selectedProject.length) {
+                            $('#edit_project_name').val(selectedProject.data('name'));
+                            $('#edit_start_date').val(selectedProject.data('start'));
+                            $('#edit_end_date').val(selectedProject.data('end'));
+                            
+                            // Set project staff if available
+                            if (selectedProject.data('engineer')) {
+                                $('#edit_project_engineer').val(selectedProject.data('engineer').split(':')).trigger('change');
+                            }
+                            if (selectedProject.data('manager')) {
+                                $('#edit_project_manager').val(selectedProject.data('manager').split(':')).trigger('change');
+                            }
+                            if (selectedProject.data('supervisor')) {
+                                $('#edit_project_supervisor').val(selectedProject.data('supervisor').split(':')).trigger('change');
+                            }
+                        }
+                    } else {
+                        alert('Error fetching MRF details');
+                    }
+                },
+                error: function() {
+                    alert('Error fetching MRF details');
+                }
+            });
+        });
+
+        // Handle project code change in edit form
+        $('#edit_project_code').on('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.dataset) {
+                // Update project details
+                $('#edit_project_name').val(selectedOption.dataset.name);
+                $('#edit_start_date').val(selectedOption.dataset.start);
+                $('#edit_end_date').val(selectedOption.dataset.end);
+                
+                // Update project staff details
+                if (selectedOption.dataset.engineer) {
+                    $('#edit_project_engineer').val(selectedOption.dataset.engineer.split(':')).trigger('change');
+                }
+                if (selectedOption.dataset.manager) {
+                    $('#edit_project_manager').val(selectedOption.dataset.manager.split(':')).trigger('change');
+                }
+                if (selectedOption.dataset.supervisor) {
+                    $('#edit_project_supervisor').val(selectedOption.dataset.supervisor.split(':')).trigger('change');
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock content %} 

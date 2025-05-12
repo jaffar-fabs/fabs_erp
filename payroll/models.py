@@ -501,6 +501,8 @@ class projectMaster(models.Model):
     op_head = models.CharField(max_length=500, null=True, blank=True)
     manager = models.CharField(max_length=500, null=True, blank=True)
     commercial_manager = models.CharField(max_length=500, null=True, blank=True)
+    project_engineer = models.CharField(max_length=500, null=True, blank=True)
+    project_supervisor = models.CharField(max_length=500, null=True, blank=True)
     procurement_user = models.CharField(max_length=500, null=True, blank=True)
     indent_user = models.CharField(max_length=500, null=True, blank=True)
     final_contract_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
@@ -952,6 +954,7 @@ class Recruitment(models.Model):
     comp_code = models.CharField(max_length=15, null=True, blank=True)
     recr_id = models.BigAutoField(primary_key=True)
     ao_issued_date = models.DateField(null=True, blank=True)
+    mrf = models.CharField(max_length=100, null=True, blank=True)
     dep = models.CharField(max_length=100, null=True, blank=True)
     project = models.CharField(max_length=255, null=True, blank=True)
     ao_ref_no = models.CharField(max_length=100, null=True, blank=True)
@@ -1046,3 +1049,20 @@ class EmployeePPDetails(models.Model):
     tawjeeh_class = models.CharField(max_length=100, null=True, blank=True)
     iloe_status = models.CharField(max_length=100, null=True, blank=True)
     date_of_landing = models.DateField(null=True, blank=True)
+
+
+
+class MRFMaster(models.Model):
+    id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=50, null=True, blank=True)
+    mrf_number = models.CharField(max_length=50)
+    project_code = models.CharField(max_length=50)
+    designation_code = models.CharField(max_length=50)
+    quantity = models.CharField(max_length=50)
+    remaining_quantity = models.CharField(max_length=50, null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True)
+    remarks = models.TextField(null=True, blank=True)
+    created_by = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.CharField(max_length=50)
+    updated_at = models.DateTimeField(auto_now=True)

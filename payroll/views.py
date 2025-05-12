@@ -1088,6 +1088,8 @@ def project(request):
                                 op_head=row_data.get('OP Head Code', ''),
                                 manager=row_data.get('Manager Code', ''),
                                 commercial_manager=row_data.get('Commercial Manager Code', ''),
+                                project_engineer=row_data.get('Project Engineer Code', ''),
+                                project_supervisor=row_data.get('Project Supervisor Code', ''),
                                 procurement_user=row_data.get('Procurement User Code', ''),
                                 indent_user=row_data.get('Indent User Code', ''),
                                 final_contract_value=row_data.get('Final Contract Value', 0),
@@ -1157,6 +1159,8 @@ def project(request):
                     "op_head": project.op_head.split(':') if project.op_head else [],
                     "manager": project.manager.split(':') if project.manager else [],
                     "commercial_manager": project.commercial_manager.split(':') if project.commercial_manager else [],
+                    "project_engineer": project.project_engineer.split(':') if project.project_engineer else [],
+                    "project_supervisor": project.project_supervisor.split(':') if project.project_supervisor else [], 
                     "procurement_user": project.procurement_user.split(':') if project.procurement_user else [],
                     "indent_user": project.indent_user.split(':') if project.indent_user else [],
                     "final_contract_value": project.final_contract_value or 0,
@@ -1225,6 +1229,8 @@ def project(request):
                     "op_head": project.op_head,
                     "manager": project.manager,
                     "commercial_manager": project.commercial_manager,
+                    "project_engineer": project.project_engineer,
+                    "project_supervisor": project.project_supervisor,
                     "procurement_user": project.procurement_user,
                     "indent_user": project.indent_user,
                     "customer": project.customer,
@@ -1258,6 +1264,8 @@ def project(request):
         op_heads = request.POST.getlist("op_head")  # Get list of selected OP Heads
         managers = request.POST.getlist("manager")  # Get list of selected Managers
         commercial_managers = request.POST.getlist("commercial_manager")  # Get list of selected Commercial Managers
+        project_engineers = request.POST.getlist("project_engineer")  # Get list of selected Project Engineers
+        project_supervisors = request.POST.getlist("project_supervisor")  # Get list of selected Project Supervisors
         procurement_users = request.POST.getlist("procurement_user")  # Get list of selected Procurement Users
         indent_users = request.POST.getlist("indent_user")  # Get list of selected Indent Users
 
@@ -1265,6 +1273,8 @@ def project(request):
         op_heads_str = ":".join(op_heads)
         managers_str = ":".join(managers)
         commercial_managers_str = ":".join(commercial_managers)
+        project_engineers_str = ":".join(project_engineers)
+        project_supervisors_str = ":".join(project_supervisors)
         procurement_users_str = ":".join(procurement_users)
         indent_users_str = ":".join(indent_users)
 
@@ -1288,6 +1298,8 @@ def project(request):
             project.op_head = op_heads_str
             project.manager = managers_str
             project.commercial_manager = commercial_managers_str
+            project.project_engineer = project_engineers_str
+            project.project_supervisor = project_supervisors_str
             project.procurement_user = procurement_users_str
             project.indent_user = indent_users_str
             project.customer = request.POST.get("customer", project.customer)
@@ -1318,6 +1330,8 @@ def project(request):
                 op_head=op_heads_str,
                 manager=managers_str,
                 commercial_manager=commercial_managers_str,
+                project_engineer=project_engineers_str,
+                project_supervisor=project_supervisors_str,
                 procurement_user=procurement_users,
                 indent_user=indent_users,
                 customer=request.POST.get("customer"),
@@ -5911,7 +5925,8 @@ def get_emp_code(request):
 def ao_entry_list(request):
     set_comp_code(request)
     keyword = request.GET.get('keyword', '')
-    entries = Recruitment.objects.filter(comp_code=COMP_CODE).order_by('-ao_issued_date')
+    entries = Recruitment.objects.filter(comp_code=COMP_CODE).order_by('-ao_ref_no')
+    mrf_data = MRFMaster.objects.filter(comp_code=COMP_CODE, status='Open', remaining_quantity__gt=0)
     
     if keyword:
         entries = entries.filter(
@@ -5922,7 +5937,7 @@ def ao_entry_list(request):
         )
     
     # Pagination
-    paginator = Paginator(entries, 10)  # Show 10 entries per page
+    paginator = Paginator(entries, PAGINATION_SIZE)  # Show 10 entries per page
     page = request.GET.get('page')
     try:
         entries = paginator.page(page)
@@ -5934,7 +5949,8 @@ def ao_entry_list(request):
     context = {
         'entries': entries,
         'result_cnt': entries.paginator.count if entries else 0,
-        'keyword': keyword
+        'keyword': keyword,
+        'mrf_data': mrf_data
     }
     return render(request, 'pages/payroll/recruitment/ao_entry_list.html', context)
 
@@ -5945,6 +5961,7 @@ def ao_entry_create(request):
             ao_issued_date = request.POST.get('ao_issued_date') or None
             dep = request.POST.get('dep')
             project = request.POST.get('project')
+            mrf = request.POST.get('mrf')
             # ao_ref_no = request.POST.get('ao_ref_no')
             name_as_per_pp = request.POST.get('name_as_per_pp')
             pp_number = request.POST.get('pp_number')
@@ -5980,12 +5997,14 @@ def ao_entry_create(request):
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=500)
             
-            try:                
+            try: 
+                print(mrf)
                 recruitment = Recruitment.objects.create(
                     comp_code=COMP_CODE,
                     ao_issued_date=ao_issued_date,
                     dep=dep,
                     project=project,
+                    mrf=mrf,
                     ao_ref_no=ao_ref_no,
                     name_as_per_pp=name_as_per_pp,
                     pp_number=pp_number,
@@ -6015,6 +6034,10 @@ def ao_entry_create(request):
                     # created_by=request.session.get('username'),
                     # created_on=now()
                 )
+                mrf_data = MRFMaster.objects.get(comp_code=COMP_CODE, id=mrf)
+                remaining_quantity = int(mrf_data.remaining_quantity) - 1
+                mrf_data.remaining_quantity = remaining_quantity
+                mrf_data.save()
                 messages.success(request, 'AO Entry created successfully!')
                 return redirect('ao_entry_list')
             
@@ -6034,6 +6057,7 @@ def ao_entry_edit(request):
                 'ao_issued_date': ao_entry.ao_issued_date.strftime('%Y-%m-%d') if ao_entry.ao_issued_date else None,
                 'dep': ao_entry.dep,
                 'project': ao_entry.project,
+                'mrf': ao_entry.mrf,
                 'ao_ref_no': ao_entry.ao_ref_no,
                 'name_as_per_pp': ao_entry.name_as_per_pp,
                 'pp_number': ao_entry.pp_number,
@@ -6079,6 +6103,7 @@ def ao_entry_update(request):
             ao_entry.ao_issued_date = request.POST.get('ao_issued_date')
             ao_entry.dep = request.POST.get('dep')
             ao_entry.project = request.POST.get('project')
+            ao_entry.mrf = request.POST.get('mrf')
             ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
             ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
             ao_entry.pp_number = request.POST.get('pp_number')
@@ -6530,3 +6555,149 @@ def convert_to_employee(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+def mrf_list(request):
+    set_comp_code(request)
+    """View to list all MRFs"""
+    keyword = request.GET.get('keyword', '')
+    
+    # Get all MRFs
+    mrfs = MRFMaster.objects.filter(comp_code = COMP_CODE)
+    
+    # Apply search filter if keyword exists
+    if keyword:
+        mrfs = mrfs.filter(
+            Q(mrf_number__icontains=keyword) |
+            Q(project_code__icontains=keyword) |
+            Q(designation_code__icontains=keyword)
+        )
+    
+    # Get projects for dropdown
+    projects = projectMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
+    
+    # Get designations for dropdown
+    designations = CodeMaster.objects.filter(
+        comp_code=COMP_CODE,
+        base_type='DESIGNATION',
+        is_active='Y'
+    )
+    
+    
+    context = {
+        'mrfs': mrfs,
+        'projects': projects,
+        'designations': designations,
+        'keyword': keyword,
+        'result_cnt': mrfs.count()
+    }
+    
+    return render(request, 'pages/payroll/mrf/mrf.html', context)
+
+@csrf_exempt
+def create_mrf(request):
+    """View to create a new MRF"""
+    if request.method == 'POST':
+        try:
+            # Generate MRF number
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'MRF'])
+                    result = cursor.fetchone()
+                    mrf_number = result[0] if result else None
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+            
+            # Create new MRF
+            mrf = MRFMaster.objects.create(
+                mrf_number=mrf_number,
+                comp_code=COMP_CODE,
+                project_code=request.POST.get('project_code'),
+                designation_code=request.POST.get('designation_code'),
+                quantity=request.POST.get('quantity'),
+                remaining_quantity=request.POST.get('quantity'),
+                status='Open',
+                remarks=request.POST.get('remarks'),
+                created_by=request.user.username,
+                updated_by=request.user.username
+            )
+            
+            return redirect('mrf_list')
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def edit_mrf(request):
+    set_comp_code(request)
+    """View to edit an existing MRF"""
+    if request.method == 'POST':
+        try:
+            mrf_id = request.POST.get('mrf_id')
+            mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
+            mrf.remaining_quantity = request.POST.get('remaining_quantity')
+            mrf.status = request.POST.get('status')
+            mrf.remarks = request.POST.get('remarks')
+            mrf.updated_by = request.user.username
+            mrf.save()
+            
+            return redirect('mrf_list')
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def delete_mrf(request):
+    set_comp_code(request)
+    """View to delete an MRF"""
+    if request.method == 'POST':
+        try:
+            mrf_id = request.POST.get('mrf_id')
+            mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
+            mrf.delete()
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'MRF deleted successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=400)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+def get_mrf_details(request):
+    set_comp_code(request)
+    """View to get MRF details for editing"""
+    try:
+        mrf_id = request.GET.get('mrf_id')
+        mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
+        
+        data = {
+            'project_code': mrf.project_code,
+            'designation_code': mrf.designation_code,
+            'quantity': mrf.quantity,
+            'remaining_quantity': mrf.remaining_quantity,
+            'status': mrf.status,
+            'remarks': mrf.remarks
+        }
+        
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)

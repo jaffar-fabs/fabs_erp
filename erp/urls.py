@@ -216,6 +216,13 @@ urlpatterns = [
     path('recruitment_edit/', views.recruitment_edit, name='recruitment_edit'),
     path('recruitment/convert-to-employee/', views.convert_to_employee, name='convert_to_employee'),
 
+    #MRF
+    path('mrf_list/', views.mrf_list, name='mrf_list'),
+    path('create_mrf/', views.create_mrf, name='create_mrf'),
+    path('edit_mrf/', views.edit_mrf, name='edit_mrf'),
+    path('delete_mrf/', views.delete_mrf, name='delete_mrf'),
+    path('get_mrf_details/', views.get_mrf_details, name='get_mrf_details'),
+
     #Employee PP
     path('employee_pp/', views.employee_pp_list, name='employee_pp_list'),
     path('employee_pp/create/', views.employee_pp_create, name='employee_pp_create'),

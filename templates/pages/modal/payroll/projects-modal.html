@@ -162,6 +162,36 @@
                     </div>
                 </div>
 
+                <!-- Project Engineer -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Engineer</label>
+                        <select name="project_engineer" class="form-control select2" multiple="multiple">   
+                            <option value="">Select</option>    
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Supervisor --> 
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Supervisor</label>
+                        <select name="project_supervisor" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}">
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
                 <!-- Procurement User -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -435,6 +465,35 @@
                     </div>
                 </div>
 
+                <!-- Project Engineer -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Engineer</label>
+                        <select name="project_engineer" id="project_engineer" class="form-control select2" multiple="multiple"> 
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.project_engineer %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Project Supervisor --> 
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Project Supervisor</label>
+                        <select name="project_supervisor" id="project_supervisor" class="form-control select2" multiple="multiple">
+                            <option value="">Select</option>
+                            {% for type in employee_data %}
+                                <option value="{{ type.emp_code }}" {% if type.emp_code in user.project_supervisor %}selected{% endif %}>
+                                    {{ type.emp_code }} - {{ type.emp_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
                 <!-- Procurement User -->
                 <div class="col-md-6">
                     <div class="mb-3">
