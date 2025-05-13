@@ -353,6 +353,13 @@ def get_party_type(request):
     }
 
 
+def get_company(request):
+    comp_code = get_comp_code(request)
+    company_data = CompanyMaster.objects.all()
+    return {
+        'company_data': company_data
+        }
+
 def get_leave_types(request):
     comp_code = get_comp_code(request)
     leave_types_data = CodeMaster.objects.filter(

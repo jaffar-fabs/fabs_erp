@@ -605,17 +605,28 @@ def my_login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
+        selected_company = request.POST.get("selected_company")
 
         try:
             user = UserMaster.objects.get(user_id=username, is_active=True)
 
             if password == user.password:
                 request.session["username"] = user.user_id
-                request.session["comp_code"] = user.comp_code  # Set comp_code in session
+
+                get_companies = user.company.split(':')
+                if len(get_companies) > 1:
+                    if not selected_company:
+                        messages.error(request, "Please select a company.")
+                        return render(request, "auth/login.html")
+                    request.session["comp_code"] = selected_company
+                else:
+                    request.session["comp_code"] = get_companies[0]
+
                 request.session["user_paycycles"] = user.user_paycycles
 
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
+
                 # Fetch role ID from UserRoleMapping
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
@@ -627,7 +638,6 @@ def my_login_view(request):
 
                 set_comp_code(request)
                 
-                # messages.success(request, "Login successful!")
                 return redirect("/index")
             else:
                 messages.error(request, "Invalid username or password.")
@@ -639,6 +649,35 @@ def my_login_view(request):
             messages.error(request, "Role not found.")
 
     return render(request, "auth/login.html")
+
+@csrf_exempt
+def check_user_companies(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            
+            user = UserMaster.objects.get(user_id=username, is_active=True)
+            companies = user.company.split(':')
+            
+            return JsonResponse({
+                'success': True,
+                'companies': companies
+            })
+        except UserMaster.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'User not found'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
 
 def dashboard_view(request):
     set_comp_code(request)
@@ -1634,6 +1673,9 @@ class UserMasterCreate(View):
             user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
             user_paycycles_str = ':'.join(user_paycycles)  # Convert list to colon-separated string
 
+            user_company = request.POST.getlist('company')
+            user_company_str = ':'.join(user_company)
+
             user = UserMaster(
                 comp_code=COMP_CODE,
                 first_name=request.POST.get('first_name'),
@@ -1650,7 +1692,8 @@ class UserMasterCreate(View):
                 modified_by=request.POST.get('modified_by'),
                 emp_code=request.POST.get('emp_code'),
                 user_paycycles=user_paycycles_str,  # Save as colon-separated string
-                view_emp_salary=request.POST.get('view_emp_salary')
+                view_emp_salary=request.POST.get('view_emp_salary'),
+                company=user_company_str
             )
 
             user.full_clean()
@@ -1678,7 +1721,8 @@ class UserMasterUpdate(View):
             user.profile_picture = request.FILES.get('profile_picture')
             user.modified_by = request.POST.get('modified_by')
             user.emp_code = request.POST.get('emp_code')
-            
+            user_company = request.POST.getlist('company')
+            user.company = ':'.join(user_company)
             user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
             user.user_paycycles = ':'.join(user_paycycles)  # Convert list to colon-separated string
             

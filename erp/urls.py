@@ -52,6 +52,7 @@ urlpatterns = [
     path('users/update/<int:user_master_id>/', auth_views.UserMasterUpdate.as_view(), name='user_update'),
     path('users/delete/<int:user_master_id>/', auth_views.UserMasterDelete.as_view(), name='user_delete'),
     path('get-employee-data/<str:emp_code>/', get_employee_data, name='get_employee_data'),
+    path('check-user-companies/', views.check_user_companies, name='check_user_companies'),
 
     #leave transaction urls
     path('leave_transaction/', views.leave_transaction_list, name='leave_transaction'),

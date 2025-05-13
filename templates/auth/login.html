@@ -34,6 +34,12 @@
                             <span class="ti toggle-password ti-eye-off"></span>
                         </div>
                     </div>
+                    <div class="mb-3" id="company-select-container" style="display: none;">
+                        <label class="col-form-label">Select Company</label>
+                        <select name="selected_company" class="form-select" required>
+                            <option value="">Select a company</option>
+                        </select>
+                    </div>
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <!-- <div class="form-check form-check-md d-flex align-items-center">
                             <input class="form-check-input" name="remember" type="checkbox" value="" id="checkebox-md" checked="">
@@ -88,5 +94,38 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('username').addEventListener('blur', function() {
+    const username = this.value;
+    if (username) {
+        fetch('{% url "check_user_companies" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ username: username })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const companySelect = document.querySelector('select[name="selected_company"]');
+            const companyContainer = document.getElementById('company-select-container');
+            
+            if (data.companies && data.companies.length > 1) {
+                companySelect.innerHTML = '<option value="">Select a company</option>';
+                data.companies.forEach(company => {
+                    companySelect.innerHTML += `<option value="${company}">${company}</option>`;
+                });
+                companyContainer.style.display = 'block';
+                companySelect.required = true;
+            } else {
+                companyContainer.style.display = 'none';
+                companySelect.required = false;
+            }
+        });
+    }
+});
+</script>
 
 {% endblock content %}
