@@ -1,7 +1,7 @@
 import pandas as pd
 from django.http import HttpResponse
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import letter, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import inch
 import io
@@ -67,16 +67,18 @@ def export_to_pdf(data, filename, title):
     # Create a BytesIO object to store the PDF
     buffer = io.BytesIO()
     
-    # Create the PDF object
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    # Create the PDF object with landscape orientation
+    doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
     elements = []
     
-    # Add title
+    # Add title with smaller font
     from reportlab.platypus import Paragraph
     from reportlab.lib.styles import getSampleStyleSheet
     styles = getSampleStyleSheet()
-    elements.append(Paragraph(title, styles['Title']))
-    elements.append(Paragraph("<br/><br/>", styles['Normal']))
+    title_style = styles['Title']
+    title_style.fontSize = 14  # Reduce title font size
+    elements.append(Paragraph(title, title_style))
+    elements.append(Paragraph("<br/>", styles['Normal']))  # Reduce space after title
     
     # Convert DataFrame to list of lists for the table
     table_data = [df.columns.tolist()] + df.values.tolist()
@@ -84,21 +86,26 @@ def export_to_pdf(data, filename, title):
     # Create the table
     table = Table(table_data)
     
-    # Add style to the table
+    # Add style to the table with smaller fonts and reduced padding
     style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 14),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),  # Reduce header font size
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 6),  # Reduce header padding
+        ('TOPPADDING', (0, 0), (-1, 0), 6),  # Reduce header padding
         ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
         ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 12),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),  # Reduce content font size
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),  # Thinner grid lines
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 3),  # Reduce cell padding
+        ('RIGHTPADDING', (0, 0), (-1, -1), 3),  # Reduce cell padding
+        ('TOPPADDING', (0, 1), (-1, -1), 3),  # Reduce cell padding
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 3),  # Reduce cell padding
     ])
     table.setStyle(style)
     

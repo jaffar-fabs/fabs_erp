@@ -1273,6 +1273,45 @@ def project(request):
                     )
                 except Exception as e:
                     return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+                
+            export_format = request.GET.get('export')
+            if export_format:
+                # get all projects data without paginaition for export
+                project_doc = list(query.values(
+                    "prj_code",
+                    "prj_name",
+                    "project_description",
+                    "project_type",
+                    "project_value",
+                    "timeline_from",
+                    "timeline_to",
+                    "prj_city",
+                    "is_active",
+                    "comp_code",
+                    "service_type",
+                    "service_category",
+                    "pro_sub_location",
+                    "customer",
+                    "agreement_ref",
+                    "op_head",
+                    "manager",
+                    "commercial_manager",
+                    "project_engineer",
+                    "project_supervisor",
+                    "procurement_user",
+                    "indent_user",
+                    "final_contract_value",
+                    "project_status"
+                ))   
+
+                for project in project_doc:
+                    project['timeline_from'] = project['timeline_from'].strftime('%d-%m-%Y')
+                    project['timeline_to'] = project['timeline_to'].strftime('%d-%m-%Y')
+
+                if export_format == 'pdf':
+                    return export_to_pdf(project_doc, 'project_master', 'Project Master')
+                elif export_format == 'excel':
+                    return export_to_excel(project_doc, 'project_master', 'Project Master')
 
             # Apply pagination
             paginator = Paginator(query.order_by('project_id'), PAGINATION_SIZE)
@@ -4234,6 +4273,22 @@ def party_master_list(request):
     else:
         parties = PartyMaster.objects.filter(comp_code=COMP_CODE).order_by('-party_id')
 
+    export_format = request.GET.get('export')
+    if export_format:
+        party_doc = list(parties.values(
+            'customer_code',
+            'customer_name',
+            'contact_person',
+            'telephone',
+            'email',
+            'status'
+        ))
+
+        if export_format == 'pdf':
+            return export_to_pdf(party_doc, 'party_master', 'Party Master')
+        elif export_format == 'excel':
+            return export_to_excel(party_doc, 'party_master', 'Party Master')
+
     # Handle Excel upload
     if request.method == 'POST' and 'excel_file' in request.FILES:
         try:
@@ -4831,6 +4886,16 @@ def leave_transaction_list(request):
     set_comp_code(request)
     # Get search keyword
     keyword = request.GET.get('keyword', '')
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+    
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
     
     # Get all leave transactions or filter by keyword
     if keyword:
@@ -4841,6 +4906,47 @@ def leave_transaction_list(request):
         ).order_by('-date_of_application')
     else:
         leaves = LeaveTransaction.objects.filter(comp_code=COMP_CODE).order_by('-date_of_application')
+
+    export_format = request.GET.get('export')
+    if export_format:
+        leave_doc = list(leaves.values(
+            'tran_id',
+            'employee_name',
+            'department',
+            'leave_type',
+            'start_date',
+            'end_date',
+            'total_leave_days',
+            'reason_for_leave',
+            'contact_during_leave',
+            'leave_policy_agreed',
+            'delegate_person',
+            'supervisor_status',
+            'dept_head_status',
+            'hr_status',
+            'supervisor_approval_date',
+            'dept_head_approval_date',
+            'hr_approval_date'
+        ))
+        if export_format == 'pdf':
+            return export_to_pdf(leave_doc, 'leave_transaction_list', 'Leave Transaction List')
+        elif export_format == 'excel':
+            return export_to_excel(leave_doc, 'leave_transaction_list', 'Leave Transaction List')
+    
+    # Apply pagination
+    paginator = Paginator(leaves, PAGINATION_SIZE)  # Show 10 items per page
+    try:
+        leaves = paginator.page(page_number)
+    except PageNotAnInteger:
+        leaves = paginator.page(1)
+    except EmptyPage:
+        leaves = paginator.page(paginator.num_pages)
+    
+    # Calculate start and end indices for the current page
+    start_index = (leaves.number - 1) * paginator.per_page + 1
+    end_index = min(start_index + paginator.per_page - 1, paginator.count)
+    leaves.start_index = start_index
+    leaves.end_index = end_index
     
     employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').values(
         'emp_code',
@@ -4855,9 +4961,10 @@ def leave_transaction_list(request):
     context = {
         'leaves': leaves,
         'keyword': keyword,
-        'result_cnt': leaves.count(),
+        'result_cnt': leaves.paginator.count if hasattr(leaves, 'paginator') else leaves.count(),
         'employees': employees,
-        'leave_types': leave_types
+        'leave_types': leave_types,
+        'current_url': current_url
     }
     
     return render(request, 'pages/payroll/leave_master/leave_transaction_list.html', context)
