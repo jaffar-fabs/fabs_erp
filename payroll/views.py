@@ -649,6 +649,7 @@ def my_login_view(request):
                 request.session["username"] = user.user_id
 
                 get_companies = user.company.split(':') if user.company else []
+                company_data = CompanyMaster.objects.filter(company_code__in=get_companies).values('company_code', 'company_name')
                 if len(get_companies) > 1:
                     if not selected_company:
                         messages.error(request, "Please select a company.")
@@ -683,7 +684,7 @@ def my_login_view(request):
         except RoleMaster.DoesNotExist:
             messages.error(request, "Role not found.")
 
-    return render(request, "auth/login.html")
+    return render(request, "auth/login.html", {'company_data': company_data})
 
 @csrf_exempt
 def check_user_companies(request):

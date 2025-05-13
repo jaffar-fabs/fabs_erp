@@ -10,6 +10,13 @@
 
             <form id="login-form-authenticate-form-id" method="post" action="{% url 'after-login' %}">
                 {% csrf_token %}
+                {% if messages %}
+                <div class="alert alert-danger" id="alert-message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <div class="mx-auto mw-450">
                     <div class="text-center mb-4">
                         <img src="{% static 'assets/img/FABS.png' %}" style="height: 50px;width:200px;" class="img-fluid" alt="Logo">
@@ -124,6 +131,15 @@ document.getElementById('username').addEventListener('blur', function() {
                 companySelect.required = false;
             }
         });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const alertMessage = document.getElementById('alert-message');
+    if (alertMessage) {
+        setTimeout(function() {
+            alertMessage.style.display = 'none';
+        }, 5000);
     }
 });
 </script>
