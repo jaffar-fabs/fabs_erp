@@ -4,7 +4,19 @@
   {% block head %}
     {% include 'partials/head.html' %}
   {% endblock head %}
+<style>
+    .watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #888;
+    opacity: 0.5;
+    z-index: 9999;
+    pointer-events: none;
+}
 
+</style>
   <body class="{% if request.path == '/chat' %} main-chat-blk {% else %} {% endif %}">
     {% if request.path == '/index' or request.path == '/leads-dashboard' or request.path == '/project-dashboard' %}
       <div class="preloader">
@@ -51,6 +63,7 @@
       {% include 'partials/theme-settings.html' %}
     {% endblock theme_settings %}
       
+    <div class="watermark">Powered by Fabs</div>
   </body>
   
   <script type="text/javascript">

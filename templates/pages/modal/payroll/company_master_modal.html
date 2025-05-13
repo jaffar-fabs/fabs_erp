@@ -57,14 +57,22 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Currency Code <span class="text-danger">*</span></label>
-                        <input class="form-control" name="currency_code" type="text" required>
+                        <select class="form-select" name="currency_code" required>
+                            {% for currency in currency_data %}
+                            <option value="{{ currency.base_value }}">{{ currency.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
-                        <input class="form-control" name="country_code" type="text" required>
+                        <select class="form-select" name="country_code" required>
+                            {% for country in country_data %}
+                            <option value="{{ country.base_value }}">{{ country.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
         
@@ -202,14 +210,14 @@
                 <tbody>
                     <tr>
                         <td>
-                            <select class="form-select" name="document_type[]" required>
+                            <select class="form-select" name="document_type[]">
                                 <option value="">Select Document</option>
                                 {% for comp_doc in comp_doc_data %}
                                 <option value="{{ comp_doc.base_value }}">{{ comp_doc.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
-                        <td><input type="text" class="form-control" name="document_number[]" required></td>
+                        <td><input type="text" class="form-control" name="document_number[]"></td>
                         <td><input type="text" class="form-control" name="issued_by[]"></td>
                         <td><input type="date" class="form-control" name="issued_date[]"></td>
                         <td><input type="date" class="form-control" name="expiry_date[]"></td>
@@ -233,14 +241,14 @@
                     var newRow = table.insertRow(table.rows.length);
                     newRow.innerHTML = `
                         <td>
-                             <select class="form-select" name="document_type[]" required>
+                             <select class="form-select" name="document_type[]">
                                 <option value="">Select Document</option>
                                 {% for comp_doc in comp_doc_data %}
                                 <option value="{{ comp_doc.base_value }}">{{ comp_doc.base_description }}</option>
                                 {% endfor %}
                             </select>
                         </td>
-                        <td><input type="text" class="form-control" name="document_number[]" required></td>
+                        <td><input type="text" class="form-control" name="document_number[]"></td>
                         <td><input type="text" class="form-control" name="issued_by[]"></td>
                         <td><input type="date" class="form-control" name="issued_date[]"></td>
                         <td><input type="date" class="form-control" name="expiry_date[]"></td>
@@ -327,14 +335,22 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Currency Code <span class="text-danger">*</span></label>
-                        <input class="form-control" id="currency_code" name="currency_code" type="text" required>
+                        <select class="form-select" name="currency_code" id="currency_code" required>
+                            {% for currency in currency_data %}
+                            <option value="{{ currency.base_value }}">{{ currency.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Country Code <span class="text-danger">*</span></label>
-                        <input class="form-control" id="country_code" name="country_code" type="text" required>
+                        <select class="form-select" name="country_code" id="country_code" required>
+                            {% for country in country_data %}
+                            <option value="{{ country.base_value }}">{{ country.base_description }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
         
@@ -489,7 +505,7 @@
                         newRow.innerHTML = `
 
                             <td>
-                            <select class="form-select" name="document_type[]" required>
+                            <select class="form-select" name="document_type[]">
                                 <option value="">Select Document</option>
                                 {% for comp_doc in comp_doc_data %}
                                     <option value="{{ comp_doc.base_value }}" {% if comp_doc.base_value == doc.document_type %}selected{% endif %}>

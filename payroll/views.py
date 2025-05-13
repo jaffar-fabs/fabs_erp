@@ -614,6 +614,9 @@ def my_login_view(request):
                 request.session["comp_code"] = user.comp_code  # Set comp_code in session
                 request.session["user_paycycles"] = user.user_paycycles
 
+                company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
+                request.session["image_url"] = str(company.image_url) if company.image_url else None
+                print(request.session["image_url"])
                 # Fetch role ID from UserRoleMapping
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
@@ -2276,8 +2279,7 @@ def company_master(request):
     if request.session.get('username') == "SYSTEM":
         query = CompanyMaster.objects.all()
     else:
-        query = CompanyMaster.objects.all()
-        # query = CompanyMaster.objects.filter(company_code=COMP_CODE)
+        query = CompanyMaster.objects.filter(company_code=COMP_CODE)
 
     # Apply search filter if a keyword is provided
     if keyword:
@@ -2418,12 +2420,9 @@ def company_edit(request):
     if request.method == "POST":
         comp_id = request.POST.get('company_id')
         try:
-            company = get_object_or_404(CompanyMaster, company_id=int(comp_id))
-            if 'image_url' in request.FILES:
-                image_file = request.FILES['image_url']
-                file_path = f'company_logos/{company.company_code}/{image_file.name}'
-                company.image_url.save(file_path, image_file, save=True)
+            company = get_object_or_404(CompanyMaster, company_id=int(comp_id))    
 
+            company.image_url = request.FILES.get("image_url") or company.image_url
             company.company_code = request.POST.get('company_code', company.company_code)
             company.company_name = request.POST.get('company_name', company.company_name)
             company.inception_date = request.POST.get('inception_date', company.inception_date)
@@ -2477,8 +2476,8 @@ def company_edit(request):
                         doc.document_type = document_type[i]
                         doc.document_number = document_number[i]
                         doc.issued_by = issued_by[i]
-                        doc.issued_date = issued_date[i]
-                        doc.expiry_date = expiry_date[i]
+                        doc.issued_date = issued_date[i] or None
+                        doc.expiry_date = expiry_date[i] or None
                         doc.status = status[i]
                         doc.remarks = remarks[i]
                         if file:
@@ -2493,8 +2492,8 @@ def company_edit(request):
                         document_number=document_number[i],
                         document_file=file,
                         issued_by=issued_by[i],
-                        issued_date=issued_date[i],
-                        expiry_date=expiry_date[i],
+                        issued_date=issued_date[i] or None,
+                        expiry_date=expiry_date[i] or None,
                         status=status[i],
                         remarks=remarks[i]
                     )
@@ -2503,6 +2502,7 @@ def company_edit(request):
             return redirect('company_list')
 
         except Exception as e:
+            print(e)
             return JsonResponse({"error": "Error updating company data."}, status=500)
 
     return redirect('company_list')

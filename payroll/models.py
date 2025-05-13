@@ -13,8 +13,7 @@ def camp_document_path(instance, filename):
     return os.path.join('camp_documents', instance.camp_code, filename)
 
 def company_logo_upload_path(instance, filename):
-    safe_code = str(instance.company_code).replace(" ", "_").replace("/", "_")
-    return os.path.join('company_logos', safe_code, filename)
+    return os.path.join('company_logos', instance.company_code, filename)
 
 def party_documents_path(instance, filename):
     # Construct the path using the party's customer code
@@ -663,12 +662,12 @@ class CompanyMaster(models.Model):
     inception_date = models.CharField(max_length=200)
     labour_ministry_id = models.CharField(max_length=50, blank=True, null=True)
     labour_bank_acc_no = models.CharField(max_length=50, blank=True, null=True)
-    currency_code = models.CharField(max_length=5)
+    currency_code = models.CharField(max_length=100, blank=True, null=True)
     address_line1 = models.CharField(max_length=50, blank=True, null=True)
     address_line2 = models.CharField(max_length=50, blank=True, null=True)
     address_line_city = models.CharField(max_length=50, blank=True, null=True)
     address_line_state = models.CharField(max_length=50, blank=True, null=True)
-    country_code = models.CharField(max_length=20, blank=True, null=True)
+    country_code = models.CharField(max_length=100, blank=True, null=True)
     telephone1 = models.CharField(max_length=20, blank=True, null=True)
     telephone2 = models.CharField(max_length=20, blank=True, null=True)
     fax_number = models.CharField(max_length=20, blank=True, null=True)
@@ -695,8 +694,8 @@ class CompanyDocument(models.Model):
     document_type = models.CharField(max_length=50)
     document_number = models.CharField(max_length=50)
     issued_by = models.CharField(max_length=50, blank=True, null=True)
-    issued_date = models.DateField()
-    expiry_date = models.DateField()
+    issued_date = models.DateField(blank=True, null=True)
+    expiry_date = models.DateField(blank=True, null=True)
     status = models.CharField(max_length=50, blank=True, null=True)
     remarks = models.CharField(max_length=500, blank=True, null=True)
     document_file = models.FileField(upload_to=company_logo_upload_path)  # Document file

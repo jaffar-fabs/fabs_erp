@@ -18,7 +18,11 @@
 	<!-- Logo -->
 	<div class="header-left active">
 		<a href="" class="logo logo-normal">
+			{% if request.session.username == 'SYSTEM' %}
 			<img src="{% static 'assets/img/FABS.png' %}" alt="Logo" />
+			{% else %}
+			<img src="media/{{ request.session.image_url }}" alt="Logo" style="width: 200px; height: 100px;" />
+			{% endif %}
 			<img src="{% static 'assets/img/white-logo.svg' %}" class="white-logo" alt="Logo" />
 		</a>
 		<a href="" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}"
