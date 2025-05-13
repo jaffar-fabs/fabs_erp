@@ -36,6 +36,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import GratuitySettlement
 from .models import EmployeePPDetails
+from .utils import export_to_excel, export_to_pdf
 
 
 PAGINATION_SIZE = 6
@@ -87,6 +88,40 @@ def employee_master(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
+    export_format = request.GET.get('export')
+    if export_format:
+        # Get all data without pagination for export
+        employees_data = list(query.values(
+            'emp_code', 'emp_name', 'surname', 'emp_sex', 'emp_status', 'dob'
+        ))
+        
+        # Add gender and status descriptions
+        for emp in employees_data:
+            # Get gender description
+            gender = CodeMaster.objects.filter(
+                comp_code=COMP_CODE,
+                base_type='GENDER',
+                base_value=emp['emp_sex']
+            ).first()
+            emp['emp_sex'] = gender.base_description if gender else emp['emp_sex']
+            
+            # Get status description
+            status = CodeMaster.objects.filter(
+                comp_code=COMP_CODE,
+                base_type='STATUS',
+                base_value=emp['emp_status']
+            ).first()
+            emp['emp_status'] = status.base_description if status else emp['emp_status']
+            
+            # Format date
+            if emp['dob']:
+                emp['dob'] = emp['dob'].strftime('%d/%m/%Y')
+
+        if export_format == 'excel':
+            return export_to_excel(employees_data, 'employee_master', 'Employees')
+        elif export_format == 'pdf':
+            return export_to_pdf(employees_data, 'employee_master', 'Employee Master List')
+    
     # Apply pagination
     paginator = Paginator(query.order_by('emp_code'), 6)
 
