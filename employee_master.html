@@ -219,7 +219,7 @@
                         $("#dob").val(response.data.dob);
                         $("#emp_sex").val(response.data.emp_sex);
                         $("#nationality").val(response.data.nationality);
-                        $("#designation").val(response.data.designation);
+                        $("#designation").val(response.data.designation).change();
                         $("#date_of_join").val(response.data.date_of_join);
                         $("#qualification").val(response.data.qualification);
                         $("#emp_status").val(response.data.emp_status);
@@ -229,6 +229,7 @@
                         $("#mother_name").val(response.data.mother_name);
                         $("#religion").val(response.data.religion);
                         $("#emp_marital_status").val(response.data.emp_marital_status);
+                        $("#profile_picture").attr("src", response.data.profile_picture);
 
                         // Populate contact information
                         $("#res_addr_line1").val(response.data.res_addr_line1);
@@ -243,10 +244,13 @@
                         $("#local_state").val(response.data.local_state);
                         $("#local_country_code").val(response.data.local_country_code);
                         $("#local_phone_no").val(response.data.local_phone_no);
+                        $("#department").val(response.data.department).change();
 
                         //Populate Salary Details 
-                        $('#process_cycle').val(response.data.process_cycle);
+                        $('#process_cycle').val(response.data.process_cycle).change();
                         $('#basicpay').val(response.data.basic_pay);
+                        $('#prj_code').val(response.data.prj_code).change();
+                        $('#sub_location').val(response.data.sub_location).change();
 
                         // Populate visa details
                         $("#visa_no").val(response.data.visa_no);

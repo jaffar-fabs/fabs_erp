@@ -192,6 +192,9 @@ def get_employee_details(request):
             'emp_marital_status': employee.emp_marital_status,
             'basic_pay': str(employee.basic_pay) if employee.basic_pay else None,  # Convert Decimal to string
             'allowance': str(employee.allowance) if employee.allowance else None,
+            'prj_code': employee.prj_code,
+            'sub_location': employee.sub_location,
+            'profile_picture': employee.profile_picture.url if employee.profile_picture else None,
             'department': employee.department,
             'process_cycle': employee.process_cycle,
             'local_addr_line1': employee.local_addr_line1,
@@ -300,7 +303,7 @@ def get_employee_details(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
-        
+@csrf_exempt
 def save_employee(request, employee_id=None):
     set_comp_code(request)
     if request.method == "POST":

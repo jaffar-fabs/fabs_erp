@@ -1837,7 +1837,7 @@ function removeLicenseRow_add(button) {
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Project <span class="text-danger">*</span></label>
-                                        <select name="prj_code" id="projectDropdown_edit" class="form-control" required>
+                                        <select name="prj_code" id="prj_code" class="form-control" required>
                                             <option value="">Select</option>
                                             {% for statuses in project_data %}
                                                 <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
@@ -1849,7 +1849,7 @@ function removeLicenseRow_add(button) {
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label">Project Sub Location</label>
-                                        <select name="sub_location" id="locationDropdown_edit" class="form-control">
+                                        <select name="sub_location" id="sub_location" class="form-control">
                                             <option value="">Select</option>
                                             {% for statuses in pro_sub_location_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
@@ -2170,6 +2170,9 @@ function removeLicenseRow_add(button) {
                         <label class="form-label">Document Type</label>
                         <select id="documentTypeSelect" class="form-select">
                             <option value="">Select</option>
+                            {% for statuses in doc_data %}
+                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -2670,6 +2673,7 @@ function removeLicenseRow_add(button) {
 </div>
 </form>
 </div>
+</div>
 <!-- /Edit Employee Offcanvas -->
 
 
@@ -2775,9 +2779,9 @@ $(document).ready(function() {
 const newDocuments = [];
 
 function addNewDocument(employeeId) {
-    const fileInput = document.getElementById(`documentFileInput_${employeeId}`);
-    const docTypeSelect = document.getElementById(`documentTypeSelect_${employeeId}`);
-    const container = document.getElementById(`documentList_${employeeId}`);
+    const fileInput = document.getElementById(`documentFileInput`);
+    const docTypeSelect = document.getElementById(`documentTypeSelect`);
+    const container = document.getElementById(`documentList`);
 
     if (!fileInput || !docTypeSelect || !container) {
         console.error("Required elements not found!");
