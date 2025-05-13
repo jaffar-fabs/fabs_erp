@@ -613,14 +613,14 @@ def my_login_view(request):
             if password == user.password:
                 request.session["username"] = user.user_id
 
-                get_companies = user.company.split(':')
+                get_companies = user.company.split(':') if user.company else []
                 if len(get_companies) > 1:
                     if not selected_company:
                         messages.error(request, "Please select a company.")
                         return render(request, "auth/login.html")
                     request.session["comp_code"] = selected_company
                 else:
-                    request.session["comp_code"] = get_companies[0]
+                    request.session["comp_code"] = user.comp_code
 
                 request.session["user_paycycles"] = user.user_paycycles
 
