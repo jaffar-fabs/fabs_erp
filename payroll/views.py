@@ -72,7 +72,8 @@ def employee_master(request):
         current_url = f"{get_url}?"
 
     # Initialize the query
-    query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES)
+    query = Employee.objects.filter(comp_code=COMP_CODE)
+    # query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES)
     user = request.session.get("username")
     user_master = UserMaster.objects.filter(comp_code=COMP_CODE, is_active=True, user_id = user).values_list('view_emp_salary', flat=True)
 
@@ -123,7 +124,7 @@ def employee_master(request):
             return export_to_pdf(employees_data, 'employee_master', 'Employee Master List')
     
     # Apply pagination
-    paginator = Paginator(query.order_by('emp_code'), 6)
+    paginator = Paginator(query.order_by('emp_code'), 25)
 
     try:
         employees_page = paginator.get_page(page_number)
