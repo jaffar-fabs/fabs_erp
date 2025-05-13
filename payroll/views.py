@@ -611,12 +611,11 @@ def my_login_view(request):
 
             if password == user.password:
                 request.session["username"] = user.user_id
-                request.session["comp_code"] = user.comp_code
+                request.session["comp_code"] = user.comp_code  # Set comp_code in session
                 request.session["user_paycycles"] = user.user_paycycles
 
-                # Get the company but don't store image_url in session
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
-                
+                request.session["image_url"] = str(company.image_url) if company.image_url else None
                 # Fetch role ID from UserRoleMapping
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
@@ -628,6 +627,7 @@ def my_login_view(request):
 
                 set_comp_code(request)
                 
+                # messages.success(request, "Login successful!")
                 return redirect("/index")
             else:
                 messages.error(request, "Invalid username or password.")
@@ -637,8 +637,6 @@ def my_login_view(request):
             messages.error(request, "User role mapping not found.")
         except RoleMaster.DoesNotExist:
             messages.error(request, "Role not found.")
-        except CompanyMaster.DoesNotExist:
-            messages.error(request, "Company not found.")
 
     return render(request, "auth/login.html")
 
