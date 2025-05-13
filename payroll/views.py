@@ -616,7 +616,6 @@ def my_login_view(request):
 
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
-                print(request.session["image_url"])
                 # Fetch role ID from UserRoleMapping
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
@@ -2502,7 +2501,6 @@ def company_edit(request):
             return redirect('company_list')
 
         except Exception as e:
-            print(e)
             return JsonResponse({"error": "Error updating company data."}, status=500)
 
     return redirect('company_list')

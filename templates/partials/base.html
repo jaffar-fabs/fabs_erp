@@ -62,8 +62,9 @@
     {% block theme_settings %}
       {% include 'partials/theme-settings.html' %}
     {% endblock theme_settings %}
-      
+    {% if request.session.username != 'SYSTEM' %}
     <div class="watermark">Powered by Fabs</div>
+    {% endif %}
   </body>
   
   <script type="text/javascript">
