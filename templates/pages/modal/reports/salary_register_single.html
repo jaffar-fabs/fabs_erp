@@ -15,7 +15,7 @@
                         <h5 class="card-title">Generate Salary Register</h5>
                     </div>
                     <div class="card-body">
-                        <form id="salary-register-form" method="POST" action="{% url 'submit_salary_register' %}">
+                        <form id="salary-register-form" method="POST" action="{% url 'salary_register_report' %}">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6">
@@ -44,7 +44,7 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
     $(document).ready(function () {
         // Add any JavaScript logic if needed
         $('#salary-register-form').on('submit', function (e) {
@@ -53,6 +53,6 @@
             alert('Form submitted successfully!');
         });
     });
-</script>
+</script> -->
 
 {% endblock content %}

@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="page-wrapper">
-    <div class="content">
+    <div class="content" style="overflow-y: auto; height: 90vh;">
         <div class="row">
             <div class="col-md-12">
                 <!-- Page Header -->
@@ -136,48 +136,75 @@
                             </table>
                         </div>
                         {% if employees.has_other_pages %}
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <div class="showing-entries">
-                                    <span>Showing {{ employees.start_index }} to {{ employees.end_index }} of {{ employees.paginator.count }} entries</span>
-                                </div>
-                                <ul class="pagination">
-                                    <!-- Previous button -->
-                                    {% if employees.has_previous %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.previous_page_number }}">Previous</a>
-                                        </li>
-                                    {% else %}
-                                        <li class="page-item disabled">
-                                            <a class="page-link" href="#">Previous</a>
-                                        </li>
-                                    {% endif %}
-
-                                    <!-- Page numbers -->
-                                    {% for page in employees.paginator.page_range %}
-                                        {% if employees.number == page %}
-                                            <li class="page-item active">
-                                                <a class="page-link" href="#">{{ page }}</a>
-                                            </li>
-                                        {% else %}
-                                            <li class="page-item">
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ employees.start_index }} to {{ employees.end_index }} of {{ employees.paginator.count }}
+                                    entries</span>
+                            </div>
+                            <ul class="pagination">
+                                <!-- Previous button -->
+                                {% if employees.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+                        
+                                <!-- First page and ellipsis -->
+                                {% if employees.number > 4 %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page=1">1</a>
+                                </li>
+                                {% if employees.number > 5 %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                                {% endif %}
+                                {% endif %}
+                        
+                                <!-- Page numbers around current page -->
+                                {% for page in employees.paginator.page_range %}
+                                    {% if page >= employees.number|add:-3 and page <= employees.number|add:3 %} 
+                                        <li class="page-item {% if page == employees.number %} active {% endif %}">
+                                                {% if page == employees.number %}
+                                                <span class="page-link">{{ page }}</span>
+                                                {% else %}
                                                 <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                                {% endif %}
                                             </li>
+                                    {% endif %}
+                                {% endfor %}
+                        
+                                    <!-- Last page and ellipsis -->
+                                    {% if employees.number < employees.paginator.num_pages|add:-3 %} 
+                                        {% if employees.number < employees.paginator.num_pages|add:-4 %} 
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
                                         {% endif %}
-                                    {% endfor %}
-
-                                    <!-- Next button -->
-                                    {% if employees.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.paginator.num_pages }}">
+                                         {{ employees.paginator.num_pages }}</a>
+                                    </li>
+                                    {% endif %}
+                        
+                                        <!-- Next button -->
+                                        {% if employees.has_next %}
                                         <li class="page-item">
                                             <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.next_page_number }}">Next</a>
                                         </li>
-                                    {% else %}
+                                        {% else %}
                                         <li class="page-item disabled">
                                             <a class="page-link" href="#">Next</a>
                                         </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                                        {% endif %}
+                            </ul>
+                        </div>
                         {% endif %}
+
                     </div>
                 </div>
             </div>

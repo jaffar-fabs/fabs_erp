@@ -113,6 +113,20 @@
                     </div>
                 </div>
 
+                <!-- Department -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Department <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="department" id="department" required> 
+                            <option value="">Select Department</option>
+                            {% for department in dept_data %}
+                                <option value="{{ department.base_value }}">{{ department.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+
                 <!-- Category -->
                 <div class="col-md-6">
                     <div class="mb-3">
@@ -261,6 +275,19 @@
                                 <option value="{{ designation.base_value }}">
                                     {{ designation.base_description }}
                                 </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Department -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Department <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="department" id="edit_department" required>
+                            <option value="">Select Department</option>
+                            {% for department in dept_data %}
+                                <option value="{{ department.base_value }}">{{ department.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>

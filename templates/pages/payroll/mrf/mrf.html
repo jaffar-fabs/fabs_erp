@@ -146,7 +146,8 @@
                         $('#edit_status').val(response.status).trigger('change');
                         $('#edit_remarks').val(response.remarks);
                         $('#edit_category').val(response.category).trigger('change');
-                        
+                        $('#edit_department').val(response.department).trigger('change');
+
                         // Set project details based on selected project
                         const selectedProject = $('#edit_project_code option:selected');
                         if (selectedProject.length) {

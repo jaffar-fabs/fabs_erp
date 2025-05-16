@@ -19,7 +19,7 @@
                 {% endif %}
                 <div class="mx-auto mw-450">
                     <div class="text-center mb-4">
-                        <img src="{% static 'assets/img/FABS.png' %}" style="height: 50px;width:200px;" class="img-fluid" alt="Logo">
+                        <img src="{% static 'assets/img/Prime.png' %}" style="height: 150px;width:300px;" class="img-fluid" alt="Logo">
                     </div>
                     <div class="mb-4">
                         <h4 class="mb-2 fs-20">Sign In</h4>
@@ -41,12 +41,12 @@
                             <span class="ti toggle-password ti-eye-off"></span>
                         </div>
                     </div>
-                    <div class="mb-3" id="company-select-container" style="display: none;">
+                    <!-- <div class="mb-3" id="company-select-container" style="display: none;">
                         <label class="col-form-label">Select Company</label>
                         <select name="selected_company" class="form-select" required>
                             <option value="">Select a company</option>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <!-- <div class="form-check form-check-md d-flex align-items-center">
                             <input class="form-check-input" name="remember" type="checkbox" value="" id="checkebox-md" checked="">
@@ -94,7 +94,7 @@
                         </div>
                     </div> -->
                     <div class="text-center">
-                        <p class="fw-medium text-gray">Copyright &copy; 2025 - Fabs Infotech,Dubai</p>
+                        <p class="fw-medium text-gray">Powered by Fabs Infotech,Dubai</p>
                     </div>
                 </div>
             </form>
@@ -102,7 +102,7 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
 document.getElementById('username').addEventListener('blur', function() {
     const username = this.value;
     if (username) {
@@ -134,7 +134,11 @@ document.getElementById('username').addEventListener('blur', function() {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+
+</script> -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
     const alertMessage = document.getElementById('alert-message');
     if (alertMessage) {
         setTimeout(function() {

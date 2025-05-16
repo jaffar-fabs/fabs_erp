@@ -1060,6 +1060,7 @@ class MRFMaster(models.Model):
     mrf_number = models.CharField(max_length=50)
     project_code = models.CharField(max_length=50)
     designation_code = models.CharField(max_length=50)
+    department = models.CharField(max_length=50, null=True, blank=True)
     quantity = models.CharField(max_length=50)
     remaining_quantity = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=50, null=True, blank=True)

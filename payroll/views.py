@@ -652,14 +652,14 @@ def my_login_view(request):
             if password == user.password:
                 request.session["username"] = user.user_id
 
-                get_companies = user.company.split(':') if user.company else []
-                if len(get_companies) > 1:
-                    if not selected_company:
-                        messages.error(request, "Please select a company.")
-                        return render(request, "auth/login.html")
-                    request.session["comp_code"] = selected_company
-                else:
-                    request.session["comp_code"] = user.comp_code
+                # get_companies = user.company.split(':') if user.company else []
+                # if len(get_companies) > 1:
+                #     if not selected_company:
+                #         messages.error(request, "Please select a company.")
+                #         return render(request, "auth/login.html")
+                #     request.session["comp_code"] = selected_company
+                # else:
+                request.session["comp_code"] = user.comp_code
 
                 request.session["user_paycycles"] = user.user_paycycles
 
@@ -6803,6 +6803,7 @@ def create_mrf(request):
                 mrf_number=mrf_number,
                 comp_code=COMP_CODE,
                 project_code=request.POST.get('project_code'),
+                department=request.POST.get('department'),
                 designation_code=request.POST.get('designation_code'),
                 category=request.POST.get('category'),
                 quantity=request.POST.get('quantity'),
@@ -6832,6 +6833,7 @@ def edit_mrf(request):
             mrf_id = request.POST.get('mrf_id')
             mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
             mrf.remaining_quantity = request.POST.get('remaining_quantity')
+            mrf.department = request.POST.get('department')
             mrf.category = request.POST.get('category')
             mrf.status = request.POST.get('status')
             mrf.remarks = request.POST.get('remarks')
@@ -6884,11 +6886,131 @@ def get_mrf_details(request):
             'category': mrf.category,
             'quantity': mrf.quantity,
             'remaining_quantity': mrf.remaining_quantity,
+            'department': mrf.department,
             'status': mrf.status,
             'remarks': mrf.remarks
         }
         
         return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+    
+def salary_register_report(request):
+    set_comp_code(request)
+    """View to generate salary register report"""
+    try:
+        if request.method == 'POST':
+            employee_id = request.POST.get('employee_id') or '';
+            # Get all employees
+            query = """SELECT         
+                        B.DESIGNATION AS "DESIGNATION",
+                    B.PROCESS_CYCLE AS "PROCESS_CYCLE",         
+                    A.EMPLOYEE_CODE AS "EMPLOYEE_CODE",         
+                    B.EMP_NAME AS "EMP_NAME",         
+                    B.BASIC_PAY AS "A_BASIC",         
+                    B.ALLOWANCE AS "A_ALLOW",         
+                    C.PROCESS_COMP_FLAG AS "PROCESS_COMP_FLAG",
+
+                    -- ATTENDANCE COUNTS
+                    COALESCE(PRES.PRESENT, 0) AS "PRESENT",
+                    COALESCE(ABS.ABSENT, 0) AS "ABSENT",
+
+                    -- WORKING DAYS CALCULATION
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.MORNING, 0) + COALESCE(A.AFTERNOON, 0) ELSE 0 END) / 8, 0) AS "WDAYS",
+
+                    -- OT1 HOURS
+                    SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT1, 0) ELSE 0 END) AS "OT1_HOURS",
+
+                    -- OT2 HOURS
+                    SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT2, 0) ELSE 0 END) AS "OT2_HOURS",
+
+                    -- SALARY COMPONENTS
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN A.AMOUNT ELSE 0 END), 2) AS "BASIC",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER004' THEN A.AMOUNT ELSE 0 END), 2) AS "ALLOWANCE",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER002' THEN A.AMOUNT ELSE 0 END), 2) AS "OT1",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER003' THEN A.AMOUNT ELSE 0 END), 2) AS "OT2",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_PAY",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'DD900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_DED",
+                    ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER999' THEN A.AMOUNT ELSE 0 END), 2) AS "NET"
+
+                FROM 
+                    PAYROLL_PAYPROCESS A
+
+                -- JOIN EMPLOYEE INFO
+                LEFT JOIN PAYROLL_EMPLOYEE B 
+                    ON A.COMP_CODE = B.COMP_CODE 
+                AND A.EMPLOYEE_CODE = B.EMP_CODE
+                AND A.PAY_CYCLE = B.PROCESS_CYCLE
+
+                -- JOIN PAYCYCLE MASTER
+                LEFT JOIN PAYROLL_PAYCYCLEMASTER C 
+                    ON A.PAY_CYCLE = C.PROCESS_CYCLE
+
+                -- JOIN FOR PRESENT DAYS
+                LEFT JOIN (
+                    SELECT 
+                        EMPLOYEE_CODE, 
+                        PAY_PROCESS_MONTH, 
+                        PAY_CYCLE, 
+                        COUNT(*) AS PRESENT
+                    FROM PAYROLL_WORKERATTENDANCEREGISTER
+                    WHERE COMP_CODE = '1000' AND ATTENDANCE_TYPE = 26
+                    GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                ) PRES 
+                    ON PRES.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                AND PRES.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                AND PRES.PAY_CYCLE = A.PAY_CYCLE
+
+                -- JOIN FOR ABSENT DAYS
+                LEFT JOIN (
+                    SELECT 
+                        EMPLOYEE_CODE, 
+                        PAY_PROCESS_MONTH, 
+                        PAY_CYCLE, 
+                        COUNT(*) AS ABSENT
+                    FROM PAYROLL_WORKERATTENDANCEREGISTER
+                    WHERE ATTENDANCE_TYPE = 27
+                    GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                ) ABS 
+                    ON ABS.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                AND ABS.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                AND ABS.PAY_CYCLE = A.PAY_CYCLE
+                
+                WHERE 
+                        A.COMP_CODE = '1000'
+                        AND A.EMPLOYEE_CODE = COALESCE(%s, A.EMPLOYEE_CODE)
+
+                GROUP BY  
+                    A.COMP_CODE,
+                    B.DESIGNATION,
+                    A.EMPLOYEE_CODE,
+                    B.EMP_NAME,
+                    B.BASIC_PAY,
+                    B.ALLOWANCE,
+                    B.PROCESS_CYCLE,
+                    A.PAY_CYCLE,
+                    C.PROCESS_COMP_FLAG,
+                    PRES.PRESENT,
+                    ABS.ABSENT
+
+                ORDER BY 
+                    A.EMPLOYEE_CODE"""
+        
+        # Execute the query and get results
+        with connection.cursor() as cursor:
+            cursor.execute(query, [employee_id])
+            columns = [col[0] for col in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        # Convert results to DataFrame
+        df = pd.DataFrame(results)
+        
+        # Export to PDF
+        return export_to_pdf(df, 'salary_register_report', 'Salary Register Report')
         
     except Exception as e:
         return JsonResponse({
