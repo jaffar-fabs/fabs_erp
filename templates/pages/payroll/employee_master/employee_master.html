@@ -96,9 +96,11 @@
                                                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item edit-employee-btn" href="javascript:void(0);"
+                                                        data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add"
                                                        data-id="{{ employee.employee_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
+                                                   
                                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#delete_employee_{{ employee.employee_id }}"><i
                                                         class="ti ti-trash text-danger"></i> Delete</a>
                                                 </div>
@@ -217,16 +219,18 @@
 <script>
     $(document).ready(function () {
     // Edit Employee Functionality
+
+    $(document).on("click",".edit-employee-btn", function (event) {
+        var employeeId = $(this).data("id");
+        console.log(employeeId);
+    })
+
     $(".edit-employee-btn").on("click", function (event) {
         event.preventDefault();
         var employeeId = $(this).data("id");
-
-        var offcanvasElement = document.getElementById("offcanvas_edit");
-        var offcanvasElement2 = document.getElementById("offcanvas_add");
-        offcanvasElement2.addEventListener('hidden.bs.offcanvas', function () {
-        var bsOffcanvas2 = new bootstrap.Offcanvas(offcanvasElement)
-        bsOffcanvas2.show()
-        })
+        console.log(employeeId);
+        let firstOffcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas_add'));
+        firstOffcanvas.show();
 
 
         // Reset all fields
