@@ -4,117 +4,200 @@
 {% block content %}
 
 <!-- Page Wrapper -->
-<div class="page-wrapper" style="height: 100vh; display: flex; flex-direction: column;">
-    <!-- Fixed Header -->
+<div class="page-wrapper">
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <!-- Page Header -->
                 {% block pagetitle %}
-                {% include "partials/page-title.html" with title="Dashboard" %}
+                {% include "partials/page-title.html" with title="HR Dashboard" %}
                 {% endblock pagetitle %}
-                <!-- /Page Header -->
             </div>
         </div>
-    </div>
 
-    <!-- Scrollable Content -->
-    <div class="content" style="flex: 1; overflow-y: auto; padding: 20px;">
         <!-- Employee Status Cards -->
         <div class="row">
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Total Employees</h5>
-                        <h2 class="card-text text-primary">{{ total_employees }}</h2>
-                        <a href="{% url 'employee_enquiries' %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-users text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Total Employees</h5>
+                                <h2 class="mb-0">{{ total_employees }}</h2>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Active Employees</h5>
-                        <h2 class="card-text text-success">{{ active_employees }}</h2>
-                        <a href="{% url 'employee_enquiries' %}?status=ACTIVE" class="btn btn-sm btn-outline-success">View Details</a>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-user-check text-success"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Active Employees</h5>
+                                <h2 class="mb-0">{{ active_employees }}</h2>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">On Leave</h5>
-                        <h2 class="card-text text-warning">{{ on_leave_employees }}</h2>
-                        <a href="{% url 'employee_enquiries' %}?status=ON_LEAVE" class="btn btn-sm btn-outline-warning">View Details</a>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-calendar-off text-warning"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">On Leave</h5>
+                                <h2 class="mb-0">{{ on_leave_employees }}</h2>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Inactive</h5>
-                        <h2 class="card-text text-danger">{{ inactive_employees }}</h2>
-                        <a href="{% url 'employee_enquiries' %}?status=INACTIVE" class="btn btn-sm btn-outline-danger">View Details</a>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-user-x text-danger"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Inactive</h5>
+                                <h2 class="mb-0">{{ inactive_employees }}</h2>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Other Summary Cards -->
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
+        <!-- Main Content -->
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Recent Leave Requests</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Projects</h5>
-                        <h2 class="card-text text-info">{{ project_count }}</h2>
-                        <a href="{% url 'project' %}" class="btn btn-sm btn-outline-info">View Details</a>
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Leave Type</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leave in recent_leaves %}
+                                    <tr>
+                                        <td>
+                                            <h2 class="d-flex align-items-center">
+                                                <a href="#" class="avatar avatar-sm border me-2">
+                                                    <img class="w-auto h-auto" src="{% static 'assets/img/avatar.png' %}" alt="User Image"/>
+                                                </a>
+                                                <a href="#" class="d-flex flex-column">
+                                                    {{ leave.employee_name }}
+                                                </a>
+                                            </h2>
+                                        </td>
+                                        <td>{{ leave.leave_type }}</td>
+                                        <td>{{ leave.start_date }} - {{ leave.end_date }}</td>
+                                        <td>
+                                            <span class="badge badge-pill {% if leave.hr_status == 'Approved' %}bg-success{% elif leave.hr_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                                {{ leave.hr_status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Holidays</h5>
-                        <h2 class="card-text text-secondary">{{ holiday_count }}</h2>
-                        <a href="{% url 'holiday_master' %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+            <div class="col-md-5 d-flex">
+                <div class="card w-100">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Employee Status</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">Camps</h5>
-                        <h2 class="card-text text-dark">{{ camp_count }}</h2>
-                        <a href="{% url 'camp_master' %}" class="btn btn-sm btn-outline-dark">View Details</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Paycycles</h5>
-                        <h2 class="card-text text-primary">{{ paycycle_count }}</h2>
-                        <a href="{% url 'payroll_paycycle_master' %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        <div id="employee-status-chart"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Charts Section -->
-        <div class="row mt-4">
+        <div class="row">
             <div class="col-md-6">
-                <div class="card shadow-sm">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Department Distribution</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Employee Status Distribution</h5>
-                        <canvas id="pieChart"></canvas>
+                        <div id="department-chart"></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card shadow-sm">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-grip-vertical me-1"></i>Camp Occupancy</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Employee Status Comparison</h5>
-                        <canvas id="barChart"></canvas>
+                        <div id="camp-occupancy-chart"></div>
                     </div>
                 </div>
             </div>
@@ -125,66 +208,79 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Pie Chart
-        const pieCtx = document.getElementById('pieChart').getContext('2d');
-        new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-                labels: {{ chart_data.labels|safe }},
-                datasets: [{
-                    data: {{ chart_data.values|safe }},
-                    backgroundColor: [
-                        '#28a745', // Active - green
-                        '#ffc107', // On Leave - yellow
-                        '#dc3545'  // Inactive - red
-                    ],
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
+document.addEventListener("DOMContentLoaded", function() {
+    // Employee Status Chart
+    const statusCtx = document.getElementById('employee-status-chart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ chart_data.labels|safe }},
+            datasets: [{
+                data: {{ chart_data.values|safe }},
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
             }
-        });
-
-        // Bar Chart
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: {{ chart_data.labels|safe }},
-                datasets: [{
-                    label: 'Number of Employees',
-                    data: {{ chart_data.values|safe }},
-                    backgroundColor: [
-                        '#28a745', // Active - green
-                        '#ffc107', // On Leave - yellow
-                        '#dc3545'  // Inactive - red
-                    ],
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
+        }
     });
+
+    // Department Distribution Chart
+    const deptCtx = document.getElementById('department-chart').getContext('2d');
+    new Chart(deptCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ department_data.labels|safe }},
+            datasets: [{
+                label: 'Employees per Department',
+                data: {{ department_data.values|safe }},
+                backgroundColor: '#0d6efd'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Camp Occupancy Chart
+    const campCtx = document.getElementById('camp-occupancy-chart').getContext('2d');
+    new Chart(campCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Occupied', 'Available'],
+            datasets: [{
+                data: [{{ camp_occupancy }}, {{ available_beds_percentage }}],
+                backgroundColor: ['#0d6efd', '#e9ecef']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
 </script>
 
 {% endblock content %}

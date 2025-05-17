@@ -1,0 +1,235 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/page-title.html" with title="Payroll Dashboard" %}
+                {% endblock pagetitle %}
+            </div>
+        </div>
+
+        <!-- Payroll Overview Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-cash text-primary"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Total Payroll</h5>
+                                <h2 class="mb-0">{{ total_payroll|default:"0" }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-clock text-success"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Overtime Hours</h5>
+                                <h2 class="mb-0">{{ total_overtime|default:"0" }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-users text-warning"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Active Projects</h5>
+                                <h2 class="mb-0">{{ active_projects|default:"0" }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg">
+                                <i class="ti ti-chart-bar text-danger"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-1">Avg. Salary</h5>
+                                <h2 class="mb-0">{{ avg_salary|default:"0" }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-chart-line me-1"></i>Payroll Trends</h4>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
+                                    <i class="ti ti-calendar-check me-2"></i>Last 6 months
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 3 months</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 6 months</a>
+                                    <a href="javascript:void(0);" class="dropdown-item">Last 12 months</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="payrollTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-chart-pie me-1"></i>Earnings Distribution</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="earningsDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Distribution Row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-chart-bar me-1"></i>Project-wise Payroll Distribution</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="projectDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Payroll Trend Chart
+    const trendCtx = document.getElementById('payrollTrendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: {{ months|safe }},
+            datasets: [{
+                label: 'Total Payroll',
+                data: {{ amounts|safe }},
+                borderColor: '#0d6efd',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Earnings Distribution Chart
+    const earningsCtx = document.getElementById('earningsDistributionChart').getContext('2d');
+    new Chart(earningsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ earnings_labels|safe }},
+            datasets: [{
+                data: {{ earnings_values|safe }},
+                backgroundColor: [
+                    '#0d6efd',
+                    '#6610f2',
+                    '#6f42c1',
+                    '#d63384',
+                    '#dc3545'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Project Distribution Chart
+    const projectCtx = document.getElementById('projectDistributionChart').getContext('2d');
+    new Chart(projectCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ project_labels|safe }},
+            datasets: [{
+                label: 'Payroll Amount',
+                data: {{ project_values|safe }},
+                backgroundColor: '#0d6efd'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock content %} 

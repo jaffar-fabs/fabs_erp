@@ -21,7 +21,7 @@ from django.views import View
 from .models import CodeMaster
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q, Sum, Count
+from django.db.models import Q, Sum, Count, Avg
 import pdb
 from itertools import zip_longest
 from django.db import connection
@@ -601,44 +601,136 @@ def deactivate_employee(request, employee_id):
 
 def index(request):
     set_comp_code(request)
-    
-    # Count records for each model
-    total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
-    active_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count()
-    on_leave_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ON_LEAVE').count()
-    inactive_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='INACTIVE').count()
-    project_count = projectMaster.objects.filter(comp_code=COMP_CODE).count()
-    holiday_count = HolidayMaster.objects.filter(comp_code=COMP_CODE).count()
-    seed_count = SeedModel.objects.filter(comp_code=COMP_CODE).count()
-    paycycle_count = PaycycleMaster.objects.filter(comp_code=COMP_CODE).count()
-    company_count = CompanyMaster.objects.filter(company_code=COMP_CODE).count()
-    grade_count = GradeMaster.objects.filter(comp_code=COMP_CODE).count()
-    user_count = UserMaster.objects.filter(comp_code=COMP_CODE).count()
-    camp_count = CampMaster.objects.filter(comp_code=COMP_CODE).count()
+    # Employee Statistics
+    total_employees = Employee.objects.count()
+    active_employees = Employee.objects.filter(emp_status='ACTIVE').count()
+    on_leave_employees = LeaveTransaction.objects.filter(
+        start_date__lte=timezone.now(),
+        end_date__gte=timezone.now(),
+        hr_status='Approved'
+    ).count()
+    inactive_employees = Employee.objects.filter(emp_status='INACTIVE').count()
 
-    # Prepare data for charts
+    # Recent Leave Requests
+    recent_leaves = LeaveTransaction.objects.filter(
+        created_on__gte=timezone.now() - timedelta(days=30)
+    ).order_by('-created_on')[:5]
+
+    # Chart Data
     chart_data = {
-        "labels": ["Employees", "Projects", "Holidays", "Seeds", "Paycycles", "Companies", "Grades", "Users", "Camps"],
-        "values": [total_employees, project_count, holiday_count, seed_count, paycycle_count, company_count, grade_count, user_count, camp_count],
+        'labels': ['Active', 'On Leave', 'Inactive'],
+        'values': [active_employees, on_leave_employees, inactive_employees]
     }
+
+    # Department Distribution
+    departments = Employee.objects.values('department').annotate(
+        count=Count('employee_id')
+    ).exclude(department__isnull=True).order_by('-count')[:5]
+
+    department_data = {
+        'labels': [dept['department'] for dept in departments],
+        'values': [dept['count'] for dept in departments]
+    }
+
+    # Camp Occupancy
+    total_beds = CampBeds.objects.count()
+    occupied_beds = CampBeds.objects.filter(bed_status='Occupied').count()
+    camp_occupancy = round((occupied_beds / total_beds * 100) if total_beds > 0 else 0, 1)
+    available_beds_percentage = round(100 - camp_occupancy, 1)  # Calculate available beds percentage
 
     context = {
         'total_employees': total_employees,
         'active_employees': active_employees,
         'on_leave_employees': on_leave_employees,
         'inactive_employees': inactive_employees,
-        'project_count': project_count,
-        'holiday_count': holiday_count,
-        'seed_count': seed_count,
-        'paycycle_count': paycycle_count,
-        'company_count': company_count,
-        'grade_count': grade_count,
-        'user_count': user_count,
-        'camp_count': camp_count,
+        'recent_leaves': recent_leaves,
         'chart_data': chart_data,
+        'department_data': department_data,
+        'camp_occupancy': camp_occupancy,
+        'available_beds_percentage': available_beds_percentage,  # Add to context
     }
-    
+
     return render(request, 'pages/dashboard/index.html', context)
+
+def payroll_dashboard(request):
+    comp_code = request.session.get('comp_code')
+    six_months_ago = datetime.now() - timedelta(days=180)
+    payroll_data = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).order_by('pay_month')
+
+    # Calculate monthly totals (sum of morning, afternoon, ot1, ot2, amount)
+    monthly_totals = {}
+    for payroll in payroll_data:
+        month_key = payroll.pay_month
+        if month_key not in monthly_totals:
+            monthly_totals[month_key] = 0
+        total_earnings = float(payroll.morning or 0) + float(payroll.afternoon or 0) + float(payroll.ot1 or 0) + float(payroll.ot2 or 0) + float(payroll.amount or 0)
+        monthly_totals[month_key] += total_earnings
+
+    months = list(monthly_totals.keys())
+    amounts = list(monthly_totals.values())
+
+    # Earnings distribution (top 5 earn_type by sum of amount)
+    earnings_data = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).values('earn_type').annotate(
+        total=Sum('amount')
+    ).order_by('-total')[:5]
+    earnings_labels = [item['earn_type'] for item in earnings_data]
+    earnings_values = [float(item['total'] or 0) for item in earnings_data]
+
+    # Project-wise distribution (top 5 project_code by sum of amount)
+    project_data = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).values('project_code').annotate(
+        total=Sum('amount')
+    ).order_by('-total')[:5]
+    project_labels = [item['project_code'] for item in project_data]
+    project_values = [float(item['total'] or 0) for item in project_data]
+
+    # Summary statistics
+    total_payroll = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    total_overtime = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).aggregate(
+        ot1=Sum('ot1'),
+        ot2=Sum('ot2')
+    )
+    total_overtime_sum = (total_overtime['ot1'] or 0) + (total_overtime['ot2'] or 0)
+
+    active_projects = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).values('project_code').distinct().count()
+
+    avg_salary = PayProcess.objects.filter(
+        comp_code=comp_code,
+        created_at__gte=six_months_ago
+    ).aggregate(avg=Avg('amount'))['avg'] or 0
+
+    context = {
+        'months': months,
+        'amounts': amounts,
+        'earnings_labels': earnings_labels,
+        'earnings_values': earnings_values,
+        'project_labels': project_labels,
+        'project_values': project_values,
+        'total_payroll': total_payroll,
+        'total_overtime': total_overtime_sum,
+        'active_projects': active_projects,
+        'avg_salary': round(avg_salary, 2)
+    }
+
+    return render(request, 'pages/dashboard/payroll_dashboard.html', context)
 
 def my_login_view(request):
     if request.method == "POST":
@@ -666,7 +758,7 @@ def my_login_view(request):
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
 
-                # Fetch role ID from UserRoleMapping
+                # Fetch role ID from UserRoleMapping    
                 user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
 
@@ -6982,7 +7074,7 @@ def salary_register_report(request):
                 
                 WHERE 
                         A.COMP_CODE = '1000'
-                        AND A.EMPLOYEE_CODE = COALESCE(%s, A.EMPLOYEE_CODE)
+                        
 
                 GROUP BY  
                     A.COMP_CODE,
