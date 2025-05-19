@@ -244,7 +244,7 @@ class Employee(models.Model):
     employee_bank = models.CharField(max_length=100, blank=True, null=True)  # Employee bank
     bank_branch = models.CharField(max_length=100, blank=True, null=True)  # Bank branch
     account_no = models.CharField(max_length=20, blank=True, null=True)  # Account number
-    bank_loan = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Bank loan
+    iban_number = models.CharField(max_length=20, blank=True, null=True)  # Bank loan
 
     # Travel Document Details
     passport_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Passport document upload

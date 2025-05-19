@@ -96,7 +96,6 @@
                                                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <a class="dropdown-item edit-employee-btn" href="javascript:void(0);"
-                                                        data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add"
                                                        data-id="{{ employee.employee_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
@@ -248,6 +247,7 @@
                 success: function (response) {
                     if (response.success) {
                         // Populate basic employee information
+                        $("#emp_id").val(response.data.employee_id);
                         $("#emp_code").val(response.data.emp_code);
                         $("#emp_name_passport").val(response.data.emp_name);
                         $("#surname").val(response.data.surname);
@@ -256,6 +256,7 @@
                         $("#nationality").val(response.data.nationality);
                         $("#designation").val(response.data.designation).change();
                         $("#date_of_join").val(response.data.date_of_join);
+                        $("#date_of_rejoin").val(response.data.date_of_rejoin);
                         $("#qualification").val(response.data.qualification);
                         $("#emp_status").val(response.data.emp_status);
                         $("#emp_sub_status").val(response.data.emp_sub_status);
@@ -263,8 +264,27 @@
                         $("#father_name").val(response.data.father_name);
                         $("#mother_name").val(response.data.mother_name);
                         $("#religion").val(response.data.religion);
+                        $("#passport_release").val(response.data.passport_release);
+                        $("#release_reason").val(response.data.release_reason);
+                        $("#depend_count").val(response.data.depend_count);
+                        $("#child_count").val(response.data.child_count);
                         $("#emp_marital_status").val(response.data.emp_marital_status);
+                        $("#staff_category").val(response.data.staff_category).change();
                         $("#profile_picture").attr("src", response.data.profile_picture);
+                        if (response.data.profile_picture) {
+                            $("#profile_picture_preview").html(`
+                                <a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
+                                    <i class="fas fa-eye"></i> Preview
+                                </a>
+                                <a href="${response.data.profile_picture}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            `);
+                        } else {
+                           $("#profile_picture_preview").html(`
+                                <span class="text-muted">No document uploaded.</span>
+                           `);
+                        }
 
                         // Populate contact information
                         $("#res_addr_line1").val(response.data.res_addr_line1);
@@ -283,17 +303,193 @@
 
                         //Populate Salary Details 
                         $('#process_cycle').val(response.data.process_cycle).change();
-                        $('#basicpay').val(response.data.basic_pay);
+                        $('#basic_pay').val(response.data.basic_pay);
                         $('#prj_code').val(response.data.prj_code).change();
                         $('#sub_location').val(response.data.sub_location).change();
+                        $('#grade_code').val(response.data.grade_code).change();
 
+                        //Account Details
+                        $('#employee_bank').val(response.data.employee_bank).change();
+                        $('#bank_branch').val(response.data.bank_branch).change();
+                        $('#account_no').val(response.data.account_no);
+                        $('#iban_number').val(response.data.iban_number);
+
+                        // Accomodation Details
+                        $('#select_camp').val(response.data.camp_code).change();
+                        $('#room_no').val(response.data.room_no);
+                        $('#client_name').val(response.data.client_name);
+                        $('#client_location').val(response.data.client_location);
+                        $('#outside_location').val(response.data.outside_location);
+                        $('#room_rent').val(response.data.room_rent);
+
+                        // Accommodation Details
+                        $("#campType_add").val(response.data.camp_type).change();
+                        if (response.data.camp_type === 'by_company') {
+                            $("#campDetails_add").show();
+                            $("#campInsideOutside_add").val(response.data.camp_inside_outside).change();
+                            
+                            if (response.data.camp_inside_outside === 'camp') {
+                                $("#inCampDetails_add").show();
+                                $("#select_camp").val(response.data.select_camp);
+                                $("#room_no").val(response.data.room_no);
+                            } else if (response.data.camp_inside_outside === 'client_accommodation') {
+                                $("#clientAccommodationDetails_add").show();
+                                $("#client_name").val(response.data.client_name);
+                                $("#client_location").val(response.data.client_location);
+                            } else if (response.data.camp_inside_outside === 'outside') {
+                                $("#outsideDetails_add").show();
+                                $("#outside_location").val(response.data.outside_location);
+                                $("#room_rent").val(response.data.room_rent);
+                            }
+                        }
+
+                        //Travel Document Details
+                        $("#issued_date").val(response.data.issued_date);
+                        $("#expiry_date").val(response.data.expiry_date);
+                        $("#passport_details").val(response.data.passport_details);
+                        $("#passport_issued_country").val(response.data.passport_issued_country);
+                        $("#passport_place_of_issue").val(response.data.passport_place_of_issue);
+                        
+                        // Handle passport document preview
+                        if (response.data.passport_document) {
+                            $("#passport_document_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.passport_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.passport_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#passport_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+                        
                         // Populate visa details
                         $("#visa_no").val(response.data.visa_no);
                         $("#visa_expiry").val(response.data.visa_expiry);
                         $("#emirates_no").val(response.data.emirates_no);
                         $("#emirate_expiry").val(response.data.emirate_expiry);
-                        $("#passport_no").val(response.data.passport_no);
-                        $("#passport_expiry").val(response.data.passport_expiry);
+                        $("#emirate_issued").val(response.data.emirate_issued);
+                        $("#visa_issued").val(response.data.visa_issued);
+                        $("#visa_issued_emirate").val(response.data.visa_issued_emirate);
+                        $("#visa_designation").val(response.data.visa_designation);
+                        $("#uid_number").val(response.data.uid_number);
+                        $("#mohra_number").val(response.data.mohra_number);
+                        $("#mohra_name").val(response.data.mohra_name);
+                        $("#mohra_designation").val(response.data.mohra_designation);
+                        $("#work_permit_number").val(response.data.work_permit_number);
+                        $("#work_permit_expiry").val(response.data.work_permit_expiry);
+                        $("#iloe_no").val(response.data.iloe_no);
+                        $("#iloe_expiry").val(response.data.iloe_expiry);
+                        $("#locationSelect_add").val(response.data.visa_location);
+                        
+                        // Handle change status file preview
+                        if (response.data.change_status) {
+                            $("#changeStatusFile_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.change_status}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.change_status}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                            // Enable the file input if location is inside
+                            if (response.data.visa_location === 'inside') {
+                                $("#changeStatusFile_add").removeAttr('disabled');
+                            }
+                        } else {
+                            $("#changeStatusFile_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        if (response.data.emirate_document) {
+                            $("#emirate_document_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.emirate_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.emirate_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#emirate_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        // Handle visa document preview
+                        if (response.data.visa_document) {
+                            $("#visa_document_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.visa_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.visa_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {    
+                            $("#visa_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }   
+
+                        // Handle work permit document preview
+                        if (response.data.work_permit_document) {
+                            $("#work_permit_document_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.work_permit_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.work_permit_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#work_permit_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        if (response.data.iloe_document) {
+                            $("#iloe_document_preview").html(`
+                                <div class="mt-2">
+                                    <a href="${response.data.iloe_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.iloe_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#iloe_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
 
                         // Populate dynamic sections
                         populateEarnDeducts(response.data.earn_deducts);
@@ -314,141 +510,495 @@
 
         // Helper functions for dynamic sections
         function populateEarnDeducts(earnDeducts) {
-            const container = $("#entriesContainer");
-            container.empty();
+            const tableBody = document.querySelector('#multiEntryTable_add tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
 
-            earnDeducts.forEach(item => {
-                const newEntry = `
-                    <div class="card p-3 mb-2 shadow-sm entry-row">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <input type="text" name="entry_type[]" class="form-control" value="${item.earn_type}" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" name="entry_code[]" class="form-control" value="${item.earn_deduct_code}" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" name="entry_amount[]" class="form-control" value="${item.earn_deduct_amt}" required min="0" step="0.01">
-                            </div>
-                            <div class="col-md-2">
-                                <select name="entry_proated_flag[]" class="form-control">
-                                    <option value="Yes" ${item.prorated_flag ? 'selected' : ''}>Yes</option>
-                                    <option value="No" ${!item.prorated_flag ? 'selected' : ''}>No</option>
-                                </select>
-                            </div>
-                            <div class="col-md-1 text-end">
-                                <button type="button" class="btn btn-danger" onclick="removeEntry(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            if (earnDeducts && earnDeducts.length > 0) {
+                earnDeducts.forEach(item => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <select name="entry_type[]" class="form-control entry-type">
+                                <option value="">Select Type</option>
+                                <option value="EARNINGS" ${item.earn_type === 'EARNINGS' ? 'selected' : ''}>Earnings</option>
+                                <option value="DEDUCTION" ${item.earn_type === 'DEDUCTION' ? 'selected' : ''}>Deduction</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="entry_code[]" class="form-control code-dropdown">
+                                <option value="">Select Code</option>
+                                <!-- Options will be populated dynamically based on type -->
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="entry_amount[]" class="form-control" value="${item.earn_deduct_amt}" min="0" step="0.01">
+                        </td>
+                        <td>
+                            <select name="entry_proated_flag[]" class="form-control">
+                                <option value="Yes" ${item.prorated_flag === 'Yes' ? 'selected' : ''}>Yes</option>
+                                <option value="No" ${item.prorated_flag === 'No' ? 'selected' : ''}>No</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger remove-entry">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+
+                    // After adding the row, trigger the entry type change to populate codes
+                    const entryTypeSelect = newRow.querySelector('.entry-type');
+                    const codeDropdown = newRow.querySelector('.code-dropdown');
+                    
+                    // Set the initial code value
+                    if (item.earn_deduct_code) {
+                        // Fetch codes for the selected type
+                        fetch(`/fetch_codes?type=${item.earn_type}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    data.codes.forEach(code => {
+                                        const option = document.createElement('option');
+                                        option.value = code[0];
+                                        option.textContent = code[1];
+                                        if (code[0] === item.earn_deduct_code) {
+                                            option.selected = true;
+                                        }
+                                        codeDropdown.appendChild(option);
+                                    });
+                                }
+                            })
+                            .catch(error => console.error('Error fetching codes:', error));
+                    }
+                });
+            } else {
+                // Add one empty row if no data
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <select name="entry_type[]" class="form-control entry-type">
+                            <option value="">Select Type</option>
+                            <option value="EARNINGS">Earnings</option>
+                            <option value="DEDUCTION">Deduction</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="entry_code[]" class="form-control code-dropdown">
+                            <option value="">Select Code</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" name="entry_amount[]" class="form-control" min="0" step="0.01">
+                    </td>
+                    <td>
+                        <select name="entry_proated_flag[]" class="form-control">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger remove-entry">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
                 `;
-                container.append(newEntry);
-            });
+                tableBody.appendChild(newRow);
+            }
         }
 
         function populateDocuments(documents) {
-            const container = $("#documentList");
-            container.empty();
+            const tableBody = document.querySelector('#documentUploadTable_add tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
 
-            documents.forEach(doc => {
-                const newRow = `
-                    <div class="card p-3 mb-2 shadow-sm document-upload-row">
-                        <div class="row align-items-center">
-                            <div class="col-md-4">
-                                <strong>${doc.document_type}</strong>
-                                <input type="hidden" name="document_type[]" value="${doc.document_type}">
-                            </div>
-                            <div class="col-md-4">
-                                <strong>${doc.document_file}</strong>
-                                <input type="hidden" name="document_file[]" value="${doc.document_file}">
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <a href="${doc.document_file}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
-                                    <i class="fas fa-eye"></i> Preview
-                                </a>
-                                <a href="${doc.document_file}" download class="btn btn-sm btn-secondary" title="Download Document">
-                                    <i class="fas fa-download"></i> Download
-                                </a>
-                                <button type="button" class="btn btn-danger" onclick="removeDocument(this)">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            if (documents && documents.length > 0) {
+                documents.forEach(doc => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <input type="hidden" name="document_id[]" value="${doc.document_id}">
+                            <select class="form-select" name="document_type[]">
+                                {% for document in doc_data %}
+                                    <option value="{{ document.base_value }}" ${doc.document_type === '{{ document.base_value }}' ? 'selected' : ''}>
+                                        {{ document.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                            ${doc.document_file ? `
+                                <div class="mt-2">
+                                    <a href="${doc.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${doc.document_file}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeRow_add(this, ${doc.document_id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            } else {
+                // Add one empty row if no data
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <input type="hidden" name="document_id[]" value="">
+                        <select class="form-select" name="document_type[]">
+                            {% for document in doc_data %}
+                                <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeRow_add(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="addRow_add()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </td>
                 `;
-                container.append(newRow);
-            });
+                tableBody.appendChild(newRow);
+            }
+        }
+
+        function addRow_add() {
+            const tableBody = document.querySelector('#documentUploadTable_add tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <input type="hidden" name="document_id[]" value="">
+                    <select class="form-select" id="document_type" name="document_type[]">
+                        {% for document in doc_data %}
+                            <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="file" name="document_file[]" id="document_file" class="form-control" accept="application/pdf,image/*">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRow_add(this, ${doc.document_id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
         }
 
         function populateDependents(dependents) {
-            const container = $("#existingDependents");
-            container.empty();
+            const tableBody = document.querySelector('#dependentsTable_add tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
 
-            dependents.forEach(dependent => {
-                const newEntry = `
-                    <div class="dependent-entry-exist mb-3 border p-3 rounded">
-                        <div class="row mb-2">
-                            <div class="col-md-2"><strong>Dependent:</strong> ${dependent.relationship}</div>
-                            <div class="col-md-2">${dependent.document_type}</div>
-                            <div class="col-md-2">${dependent.document_number}</div>
-                            <div class="col-md-2">${dependent.issued_date}</div>
-                            <div class="col-md-2">${dependent.expiry_date}</div>
-                            <div class="col-md-2">
+            if (dependents && dependents.length > 0) {
+                dependents.forEach(dependent => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <input type="hidden" value="${dependent.document_id}">
+                            <select class="form-select">
+                                {% for relative in relatives_data %}
+                                    <option value="{{ relative.base_value }}" ${dependent.relationship === '{{ relative.base_value }}' ? 'selected' : ''}>
+                                        {{ relative.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select">
+                                {% for document in other_documents_data %}
+                                    <option value="{{ document.base_value }}" ${dependent.document_type === '{{ document.base_value }}' ? 'selected' : ''}>
+                                        {{ document.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control" value="${dependent.document_number || ''}"></td>
+                        <td><input type="date" class="form-control" value="${dependent.issued_date || ''}"></td>
+                        <td><input type="date" class="form-control" value="${dependent.expiry_date || ''}"></td>
+                        <td>
+                            <input type="file" class="form-control" accept="application/pdf,image/*">
+                            <div class="dependent-file-preview">
                                 ${dependent.document_file ? `
-                                    <a href="${dependent.document_file}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                    <a href="${dependent.document_file}" download class="btn btn-sm btn-secondary">Download</a>
-                                ` : '<span class="text-muted">No document uploaded.</span>'}
+                                    <div class="mt-2">
+                                        <a href="${dependent.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                            <i class="fas fa-eye"></i> Preview
+                                        </a>
+                                        <a href="${dependent.document_file}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    </div>
+                                ` : ''}
                             </div>
-                        </div>
-                    </div>
-                `;
-                container.append(newEntry);
-            });
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this, ${dependent.document_id || ''})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addDependentRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            } else {
+                // Add one empty row if no data
+                addDependentRow_add();
+            }
         }
 
         function populateLicenses(licenses) {
-            const container = $("#existingLicenses");
-            container.empty();
+            const tableBody = document.querySelector('#licensePassesTable_add tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
 
-            licenses.forEach(license => {
-                const newRow = `
-                    <div class="row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist">
-                        <div class="col-md-2"><strong>${license.document_type}</strong></div>
-                        <div class="col-md-2">${license.document_number}</div>
-                        <div class="col-md-2">${license.expiry_date}</div>
-                        <div class="col-md-3">
+            if (licenses && licenses.length > 0) {
+                licenses.forEach(license => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <input type="hidden" value="${license.license_id}">
+                            <select class="form-select doc-type-select" onchange="toggleCategoryColumn(this)">
+                                <option value="">-- Select --</option>
+                                <option value="license" ${license.document_type === 'license' ? 'selected' : ''}>License</option>
+                                <option value="site_medical" ${license.document_type === 'site_medical' ? 'selected' : ''}>Site Medical</option>
+                                <option value="site_pass" ${license.document_type === 'site_pass' ? 'selected' : ''}>Site Pass</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="form-control" value="${license.document_number || ''}"></td>
+                        <td><input type="date" class="form-control" value="${license.issued_date || ''}"></td>
+                        <td><input type="date" class="form-control" value="${license.expiry_date || ''}"></td>
+                        <td>
+                            <select class="form-select">
+                                {% for location in work_location_data %}
+                                    <option value="{{ location.base_value }}" ${license.work_location === '{{ location.base_value }}' ? 'selected' : ''}>
+                                        {{ location.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select">
+                                {% for emirate in emirates_list %}
+                                    <option value="{{ emirate.base_value }}" ${license.emirate_issued === '{{ emirate.base_value }}' ? 'selected' : ''}>
+                                        {{ emirate.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select category-column" style="${license.document_type === 'license' ? '' : 'display:none;'}">
+                                <option value="">-- Select Category --</option>
+                                <option value="light" ${license.category === 'light' ? 'selected' : ''}>Light</option>
+                                <option value="heavy" ${license.category === 'heavy' ? 'selected' : ''}>Heavy</option>
+                                <option value="high" ${license.category === 'high' ? 'selected' : ''}>High</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="file" class="form-control" accept="application/pdf,image/*">
                             ${license.document_file ? `
-                                <a href="${license.document_file}" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                                <a href="${license.document_file}" download class="btn btn-sm btn-secondary">Download</a>
-                            ` : '<span class="text-muted">No file</span>'}
-                        </div>
-                    </div>
-                `;
-                container.append(newRow);
-            });
+                                <div class="mt-2">
+                                    <a href="${license.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${license.document_file}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this, ${license.document_id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addLicenseRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            } else {
+                // Add one empty row if no data
+                addLicenseRow_add();
+            }
         }
 
         function populateRecruitment(recruitmentDetails) {
-            const container = $("#existingRecruitmentEntries");
-            container.empty();
+            const tableBody = document.querySelector('#recruitmentInfoTable_add tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
 
-            recruitmentDetails.forEach(detail => {
-                const newEntry = `
-                    <div class="recruitment-entry-exist mb-3 border p-3 rounded">
-                        <div class="row mb-2">
-                            <div class="col-md-3"><strong>Agent Name:</strong> ${detail.agent_or_reference}</div>
-                            <div class="col-md-3"><strong>Location:</strong> ${detail.location}</div>
-                            <div class="col-md-2"><strong>Change Status:</strong> ${detail.change_status}</div>
-                            <div class="col-md-2"><strong>Recruitment From:</strong> ${detail.recruitment_from}</div>
-                            <div class="col-md-2"><strong>Date:</strong> ${detail.date}</div>
-                        </div>
-                    </div>
-                `;
-                container.append(newEntry);
-            });
+            if (recruitmentDetails && recruitmentDetails.length > 0) {
+                recruitmentDetails.forEach(detail => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>
+                            <input type="hidden" name="recruitment_id[]" value="${detail.recruitment_id || ''}">
+                            <select class="form-select" name="agent_name[]">
+                                <option value="">Select Agent</option>
+                                {% for agent in agent_data %}
+                                    <option value="{{ agent.base_value }}" ${detail.agent_or_reference === '{{ agent.base_value }}' ? 'selected' : ''}>
+                                        {{ agent.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="location[]">
+                                <option value="">Select Location</option>
+                                {% for location in location_data %}
+                                    <option value="{{ location.base_value }}" ${detail.location === '{{ location.base_value }}' ? 'selected' : ''}>
+                                        {{ location.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" name="change_status[]">
+                                <option value="">Select</option>
+                                <option value="inside" ${detail.change_status === 'inside' ? 'selected' : ''}>Inside</option>
+                                <option value="outside" ${detail.change_status === 'outside' ? 'selected' : ''}>Outside</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="recruitment_from[]" class="form-control" value="${detail.recruitment_from || ''}" placeholder="Enter Recruitment From">
+                        </td>
+                        <td>
+                            <input type="date" name="recruitment_date[]" class="form-control" value="${detail.date || ''}">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this, ${detail.recruitment_id || ''})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(newRow);
+                });
+            } else {
+                // Add one empty row if no data
+                addRecruitmentRow_add();
+            }
         }
+
+        function addRecruitmentRow_add() {
+            const tableBody = document.querySelector('#recruitmentInfoTable_add tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <input type="hidden" name="recruitment_id[]" value="">
+                    <select class="form-select" name="agent_name[]">
+                        <option value="">Select Agent</option>
+                        {% for agent in agent_data %}
+                            <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="location[]">
+                        <option value="">Select Location</option>
+                        {% for location in location_data %}
+                            <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="change_status[]">
+                        <option value="">Select</option>
+                        <option value="inside">Inside</option>
+                        <option value="outside">Outside</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+                </td>
+                <td>
+                    <input type="date" name="recruitment_date[]" class="form-control">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        }
+
+        function removeRecruitmentRow_add(button, recruitmentId = null) {
+            const row = button.closest('tr');
+            const tableBody = document.querySelector('#recruitmentInfoTable_add tbody');
+            
+            if (!tableBody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // If this is an existing recruitment (has recruitmentId), add it to recruitments_to_remove
+            if (recruitmentId && recruitmentId !== '') {
+                let recruitmentsToRemove = document.getElementById('recruitments_to_remove');
+                
+                if (!recruitmentsToRemove) {
+                    recruitmentsToRemove = document.createElement('input');
+                    recruitmentsToRemove.type = 'hidden';
+                    recruitmentsToRemove.id = 'recruitments_to_remove';
+                    recruitmentsToRemove.name = 'recruitments_to_remove';
+                    const table = document.getElementById('recruitmentInfoTable_add');
+                    if (table && table.parentNode) {
+                        table.parentNode.appendChild(recruitmentsToRemove);
+                    }
+                }
+                
+                // Get current values and add new recruitmentId
+                const currentValues = recruitmentsToRemove.value ? recruitmentsToRemove.value.split(',') : [];
+                if (!currentValues.includes(recruitmentId.toString())) {
+                    currentValues.push(recruitmentId.toString());
+                    recruitmentsToRemove.value = currentValues.join(',');
+                }
+            }
+            
+            // Ensure at least one row remains
+            if (tableBody.rows.length > 1) {
+                row.remove();
+            } else {
+                // Show warning message
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning mt-3';
+                message.innerText = "At least one row must remain.";
+                
+                // Insert after table
+                const table = document.getElementById('recruitmentInfoTable_add');
+                if (table && table.parentNode) {
+                    table.parentNode.insertBefore(message, table.nextSibling);
+                    
+                    // Remove after 3 seconds
+                    setTimeout(() => message.remove(), 3000);
+                }
+            }
+        }
+
     });
 </script>
 

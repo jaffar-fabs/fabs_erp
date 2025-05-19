@@ -174,6 +174,7 @@ def get_employee_details(request):
 
         # Serialize the employee data
         employee_data = {
+            'employee_id': employee.employee_id,
             'emp_code': employee.emp_code,
             'emp_name': employee.emp_name,
             'surname': employee.surname,
@@ -182,6 +183,7 @@ def get_employee_details(request):
             'nationality': employee.nationality,
             'designation': employee.designation,
             'date_of_join': format_date(employee.date_of_join),
+            'date_of_rejoin': format_date(employee.date_of_rejoin),
             'qualification': employee.qualification,
             'emp_status': employee.emp_status,
             'emp_sub_status': employee.emp_sub_status,
@@ -189,14 +191,15 @@ def get_employee_details(request):
             'father_name': employee.father_name,
             'mother_name': employee.mother_name,
             'religion': employee.religion,
+            'passport_release': employee.passport_release,
+            'release_reason': employee.release_reason,
             'emp_marital_status': employee.emp_marital_status,
-            'basic_pay': str(employee.basic_pay) if employee.basic_pay else None,  # Convert Decimal to string
-            'allowance': str(employee.allowance) if employee.allowance else None,
-            'prj_code': employee.prj_code,
-            'sub_location': employee.sub_location,
+            'staff_category': employee.staff_category,
+            'depend_count': employee.depend_count,
+            'child_count': employee.child_count,
             'profile_picture': employee.profile_picture.url if employee.profile_picture else None,
             'department': employee.department,
-            'process_cycle': employee.process_cycle,
+
             'local_addr_line1': employee.local_addr_line1,
             'local_addr_line2': employee.local_addr_line2,
             'local_city': employee.local_city,
@@ -209,12 +212,56 @@ def get_employee_details(request):
             'res_state': employee.res_state,
             'res_country_code': employee.res_country_code,
             'res_phone_no': employee.res_phone_no,
+            
+            'process_cycle': employee.process_cycle,
+            'basic_pay': str(employee.basic_pay) if employee.basic_pay else None,
+            'grade_code': employee.grade_code,
+            'prj_code': employee.prj_code,
+            'sub_location': employee.sub_location,
+
+            'employee_bank': employee.employee_bank,
+            'bank_branch': employee.bank_branch,
+            'account_no': employee.account_no,
+            'iban_number': employee.iban_number,
+
+            'camp_type': employee.camp_type,
+            'camp_inside_outside': employee.camp_inside_outside,
+            'client_name': employee.client_name,
+            'client_location': employee.client_location,
+            'room_no': employee.room_no,
+            'room_rent': str(employee.room_rent) if employee.room_rent else None,
+            'outside_location': employee.outside_location,
+            'select_camp': employee.select_camp,
+
+            'issued_date': format_date(employee.issued_date),
+            'expiry_date': format_date(employee.expiry_date),
+            'passport_document': employee.passport_document.url if employee.passport_document else None,
+            'passport_details': employee.passport_details,
+            'passport_issued_country': employee.passport_issued_country,
+            'passport_place_of_issue': employee.passport_place_of_issue,
+
             'visa_no': employee.visa_no,
             'visa_expiry': format_date(employee.visa_expiry),
             'emirates_no': employee.emirates_no,
+            'emirate_issued': format_date(employee.emirate_issued),
             'emirate_expiry': format_date(employee.emirate_expiry),
-            'passport_details': employee.passport_details,
-            'passport_expiry': format_date(employee.passport_expiry_date),
+            'visa_issued': employee.visa_issued,
+            'visa_issued_emirate': employee.visa_issued_emirate,
+            'visa_designation': employee.visa_designation,
+            'uid_number': employee.uid_number,
+            'mohra_number': employee.mohra_number,
+            'mohra_name': employee.mohra_name,
+            'mohra_designation': employee.mohra_designation,
+            'work_permit_number': employee.work_permit_number,
+            'work_permit_expiry': format_date(employee.work_permit_expiry),
+            'iloe_no': employee.iloe_no,
+            'iloe_expiry': format_date(employee.iloe_expiry),
+            'iloe_document': employee.iloe_document.url if employee.iloe_document else None,
+            'visa_location': employee.visa_location,
+            'change_status': employee.change_status.url if employee.change_status else None,
+            'visa_document': employee.visa_document.url if employee.visa_document else None,
+            'emirate_document': employee.emirate_document.url if employee.emirate_document else None,
+            'work_permit_document': employee.work_permit_document.url if employee.work_permit_document else None,
         }
 
         # Fetch and serialize related data with error handling
@@ -237,7 +284,7 @@ def get_employee_details(request):
                 relationship__isnull=True, 
                 document_number__isnull=True
             ).values(
-                'document_type', 'document_file'
+                'document_id', 'document_type', 'document_file'
             ))
         except Exception as e:
             documents = []
@@ -247,7 +294,7 @@ def get_employee_details(request):
                 emp_code=employee.emp_code, 
                 relationship__isnull=False
             ).values(
-                'relationship', 'document_type', 'document_number', 
+                'document_id', 'relationship', 'document_type', 'document_number', 
                 'issued_date', 'expiry_date', 'document_file'
             ))
             # Format dates for dependents
@@ -261,9 +308,12 @@ def get_employee_details(request):
             license_and_passes = list(EmployeeDocument.objects.filter(
                 emp_code=employee.emp_code, 
                 relationship__isnull=True, 
-                issued_date__isnull=True
+                issued_date__isnull=True,
+                document_number__isnull=False
             ).values(
-                'document_type', 'document_number', 'expiry_date', 'document_file'
+                'document_id', 'document_type', 'document_number', 'expiry_date', 
+                'document_file', 'staff_work_location', 'emirates_issued_by', 
+                'category', 'comments'
             ))
             # Format dates for licenses
             for lic in license_and_passes:
@@ -275,7 +325,7 @@ def get_employee_details(request):
             recruitment_details = list(EmployeeRecruitmentDetails.objects.filter(
                 emp_code=employee.emp_code
             ).values(
-                'agent_or_reference', 'location', 'change_status', 
+                'recruitment_id', 'agent_or_reference', 'location', 'change_status', 
                 'recruitment_from', 'date'
             ))
             # Format dates for recruitment details
@@ -304,10 +354,12 @@ def get_employee_details(request):
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
 @csrf_exempt
-def save_employee(request, employee_id=None):
+@csrf_exempt
+def save_employee(request):
     set_comp_code(request)
     if request.method == "POST":
         emp_code = request.POST.get("emp_code")
+        employee_id = request.POST.get("emp_id")
         
         # Check if emp_code already exists for new employees
         if not employee_id and Employee.objects.filter(emp_code=emp_code, comp_code=COMP_CODE).exists():
@@ -380,7 +432,33 @@ def save_employee(request, employee_id=None):
         employee.employee_bank = request.POST.get("employee_bank")
         employee.bank_branch = request.POST.get("bank_branch")
         employee.account_no = request.POST.get("account_no")
-        employee.bank_loan = request.POST.get("bank_loan") or None
+        employee.iban_number = request.POST.get("iban_number")
+
+        # Handle accommodation details
+        employee.camp_type = request.POST.get("camp_type")
+        employee.camp_inside_outside = request.POST.get("camp_inside_outside")
+        
+        if employee.camp_inside_outside == "client_accommodation":
+            employee.client_name = request.POST.get("client_name")
+            employee.client_location = request.POST.get("client_location")
+            employee.select_camp = None
+            employee.room_no = None
+            employee.room_rent = None
+            employee.outside_location = None
+        elif employee.camp_inside_outside == "camp":
+            employee.select_camp = request.POST.get("camp_code")
+            employee.room_no = request.POST.get("room_no")
+            employee.client_name = None
+            employee.client_location = None
+            employee.room_rent = None
+            employee.outside_location = None
+        elif employee.camp_inside_outside == "outside":
+            employee.outside_location = request.POST.get("outside_location")
+            employee.room_rent = request.POST.get("room_rent")
+            employee.client_name = None
+            employee.client_location = None
+            employee.select_camp = None
+            employee.room_no = None
 
         # File fields
         employee.passport_document = request.FILES.get("passport_document") or employee.passport_document
@@ -424,169 +502,222 @@ def save_employee(request, employee_id=None):
         employee.passport_issued_date = request.POST.get("passport_copy_issued_date") or None
         employee.passport_expiry_date = request.POST.get("passport_copy_expiry_date") or None
 
-        # Camp Details
-        employee.camp_type = request.POST.get("camp_type")
-        employee.camp_inside_outside = request.POST.get("camp_inside_outside")
+        try:
+            # Save employee
+            employee.save()
 
-        # Handle accommodation details based on the selected type
-        if employee.camp_inside_outside == "client_accommodation":
-            employee.client_name = request.POST.get("client_name")  # New field for Client Name
-            employee.client_location = request.POST.get("client_location")  # New field for Client Location
-        elif employee.camp_inside_outside == "camp":
-            employee.select_camp = request.POST.get("select_camp")
-            employee.room_no = request.POST.get("room_no")
-        elif employee.camp_inside_outside == "outside":
-            employee.outside_location = request.POST.get("outside_location")
-            employee.room_rent = request.POST.get("room_rent")
+            # Handle Earn/Deduct entries
+            earn_deduct_types = request.POST.getlist("entry_type[]")
+            earn_deduct_codes = request.POST.getlist("entry_code[]")
+            earn_deduct_amounts = request.POST.getlist("entry_amount[]")
+            prorated_flags = request.POST.getlist("entry_proated_flag[]")
 
-        # Save employee
-        employee.save()
+            # Delete existing entries for the employee
+            EarnDeductMaster.objects.filter(
+                comp_code=COMP_CODE,
+                employee_code=emp_code
+            ).delete()
 
-        # Handle Earn/Deduct entries
-        earn_deduct_types = request.POST.getlist("entry_type[]")
-        earn_deduct_codes = request.POST.getlist("entry_code[]")
-        earn_deduct_amounts = request.POST.getlist("entry_amount[]")
-        prorated_flags = request.POST.getlist("entry_proated_flag[]")
-        # Delete existing entries for the employee
-        EarnDeductMaster.objects.filter(
-            comp_code=COMP_CODE,
-            employee_code=emp_code
-        ).delete()  # Remove all existing entries for this employee
+            # Create new entries
+            for entry_type, entry_code, entry_amount, prorated_flag in zip(
+                earn_deduct_types, earn_deduct_codes, earn_deduct_amounts, prorated_flags):
+                if entry_type and entry_code and entry_amount:  # Ensure all fields are provided
+                    EarnDeductMaster.objects.create(
+                        comp_code=COMP_CODE,
+                        employee_code=emp_code,
+                        earn_deduct_code=entry_code,
+                        earn_deduct_amt=entry_amount,
+                        prorated_flag=prorated_flag == 'Yes',  # Convert to boolean
+                        created_by=1,  # Replace with actual user ID if available
+                        instance_id=employee_id or emp_code,  # Use employee_id if editing, otherwise use emp_code
+                        earn_type=entry_type
+                    )
 
-        # Create new entries
-        for entry_type, entry_code, entry_amount, prorated_flag in zip(earn_deduct_types, earn_deduct_codes, earn_deduct_amounts, prorated_flags):
-            if entry_type and entry_code and entry_amount:  # Ensure all fields are provided
-                EarnDeductMaster.objects.create(
-                    comp_code=COMP_CODE,
-                    employee_code=emp_code,
-                    earn_deduct_code=entry_code,
-                    earn_deduct_amt=entry_amount,
-                    prorated_flag=prorated_flag == 'Yes',  # Convert to boolean
-                    created_by=1,  # Replace with actual user ID if available
-                    instance_id=employee_id or emp_code,  # Use employee_id if editing, otherwise use emp_code
-                    earn_type=entry_type
-                )
+            # Handle document removal
+            documents_to_remove = request.POST.get('documents_to_remove', '').split(',')
+            documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()] 
 
-        # Handle document removal
-        documents_to_remove = request.POST.get('documents_to_remove', '').split(',')
-        documents_to_remove = [doc_id for doc_id in documents_to_remove if doc_id.isdigit()]  # Filter valid IDs
+            for doc_id in documents_to_remove:
+                try:
+                    document = EmployeeDocument.objects.get(document_id=doc_id)
+                    if document.document_file:
+                        file_path = document.document_file.path
+                        if os.path.exists(file_path):
+                            os.remove(file_path)  # Delete the file from the filesystem
+                    document.delete()
+                except EmployeeDocument.DoesNotExist:
+                    continue
 
-        for doc_id in documents_to_remove:
-            try:
-                document = EmployeeDocument.objects.get(document_id=doc_id)
-                if document.document_file:
-                    file_path = document.document_file.path
-                    if os.path.exists(file_path):
-                        os.remove(file_path)  # Delete the file from the filesystem
-                document.delete()
-            except EmployeeDocument.DoesNotExist:
-                continue
+            # Handle new document uploads
+            document_types = request.POST.getlist("document_type[]")
+            document_files = request.FILES.getlist("document_file[]")
+            document_ids = request.POST.getlist("document_id[]")
 
-        # Handle new document uploads
-        document_types = request.POST.getlist("document_type[]")
-        document_files = request.FILES.getlist("document_file[]")
+            # Save new documents to the database
+            for doc_type, doc_file, doc_id in zip(document_types, document_files, document_ids):
+                try:
+                    if doc_type and doc_file: 
+                        if doc_id == '':    
+                            EmployeeDocument.objects.create(
+                                comp_code=COMP_CODE,
+                                emp_code=employee.emp_code,
+                                document_type=doc_type,
+                                document_file=doc_file,
+                                created_by=1,  # Replace with actual user ID if available
+                            )
+                        else:
+                            document = EmployeeDocument.objects.get(document_id=doc_id)
+                            document.document_type = doc_type
+                            document.document_file = doc_file
+                            document.save()
+                except Exception as e:
+                    return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
-        # Save new documents to the database
-        for doc_type, doc_file in zip(document_types, document_files):
-            if doc_type and doc_file:  # Ensure both type and file are provided
-                EmployeeDocument.objects.create(
-                    comp_code=COMP_CODE,
-                    emp_code=employee.emp_code,
-                    document_type=doc_type,
-                    document_file=doc_file,
-                    created_by=1,  # Replace with actual user ID if available
-                )
-
-        # Handle dependent details
-        dependent_relationships = request.POST.getlist("dependent_relationship[]")
-        dependent_doc_types = request.POST.getlist("dependent_doc_type[]")
-        dependent_doc_numbers = request.POST.getlist("dependent_doc_number[]")
-        dependent_issued_dates = request.POST.getlist("dependent_issued_date[]")
-        dependent_expiry_dates = request.POST.getlist("dependent_expiry_date[]")
-        dependent_doc_files = request.FILES.getlist("dependent_doc_file[]")
-
-        # Create new dependent entries
-        
-
-        for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file in zip_longest(
-                dependent_relationships, dependent_doc_types, dependent_doc_numbers,
-                dependent_issued_dates, dependent_expiry_dates, dependent_doc_files):
-
+            dependents_to_remove = request.POST.get('dependents_to_remove', '').split(',')
+            dependents_to_remove = [dependent_id for dependent_id in dependents_to_remove if dependent_id.isdigit()]
             
-            if relationship and doc_type and doc_number:  # Ensure required fields are provided
-                EmployeeDocument.objects.create(
-                    comp_code=COMP_CODE,
-                    emp_code=employee.emp_code,
-                    relationship=relationship,
-                    document_type=doc_type,
-                    document_number=doc_number,
-                    issued_date=issued_date,
-                    expiry_date=expiry_date,
-                    document_file=doc_file if doc_file else None,  # Save file if provided
-                    created_by=1,  # Replace with actual user ID if available
-                )
+            for dependent_id in dependents_to_remove:
+                try:
+                    dependent = EmployeeDocument.objects.get(document_id=dependent_id)
+                    if dependent.document_file:
+                        file_path = dependent.document_file.path
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+                    dependent.delete()
+                except EmployeeDocument.DoesNotExist:
+                    continue
 
-        # Handle License and Passes Details
-        license_doc_types = request.POST.getlist("license_doc_type[]")
-        license_doc_numbers = request.POST.getlist("license_doc_number[]")
-        license_doc_files = request.FILES.getlist("license_doc_file[]")
-        license_work_locations = request.POST.getlist("work_location[]")
-        license_emirates_issued = request.POST.getlist("emirate_issued[]")
-        license_expiry_dates = request.POST.getlist("license_expiry_date[]")
-        license_categories = request.POST.getlist("license_category[]")
-        license_comments = request.POST.getlist("license_comments[]")
+            # Handle dependent details
+            dependent_relationships = request.POST.getlist("dependent_relationship[]")
+            dependent_doc_types = request.POST.getlist("dependent_doc_type[]")
+            dependent_doc_numbers = request.POST.getlist("dependent_doc_number[]")
+            dependent_issued_dates = request.POST.getlist("dependent_issued_date[]")
+            dependent_expiry_dates = request.POST.getlist("dependent_expiry_date[]")
+            dependent_doc_files = request.FILES.getlist("dependent_doc_file[]")
+            dependent_ids = request.POST.getlist("dependent_id[]")           
 
-        for doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments in zip_longest(
-                license_doc_types, license_doc_numbers, license_doc_files,
-                license_work_locations, license_emirates_issued,
-                license_expiry_dates, license_categories, license_comments):
+            # Create new dependent entries
+            for relationship, doc_type, doc_number, issued_date, expiry_date, doc_file, dependent_id in zip_longest(
+                    dependent_relationships, dependent_doc_types, dependent_doc_numbers,
+                    dependent_issued_dates, dependent_expiry_dates, dependent_doc_files, dependent_ids):
+                
+                if relationship and doc_type and doc_number:  # Ensure required fields are provided
+                    if dependent_id == '':
+                        EmployeeDocument.objects.create(
+                            comp_code=COMP_CODE,
+                            emp_code=employee.emp_code,
+                            relationship=relationship,
+                            document_type=doc_type,
+                            document_number=doc_number,
+                            issued_date=issued_date,
+                            expiry_date=expiry_date,
+                            document_file=doc_file if doc_file else None,  # Save file if provided
+                            created_by=1,  # Replace with actual user ID if available
+                        )
+                    else:
+                        dependent = EmployeeDocument.objects.get(document_id=dependent_id)
+                        dependent.relationship = relationship
+                        dependent.document_type = doc_type
+                        dependent.document_number = doc_number
+                        dependent.issued_date = issued_date
+                        dependent.expiry_date = expiry_date
+                        dependent.document_file = doc_file if doc_file else dependent.document_file
+                        dependent.save()
+
+            licenses_to_remove = request.POST.get("licenses_to_remove", '').split(',')
+            licenses_to_remove = [license_id for license_id in licenses_to_remove if license_id.isdigit()]
+            for license_id in licenses_to_remove:
+                try:
+                    license = EmployeeDocument.objects.get(document_id=license_id)
+                    if license.document_file:
+                        file_path = license.document_file.path
+                        if os.path.exists(file_path):
+                            os.remove(file_path)
+                    license.delete()
+                except EmployeeDocument.DoesNotExist:
+                    continue
+                        
+            # Handle License and Passes Details
+            license_doc_types = request.POST.getlist("license_doc_type[]")
+            license_doc_numbers = request.POST.getlist("license_doc_number[]")
+            license_doc_files = request.FILES.getlist("license_doc_file[]")
+            license_work_locations = request.POST.getlist("work_location[]")
+            license_emirates_issued = request.POST.getlist("emirate_issued[]")
+            license_expiry_dates = request.POST.getlist("license_expiry_date[]")
+            license_categories = request.POST.getlist("license_category[]")
+            license_comments = request.POST.getlist("license_comments[]")
+
+            for doc_type, doc_number, doc_file, work_location, emirate_issued, expiry_date, category, comments in zip_longest(
+                    license_doc_types, license_doc_numbers, license_doc_files,
+                    license_work_locations, license_emirates_issued,
+                    license_expiry_dates, license_categories, license_comments):
+
+                if doc_type and doc_number:
+                    EmployeeDocument.objects.create(
+                        comp_code=COMP_CODE,
+                        emp_code=employee.emp_code,
+                        document_type=doc_type,
+                        document_number=doc_number,
+                        document_file=doc_file if doc_file else None,
+                        staff_work_location=work_location,
+                        emirates_issued_by=emirate_issued,
+                        expiry_date=expiry_date,
+                        category=category,
+                        comments=comments,
+                        created_by=request.user.id if request.user.is_authenticated else 1
+                    )
 
 
-            if doc_type and doc_number:
-                # Create document entry (adjust model and field names as needed)
-                EmployeeDocument.objects.create(
-                    comp_code=COMP_CODE,
-                    emp_code=employee.emp_code,
-                    document_type=doc_type,
-                    document_number=doc_number,
-                    document_file=doc_file if doc_file else None,
-                    staff_work_location=work_location,
-                    emirates_issued_by=emirate_issued,
-                    expiry_date=expiry_date,
-                    category=category,
-                    comments=comments,
-                    created_by=request.user.id if request.user.is_authenticated else 1
-                )
+            recruitments_to_remove = request.POST.get("recruitments_to_remove", '').split(',')
+            recruitments_to_remove = [recruitment_id for recruitment_id in recruitments_to_remove if recruitment_id.isdigit()]
+            for recruitment_id in recruitments_to_remove:
+                try:
+                    recruitment = EmployeeRecruitmentDetails.objects.get(recruitment_id=recruitment_id)
+                    recruitment.delete()
+                except EmployeeRecruitmentDetails.DoesNotExist:
+                    continue
+                        
 
-        # Handle Recruitment Information
-        recruitment_agents = request.POST.getlist("agent_name[]")
-        recruitment_locations = request.POST.getlist("location[]")
-        recruitment_change_statuses = request.POST.getlist("change_status[]")
-        recruitment_froms = request.POST.getlist("recruitment_from[]")
-        recruitment_dates = request.POST.getlist("recruitment_date[]")
+            # Handle Recruitment Information
+            recruitment_ids = request.POST.getlist("recruitment_id[]")
+            recruitment_agents = request.POST.getlist("agent_name[]")
+            recruitment_locations = request.POST.getlist("location[]")
+            recruitment_change_statuses = request.POST.getlist("change_status[]")
+            recruitment_froms = request.POST.getlist("recruitment_from[]")
+            recruitment_dates = request.POST.getlist("recruitment_date[]")
 
-        # Delete existing recruitment details for the employee
-        # EmployeeRecruitmentDetails.objects.filter(comp_code=COMP_CODE, emp_code=emp_code).delete()
 
-        # Save new recruitment details
-        for agent, location, change_status, recruitment_from, date in zip(
-                recruitment_agents, recruitment_locations, recruitment_change_statuses, recruitment_froms, recruitment_dates):
-            if agent or location or change_status or recruitment_from or date:  # Ensure at least one field is filled
-                EmployeeRecruitmentDetails.objects.create(
-                    comp_code=COMP_CODE,
-                    emp_code=emp_code,
-                    agent_or_reference=agent,
-                    location=location,
-                    change_status=change_status,
-                    recruitment_from=recruitment_from,
-                    date=date if date else None
-                )
+            # Save new recruitment details
+            for agent, location, change_status, recruitment_from, date, recruitment_id in zip_longest(
+                    recruitment_agents, recruitment_locations, recruitment_change_statuses, recruitment_froms, recruitment_dates, recruitment_ids):
+                if change_status or recruitment_from or date:  # Ensure at least one field is filled
+                    if recruitment_id == '':
+                        EmployeeRecruitmentDetails.objects.create(
+                            comp_code=COMP_CODE,
+                            emp_code=emp_code,
+                            agent_or_reference=agent,
+                            location=location,
+                            change_status=change_status,
+                            recruitment_from=recruitment_from,
+                            date=date if date else None
+                        )
+                    else:
+                        recruitment = EmployeeRecruitmentDetails.objects.get(recruitment_id=recruitment_id)
+                        recruitment.agent_or_reference = agent
+                        recruitment.location = location
+                        recruitment.change_status = change_status
+                        recruitment.recruitment_from = recruitment_from
+                        recruitment.date = date
+                        recruitment.save()
 
-        # Continue with the rest of your code
-        messages.success(request, "Employee details and documents updated successfully.")
-        return JsonResponse({'success': True})
+            messages.success(request, "Employee details and documents updated successfully.")
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'error': 'Invalid request method.'}, status=400)
+
 
 def deactivate_employee(request, employee_id):
     set_comp_code(request)
@@ -3705,9 +3836,7 @@ def create_camp(request):
     set_comp_code(request)
     if request.method == 'POST':
         
-        
         comp_code = COMP_CODE
-        # camp_code = request.POST.get('camp_code')
         camp_name = request.POST.get('camp_name')
         camp_agent = request.POST.get('camp_agent')
         try:
@@ -3718,7 +3847,6 @@ def create_camp(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-        # Convert empty date fields to None
         ejari_start_date = request.POST.get('ejari_start_date') or None
         ejari_end_date = request.POST.get('ejari_end_date') or None
         rental_contract_start_date = request.POST.get('rental_contract_start_date') or None
@@ -3740,7 +3868,6 @@ def create_camp(request):
                     document_file=file
                 )
 
-        # Create CampMaster entry
         CampMaster.objects.create(
             comp_code=comp_code,
             camp_code=camp_code,
@@ -3758,7 +3885,6 @@ def create_camp(request):
             is_active=True
         )
 
-        # Camp Details
         block_name = request.POST.getlist('block_name[]')
         floor = request.POST.getlist('floor[]')
         room_type = request.POST.getlist('type[]')
@@ -3792,7 +3918,6 @@ def create_camp(request):
                 available_beds=available[i] or 0,
             )
 
-        # Generate and insert bed data into CampBeds
             lower_beds = int(lower_bed_level[i]) if lower_bed_level[i] else 0
             upper_beds = int(upper_bed_level[i]) if upper_bed_level[i] else 0
 
@@ -3818,7 +3943,6 @@ def create_camp(request):
                     floor = floor[i]
                 )
 
-        # Cheque Details
         bank_name = request.POST.getlist('bank_name[]')
         cheque_no = request.POST.getlist('cheque_no[]')
         cheque_date = request.POST.getlist('cheque_date[]')
@@ -3829,9 +3953,9 @@ def create_camp(request):
                 comp_code=comp_code,
                 camp_code=camp_code,
                 bank_name=bank_name[i],
-                cheque_no=cheque_no[i] or None,  # Convert empty string to None
-                cheque_date=cheque_date[i] or None,  # Convert empty string to None
-                cheque_amount=cheque_amount[i] or 0,  # Default to 0 if empty
+                cheque_no=cheque_no[i] or None,
+                cheque_date=cheque_date[i] or None,
+                cheque_amount=cheque_amount[i] or 0,
             )
 
         return redirect('camp_master')
@@ -3941,7 +4065,6 @@ def camp_master_edit(request):
 
             
 
-            # Update Camp Details
             camp_detail_ids = request.POST.getlist('camp_detail_id[]')
             block_name = request.POST.getlist('block_name[]')
             floor = request.POST.getlist('floor[]')
@@ -3981,30 +4104,6 @@ def camp_master_edit(request):
                     camp_detail.occupied_beds = occ or 0
                     camp_detail.available_beds = avail or 0
                     camp_detail.save()
-                    # Update CampBeds for the updated CampDetails
-                    # CampBeds.objects.filter(camp_code=camp_master.camp_code, block=block, room_no=rooms).delete()
-                    # lower_beds = int(low) if low else 0
-                    # upper_beds = int(up) if up else 0
-
-                    # for j in range(1, lower_beds + 1):
-                    #     CampBeds.objects.create(
-                    #         comp_code=COMP_CODE,
-                    #         camp_code=camp_master.camp_code,
-                    #         block=block,
-                    #         room_no=rooms,
-                    #         bed_no=f"L-{j}",
-                    #         bed_status="N"
-                    #     )
-
-                    # for j in range(1, upper_beds + 1):
-                    #     CampBeds.objects.create(
-                    #         comp_code=COMP_CODE,
-                    #         camp_code=camp_master.camp_code,
-                    #         block=block,
-                    #         room_no=rooms,
-                    #         bed_no=f"U-{j}",
-                    #         bed_status="N"
-                    #     )
                 elif not cid and not rmid:
                         if block and flr and typ:
                             CampDetails.objects.create(
@@ -4023,7 +4122,6 @@ def camp_master_edit(request):
                                 occupied_beds=occ or 0,
                                 available_beds=avail or 0
                             )
-                            # Create CampBeds for the new CampDetails
                             lower_beds = int(low) if low else 0
                             upper_beds = int(up) if up else 0
                             for j in range(1, lower_beds + 1):
@@ -4049,7 +4147,6 @@ def camp_master_edit(request):
                                 )
 
 
-            # Update Camp Cheque
             cheque_detail_ids = request.POST.getlist('cheque_detail_id[]')
             bank_name = request.POST.getlist('bank_name[]')
             cheque_no = request.POST.getlist('cheque_no[]')
@@ -4097,7 +4194,6 @@ def camp_allocation_list(request):
     keyword = request.GET.get('keyword', '').strip()
     page_number = request.GET.get('page', 1)
 
-    # Filter transactions based on keyword
     transactions = CampAllocation.objects.filter(comp_code=COMP_CODE)
     if keyword:
         transactions = transactions.filter(
@@ -4106,7 +4202,6 @@ def camp_allocation_list(request):
             Q(camp__icontains=keyword)
         )
 
-    # Paginate the results
     paginator = Paginator(transactions.order_by('-created_on'), PAGINATION_SIZE)
     try:
         transactions_page = paginator.get_page(page_number)
@@ -4158,13 +4253,12 @@ def fetch_beds(request):
     room_no = request.GET.get('room_no')
 
     if camp_code and building_name and floor_no and room_no:
-        # Fetch available beds from CampBeds where bed_status = 'N'
         available_beds = CampBeds.objects.filter(
             camp_code=camp_code,
             block=building_name,
             floor=floor_no,
             room_no=room_no,
-            bed_status='N'  # Only fetch beds with status 'N'
+            bed_status='N'
         ).values_list('bed_no', flat=True)
 
         return JsonResponse({'success': True, 'beds': list(available_beds)})

@@ -26,45 +26,47 @@
                     </h2>
                     <div id="collapsePersonalDetails_add" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails_add" data-bs-parent="#employeeAccordion_add">
                         <div class="accordion-body">
+                            <input type="hidden" id="emp_id" name="emp_id">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Profile Picture</label>
-                                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
+                                        <label class="col-form-label" id="profile_picture_label">Profile Picture</label>
+                                        <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*">
+                                        <div id="profile_picture_preview" class="mt-2"></div>
                                         <div class="invalid-feedback">Please upload a profile picture.</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label" name="emp_code">Employee Code </label>
+                                        <label class="col-form-label" id="emp_code_label">Employee Code </label>
                                         <input type="text" name="emp_code" id="emp_code" class="form-control" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                                        <input type="text" name="emp_name_passport" class="form-control" required>
+                                        <label class="col-form-label" id="emp_name_passport_label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
+                                        <input type="text" name="emp_name_passport" id="emp_name_passport" class="form-control" required>
                                         <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                                        <input type="text" name="surname" class="form-control" required>
+                                        <label class="col-form-label" id="surname_label">Surname <span class="text-danger">*</span></label>
+                                        <input type="text" name="surname" id="surname" class="form-control" required>
                                         <div class="invalid-feedback">Please provide a surname.</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                                        <input type="date" name="dob" class="form-control" required>
+                                        <label class="col-form-label" id="dob_label">Date of Birth <span class="text-danger">*</span></label>
+                                        <input type="date" name="dob" id="dob" class="form-control" required>
                                         <div class="invalid-feedback">Please provide a date of birth.</div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                        <select name="emp_sex" class="form-select" required>
+                                        <label class="col-form-label" id="emp_sex_label">Gender <span class="text-danger">*</span></label>
+                                        <select name="emp_sex" id="emp_sex" class="form-select" required>
                                             <option value="">Select</option>
                                             {% for gender in gender_data %}
                                                 <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
@@ -75,8 +77,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
-                                        <select name="nationality" class="form-select" required>
+                                        <label class="col-form-label" id="nationality_label">Nationality<span class="text-danger">*</span></label>
+                                        <select name="nationality" id="nationality" class="form-select" required>
                                             <option value="">Select</option>
                                             {% for nation in nationality_data %}
                                             <option value="{{ nation.base_value }}">{{ nation.base_description }}</option>
@@ -88,8 +90,8 @@
                                 <!-- Designation (Dropdown) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Designation <span class="text-danger">*</span> </label>
-                                        <select name="designation" class="form-control" required>
+                                        <label class="col-form-label" id="designation_label">Designation <span class="text-danger">*</span> </label>
+                                        <select name="designation" id="designation" class="form-control" required>
                                             <option value="">Select</option>
                                             {% for statuses in desig_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
@@ -101,8 +103,8 @@
                                 <!-- Date of Join -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Date of Join <span class="text-danger">*</span> </label>
-                                        <input type="date" name="date_of_join" class="form-control" required>
+                                        <label class="col-form-label" id="date_of_join_label">Date of Join <span class="text-danger">*</span> </label>
+                                        <input type="date" name="date_of_join" id="date_of_join" class="form-control" required>
                                         <div class="invalid-feedback">Please Select Date of Join</div>
                                     </div>
                                 </div>
@@ -110,22 +112,22 @@
                                 <!-- Date of Rejoin -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Date of Rejoin</label>
-                                        <input type="date" name="date_of_rejoin" class="form-control">
+                                        <label class="col-form-label" id="date_of_rejoin_label">Date of Rejoin</label>
+                                        <input type="date" name="date_of_rejoin" id="date_of_rejoin" class="form-control">
                                     </div>
                                 </div>
                                 <!-- Qualification before Marital Status -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Qualification</label>
-                                        <input type="text" name="qualification" class="form-control">
+                                        <label class="col-form-label" id="qualification_label">Qualification</label>
+                                        <input type="text" name="qualification" id="qualification" class="form-control">
                                     </div>
                                 </div>
                                 <!-- Marital Status moved after Qualification -->
                                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Marital Status</label>
-                        <select name="emp_marital_status" class="form-select">
+                        <label class="col-form-label" id="emp_marital_status_label">Marital Status</label>
+                        <select name="emp_marital_status" id="emp_marital_status" class="form-select">
                             <option value="">Select</option>
                             {% for status in mar_status_data %}
                             <option value="{{ status.base_value }}">
@@ -137,26 +139,26 @@
                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Spouse Name</label>
-                                        <input type="text" name="spouse_name" class="form-control">
+                                        <label class="col-form-label" id="spouse_name_label">Spouse Name</label>
+                                        <input type="text" name="spouse_name" id="spouse_name" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Father Name</label>
-                                        <input type="text" name="father_name" class="form-control">
+                                        <label class="col-form-label" id="father_name_label">Father Name</label>
+                                        <input type="text" name="father_name" id="father_name" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Mother Name</label>
-                                        <input type="text" name="mother_name" class="form-control">
+                                        <label class="col-form-label" id="mother_name_label">Mother Name</label>
+                                        <input type="text" name="mother_name" id="mother_name" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Religion</label>
-                                        <input type="text" name="religion" class="form-control">
+                                        <label class="col-form-label" id="religion_label">Religion</label>
+                                        <input type="text" name="religion" id="religion" class="form-control">
                                     </div>
                                 </div>        
                                 <!-- Status and Sub Status (Same Line) -->
@@ -187,8 +189,8 @@
                                 <!-- passport Release and Reason (Next Line) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Passport Control</label>
-                                        <select name="passport_release" class="form-select">
+                                        <label class="col-form-label" id="passport_release_label">Passport Control</label>
+                                        <select name="passport_release" id="passport_release" class="form-select">
                                             <option value="">Select</option>
                                             <option value="Yes">Yes</option>
                                             <option value="No">No</option>
@@ -197,16 +199,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Release Reason</label>
-                                        <input type="text" name="release_reason" class="form-control">
+                                        <label class="col-form-label" id="release_reason_label">Release Reason</label>
+                                        <input type="text" name="release_reason" id="release_reason" class="form-control">
                                     </div>
                                 </div>                        
 
                                 <!-- Department (Dropdown) -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Department <span class="text-danger">*</span> </label>
-                                        <select name="department" class="form-control" required>
+                                        <label class="col-form-label" id="department_label">Department <span class="text-danger">*</span> </label>
+                                        <select name="department" id="department" class="form-control" required>
                                             <option value="">Select</option>
                                             {% for statuses in dept_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
@@ -218,8 +220,8 @@
 
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Category</label>
-                                        <select name="staff_category" class="form-select" id="categorySelect">
+                                        <label class="col-form-label" id="staff_category_label">Category</label>
+                                        <select name="staff_category" id="staff_category" class="form-select">
                                             <option value="">Select</option>
                                             <option value="staff">Staff</option>
                                             <option value="field-staff">Field Staff</option>
@@ -231,24 +233,24 @@
                                 <!-- Dependent Count -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Dependent Count</label>
-                                        <input type="number" name="depend_count" class="form-control" id="dependCount">
+                                        <label class="col-form-label" id="depend_count_label">Dependent Count</label>
+                                        <input type="number" name="depend_count" id="depend_count" class="form-control">
                                     </div>
                                 </div>
                                 
                                 <!-- Child Count -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label">Child Count</label>
-                                        <input type="number" name="child_count" class="form-control" id="childCount">
+                                        <label class="col-form-label" id="child_count_label">Child Count</label>
+                                        <input type="number" name="child_count" id="child_count" class="form-control">
                                     </div>
                                 </div>
                                 
                                 <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    const categorySelect = document.getElementById('categorySelect');
-                                    const dependCount = document.getElementById('dependCount');
-                                    const childCount = document.getElementById('childCount');
+                                    const categorySelect = document.getElementById('staff_category');
+                                    const dependCount = document.getElementById('depend_count');
+                                    const childCount = document.getElementById('child_count');
                                 
                                     categorySelect.addEventListener('change', function() {
                                         if (this.value === 'field-staff') {
@@ -316,30 +318,30 @@
                                         <h5 class="mt-3">Permanent Address</h5>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_addr_line1" class="form-control" required>
+                                            <input type="text" name="res_addr_line1" id="res_addr_line1" class="form-control" required>
                                             <div class="invalid-feedback">Please provide an address line 1.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="res_addr_line2" class="form-control">
+                                            <input type="text" name="res_addr_line2" id="res_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_city" class="form-control" required>
+                                            <input type="text" name="res_city" id="res_city" class="form-control" required>
                                             <div class="invalid-feedback">Please provide a city.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_state" class="form-control" required>
+                                            <input type="text" name="res_state" id="res_state" class="form-control" required>
                                             <div class="invalid-feedback">Please provide a state.</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" class="form-control">
+                                            <input type="text" name="res_country_code" id="res_country_code" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" class="form-control">
+                                            <input type="text" name="res_phone_no" id="res_phone_no" class="form-control">
                                         </div>
                                     </div>
 
@@ -348,30 +350,30 @@
                                         <h5 class="mt-3">UAE Address</h5>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="local_addr_line1" class="form-control">
+                                            <input type="text" name="local_addr_line1" id="local_addr_line1" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="local_addr_line2" class="form-control">
+                                            <input type="text" name="local_addr_line2" id="local_addr_line2" class="form-control">
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">City </label>
-                                            <input type="text" name="uae_city" class="form-control" >
+                                            <input type="text" name="local_city" id="local_city" class="form-control" >
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">State </label>
-                                            <input type="text" name="uae_state" class="form-control" >
+                                            <input type="text" name="local_state" id="local_state" class="form-control" >
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Country Code </label>
-                                            <input type="text" name="local_country_code" class="form-control" >
+                                            <input type="text" name="local_country_code" id="local_country_code" class="form-control" >
                                             
                                         </div>
                                         <div class="mb-3">
                                             <label class="col-form-label">Phone Number </label>
-                                            <input type="text" name="local_phone_no" class="form-control">
+                                            <input type="text" name="local_phone_no" id="local_phone_no" class="form-control">
                                         </div>
                                     </div>
 
@@ -398,7 +400,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Process Cycle</label>
-                        <select name="process_cycle" class="form-control">
+                        <select name="process_cycle" id="process_cycle" class="form-control">
                             <option value="">Select</option>
                             {% for paycycle in paycycle_data %}
                                 <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
@@ -410,7 +412,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
-                        <input type="number" name="basic_pay" class="form-control" required min="0" step="0.01" id="basicPay">
+                        <input type="number" name="basic_pay" id="basic_pay" class="form-control" required min="0" step="0.01">
                         <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
                     </div>
                 </div>
@@ -426,7 +428,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Grade</label>
-                        <select name="grade_code" class="form-control">
+                        <select name="grade_code" id="grade_code" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in grade_code_data %}
                                 <option value="{{ statuses.grade_code }}">{{ statuses.grade_code }} - {{ statuses.grade_desc }}</option>
@@ -438,7 +440,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project <span class="text-danger">*</span></label>
-                        <select name="prj_code" id="projectDropdown" class="form-control" required>
+                        <select name="prj_code" id="prj_code" class="form-control" required>
                             <option value="">Select</option>
                             {% for statuses in project_data %}
                                 <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
@@ -451,7 +453,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Project Sub Location</label>
-                        <select name="sub_location" id="locationDropdown" class="form-control">
+                        <select name="sub_location" id="sub_location" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in pro_sub_location_data %}
                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
@@ -590,7 +592,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Bank Name</label>
-                        <select name="employee_bank" class="form-control">
+                        <select name="employee_bank" id="employee_bank" class="form-control">
                             <option value="">Select Bank</option>
                             {% for bank in bank_data %}
                             <option value="{{ bank.base_type }}">{{ bank.base_description }}</option>
@@ -601,7 +603,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Branch Name</label>
-                        <select name="bank_branch" class="form-control">
+                        <select name="bank_branch" id="bank_branch" class="form-control">
                             <option value="">Select Branch</option>
                             {% for branch in branch_data %}
                             <option value="{{ branch.base_type }}">{{ branch.base_description }}</option>
@@ -612,13 +614,13 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Account No</label>
-                        <input type="text" name="account_no" class="form-control">
+                        <input type="text" name="account_no" id="account_no" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">IBAN Number</label>
-                        <input type="text" name="bank_loan" class="form-control">
+                        <input type="text" name="iban_number" id="iban_number" class="form-control">
                     </div>
                 </div>
             </div>
@@ -640,7 +642,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                     <!-- Left side fields -->
                     <div class="mb-3">
                         <label class="col-form-label">Accommodation By</label>
-                        <select id="campType_add" class="form-control" onchange="handleCampTypeChange_add()">
+                        <select name="camp_type" id="campType_add" class="form-control" onchange="handleCampTypeChange_add()">
                             <option value="">Select</option>
                             <option value="self">Self</option>
                             <option value="by_company">By Company</option>
@@ -649,7 +651,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                     <div id="campDetails_add" style="display: none;">
                         <div class="mb-3">
                             <label class="col-form-label">Accommodation Detail</label>
-                            <select id="campInsideOutside_add" class="form-control" onchange="handleInsideOutsideChange_add()">
+                            <select name="camp_inside_outside" id="campInsideOutside_add" class="form-control" onchange="handleInsideOutsideChange_add()">
                                 <option value="">Select</option>
                                 <option value="camp">Camp</option>
                                 <option value="client_accommodation">Client Accommodation</option>
@@ -663,36 +665,36 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                     <div id="inCampDetails_add" style="display: none;">
                         <div class="mb-3">
                             <label class="col-form-label">Select Camp</label>
-                            <select name="select_camp" class="form-control">
+                            <select name="camp_code" id="select_camp" class="form-control">
                                 <option value="">Select Camp</option>
                                 {% for camp in camp_data %}
-                                <option value="{{ camp.base_value }}">{{ camp.base_description }}</option>
+                                <option value="{{ camp.camp_code }}">{{ camp.camp_code }}-{{ camp.camp_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label">Room No</label>
-                            <input type="text" name="room_no" class="form-control">
+                            <input type="text" name="room_no" id="room_no" class="form-control">
                         </div>
                     </div>
                     <div id="clientAccommodationDetails_add" style="display: none;">
                         <div class="mb-3">
                             <label class="col-form-label">Client Name</label>
-                            <input type="text" name="client_name" class="form-control">
+                            <input type="text" name="client_name" id="client_name" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label">Location</label>
-                            <input type="text" name="client_location" class="form-control">
+                            <input type="text" name="client_location" id="client_location" class="form-control">
                         </div>
                     </div>
                     <div id="outsideDetails_add" style="display: none;">
                         <div class="mb-3">
                             <label class="col-form-label">Location</label>
-                            <input type="text" name="outside_location" class="form-control">
+                            <input type="text" name="outside_location" id="outside_location" class="form-control">
                         </div>
                         <div class="mb-3">
                             <label class="col-form-label">Room Rent</label>
-                            <input type="text" name="room_rent" class="form-control">
+                            <input type="number" name="room_rent" id="room_rent" class="form-control" min="0" step="0.01">
                         </div>
                     </div>
                 </div>
@@ -709,6 +711,15 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
         const clientAccommodationDetails = document.getElementById('clientAccommodationDetails_add');
         const outsideDetails = document.getElementById('outsideDetails_add');
 
+        // Reset all fields when camp type changes
+        document.getElementById('campInsideOutside_add').value = '';
+        document.getElementById('select_camp').value = '';
+        document.getElementById('room_no').value = '';
+        document.getElementById('client_name').value = '';
+        document.getElementById('client_location').value = '';
+        document.getElementById('outside_location').value = '';
+        document.getElementById('room_rent').value = '';
+
         if (campType === 'by_company') {
             campDetails.style.display = 'block';
         } else {
@@ -723,8 +734,17 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
         const insideOutside = document.getElementById('campInsideOutside_add').value;
         const inCampDetails = document.getElementById('inCampDetails_add');
         const clientAccommodationDetails = document.getElementById('clientAccommodationDetails_add');
-        const outsideDetails = document.getElementById('outsideDetails_add'); 
-        if(insideOutside === 'camp') {
+        const outsideDetails = document.getElementById('outsideDetails_add');
+
+        // Reset all fields when accommodation type changes
+        document.getElementById('select_camp').value = '';
+        document.getElementById('room_no').value = '';
+        document.getElementById('client_name').value = '';
+        document.getElementById('client_location').value = '';
+        document.getElementById('outside_location').value = '';
+        document.getElementById('room_rent').value = '';
+
+        if (insideOutside === 'camp') {
             inCampDetails.style.display = 'block';
             clientAccommodationDetails.style.display = 'none';
             outsideDetails.style.display = 'none';
@@ -761,31 +781,32 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Issued Date</label>
-                        <input type="date" name="issued_date" class="form-control">
+                        <input type="date" id="issued_date" name="issued_date" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control">
+                        <input type="date" id="expiry_date" name="expiry_date" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Document Upload</label>
-                        <input type="file" name="passport_document" class="form-control">
+                        <input type="file" name="passport_document" id="passport_document" class="form-control" accept="application/pdf,image/*">
+                        <div id="passport_document_preview"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport No.</label>
-                        <input type="text" name="passport_details" class="form-control">
+                        <input type="text" name="passport_details" id="passport_details" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Issued Country</label>
-                        <select name="passport_issued_country" class="form-control">
+                        <select name="passport_issued_country" id="passport_issued_country" class="form-control">
                             <option value="">Select Country</option>
                             {% for country in country_data %}
                             <option value="{{ country.base_value }}">{{ country.base_description }}</option>
@@ -796,7 +817,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Passport Place Of Issue</label>
-                        <select name="passport_place_of_issue" class="form-control">
+                        <select name="passport_place_of_issue" id="passport_place_of_issue" class="form-control">
                             <option value="">Select Place</option>
                             {% for place in place_data %}
                             <option value="{{ place.base_value }}">{{ place.base_description }}</option>
@@ -822,31 +843,32 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa No</label>
-                        <input type="text" name="visa_no" class="form-control" placeholder="Enter Visa Number">
+                        <input type="text" name="visa_no" id="visa_no" class="form-control" placeholder="Enter Visa Number">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Document Upload</label>
-                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
+                        <input type="file" name="visa_document" id="visa_document" class="form-control" accept="application/pdf,image/*">
+                        <div id="visa_document_preview"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Issued</label>
-                        <input type="date" name="visa_issued" class="form-control">
+                        <input type="date" name="visa_issued" id="visa_issued" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Expiry</label>
-                        <input type="date" name="visa_expiry" class="form-control">
+                        <input type="date" name="visa_expiry" id="visa_expiry" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Issued Emirate</label>
-                        <select name="visa_issued_emirate" class="form-select">
+                        <select name="visa_issued_emirate" id="visa_issued_emirate" class="form-select">
                             <option value="">Select Emirate</option>
                             {% for emirate in emirates_list %}
                             <option value="{{ emirate.base_value }}">
@@ -859,75 +881,77 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Visa Designation</label>
-                        <input type="text" name="visa_designation" class="form-control">
+                        <input type="text" name="visa_designation" id="visa_designation" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id</label>
-                        <input type="text" name="emirates_no" class="form-control" placeholder="Enter Emirates Id">
+                        <input type="text" name="emirates_no" id="emirates_no" class="form-control" placeholder="Enter Emirates Id">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id Document Upload</label>
-                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
+                        <input type="file" name="emirate_document" id="emirate_document" class="form-control" accept="application/pdf,image/*">
+                        <div id="emirate_document_preview"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id Issued</label>
-                        <input type="date" name="emirate_issued" class="form-control">
+                        <input type="date" name="emirate_issued" id="emirate_issued" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Emirates Id Expiry</label>
-                        <input type="date" name="emirate_expiry" class="form-control">
+                        <input type="date" name="emirate_expiry" id="emirate_expiry" class="form-control">
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">UID Number</label>
-                        <input type="text" name="uid_number" class="form-control" placeholder="Enter UID Number">
+                        <input type="text" name="uid_number" id="uid_number" class="form-control" placeholder="Enter UID Number">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Personal Mohre Code</label>
-                        <input type="text" name="mohra_number" class="form-control" placeholder="Enter Mohra Number">
+                        <input type="text" name="mohra_number" id="mohra_number" class="form-control" placeholder="Enter Mohra Number">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mohre Name</label>
-                        <input type="text" name="mohra_name" class="form-control" placeholder="Enter Mohra Name">
+                        <input type="text" name="mohra_name" id="mohra_name" class="form-control" placeholder="Enter Mohra Name">
                     </div>
                 </div>
                 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mohre Designation</label>
-                        <input type="text" name="mohra_designation" class="form-control" placeholder="Enter Mohra Designation">
+                        <input type="text" name="mohra_designation" id="mohra_designation" class="form-control" placeholder="Enter Mohra Designation">
                     </div>
                 </div>                
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Number</label>
-                        <input type="text" name="work_permit_number" class="form-control" placeholder="Enter Work Permit Number">
+                        <input type="text" name="work_permit_number" id="work_permit_number" class="form-control" placeholder="Enter Work Permit Number">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Expiry</label>
-                        <input type="date" name="work_permit_expiry" class="form-control">
+                        <input type="date" name="work_permit_expiry" id="work_permit_expiry" class="form-control">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Document Upload</label>
-                        <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
+                        <input type="file" name="work_permit_document" id="work_permit_document" class="form-control" accept="application/pdf,image/*">
+                        <div id="work_permit_document_preview"></div>
                     </div>
                 </div>
 
@@ -948,25 +972,27 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                     <div class="mb-3">
                         <label class="col-form-label">Change Status</label>
                         <input type="file" id="changeStatusFile_add" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*" disabled>
+                        <div id="changeStatusFile_preview"></div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">ILOE No</label>
-                        <input type="text" name="iloe_no" class="form-control" >
+                        <input type="text" name="iloe_no" id="iloe_no" class="form-control" >
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">ILOE Document</label>
-                        <input type="file" name="iloe_document" class="form-control" accept="application/pdf,image/*">
+                        <input type="file" name="iloe_document" id="iloe_document" class="form-control" accept="application/pdf,image/*">
+                        <div id="iloe_document_preview"></div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">ILOE Expiry Date</label>
-                        <input type="date" name="iloe_expiry" class="form-control">
+                        <input type="date" name="iloe_expiry" id="iloe_expiry" class="form-control">
                     </div>
                 </div>
             </div>
@@ -1009,14 +1035,14 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <tbody>
                     <tr>
                         <td>
-                            <select class="form-select" name="document_type[]">
+                            <select class="form-select" id="document_type" name="document_type[]">
                                 {% for document in doc_data %}
                                     <option value="{{ document.base_value }}">{{ document.base_description }}</option>  <!-- Adjust 'name' to the actual field you want to display -->
                                 {% endfor %}
                             </select>
                         </td>
                         <td>
-                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                            <input type="file" id="document_file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
                         </td>
                         <td>
                             <button type="button" class="btn btn-danger" onclick="removeRow_add(this)">
@@ -1059,27 +1085,58 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
         `;
     }
 
-    function removeRow_add(button) {
-        const row = button.closest('.document-upload-row');
-        const tableBody = row.parentNode; // Get the parent node of the row (table body)
-
-        // Ensure at least one row remains
-        if (tableBody.children.length > 1) {
-            row.remove(); // Remove the row
-        } else {
-            // Show a warning message if trying to remove the last row
-            const message = document.createElement('div');
-            message.className = 'alert alert-warning';
-            message.innerText = "At least one row must remain.";
+    function removeRow_add(button, documentId = null) {
+            const row = button.closest('tr');
+            const tableBody = document.querySelector('#documentUploadTable_add tbody');
             
-            // Find the closest accordion body to insert the message
-            const accordionBody = button.closest('.accordion-body');
-            if (accordionBody) {
-                accordionBody.insertBefore(message, tableBody);
-                setTimeout(() => message.remove(), 3000); // Remove the message after 3 seconds
+            if (!tableBody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // If this is an existing document (has documentId), add it to documents_to_remove
+            if (documentId) {
+                let documentsToRemove = document.getElementById('documents_to_remove');
+                
+                if (!documentsToRemove) {
+                    documentsToRemove = document.createElement('input');
+                    documentsToRemove.type = 'hidden';
+                    documentsToRemove.id = 'documents_to_remove';
+                    documentsToRemove.name = 'documents_to_remove';
+                    const table = document.getElementById('documentUploadTable_add');
+                    if (table && table.parentNode) {
+                        table.parentNode.appendChild(documentsToRemove);
+                    }
+                }
+                
+                // Get current values and add new documentId
+                const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+                if (!currentValues.includes(documentId.toString())) {
+                    currentValues.push(documentId.toString());
+                    documentsToRemove.value = currentValues.join(',');
+                }
+            }
+            
+            // Ensure at least one row remains
+            if (tableBody.rows.length > 1) {
+                row.remove();
+            } else {
+                // Show warning message
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning mt-3';
+                message.innerText = "At least one row must remain.";
+                
+                // Insert after table
+                const table = document.getElementById('documentUploadTable_add');
+                if (table && table.parentNode) {
+                    table.parentNode.insertBefore(message, table.nextSibling);
+                    
+                    // Remove after 3 seconds
+                    setTimeout(() => message.remove(), 3000);
+                }
             }
         }
-    }
+
 </script>
 
 <!-- Add Dependent Details Section -->
@@ -1109,6 +1166,7 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                 <tbody>
                     <tr>
                         <td>
+                            <input type="hidden" name="dependent_id[]" value="">
                             <select class="form-select" name="dependent_relationship[]">
                                 {% for relative in relatives_data %}
                                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
@@ -1125,7 +1183,10 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
                         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
                         <td><input type="date" name="dependent_issued_date[]" class="form-control"></td>
                         <td><input type="date" name="dependent_expiry_date[]" class="form-control"></td>
-                        <td><input type="file" name="dependent_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
+                        <td>
+                            <input type="file" name="dependent_doc_file[]" class="form-control" accept="application/pdf,image/*">
+                            <div class="dependent-file-preview"></div>
+                        </td>
                         <td>
                             <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this)">
                                 <i class="fas fa-times"></i>
@@ -1143,10 +1204,11 @@ document.querySelector('#multiEntryTable_add').addEventListener('click', functio
 
 <script>
 function addDependentRow_add() {
-    const table = document.getElementById('dependentsTable_add').getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
+    const tableBody = document.querySelector('#dependentsTable_add tbody');
+    const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <td>
+            <input type="hidden" name="dependent_id[]" value="">
             <select class="form-select" name="dependent_relationship[]">
                 {% for relative in relatives_data %}
                     <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
@@ -1163,7 +1225,10 @@ function addDependentRow_add() {
         <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
         <td><input type="date" name="dependent_issued_date[]" class="form-control"></td>
         <td><input type="date" name="dependent_expiry_date[]" class="form-control"></td>
-        <td><input type="file" name="dependent_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
+        <td>
+            <input type="file" name="dependent_doc_file[]" class="form-control" accept="application/pdf,image/*">
+            <div class="dependent-file-preview"></div>
+        </td>
         <td>
             <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this)">
                 <i class="fas fa-times"></i>
@@ -1173,11 +1238,40 @@ function addDependentRow_add() {
             </button>
         </td>
     `;
+    tableBody.appendChild(newRow);
 }
 
-function removeDependentRow_add(button) {
+function removeDependentRow_add(button, dependentId = null) {
     const row = button.closest('tr');
-    const tableBody = row.parentNode;
+    const tableBody = document.querySelector('#dependentsTable_add tbody');
+    
+    if (!tableBody) {
+        console.error('Table body not found');
+        return;
+    }
+    
+    // If this is an existing dependent (has dependentId), add it to dependents_to_remove
+    if (dependentId) {
+        let dependentsToRemove = document.getElementById('dependents_to_remove');
+        
+        if (!dependentsToRemove) {
+            dependentsToRemove = document.createElement('input');
+            dependentsToRemove.type = 'hidden';
+            dependentsToRemove.id = 'dependents_to_remove';
+            dependentsToRemove.name = 'dependents_to_remove';
+            const table = document.getElementById('dependentsTable_add');
+            if (table && table.parentNode) {
+                table.parentNode.appendChild(dependentsToRemove);
+            }
+        }
+        
+        // Get current values and add new dependentId
+        const currentValues = dependentsToRemove.value ? dependentsToRemove.value.split(',') : [];
+        if (!currentValues.includes(dependentId.toString())) {
+            currentValues.push(dependentId.toString());
+            dependentsToRemove.value = currentValues.join(',');
+        }
+    }
     
     // Ensure at least one row remains
     if (tableBody.rows.length > 1) {
@@ -1190,10 +1284,12 @@ function removeDependentRow_add(button) {
         
         // Insert after table
         const table = document.getElementById('dependentsTable_add');
-        table.parentNode.insertBefore(message, table.nextSibling);
-        
-        // Remove after 3 seconds
-        setTimeout(() => message.remove(), 3000);
+        if (table && table.parentNode) {
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
     }
 }
 </script>
@@ -1204,7 +1300,7 @@ function removeDependentRow_add(button) {
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapseLicenseDetails_add" aria-expanded="false"
                 aria-controls="collapseLicenseDetails_add">
-            {{ license_passes_title|default:"License and Passes Details" }}
+            License and Passes Details
         </button>
     </h2>
     <div id="collapseLicenseDetails_add" class="accordion-collapse collapse"
@@ -1213,20 +1309,21 @@ function removeDependentRow_add(button) {
             <table class="table" id="licensePassesTable_add">
                 <thead>
                     <tr>
-                        <th>{{ doc_type_heading|default:"Document Type" }}</th>
-                        <th>{{ doc_number_heading|default:"Document Number" }}</th>
-                        <th>{{ file_upload_heading|default:"Document Upload" }}</th>
-                        <th>{{ work_location_heading|default:"Staff Work Location" }}</th>
-                        <th>{{ emirate_issued_heading|default:"Emirate Issued By" }}</th>
-                        <th>{{ expiry_date_heading|default:"Expiry Date" }}</th>
-                        <th>{{ category_heading|default:"Category" }}</th>
-                        <th>{{ comments_heading|default:"Comments" }}</th>
+                        <th>Document Type</th>
+                        <th>Document Number</th>
+                        <th>Issued Date</th>
+                        <th>Expiry Date</th>
+                        <th>Work Location</th>
+                        <th>Emirate Issued</th>
+                        <th>Category</th>
+                        <th>File Upload</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
+                            <input type="hidden" name="license_id[]" value="">
                             <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
                                 <option value="">-- Select --</option>
                                 <option value="license">License</option>
@@ -1235,7 +1332,8 @@ function removeDependentRow_add(button) {
                             </select>
                         </td>
                         <td><input type="text" name="license_doc_number[]" class="form-control"></td>
-                        <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
+                        <td><input type="date" name="license_issued_date[]" class="form-control"></td>
+                        <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
                         <td>
                             <select class="form-select" name="work_location[]">
                                 {% for location in work_location_data %}
@@ -1250,16 +1348,18 @@ function removeDependentRow_add(button) {
                                 {% endfor %}
                             </select>
                         </td>
-                        <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
                         <td>
-                            <select class="form-select category-column" name="license_category[]">
+                            <select class="form-select category-column" name="license_category[]" style="display:none;">
                                 <option value="">-- Select Category --</option>
                                 <option value="light">Light</option>
                                 <option value="heavy">Heavy</option>
                                 <option value="high">High</option>
                             </select>
                         </td>
-                        <td><input type="text" name="license_comments[]" class="form-control"></td>
+                        <td>
+                            <input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*">
+                            <div class="license-file-preview"></div>
+                        </td>
                         <td>
                             <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this)">
                                 <i class="fas fa-times"></i>
@@ -1289,9 +1389,10 @@ function toggleCategoryColumn(selectEl) {
 
 function addLicenseRow_add() {
     const tableBody = document.querySelector('#licensePassesTable_add tbody');
-    const newRow = tableBody.insertRow();
+    const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <td>
+            <input type="hidden" name="license_id[]" value="">
             <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
                 <option value="">-- Select --</option>
                 <option value="license">License</option>
@@ -1300,22 +1401,22 @@ function addLicenseRow_add() {
             </select>
         </td>
         <td><input type="text" name="license_doc_number[]" class="form-control"></td>
-        <td><input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*"></td>
+        <td><input type="date" name="license_issued_date[]" class="form-control"></td>
+        <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
         <td>
             <select class="form-select" name="work_location[]">
                 {% for location in work_location_data %}
-                    <option value="{{ location.value }}">{{ location.label }}</option>
+                    <option value="{{ location.base_value }}">{{ location.base_description }}</option>
                 {% endfor %}
             </select>
         </td>
         <td>
             <select class="form-select" name="emirate_issued[]">
                 {% for emirate in emirates_list %}
-                    <option value="{{ emirate.value }}">{{ emirate.label }}</option>
+                    <option value="{{ emirate.base_value }}">{{ emirate.base_description }}</option>
                 {% endfor %}
             </select>
         </td>
-        <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
         <td>
             <select class="form-select category-column" name="license_category[]" style="display:none;">
                 <option value="">-- Select Category --</option>
@@ -1324,7 +1425,10 @@ function addLicenseRow_add() {
                 <option value="high">High</option>
             </select>
         </td>
-        <td><input type="text" name="license_comments[]" class="form-control"></td>
+        <td>
+            <input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*">
+            <div class="license-file-preview"></div>
+        </td>
         <td>
             <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this)">
                 <i class="fas fa-times"></i>
@@ -1334,25 +1438,61 @@ function addLicenseRow_add() {
             </button>
         </td>
     `;
+    tableBody.appendChild(newRow);
 }
 
-function removeLicenseRow_add(button) {
+function removeLicenseRow_add(button, licenseId = null) {
     const row = button.closest('tr');
-    const tbody = row.parentElement;
-
-    if (tbody.rows.length > 1) {
+    const tableBody = document.querySelector('#licensePassesTable_add tbody');
+    
+    if (!tableBody) {
+        console.error('Table body not found');
+        return;
+    }
+    
+    // If this is an existing license (has licenseId), add it to licenses_to_remove
+    if (licenseId && licenseId !== '') {
+        let licensesToRemove = document.getElementById('licenses_to_remove');
+        
+        if (!licensesToRemove) {
+            licensesToRemove = document.createElement('input');
+            licensesToRemove.type = 'hidden';
+            licensesToRemove.id = 'licenses_to_remove';
+            licensesToRemove.name = 'licenses_to_remove';
+            const table = document.getElementById('licensePassesTable_add');
+            if (table && table.parentNode) {
+                table.parentNode.appendChild(licensesToRemove);
+            }
+        }
+        
+        // Get current values and add new licenseId
+        const currentValues = licensesToRemove.value ? licensesToRemove.value.split(',') : [];
+        if (!currentValues.includes(licenseId.toString())) {
+            currentValues.push(licenseId.toString());
+            licensesToRemove.value = currentValues.join(',');
+        }
+    }
+    
+    // Ensure at least one row remains
+    if (tableBody.rows.length > 1) {
         row.remove();
     } else {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-warning mt-3';
-        alertDiv.textContent = "At least one row must remain.";
+        // Show warning message
+        const message = document.createElement('div');
+        message.className = 'alert alert-warning mt-3';
+        message.innerText = "At least one row must remain.";
+        
+        // Insert after table
         const table = document.getElementById('licensePassesTable_add');
-        table.parentNode.insertBefore(alertDiv, table.nextSibling);
-        setTimeout(() => alertDiv.remove(), 3000);
+        if (table && table.parentNode) {
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
     }
 }
 </script>
-
 
 <!-- Recruitment Information -->
 <div class="accordion-item">
@@ -1379,6 +1519,7 @@ function removeLicenseRow_add(button) {
                 <tbody>
                     <tr>
                         <td>
+                            <input type="hidden" name="recruitment_id[]" value="">
                             <select class="form-select" name="agent_name[]">
                                 <option value="">Select Agent</option>
                                 {% for agent in agent_data %}
@@ -1467,30 +1608,58 @@ function removeLicenseRow_add(button) {
         `;
     }
 
-    function removeRecruitmentRow_add(button) {
-        const row = button.closest('tr');
-        const tableBody = row.parentNode;
-
-        // Ensure at least one row remains
-        if (tableBody.rows.length > 1) {
-            row.remove();
-        } else {
-            // Show warning message
-            const message = document.createElement('div');
-            message.className = 'alert alert-warning mt-3';
-            message.innerText = "At least one row must remain.";
+    function removeRecruitmentRow_add(button, recruitmentId = null) {
+            const row = button.closest('tr');
+            const tableBody = document.querySelector('#recruitmentInfoTable_add tbody');
             
-            // Insert after table
-            const table = document.getElementById('recruitmentInfoTable_add');
-            table.parentNode.insertBefore(message, table.nextSibling);
+            if (!tableBody) {
+                console.error('Table body not found');
+                return;
+            }
             
-            // Remove after 3 seconds
-            setTimeout(() => message.remove(), 3000);
+            // If this is an existing recruitment (has recruitmentId), add it to recruitments_to_remove
+            if (recruitmentId && recruitmentId !== '') {
+                let recruitmentsToRemove = document.getElementById('recruitments_to_remove');
+                
+                if (!recruitmentsToRemove) {
+                    recruitmentsToRemove = document.createElement('input');
+                    recruitmentsToRemove.type = 'hidden';
+                    recruitmentsToRemove.id = 'recruitments_to_remove';
+                    recruitmentsToRemove.name = 'recruitments_to_remove';
+                    const table = document.getElementById('recruitmentInfoTable_add');
+                    if (table && table.parentNode) {
+                        table.parentNode.appendChild(recruitmentsToRemove);
+                    }
+                }
+                
+                // Get current values and add new recruitmentId
+                const currentValues = recruitmentsToRemove.value ? recruitmentsToRemove.value.split(',') : [];
+                if (!currentValues.includes(recruitmentId.toString())) {
+                    currentValues.push(recruitmentId.toString());
+                    recruitmentsToRemove.value = currentValues.join(',');
+                }
+            }
+            
+            // Ensure at least one row remains
+            if (tableBody.rows.length > 1) {
+                row.remove();
+            } else {
+                // Show warning message
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning mt-3';
+                message.innerText = "At least one row must remain.";
+                
+                // Insert after table
+                const table = document.getElementById('recruitmentInfoTable_add');
+                if (table && table.parentNode) {
+                    table.parentNode.insertBefore(message, table.nextSibling);
+                    
+                    // Remove after 3 seconds
+                    setTimeout(() => message.remove(), 3000);
+                }
+            }
         }
-    }
 </script>
-
-
             
 
             <div class="d-flex align-items-center justify-content-end mt-4">
@@ -1501,1503 +1670,3 @@ function removeLicenseRow_add(button) {
     </div>
 </div>
 <!-- /Add Employee Offcanvas -->
-
-<!-- Edit Employee Offcanvas -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit">
-    <div class="offcanvas-header border-bottom">
-        <h4>Edit Employee</h4>
-        <button type="button"
-            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
-            data-bs-dismiss="offcanvas" aria-label="Close">
-            <i class="ti ti-x"></i>
-        </button>
-    </div>
-    <div class="offcanvas-body">
-        <form id="editEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
-            {% csrf_token %}
-            <input type="hidden" name="employee_id" id="employee_id">
-
-            <!-- Collapsible Sections -->
-            <div class="accordion" id="employeeAccordion_edit" style="width: 1350px;">
-                <!-- Personal Details -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingPersonalDetails_edit">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePersonalDetails_edit" aria-expanded="true" aria-controls="collapsePersonalDetails_edit">
-                            Employee Details
-                        </button>
-                    </h2>
-                    <div id="collapsePersonalDetails_edit" class="accordion-collapse collapse show" aria-labelledby="headingPersonalDetails_edit" data-bs-parent="#employeeAccordion_edit">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Profile Picture</label>
-                                        <input type="file" name="profile_picture" class="form-control" accept="image/*">
-                                        <div class="invalid-feedback">Please upload a profile picture.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Employee Code </label>
-                                        <input type="text" name="emp_code" id="emp_code" class="form-control" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Employee Name (As per Passport) <span class="text-danger">*</span></label>
-                                        <input type="text" name="emp_name_passport" id="emp_name_passport" class="form-control" required>
-                                        <div class="invalid-feedback">Please provide the employee's name as per passport.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Surname <span class="text-danger">*</span></label>
-                                        <input type="text" name="surname" id="surname" class="form-control" required>
-                                        <div class="invalid-feedback">Please provide a surname.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Birth <span class="text-danger">*</span></label>
-                                        <input type="date" name="dob" id="dob" class="form-control" required>
-                                        <div class="invalid-feedback">Please provide a date of birth.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Gender <span class="text-danger">*</span></label>
-                                        <select name="emp_sex" id="emp_sex" class="form-select" required>
-                                            <option value="">Select</option>
-                                            {% for gender in gender_data %}
-                                                <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Please select a gender.</div>
-                                    </div>                    
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Nationality<span class="text-danger">*</span></label>
-                                        <select name="nationality" id="nationality" class="form-select" required>
-                                            <option value="">Select</option>
-                                            {% for nation in nationality_data %}
-                                            <option value="{{ nation.base_value }}">{{ nation.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Please select a Nationality</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Designation <span class="text-danger">*</span></label>
-                                        <select name="designation" id="designation" class="form-control" required>
-                                            <option value="">Select</option>
-                                            {% for designation in desig_data %}
-                                            <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Please select a designation.</div>
-                                    </div>                                    
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Join <span class="text-danger">*</span> </label>
-                                        <input type="date" name="date_of_join" id="date_of_join" class="form-control" required>
-                                        <div class="invalid-feedback">Please Select Date of Join</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Date of Rejoin</label>
-                                        <input type="date" name="date_of_rejoin" id="date_of_rejoin" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Qualification</label>
-                                        <input type="text" name="qualification" id="qualification" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Marital Status</label>
-                                        <select name="emp_marital_status" id="emp_marital_status" class="form-select">
-                                            <option value="">Select</option>
-                                            {% for status in mar_status_data %}
-                                            <option value="{{ status.base_value }}">
-                                                {{ status.base_description }}
-                                            </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Spouse Name</label>
-                                        <input type="text" name="spouse_name" id="spouse_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Father Name</label>
-                                        <input type="text" name="father_name" id="father_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Mother Name</label>
-                                        <input type="text" name="mother_name" id="mother_name" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Religion</label>
-                                        <input type="text" name="religion" id="religion" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Passport Control</label>
-                                        <select name="passport_release" id="passport_release" class="form-select">
-                                            <option value="">Select</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Release Reason</label>
-                                        <input type="text" name="release_reason" id="release_reason" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Department <span class="text-danger">*</span> </label>
-                                        <select name="department" id="department" class="form-control" required>
-                                            <option value="">Select</option>
-                                            {% for statuses in dept_data %}
-                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Please select a department.</div>
-                                    </div>                                    
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Category</label>
-                                        <select name="staff_category" id="categorySelect_edit" class="form-select">
-                                            <option value="">Select</option>
-                                            <option value="staff">Staff</option>
-                                            <option value="field-staff">Field Staff</option>
-                                            <option value="management">Management</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Dependent Count</label>
-                                        <input type="number" name="depend_count" id="dependCount_edit" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Child Count</label>
-                                        <input type="number" name="child_count" id="childCount_edit" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Contact Information -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingContactInfo_edit">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseContactInfo_edit" aria-expanded="false" aria-controls="collapseContactInfo_edit">
-                            Contact Information
-                        </button>
-                    </h2>
-                    <div id="collapseContactInfo_edit" class="accordion-collapse collapse" aria-labelledby="headingContactInfo_edit"
-                        data-bs-parent="#employeeAccordion_edit">
-                        <div class="accordion-body">
-                            <div class="shadow p-4 rounded bg-light">
-                                <div class="row">
-                                    <!-- Left Side: Residential Address -->
-                                    <div class="col-md-6">
-                                        <h5 class="mt-3">Permanent Address</h5>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1 <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_addr_line1" id="res_addr_line1" class="form-control" required>
-                                            <div class="invalid-feedback">Please provide an address line 1.</div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="res_addr_line2" id="res_addr_line2" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">City <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_city" id="res_city" class="form-control" required>
-                                            <div class="invalid-feedback">Please provide a city.</div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">State <span class="text-danger">*</span></label>
-                                            <input type="text" name="res_state" id="res_state" class="form-control" required>
-                                            <div class="invalid-feedback">Please provide a state.</div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Country Code</label>
-                                            <input type="text" name="res_country_code" id="res_country_code" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number</label>
-                                            <input type="text" name="res_phone_no" id="res_phone_no" class="form-control">
-                                        </div>
-                                    </div>
-
-                                    <!-- Right Side: Local Residence -->
-                                    <div class="col-md-6">
-                                        <h5 class="mt-3">UAE Address</h5>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Address Line 1</label>
-                                            <input type="text" name="local_addr_line1" id="local_addr_line1" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Address Line 2</label>
-                                            <input type="text" name="local_addr_line2" id="local_addr_line2" class="form-control">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">City </label>
-                                            <input type="text" name="local_city" id="local_city" class="form-control">
-                                        
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">State </label>
-                                            <input type="text" name="local_state" id="local_state" class="form-control">
-                                            
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Country Code </label>
-                                            <input type="text" name="local_country_code" id="local_country_code" class="form-control">
-                                            
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="col-form-label">Phone Number </label>
-                                            <input type="text" name="local_phone_no" id="local_phone_no" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Salary Details -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingPaymentDetails_edit">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                            data-bs-target="#collapsePaymentDetails_edit" aria-expanded="false" aria-controls="collapsePaymentDetails_edit">
-                            Salary Details
-                        </button>
-                    </h2>
-                    <div id="collapsePaymentDetails_edit" class="accordion-collapse collapse" aria-labelledby="headingPaymentDetails_edit"
-                        data-bs-parent="#employeeAccordion_edit">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Process Cycle</label>
-                                        <select name="process_cycle" id="process_cycle" class="form-control">
-                                            <option value="">Select</option>
-                                            {% for paycycle in paycycle_data %}
-                                                <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Basic Pay <span class="text-danger">*</span></label>
-                                        <input type="number" name="basic_pay" id="basicpay" class="form-control" required min="0" step="0.01">
-                                        <div class="invalid-feedback">Please enter a valid basic pay amount (greater than or equal to 0).</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Grade</label>
-                                        <select name="grade_code" id="grade_code" class="form-control">
-                                            <option value="">Select</option>
-                                            {% for statuses in grade_code_data %}
-                                                <option value="{{ statuses.grade_code }}">{{ statuses.grade_code }} - {{ statuses.grade_desc }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Project <span class="text-danger">*</span></label>
-                                        <select name="prj_code" id="prj_code" class="form-control" required>
-                                            <option value="">Select</option>
-                                            {% for statuses in project_data %}
-                                                <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div class="invalid-feedback">Please select a project.</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="col-form-label">Project Sub Location</label>
-                                        <select name="sub_location" id="sub_location" class="form-control">
-                                            <option value="">Select</option>
-                                            {% for statuses in pro_sub_location_data %}
-                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-<script>
-    // Add event listener for category select in edit form
-    document.addEventListener('DOMContentLoaded', function() {
-        const categorySelectEdit = document.getElementById('categorySelect_edit');
-        const dependCountEdit = document.getElementById('dependCount_edit');
-        const childCountEdit = document.getElementById('childCount_edit');
-    
-        categorySelectEdit.addEventListener('change', function() {
-            if (this.value === 'field-staff') {
-                dependCountEdit.disabled = true;
-                childCountEdit.disabled = true;
-                dependCountEdit.value = '';
-                childCountEdit.value = '';
-            } else {
-                dependCountEdit.disabled = false;
-                childCountEdit.disabled = false;
-            }
-        });
-    
-        // Initialize state on page load
-        if (categorySelectEdit.value === 'field-staff') {
-            dependCountEdit.disabled = true;
-            childCountEdit.disabled = true;
-        }
-    });
-</script>
-
-<!-- Travel Document Detail -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingTravelDocumentDetail_edit">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTravelDocumentDetail_edit" aria-expanded="false" aria-controls="collapseTravelDocumentDetail_edit">
-            Travel Document Detail
-        </button>
-    </h2>
-    <div id="collapseTravelDocumentDetail_edit" class="accordion-collapse collapse" aria-labelledby="headingTravelDocumentDetail_edit" data-bs-parent="#employeeAccordion_edit">
-        <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Issued Date</label>
-                        <input type="date" name="issued_date" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Expiry Date</label>
-                        <input type="date" name="expiry_date" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Document Upload</label>
-                        <input type="file" name="passport_document" class="form-control" accept="application/pdf,image/*">
-                        
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport No.</label>
-                        <input type="text" name="passport_details" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Issued Country</label>
-                        <select name="passport_issued_country" class="form-control">
-                            <option value="">Select Country</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Passport Place Of Issue</label>
-                        <select name="passport_place_of_issue" class="form-control">
-                            <option value="">Select Place</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Visa Details -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingVisaDetails_edit">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVisaDetails_edit" aria-expanded="false" aria-controls="collapseVisaDetails_edit">
-            Visa Details
-        </button>
-    </h2>
-    <div id="collapseVisaDetails_edit" class="accordion-collapse collapse" aria-labelledby="headingVisaDetails_edit" data-bs-parent="#employeeAccordion_edit">
-        <div class="accordion-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa No</label>
-                        <input type="text" name="visa_no" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Document Upload</label>
-                        <input type="file" name="visa_document" class="form-control" accept="application/pdf,image/*">
-                        
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Issued</label>
-                        <input type="date" name="visa_issued" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Expiry</label>
-                        <input type="date" name="visa_expiry" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Issued Emirate</label>
-                        <select name="visa_issued_emirate" class="form-select">
-                            <option value="">Select Emirate</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Visa Designation</label>
-                        <input type="text" name="visa_designation" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates ID</label>
-                        <input type="text" name="emirates_no" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates Id Document Upload</label>
-                        <input type="file" name="emirate_document" class="form-control" accept="application/pdf,image/*">
-                        
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates Id Issued</label>
-                        <input type="date" name="emirate_issued" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Emirates Id Expiry</label>
-                        <input type="date" name="emirate_expiry" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">UID Number</label>
-                        <input type="text" name="uid_number" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Personal Mohre Code</label>
-                        <input type="text" name="mohra_number" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Mohre Name</label>
-                        <input type="text" name="mohra_name" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Mohre Designation</label>
-                        <input type="text" name="mohra_designation" class="form-control">
-                    </div>
-                </div>                
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Work Permit Number</label>
-                        <input type="text" name="work_permit_number" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Work Permit Expiry</label>
-                        <input type="date" name="work_permit_expiry" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Work Permit Document Upload</label>
-                        <input type="file" name="work_permit_document" class="form-control" accept="application/pdf,image/*">
-                        
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Inside/Outside Dropdown -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Location</label>
-                        <select id="locationSelect_edit" class="form-control" name="visa_location">
-                            <option value="">Select</option>
-                            <option value="inside">Inside</option>
-                            <option value="outside">Outside</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Change Status (Enable/Disable based on Selection) -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">Change Status</label>
-                        <input type="file" id="changeStatusFile_edit" name="change_status_file" class="form-control mt-2"
-                            accept="application/pdf,image/*" disabled>
-                    
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank"
-                                download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">ILOE No</label>
-                        <input type="text" name="iloe_no" class="form-control">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">ILOE Document</label>
-                        <input type="file" name="iloe_document" class="form-control" accept="application/pdf,image/*">
-                        
-                        <div class="mt-2">
-                            <strong>Current Document:</strong>
-                            <a href="" target="_blank" class="btn btn-sm btn-primary">Preview</a>
-                            <a href="" target="_blank" download="" class="btn btn-sm btn-secondary">Download</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="col-form-label">ILOE Expiry Date</label>
-                        <input type="date" name="iloe_expiry" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var locationSelect = document.getElementById('locationSelect_edit');
-        var changeStatusFile = document.getElementById('changeStatusFile_edit');
-
-        locationSelect.addEventListener('change', function () {
-            if (this.value === 'inside') {
-                changeStatusFile.removeAttribute('disabled');
-            } else {
-                changeStatusFile.setAttribute('disabled', 'disabled');
-            }
-        });
-    });
-</script>
-
-<!-- Document Uploads Section -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingDocumentUploadsEdit">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocumentUploadsEdit" aria-expanded="false" aria-controls="collapseDocumentUploadsEdit">
-            Document Uploads
-        </button>
-    </h2>
-    <div id="collapseDocumentUploadsEdit" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploadsEdit" data-bs-parent="#employeeAccordion_edit">
-        <div class="accordion-body">
-            <!-- Static Upload Fields -->
-            <div class="card p-3 mb-2 shadow-sm">
-                <div class="row align-items-center">
-                    <div class="col-md-4">
-                        <label class="form-label">Document Type</label>
-                        <select id="documentTypeSelect" class="form-select">
-                            <option value="">Select</option>
-                            {% for statuses in doc_data %}
-                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">File Upload</label>
-                        <input type="file" id="documentFileInput" class="form-control" accept="application/pdf,image/*">
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button type="button" class="btn btn-primary" onclick="addNewDocument()">
-                            <i class="fas fa-plus"></i> Add Document
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Document List -->
-            <div id="documentList">
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    function addNewDocument() {
-        const fileInput = document.getElementById(`documentFileInput`);
-        const docTypeSelect = document.getElementById(`documentTypeSelect`);
-        const container = document.getElementById(`documentList`);
-
-        if (fileInput.files.length === 0) {
-            alert("Please select a file before adding.");
-            return;
-        }
-
-        const selectedFile = fileInput.files[0];
-        const documentType = docTypeSelect.options[docTypeSelect.selectedIndex]?.text;
-
-        const newRow = document.createElement('div');
-        newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
-        newRow.innerHTML = `
-            <div class="row align-items-center">
-                <div class="col-md-3">
-                    <input type="text" name="document_type[]" value="${documentType}" >
-                </div>
-                <div class="col-md-3">
-                    <input type="file" name="document_file[]" value="${selectedFile}" >
-                </div>
-                <div class="col-md-4 text-end">
-                    <button type="button" class="btn btn-danger" onclick="removeRow(this)">
-                        <i class="fas fa-times"></i> Remove
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(newRow);
-        fileInput.value = '';
-    }
-
-    function removeDocument(button, documentId) {
-        const row = button.closest('.document-upload-row');
-        if (documentId) {
-            console.log(`Document with ID ${documentId} marked for removal.`);
-        }
-        row.remove();
-    }
-    
-    function removeRow(button) {
-        button.closest('.document-upload-row').remove();
-    }
-</script>
-
-<!-- Dependent Details Section -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingDependentDetails">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#collapseDependentDetails" aria-expanded="false" 
-                aria-controls="collapseDependentDetails">
-            Dependent Details
-        </button>
-    </h2>
-    <div id="collapseDependentDetails" class="accordion-collapse collapse" 
-         aria-labelledby="headingDependentDetails" data-bs-parent="#employeeAccordion_edit">
-        <div class="accordion-body">
-            <div id="dependentsContainer">
-                <!-- Button to Add New Dependent -->
-                <h5 class="mt-4">Add New Dependent</h5>
-                <div class="new-dependent-entry-add mb-3">
-                    <div class="row">
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Relationship</label>
-                            <select class="form-select" id="new_relationship">
-                                <option value="">Select</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Document Type</label>
-                            <select class="form-select" id="new_doc_type">
-                                <option value="">Select</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Document Number</label>
-                            <input type="text" id="new_doc_number" class="form-control" placeholder="Enter Document Number">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Issued Date</label>
-                            <input type="date" id="new_issued_date" class="form-control">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Expiry Date</label>
-                            <input type="date" id="new_expiry_date" class="form-control">
-                        </div>
-                        <div class="col-md-2 mb-3"><label class="col-form-label">File Upload</label>
-                            <input type="file" id="new_doc_file" class="form-control" accept="application/pdf,image/*">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="addDependentRowEdit()">Add Another Dependent</button>
-                </div>
-                
-                <!-- Existing Dependents -->
-                <h5>Existing Dependents</h5>
-                <div id="existingDependents"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const newDependents = [];
-
-    function addDependentRowEdit() {
-        const relationship = document.getElementById(`new_relationship`).value;
-        const docType = document.getElementById(`new_doc_type`).value;
-        const docNumber = document.getElementById(`new_doc_number`).value;
-        const issuedDate = document.getElementById(`new_issued_date`).value;
-        const expiryDate = document.getElementById(`new_expiry_date`).value;
-        const docFile = document.getElementById(`new_doc_file`);
-
-        if (!docFile.files.length) {
-            alert("Please upload a file for the dependent.");
-            return;
-        }
-
-        const file = docFile.files[0];
-        const index = newDependents.length;
-
-        const container = document.getElementById(`existingDependents`);
-        const newEntry = document.createElement("div");
-        newEntry.className = "dependent-entry mb-3 border p-3 rounded";
-        newEntry.setAttribute('data-index', index);
-
-        newEntry.innerHTML = `
-            <div class="row mb-2">
-                <div class="col-md-2"><strong>${relationship}</strong></div>
-                <div class="col-md-2"><strong>${docType}</strong></div>
-                <div class="col-md-2">${docNumber}</div>
-                <div class="col-md-2">${issuedDate}</div>
-                <div class="col-md-2">${expiryDate}</div>
-                <div class="col-md-2">${file.name}</div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger" onclick="removeDependentRowEdit(this, ${index})">
-                        Remove
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(newEntry);
-
-        newDependents.push({
-            relationship,
-            document_type: docType,
-            document_number: docNumber,
-            issued_date: issuedDate,
-            expiry_date: expiryDate,
-            document_file: file
-        });
-
-        // Clear inputs
-        document.getElementById(`new_relationship`).value = '';
-        document.getElementById(`new_doc_type`).value = '';
-        document.getElementById(`new_doc_number`).value = '';
-        document.getElementById(`new_issued_date`).value = '';
-        document.getElementById(`new_expiry_date`).value = '';
-        docFile.value = '';
-    }
-
-    function removeDependentRowEdit(button, index) {
-        const entry = button.closest('.dependent-entry');
-        if (entry) entry.remove();
-        if (index >= 0 && index < newDependents.length) {
-            newDependents.splice(index, 1);
-        }
-    }
-</script>
-
-<!-- License and Passes Section -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingLicensePasses">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                data-bs-target="#collapseLicensePasses" aria-expanded="false"
-                aria-controls="collapseLicensePasses">
-            License and Passes Details
-        </button>
-    </h2>
-    <div id="collapseLicensePasses" class="accordion-collapse collapse"
-     aria-labelledby="headingLicensePasses" data-bs-parent="#employeeAccordion_edit">
-    <div class="accordion-body">
-        <div id="licensesContainer">
-            <!-- Add New License/Pass -->
-            <h5 class="mt-3">Add New License or Pass</h5>
-            <div class="d-flex flex-wrap gap-3 mb-4 border p-3 rounded align-items-end">
-
-                <!-- Document Type -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Document Type</label>
-                    <select class="form-select" id="new_license_type"
-                            onchange="toggleCategory()">
-                        <option value="">-- Select --</option>
-                        <option value="license">License</option>
-                        <option value="site_medical">Site Medical</option>
-                        <option value="site_pass">Site Pass</option>
-                    </select>
-                </div>
-
-                <!-- Document Number -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Document Number</label>
-                    <input type="text" class="form-control" id="new_license_number" placeholder="Enter Number">
-                </div>
-
-                <!-- File Upload -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Document Upload</label>
-                    <input type="file" class="form-control" id="new_license_file" accept="application/pdf,image/*">
-                </div>
-
-                <!-- Work Location -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Staff Work Location</label>
-                    <select class="form-select" id="new_license_work_location">
-                        <option value="">Select</option>
-                    </select>
-                </div>
-
-                <!-- Emirate Issued -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Emirate Issued By</label>
-                    <select class="form-select" id="new_license_emirate_issued">
-                        <option value="">Select</option>
-                    </select>
-                </div>
-
-                <!-- Expiry Date -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Expiry Date</label>
-                    <input type="date" class="form-control" id="new_license_expiry_date">
-                </div>
-
-                <!-- Category -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="new_license_category" disabled>
-                        <option value="">-- Select Category --</option>
-                        <option value="light">Light</option>
-                        <option value="heavy">Heavy</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-
-                <!-- Comments -->
-                <div class="flex-grow-1">
-                    <label class="form-label">Comments</label>
-                    <input type="text" class="form-control" id="new_license_comments" placeholder="Enter Comments">
-                </div>
-
-                <!-- Button -->
-                <div class="flex-grow-1">
-                    <button type="button" class="btn btn-primary mt-3" onclick="addLicenseRowEdit()">
-                        <i class="fas fa-plus"></i> Add License/Pass
-                    </button>
-                </div>
-            </div>
-
-            <!-- Existing Licenses & Passes -->
-            <h5 class="mt-4">Existing Licenses & Passes</h5>
-            <div id="existingLicenses"></div>
-        </div>
-    </div>
-</div>
-</div>
-
-<script>
-    function toggleCategory() {
-        const typeSelect = document.getElementById(`new_license_type`);
-        const categorySelect = document.getElementById(`new_license_category`);
-        if (typeSelect.value === "license") {
-            categorySelect.disabled = false;
-        } else {
-            categorySelect.disabled = true;
-            categorySelect.value = "";
-        }
-    }
-
-    const newLicenses = [];
-
-    function addLicenseRowEdit() {
-        const docType = document.getElementById(`new_license_type`).value;
-        const docNumber = document.getElementById(`new_license_number`).value;
-        const workLocation = document.getElementById(`new_license_work_location`).value;
-        const emirateIssued = document.getElementById(`new_license_emirate_issued`).value;
-        const expiryDate = document.getElementById(`new_license_expiry_date`).value;
-        const category = document.getElementById(`new_license_category`).value;
-        const comments = document.getElementById(`new_license_comments`).value;
-        const fileInput = document.getElementById(`new_license_file`);
-
-        if (!docType || !docNumber || !fileInput.files.length) {
-            alert("Please fill all required fields and upload a document.");
-            return;
-        }
-
-        const file = fileInput.files[0];
-        const container = document.getElementById(`existingLicenses`);
-
-        const newRow = document.createElement("div");
-        newRow.className = "row g-3 align-items-center mb-3 p-3 border rounded bg-light license-entry-exist";
-
-        newRow.innerHTML = `
-            <div class="col-md-2"><strong>${docType}</strong></div>
-            <div class="col-md-2">${docNumber}</div>
-            <div class="col-md-2">${expiryDate}</div>
-            <div class="col-md-3">${file.name}</div>
-            <div class="col-md-3">
-                <button type="button" class="btn btn-danger" onclick="removeLicenseRowEdit(this)">
-                    <i class="fas fa-trash"></i> Remove
-                </button>
-            </div>
-        `;
-
-        container.appendChild(newRow);
-
-        newLicenses.push({
-            document_type: docType,
-            document_number: docNumber,
-            work_location: workLocation,
-            emirate_issued: emirateIssued,
-            expiry_date: expiryDate,
-            category: category,
-            comments: comments,
-            document_file: file
-        });
-
-        // Reset form
-        document.getElementById(`new_license_type`).value = '';
-        document.getElementById(`new_license_number`).value = '';
-        document.getElementById(`new_license_work_location`).value = '';
-        document.getElementById(`new_license_emirate_issued`).value = '';
-        document.getElementById(`new_license_expiry_date`).value = '';
-        document.getElementById(`new_license_category`).value = '';
-        document.getElementById(`new_license_comments`).value = '';
-        fileInput.value = '';
-    }
-
-    function removeLicenseRowEdit(button) {
-        const row = button.closest('.license-entry-exist');
-        if (row) row.remove();
-    }
-</script>
-
-<!-- Recruitment Information -->
-<div class="accordion-item">
-    <h2 class="accordion-header" id="headingRecruitmentInfo_edit">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-            data-bs-target="#collapseRecruitmentInfo_edit" aria-expanded="false"
-            aria-controls="collapseRecruitmentInfo_edit">
-            Recruitment Information
-        </button>
-    </h2>
-    <div id="collapseRecruitmentInfo_edit" class="accordion-collapse collapse"
-        aria-labelledby="headingRecruitmentInfo_edit"
-        data-bs-parent="#employeeAccordion_edit">
-        <div class="accordion-body">
-            <div id="recruitmentInfoContainer_edit">
-                <!-- Add New Recruitment Entry -->
-                <h5 class="mt-4">Add New Recruitment Entry</h5>
-                <div class="new-recruitment-entry-add mb-3">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="col-form-label">Agent Name</label>
-                            <select class="form-select" id="new_agent_name">
-                                <option value="">Select Agent</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="col-form-label">Location</label>
-                            <select class="form-select" id="new_location">
-                                <option value="">Select Location</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Change Status</label>
-                            <select class="form-select" id="new_change_status">
-                                <option value="">Select</option>
-                                <option value="inside">Inside</option>
-                                <option value="outside">Outside</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Recruitment From</label>
-                            <input type="text" id="new_recruitment_from" class="form-control"
-                                placeholder="Enter Recruitment From">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="col-form-label">Date</label>
-                            <input type="date" id="new_recruitment_date" class="form-control">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="addRecruitmentRowEdit()">
-                        Add Recruitment Entry
-                    </button>
-                </div>
-                
-                <!-- Existing Recruitment Entries -->
-                <h5>Existing Recruitment Entries</h5>
-                <div id="existingRecruitmentEntries"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const newRecruitments = [];
-
-    function addRecruitmentRowEdit() {
-        const agentName = document.getElementById(`new_agent_name`).value;
-        const location = document.getElementById(`new_location`).value;
-        const changeStatus = document.getElementById(`new_change_status`).value;
-        const recruitmentFrom = document.getElementById(`new_recruitment_from`).value;
-        const recruitmentDate = document.getElementById(`new_recruitment_date`).value;
-
-        const index = newRecruitments.length;
-
-        const container = document.getElementById(`existingRecruitmentEntries`);
-        const newEntry = document.createElement("div");
-        newEntry.className = "recruitment-entry mb-3 border p-3 rounded";
-        newEntry.setAttribute("data-index", index);
-
-        newEntry.innerHTML = `
-            <div class="row mb-2">
-                <div class="col-md-3"><strong>Agent Name:</strong> ${agentName}</div>
-                <div class="col-md-3"><strong>Location:</strong> ${location}</div>
-                <div class="col-md-2"><strong>Change Status:</strong> ${changeStatus}</div>
-                <div class="col-md-2"><strong>Recruitment From:</strong> ${recruitmentFrom}</div>
-                <div class="col-md-2"><strong>Date:</strong> ${recruitmentDate}</div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRecruitmentRowEdit(this, ${index})">
-                        Remove
-                    </button>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(newEntry);
-
-        newRecruitments.push({
-            agent_name: agentName,
-            location: location,
-            change_status: changeStatus,
-            recruitment_from: recruitmentFrom,
-            recruitment_date: recruitmentDate,
-        });
-
-        // Clear input fields
-        document.getElementById(`new_agent_name`).value = '';
-        document.getElementById(`new_location`).value = '';
-        document.getElementById(`new_change_status`).value = '';
-        document.getElementById(`new_recruitment_from`).value = '';
-        document.getElementById(`new_recruitment_date`).value = '';
-    }
-
-    function removeRecruitmentRowEdit(button, index) {
-        const entry = button.closest(".recruitment-entry");
-        if (entry) entry.remove();
-        if (index >= 0 && index < newRecruitments.length) {
-            newRecruitments.splice(index, 1);
-        }
-    }
-
-    function removeRecruitmentEntry(button) {
-        const entry = button.closest('.recruitment-entry');
-        if (entry) entry.remove();
-    }
-</script>
-
-<!-- Form Submission Buttons -->
-<div class="d-flex align-items-center justify-content-end mt-4">
-    <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
-    <button type="submit" class="btn btn-primary edit-btn">Update Employee</button>
-</div>
-</form>
-</div>
-</div>
-<!-- /Edit Employee Offcanvas -->
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Validate Date of Birth
-        const dobFields = document.querySelectorAll('input[name="dob"]');
-        dobFields.forEach(field => {
-            field.addEventListener('change', function () {
-                const dob = new Date(this.value);
-                const today = new Date();
-                if (dob > today) {
-                    alert('Date of Birth cannot be a future date.');
-                    this.value = '';
-                }
-            });
-        });
-
-        // Validate Amount Fields
-        const amountFields = document.querySelectorAll('input[type="number"]');
-        amountFields.forEach(field => {
-            field.addEventListener('input', function () {
-                if (this.value < 0) {
-                    alert('Amount cannot be negative.');
-                    this.value = '';
-                }
-            });
-        });
-
-        // Validate Document Numbers
-        const documentFields = document.querySelectorAll('input[type="text"]');
-        documentFields.forEach(field => {
-            field.addEventListener('input', function () {
-                if (this.name.includes('number') && this.value < 0) {
-                    alert('Document number cannot be negative.');
-                    this.value = '';
-                }
-            });
-        });
-
-        // Validate mandatory fields
-        const forms = document.querySelectorAll('.needs-validation');
-        forms.forEach(form => {
-            form.addEventListener('submit', function (event) {
-                const mandatoryFields = form.querySelectorAll('[required]');
-                let missingFields = [];
-                mandatoryFields.forEach(field => {
-                    if (!field.value) {
-                        missingFields.push(field.previousElementSibling.innerText.replace('*', '').trim());
-                    }
-                });
-                if (missingFields.length > 0) {
-                    alert(`Please fill out the following fields: ${missingFields.join(', ')}`);
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-            }, false);
-        });
-    });
-</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Cache the submit button
-    var submitButton = $('button[type="submit"]');
-
-    $('#emp_code').on('input', function() {
-        var empCode = $(this).val();
-        if (empCode.length > 0) {
-            $.ajax({
-                url: "{% url 'check_emp_code' %}",
-                data: {
-                    'emp_code': empCode
-                },
-                dataType: 'json',
-                success: function(data) {
-                    if (data.exists) {
-                        $('#emp_code').addClass('is-invalid');
-                        $('#emp_code').removeClass('is-valid');
-                        $('#emp_code').next('.invalid-feedback').text('Employee code already exists.').show();
-                        submitButton.prop('disabled', true); // Disable the submit button
-                    } else {
-                        $('#emp_code').removeClass('is-invalid').addClass('is-valid');
-                        $('#emp_code').next('.invalid-feedback').text('').hide();
-                        submitButton.prop('disabled', false); // Enable the submit button
-                    }
-                }
-            });
-        } else {
-            $('#emp_code').removeClass('is-invalid').removeClass('is-valid');
-            $('#emp_code').next('.invalid-feedback').text('').hide();
-            submitButton.prop('disabled', false); // Enable the submit button if input is empty
-        }
-    });
-});
-
-
-</script>
-<script>
-const newDocuments = [];
-
-function addNewDocument(employeeId) {
-    const fileInput = document.getElementById(`documentFileInput`);
-    const docTypeSelect = document.getElementById(`documentTypeSelect`);
-    const container = document.getElementById(`documentList`);
-
-    if (!fileInput || !docTypeSelect || !container) {
-        console.error("Required elements not found!");
-        return;
-    }
-
-    if (fileInput.files.length === 0) {
-        alert("Please select a file before adding.");
-        return;
-    }
-
-    const selectedFile = fileInput.files[0];
-    const documentType = docTypeSelect.options[docTypeSelect.selectedIndex]?.value;
-
-    const newRow = document.createElement('div');
-    newRow.className = 'card p-3 mb-2 shadow-sm document-upload-row';
-    newRow.innerHTML = `
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <label class="form-label">Document Type</label>
-                <input type="text" class="form-control" value="${docTypeSelect.options[docTypeSelect.selectedIndex]?.text}" readonly>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">File</label>
-                <input type="text" class="form-control" value="${selectedFile.name}" readonly>
-            </div>
-            <div class="col-md-4 text-end">
-                <button type="button" class="btn btn-danger" onclick="removeRow(this, ${newDocuments.length})">
-                    <i class="fas fa-times"></i> Remove
-                </button>
-            </div>
-        </div>
-    `;
-
-    container.appendChild(newRow);
-
-    // Add the document to the newDocuments array
-    newDocuments.push({
-        document_type: documentType,
-        document_file: selectedFile
-    });
-
-    console.log("New Documents Array (After Adding):", newDocuments);
-
-    fileInput.value = ''; // Reset input
-}
-
-function removeRow(button, index) {
-    const row = button.closest('.document-upload-row');
-    if (index >= 0 && index < newDocuments.length) {
-        newDocuments.splice(index, 1);
-    }
-
-    console.log("New Documents Array (After Removing):", newDocuments);
-    
-    row.remove();
-}
-
-document.querySelectorAll('[id^="editEmployeeForm_"]').forEach(form => {
-    form.onsubmit = function (event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const employeeId = this.id.split('_')[1];
-
-        // Append new documents to the FormData
-        if (typeof newDocuments !== 'undefined') {
-            newDocuments.forEach((doc, index) => {
-                formData.append(`document_type[]`, doc.document_type);
-                formData.append(`document_file[]`, doc.document_file);
-            });
-        }
-        
-            if (typeof newDependents !== 'undefined') {
-                newDependents.forEach(dep => {
-                    formData.append('dependent_relationship[]', dep.relationship);
-                    formData.append('dependent_doc_type[]', dep.document_type);
-                    formData.append('dependent_doc_number[]', dep.document_number);
-                    formData.append('dependent_issued_date[]', dep.issued_date);
-                    formData.append('dependent_expiry_date[]', dep.expiry_date);
-                    formData.append('dependent_doc_file[]', dep.document_file);
-                });
-            }
-
-            if (typeof newLicenses !== 'undefined') {
-                newLicenses.forEach(license => {
-                    formData.append('license_doc_type[]', license.document_type);
-                    formData.append('license_doc_number[]', license.document_number);
-                    formData.append('license_doc_file[]', license.document_file);
-                    formData.append('work_location[]', license.work_location);
-                    formData.append('emirate_issued[]', license.emirate_issued);
-                    formData.append('license_expiry_date[]', license.expiry_date);
-                    formData.append('license_category[]', license.category);
-                    formData.append('license_comments[]', license.comments);
-                });
-            }
-
-        // Handle Earnings/Deductions entries
-        const entriesContainer = document.getElementById(`entriesContainer_${employeeId}`);
-        const entryRows = entriesContainer.querySelectorAll('.entry-row');
-
-        entryRows.forEach((entry, index) => {
-            const type = entry.querySelector('input[name="entry_type_edit[]"]')?.value || '';
-            const code = entry.querySelector('input[name="entry_code_edit[]"]')?.value || '';
-            const amount = entry.querySelector('input[name="entry_amount_edit[]"]')?.value || '';
-            const proratedFlag = entry.querySelector('select[name="entry_proated_flag_edit[]"]')?.value || '';
-
-            // Optional: validate if needed
-            // if (!type || !code || !amount) return;
-            // alert(type+code+amount+proratedFlag)
-            formData.append('entry_type[]', type);
-            formData.append('entry_code[]', code);
-            formData.append('entry_amount[]', amount);
-            formData.append('entry_proated_flag[]', proratedFlag);
-        });
-
-        // Append new recruitment entries to the FormData
-        // Append new recruitment entries to the FormData
-        newRecruitments.forEach(recruitment => {
-            formData.append('agent_name[]', recruitment.agent_name);
-            formData.append('location[]', recruitment.location);
-            formData.append('change_status[]', recruitment.change_status);
-            formData.append('recruitment_from[]', recruitment.recruitment_from);
-            formData.append('recruitment_date[]', recruitment.recruitment_date);
-        });
-
-        // Submit the form via fetch
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Employee ${employeeId} updated successfully!`);
-                location.reload();
-            } else {
-                alert(`Error updating employee ${employeeId}. ${data.error || 'Please try again.'}`);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        });
-    };
-});
-</script>
-
-<script>
-    document.getElementById('addEmployeeForm').onsubmit = function (event) {
-        event.preventDefault(); // Prevent the default form submission
-    
-        const form = this;
-        const formData = new FormData(form);
-    
-        // Submit the form via fetch
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Display success message
-                alert('Employee created successfully!');
-                
-                // Optionally, reset the form
-                form.reset();
-    
-                // Close the offcanvas (if applicable)
-                const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvas_add'));
-                if (offcanvas) offcanvas.hide();
-            } else {
-                // Handle errors
-                alert(`Error creating employee: ${data.error || 'Please try again.'}`);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-    };
-    </script>
-    <script>
-        document.getElementById('addEmployeeForm').onsubmit = function (event) {
-    event.preventDefault(); // Prevent the default form submission
-
-    const form = this;
-    const formData = new FormData(form);
-
-    // Submit the form via fetch
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token if required
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Reload the page on success
-            location.reload();
-        } else {
-            // Handle errors
-            alert(`Error creating employee: ${data.error || 'Please try again.'}`);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-};
-    </script>
