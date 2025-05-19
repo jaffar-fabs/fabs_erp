@@ -34,7 +34,7 @@
                                 <thead>
                                     <tr>
                                         <th>UOM</th>
-                                        <th>Sequence</th>
+                                        <!-- <th>Sequence</th> -->
                                         <th>Base UOM</th>
                                         <th>Status</th>
                                         <th>Action</th>
@@ -44,7 +44,7 @@
                                     {% for uom in uoms %}
                                     <tr>
                                         <td>{{ uom.uom }}</td>
-                                        <td>{{ uom.seq }}</td>
+                                        <!-- <td>{{ uom.seq }}</td> -->
                                         <td>{{ uom.base_uom }}</td>
                                         <td>
                                             {% if uom.is_active %}
