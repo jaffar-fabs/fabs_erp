@@ -209,7 +209,7 @@ class Employee(models.Model):
     family_status = models.CharField(max_length=50, blank=True, null=True)  # Family status
 
     # Residential Address
-    res_country_code = models.CharField(max_length=10, blank=True, null=True)  # Residential country code
+    res_country_code = models.CharField(max_length=20, blank=True, null=True)  # Residential country code
     res_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Residential phone number
     res_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 1
     res_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 2
@@ -217,7 +217,7 @@ class Employee(models.Model):
     res_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
 
     # Local Residence
-    local_country_code = models.CharField(max_length=10, blank=True, null=True)  # Local country code
+    local_country_code = models.CharField(max_length=20, blank=True, null=True)  # Local country code
     local_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Local phone number
     local_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 1
     local_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 2
