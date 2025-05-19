@@ -221,3 +221,29 @@
         </div>
     </div>
 </div> 
+
+<!-- Rate and quantity fields doesnt accept -ve values -->
+<script>
+    $(document).ready(function() {
+        $('input[name="item_rate"]').on('input', function() {
+            if ($(this).val() < 0) {
+                $(this).val(0);
+            }
+        });
+        $('input[name="stock_qty"]').on('input', function() {
+            if ($(this).val() < 0) {
+                $(this).val(0);
+            }
+        });
+        $('input[name="open_qty"]').on('input', function() {
+            if ($(this).val() < 0) {
+                $(this).val(0);
+            }
+        });
+        $('input[name="reorder_qty"]').on('input', function() {
+            if ($(this).val() < 0) {
+                $(this).val(0);
+            }
+        });
+    });
+</script>
