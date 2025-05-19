@@ -71,13 +71,11 @@ def employee_master(request):
         get_url = get_url.split('?')[0]
         current_url = f"{get_url}?"
 
-    # Initialize the query
+    # Base query
     query = Employee.objects.filter(comp_code=COMP_CODE)
-    # query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES)
-    user = request.session.get("username")
-    user_master = UserMaster.objects.filter(comp_code=COMP_CODE, is_active=True, user_id = user).values_list('view_emp_salary', flat=True)
+    # query = Employee.objects.filter(comp_code=COMP_CODE, process_cycle__in=PAY_CYCLES)
 
-    # Apply search filter if a keyword is provided
+    # Search filter
     if keyword:
         try:
             query = query.filter(
@@ -86,35 +84,27 @@ def employee_master(request):
                 Q(surname__icontains=keyword) |
                 Q(department__icontains=keyword)
             )
-        except Exception as e:
+        except Exception:
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
 
+    # Export logic
     export_format = request.GET.get('export')
     if export_format:
-        # Get all data without pagination for export
         employees_data = list(query.values(
             'emp_code', 'emp_name', 'surname', 'emp_sex', 'emp_status', 'dob'
         ))
-        
-        # Add gender and status descriptions
+
         for emp in employees_data:
-            # Get gender description
             gender = CodeMaster.objects.filter(
-                comp_code=COMP_CODE,
-                base_type='GENDER',
-                base_value=emp['emp_sex']
+                comp_code=COMP_CODE, base_type='GENDER', base_value=emp['emp_sex']
             ).first()
             emp['emp_sex'] = gender.base_description if gender else emp['emp_sex']
-            
-            # Get status description
+
             status = CodeMaster.objects.filter(
-                comp_code=COMP_CODE,
-                base_type='STATUS',
-                base_value=emp['emp_status']
+                comp_code=COMP_CODE, base_type='STATUS', base_value=emp['emp_status']
             ).first()
             emp['emp_status'] = status.base_description if status else emp['emp_status']
-            
-            # Format date
+
             if emp['dob']:
                 emp['dob'] = emp['dob'].strftime('%d/%m/%Y')
 
@@ -122,10 +112,9 @@ def employee_master(request):
             return export_to_excel(employees_data, 'employee_master', 'Employees')
         elif export_format == 'pdf':
             return export_to_pdf(employees_data, 'employee_master', 'Employee Master List')
-    
-    # Apply pagination
-    paginator = Paginator(query.order_by('emp_code'), 25)
 
+    # Pagination logic
+    paginator = Paginator(query.order_by('emp_code'), 25)
     try:
         employees_page = paginator.get_page(page_number)
     except PageNotAnInteger:
@@ -133,18 +122,8 @@ def employee_master(request):
     except EmptyPage:
         employees_page = paginator.page(paginator.num_pages)
 
-    # Fetch documents and earnings/deductions for each employee
-    for employee in employees_page:
-        employee.documents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True, document_number__isnull=True)
-        employee.earn_deducts = EarnDeductMaster.objects.filter(comp_code=COMP_CODE, employee_code=employee.emp_code)
-        employee.dependents = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=False)
-        employee.license_and_passes = EmployeeDocument.objects.filter(emp_code=employee.emp_code, relationship__isnull=True,issued_date__isnull=True)
-        employee.recruitment_details = EmployeeRecruitmentDetails.objects.filter(emp_code=employee.emp_code)
-
-    # Prepare the context for the template
     context = {
         'employees': employees_page,
-        'user_master': user_master,
         'current_url': current_url,
         'keyword': keyword,
         'result_cnt': query.count()
@@ -711,7 +690,7 @@ def save_employee(request):
                         recruitment.save()
 
             messages.success(request, "Employee details and documents updated successfully.")
-            return JsonResponse({'success': True})
+            return redirect('/employee')
 
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
