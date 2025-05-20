@@ -491,12 +491,10 @@ def purchase_order_edit(request):
             
         try:
             po_header = get_object_or_404(PurchaseOrderHeader, id=po_id)
-            print(po_header)
             po_details = PurchaseOrderDetail.objects.filter(
                 tran_numb=po_header.tran_numb,
                 tran_type='PO'
             ).order_by('tran_srno')
-            print(po_details)
             
             # Get PR data for dropdown
             pr_items_data = MaterialRequestHeader.objects.filter(comp_code=COMP_CODE, ordr_type='PR').order_by('-ordr_date')
@@ -1441,11 +1439,7 @@ def get_mr_items(request):
             })
         
         try:
-            # Debug print
-            print(f"Fetching MR items for order number: {ordr_numb}")
-            
             mr = MaterialRequestHeader.objects.get(ordr_numb=ordr_numb)
-            print(f"Found MR header: {mr.__dict__}")
             
             items = []
             mr_details = MaterialRequestDetail.objects.filter(
@@ -1455,8 +1449,6 @@ def get_mr_items(request):
                 ordr_date=mr.ordr_date,
                 ordr_numb=mr.ordr_numb
             ).order_by('serl_numb')
-            
-            print(f"Found {mr_details.count()} MR details")
             
             for item in mr_details:
                 # Get issued quantity
@@ -1475,23 +1467,19 @@ def get_mr_items(request):
                     'balance': float(item.item_qnty - issued_qty)
                 }
                 items.append(item_data)
-                print(f"Processed item: {item_data}")
             
             response_data = {
                 'status': 'success',
                 'items': items
             }
-            print(f"Sending response: {response_data}")
             return JsonResponse(response_data)
             
         except MaterialRequestHeader.DoesNotExist:
-            print(f"MR not found for order number: {ordr_numb}")
             return JsonResponse({
                 'status': 'error',
                 'message': 'Material Request not found'
             })
         except Exception as e:
-            print(f"Error processing MR items: {str(e)}")
             return JsonResponse({
                 'status': 'error',
                 'message': str(e)

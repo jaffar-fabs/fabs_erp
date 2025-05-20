@@ -5,7 +5,7 @@
 
 <!-- Page Wrapper -->
 <div class="page-wrapper">
-    <div class="content">
+    <div class="content" style="overflow-y: scroll;">
         <div class="row">
             <div class="col-md-12">
                 {% block pagetitle %}
@@ -113,7 +113,11 @@
                                         <td>
                                             <h2 class="d-flex align-items-center">
                                                 <a href="#" class="avatar avatar-sm border me-2">
-                                                    <img class="w-auto h-auto" src="{% static 'assets/img/avatar.png' %}" alt="User Image"/>
+                                                    {% for employee in employee_data %}
+                                                    {% if employee.emp_code == leave.employee_code %}
+                                                    <img class="w-auto h-auto" src="{{ employee.emp_profile_picture }}" alt="User Image"/>
+                                                    {% endif %}
+                                                    {% endfor %}
                                                 </a>
                                                 <a href="#" class="d-flex flex-column">
                                                     {{ leave.employee_name }}
@@ -211,15 +215,21 @@
 document.addEventListener("DOMContentLoaded", function() {
     // Employee Status Chart
     const statusCtx = document.getElementById('employee-status-chart').getContext('2d');
+    const chartData = {
+        labels: ['Active', 'On Leave', 'Inactive'],
+        datasets: [{
+            data: [
+                {{ active_employees }},
+                {{ on_leave_employees }},
+                {{ inactive_employees }}
+            ],
+            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+    };
+    
     new Chart(statusCtx, {
         type: 'pie',
-        data: {
-            labels: {{ chart_data.labels|safe }},
-            datasets: [{
-                data: {{ chart_data.values|safe }},
-                backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-            }]
-        },
+        data: chartData,
         options: {
             responsive: true,
             plugins: {

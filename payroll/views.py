@@ -333,7 +333,6 @@ def get_employee_details(request):
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
 @csrf_exempt
-@csrf_exempt
 def save_employee(request):
     set_comp_code(request)
     if request.method == "POST":
@@ -728,8 +727,8 @@ def index(request):
 
     # Chart Data
     chart_data = {
-        'labels': ['Active', 'On Leave', 'Inactive'],
-        'values': [active_employees, on_leave_employees, inactive_employees]
+        'labels': json.dumps(['Active', 'On Leave', 'Inactive']),
+        'values': json.dumps([active_employees, on_leave_employees, inactive_employees])
     }
 
     # Department Distribution
@@ -738,8 +737,8 @@ def index(request):
     ).exclude(department__isnull=True).order_by('-count')[:5]
 
     department_data = {
-        'labels': [dept['department'] for dept in departments],
-        'values': [dept['count'] for dept in departments]
+        'labels': json.dumps([dept['department'] for dept in departments]),
+        'values': json.dumps([dept['count'] for dept in departments])
     }
 
     # Camp Occupancy
@@ -757,7 +756,7 @@ def index(request):
         'chart_data': chart_data,
         'department_data': department_data,
         'camp_occupancy': camp_occupancy,
-        'available_beds_percentage': available_beds_percentage,  # Add to context
+        'available_beds_percentage': available_beds_percentage,
     }
 
     return render(request, 'pages/dashboard/index.html', context)
