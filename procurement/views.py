@@ -972,7 +972,7 @@ def material_request_edit(request):
             
             # Delete existing details
             MaterialRequestDetail.objects.filter(
-                uniq_numb=mr_header.uniq_numb,
+                id=mr_header.id,
                 comp_code=mr_header.comp_code,
                 ordr_type=mr_header.ordr_type,
                 ordr_date=mr_header.ordr_date,
@@ -988,7 +988,7 @@ def material_request_edit(request):
                 item_qnty = request.POST.get(f'item_qnty_{item_id}')
                 
                 MaterialRequestDetail.objects.create(
-                    uniq_numb=mr_header.uniq_numb,
+                    id=mr_header.id,
                     comp_code=mr_header.comp_code,
                     ordr_type=mr_header.ordr_type,
                     ordr_date=mr_header.ordr_date,
@@ -1017,7 +1017,7 @@ def material_request_edit(request):
     try:
         mr_header = MaterialRequestHeader.objects.get(id=mr_id)
         mr_details = MaterialRequestDetail.objects.filter(
-            uniq_numb=mr_header.uniq_numb,
+            id=mr_header.id,
             comp_code=mr_header.comp_code,
             ordr_type=mr_header.ordr_type,
             ordr_date=mr_header.ordr_date,
@@ -1053,7 +1053,7 @@ def material_request_delete(request):
             
             # Delete details first
             MaterialRequestDetail.objects.filter(
-                uniq_numb=mr_header.uniq_numb,
+                id=mr_header.id,
                 comp_code=mr_header.comp_code,
                 ordr_type=mr_header.ordr_type,
                 ordr_date=mr_header.ordr_date,
