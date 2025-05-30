@@ -577,15 +577,15 @@
 
             // Acrude Days Calculation
             var acrudeDays = 0;
-            if (years < 1 || (years === 1 && months === 0 && days === 0)) {
+            if (years < 1) {
                 acrudeDays = 0;
             } else {
-                // Skip first year
-                var serviceMonths = (years * 12 + months) - 12;
+                // Include first year
+                var serviceMonths = (years * 12 + months);
                 if (serviceMonths > 0) {
-                    var years_2_5 = Math.min(48, serviceMonths); // up to 4 years (2-5)
-                    var years_above_5 = Math.max(0, serviceMonths - 48); // months above 5 years
-                    acrudeDays += (years_2_5 / 12) * 21;
+                    var years_1_5 = Math.min(60, serviceMonths); // up to 5 years (1-5)
+                    var years_above_5 = Math.max(0, serviceMonths - 60); // months above 5 years
+                    acrudeDays += (years_1_5 / 12) * 21;
                     acrudeDays += (years_above_5 / 12) * 30;
                 }
             }
@@ -674,14 +674,14 @@
 
             // Acrude Days Calculation
             let acrudeDays = 0;
-            if (years < 1 || (years === 1 && months === 0 && days === 0)) {
+            if (years < 1) {
                 acrudeDays = 0;
             } else {
-                const serviceMonths = (years * 12 + months) - 12;
+                const serviceMonths = (years * 12 + months);
                 if (serviceMonths > 0) {
-                    const years_2_5 = Math.min(48, serviceMonths);
-                    const years_above_5 = Math.max(0, serviceMonths - 48);
-                    acrudeDays += (years_2_5 / 12) * 21;
+                    const years_1_5 = Math.min(60, serviceMonths);
+                    const years_above_5 = Math.max(0, serviceMonths - 60);
+                    acrudeDays += (years_1_5 / 12) * 21;
                     acrudeDays += (years_above_5 / 12) * 30;
                 }
             }

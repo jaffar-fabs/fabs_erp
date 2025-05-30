@@ -127,7 +127,7 @@ DATABASES = {
         'NAME': 'ERP',
         'USER': 'postgres',
         'PASSWORD': 'Windows*1',
-        'HOST': '92.96.112.184',
+        'HOST': '92.96.253.84',
         'PORT': '5432'
     }
 }
