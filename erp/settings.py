@@ -121,27 +121,30 @@ WSGI_APPLICATION = 'erp.wsgi.application'
 
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ERP',
+#         'USER': 'ERP',
+#         'PASSWORD': 'Windows*1',
+#         'HOST': '103.91.187.48',
+#         'PORT': '3306'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ERP',
+        'NAME': 'erp',
         'USER': 'postgres',
         'PASSWORD': 'Windows*1',
-        'HOST': '92.96.253.84',
-        'PORT': '5432'
+        'HOST': '103.14.120.216',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',  # Changed from 'prefer' to 'require'
+        },
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Fabs@2211',
-#         'HOST': '103.91.187.48',
-#         'PORT': '5432'
-#     }
-# }
 
 
 # DATABASES = {

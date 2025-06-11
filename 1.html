@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>TEP FRESH : INDIAN PROFILE</title> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .profile-container {
+            background: #fff;
+            max-width: 750px;
+            margin: 30px auto;
+            padding: 32px 36px 36px 36px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .profile-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .profile-details {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .profile-details strong {
+            font-weight: bold;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 28px 0 10px 0;
+            color: #222;
+        }
+        ul, ol {
+            margin: 0 0 0 24px;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .info-list {
+            margin-bottom: 18px;
+        }
+        .download-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0 auto;
+            padding: 10px;
+            background-color: #e74c3c;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .download-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        @media print {
+            .download-btn {
+                display: none !important;
+            }
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container" id="profile-content">
+    <!-- Header -->
+    <!-- <div class="profile-title">TEP FRESH : INDIAN PROFILE</div> -->
+    <div class="profile-details">
+        <strong>CANDIDATE DETAILS:</strong> &P23_APPLICATION_NUMBER. - &P23_APPLICANT_NAME.<br>
+        <strong>Specializations:</strong> &P23_DESIRED_JOB.
+    </div>
+
+    <!-- Personal Information -->
+    <div class="section-title">Personal Information:</div>
+    <ul class="info-list">
+        <li><span class="bold">Date of Birth:</span> &P23_APPLICANT_DOB.</li>
+        <li><span class="bold">Contact Number (Primary):</span> &P23_CONTACT_NO1.</li>
+        <li><span class="bold">Contact Number (Secondary):</span> &P23_CONTACT_NO2.</li>
+        <li><span class="bold">Passport Number:</span> &P23_PASSPORT_NO.</li>
+        <li><span class="bold">Expected Salary:</span> &P23_EXPECTED_SALARY.</li>
+        <li><span class="bold">Willingness to Work Hours:</span> &P23_WILLING_WORK_HOURS.</li>
+        <li><span class="bold">Education:</span> &P23_EDUCATION.</li>
+    </ul>
+
+    <!-- Professional Experience -->
+    <div class="section-title">Professional Experience:</div>
+    <ul class="info-list">
+        <li><span class="bold">Total Experience:</span> &P23_TOTAL_EXP. years</li>
+        <li><span class="bold">Relevant Experience:</span> &P23_RELEVANT_EXP. years</li>
+        <li><span class="bold">Languages Known:</span> &P23_LANGUAGE_KNOWN.</li>
+    </ul>
+
+    <!-- Skill Set -->
+    <div class="section-title">Skill Set:</div>
+    <ul class="info-list">
+        <li><span class="bold">Key Skills:</span> &P23_SKILL_SET.</li>
+    </ul>
+
+    <!-- Interview/Status Section (Optional, if you want to keep) -->
+    <div class="section-title">Interview & Status:</div>
+    <ul class="info-list">
+        <!-- PROFILE STATUS VALUE SHT MEANS SHORLITSTED -->
+        <li><span class="bold">Profile Status:</span>
+            <span id="profile-status-label"></span>
+            <span style="display:none" id="profile-status-value">&P23_PROFILE_STATUS.</span>
+        </li>
+        <li><span class="bold">Physical Interview Status:</span> &P23_PHYSICAL_INTERVIEW.</li>
+        <li><span class="bold">Final Selection Status:</span> &P23_FINAL_SELECTION_STATUS.</li>
+        <li><span class="bold">Interviewer Remarks:</span> &P23_REMARKS.</li>
+    </ul>
+    <button class="download-btn" onclick="generatePDF()">Download PDF Report</button>
+</div>
+<script>
+    // Initialize jsPDF
+    const { jsPDF } = window.jspdf;
+
+    function generatePDF() {
+        const btn = document.querySelector('.download-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Generating PDF...';
+        btn.disabled = true;
+
+        // Hide the button before capturing
+        btn.style.display = 'none';
+
+        const element = document.getElementById('profile-content');
+        const options = {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            scrollY: 0,
+            logging: true,
+            letterRendering: true
+        };
+
+        const generatePDFPages = async () => {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
+            pdf.setFontSize(16);
+            pdf.setTextColor(40, 40, 40);
+            pdf.text('INTERVIEW REPORT', pageWidth / 2, 15, { align: 'center' });
+            pdf.setFontSize(12);
+            // pdf.text(`Candidate: &P23_APPLICANT_NAME.`, 15, 25);
+            // pdf.text(`Report Date: ${new Date().toLocaleDateString()}`, pageWidth - 15, 25, { align: 'right' });
+            pdf.setDrawColor(200, 200, 200);
+            pdf.line(15, 30, pageWidth - 15, 30);
+            let currentY = 40;
+
+            // Wait for the button to be hidden before capturing
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const canvas = await html2canvas(element, options);
+            const imgData = canvas.toDataURL('image/png');
+            const imgProps = pdf.getImageProperties(imgData);
+            const imgWidth = pageWidth - 30;
+            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+            if (currentY + imgHeight > pageHeight - 20) {
+                pdf.addPage();
+                currentY = 20;
+            }
+            pdf.addImage(imgData, 'PNG', 15, currentY, imgWidth, imgHeight);
+
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(10);
+                pdf.setTextColor(150);
+                pdf.text(`Page ${i} of ${pageCount}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
+            }
+            return pdf;
+        };
+        generatePDFPages().then(pdf => {
+            pdf.save(`TEP_FRESH_PROFILE_${cleanFileName('&P23_APPLICANT_NAME.')}_${new Date().toISOString().slice(0,10)}.pdf`);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            // Show the button again
+            btn.style.display = 'block';
+        }).catch(error => {
+            console.error('Error generating PDF:', error);
+            alert('Error generating PDF. Please try again.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            btn.style.display = 'block';
+        });
+    }
+    // Helper function to clean filename
+    function cleanFileName(name) {
+        return name.replace(/[^a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF ]/g, '');
+    }
+
+    // Mapping of status codes to human-readable labels
+    const statusMap = {
+        "SHT": "Shortlisted",
+        "PNDAI": "Pending After Interview",
+        "RJTAI": "Rejected After Interview",
+        "NWC": "Not Workable Case",
+        "REJBI": "Rejected Before Interview"
+    };
+    // Get the value from the hidden span
+    const statusValue = document.getElementById('profile-status-value').innerText.trim();
+    // Set the label
+    document.getElementById('profile-status-label').innerText = statusMap[statusValue] || statusValue;
+</script>
+</body>
+</html>
