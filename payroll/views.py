@@ -1952,6 +1952,9 @@ class UserMasterCreate(View):
             user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
             user_paycycles_str = ':'.join(user_paycycles)  # Convert list to colon-separated string
 
+            projects = request.POST.getlist('projects')
+            projects_str = ':'.join(projects)
+
             user_company = request.POST.getlist('company')
             user_company_str = ':'.join(user_company)
 
@@ -1972,7 +1975,8 @@ class UserMasterCreate(View):
                 emp_code=request.POST.get('emp_code'),
                 user_paycycles=user_paycycles_str,  # Save as colon-separated string
                 view_emp_salary=request.POST.get('view_emp_salary'),
-                company=user_company_str
+                company=user_company_str,
+                project=projects_str
             )
 
             user.full_clean()
@@ -2004,7 +2008,8 @@ class UserMasterUpdate(View):
             user.company = ':'.join(user_company)
             user_paycycles = request.POST.getlist('user_paycycles')  # Get list of selected paycycles
             user.user_paycycles = ':'.join(user_paycycles)  # Convert list to colon-separated string
-            
+            projects =request.POST.getlist('projects')
+            user.project = ':'.join(projects)
             user.is_active = request.POST.get('is_active') == 'on'
             user.view_emp_salary = request.POST.get('view_emp_salary')
             user.full_clean()

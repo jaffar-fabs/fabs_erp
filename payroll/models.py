@@ -558,6 +558,7 @@ class UserMaster(models.Model):
     user_paycycles = models.TextField(blank=True, null=True)
     view_emp_salary = models.CharField(max_length=10, blank=True, null=True)
     company = models.CharField(max_length=10, blank=True, null=True)
+    project = models.CharField(max_length=200, blank=True, null=True)
     
     def __str__(self):
         return self.user_id
