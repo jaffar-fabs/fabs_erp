@@ -50,12 +50,17 @@ COMP_CODE = None
 def set_comp_code(request):
     global COMP_CODE
     global PAY_CYCLES
+    global PROJECTS
 
     COMP_CODE = request.session.get("comp_code")
     pay_cycles_raw = request.session.get("user_paycycles", "")
 
     # Split pay cycles by ":" if it's a string, default to empty list
     PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
+
+    projects_raw = request.session.get("user_project","")
+
+    PROJECTS = projects_raw.split(":") if isinstance(projects_raw, str) else []
 
 def employee_master(request):
     set_comp_code(request)
@@ -72,8 +77,8 @@ def employee_master(request):
         current_url = f"{get_url}?"
 
     # Base query
-    query = Employee.objects.filter(comp_code=COMP_CODE)
-    # query = Employee.objects.filter(comp_code=COMP_CODE, process_cycle__in=PAY_CYCLES)
+    # query = Employee.objects.filter(comp_code=COMP_CODE)
+    query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES, prj_code__in=PROJECTS)
 
     # Search filter
     if keyword:
@@ -863,6 +868,8 @@ def my_login_view(request):
                 request.session["comp_code"] = user.comp_code
 
                 request.session["user_paycycles"] = user.user_paycycles
+
+                request.session["user_project"] = user.project
 
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
