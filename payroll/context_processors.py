@@ -7,11 +7,17 @@ from .views import set_comp_code
 
 def get_comp_code(request):
     global PAY_CYCLES
+    global PROJECTS
+
     pay_cycles_raw = request.session.get("user_paycycles", "")
 
     # Split pay cycles by ":" if it's a string, default to empty list
     PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
+    projets_raw = request.session.get("user_project", "")
+
+    PROJECTS = projets_raw.split(":") if isinstance(projets_raw, str) else []
     return request.session.get('comp_code')
+
 
 def get_currency(request):
     comp_code = get_comp_code(request)
@@ -165,14 +171,14 @@ def grade_code(request):
 
 def project(request):
     comp_code = get_comp_code(request)
-    project_data = projectMaster.objects.filter(comp_code=comp_code, is_active= True)
+    project_data = projectMaster.objects.filter(comp_code=comp_code, is_active= True, prj_code__in = PROJECTS)
     return {
         'project_data': project_data
         }
 
 def employee(request):
     comp_code = get_comp_code(request)
-    employee_data = Employee.objects.filter(comp_code=comp_code, staff_category__in = PAY_CYCLES).order_by('emp_code')
+    employee_data = Employee.objects.filter(comp_code=comp_code, staff_category__in = PAY_CYCLES, prj_code__in = PROJECTS).order_by('emp_code')
     return {
         'employee_data': employee_data
         }
