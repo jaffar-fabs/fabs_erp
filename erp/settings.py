@@ -140,7 +140,10 @@ DATABASES = {
         'PASSWORD': 'Windows*1',
         'HOST': '103.14.120.216',
         # 'HOST': '92.96.253.84',
-        'PORT': '5432'
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode' : 'prefer'
+        }
     }
 }
 
