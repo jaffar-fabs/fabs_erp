@@ -1,6 +1,11 @@
 @ -1,295 +0,0 @@
 {% load static %}
 {% block header %}
+<style>
+  .header #toggle_btn{
+	display: none;
+  }
+</style>
   <!-- Header -->
   <div class="header">
     <!-- Logo -->
@@ -10,7 +15,7 @@
         <img src="{% static 'assets/img/white-logo.svg' %}" class="white-logo" alt="Logo" />
       </a>
       {% comment %} <a href="{% url 'index' %}" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}" alt="Logo" /></a> {% endcomment %}
-      <a id="toggle_btn" href="javascript:void(0);"><i class="ti ti-arrow-bar-to-left"></i></a>
+      <a id="toggle_btn" href="javascript:void(0);" style="display: none !important;"><i class="ti ti-arrow-bar-to-left"></i></a>
     </div>
     <!-- /Logo -->
 <!-- Header -->
@@ -399,7 +404,7 @@
 				<div class="dropdown-menu menu-drop-user">
 					<div class="profilename">
 						<a class="dropdown-item" href="index"><i class="ti ti-layout-2"></i> Dashboard</a>
-						<a class="dropdown-item" href="profile"><i class="ti ti-user-pin"></i> My Profile</a>
+						<!-- <a class="dropdown-item" href="profile"><i class="ti ti-user-pin"></i> My Profile</a> -->
 						<a class="dropdown-item" href="{% url 'logout' %}"><i class="ti ti-lock"></i> Logout</a>
 					</div>
 				</div>

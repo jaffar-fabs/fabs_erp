@@ -78,7 +78,10 @@ def employee_master(request):
 
     # Base query
     # query = Employee.objects.filter(comp_code=COMP_CODE)
-    query = Employee.objects.filter(comp_code=COMP_CODE, staff_category__in=PAY_CYCLES, prj_code__in=PROJECTS)
+    query = Employee.objects.filter(
+        Q(staff_category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
+        comp_code=COMP_CODE
+    )
 
     # Search filter
     if keyword:
