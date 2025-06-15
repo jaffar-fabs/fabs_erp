@@ -139,8 +139,8 @@ class UserRoleMappingCreate(View):
                 comp_code=1000,
                 userid=user_master.user_master_id,
                 roleid=role.id,
-                role_start_date=request.POST.get('role_start_date'),
-                role_to_date=request.POST.get('role_to_date'),
+                role_start_date=request.POST.get('role_start_date') or None,
+                role_to_date=request.POST.get('role_to_date') or None,
                 is_active=request.POST.get('is_active') == 'on',
                 created_by=4  # Hard-coded value
             )
@@ -165,8 +165,8 @@ class UserRoleMappingUpdate(View):
 
             mapping.userid = user_master.user_master_id
             mapping.roleid = role.id
-            mapping.role_start_date = request.POST.get('role_start_date')
-            mapping.role_to_date = request.POST.get('role_to_date')
+            mapping.role_start_date = request.POST.get('role_start_date') or None
+            mapping.role_to_date = request.POST.get('role_to_date') or None
             mapping.is_active = request.POST.get('is_active') == 'on'
             mapping.modified_by = 5  # Hard-coded value
             mapping.full_clean()

@@ -82,7 +82,7 @@ def check_process_cycle(request):
     if request.method == 'POST':
         process_cycle = request.POST.get('process_cycle')
         comp_code = get_comp_code(request)
-        exists = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE', base_value=process_cycle).exists()
+        exists = PaycycleMaster.objects.filter(comp_code=comp_code, process_cycle=process_cycle).exists()
         return JsonResponse({'exists': exists})
 
 def get_pay_process_flag(request):

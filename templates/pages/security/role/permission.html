@@ -3,6 +3,12 @@
 {% block content %}
 {% csrf_token %}
 
+<style>
+    .checkboxs input ~ .checkmarks{
+        border: 1px solid grey;
+    }
+</style>
+
 <div class="page-wrapper">
     <div class="content" style="overflow-y: auto;">
         <!-- Page Header -->
@@ -56,7 +62,6 @@
                                 <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
                                 {% endfor %}
                             </select>
-                            <div class="table-responsive custom-table" style="max-height: calc(95vh - 300px); overflow-y: auto;">
                                 <table class="table datatable">
                                     <thead class="thead-light">
                                         <tr>
@@ -68,11 +73,12 @@
                                         <th>Allow All</th>
                                     </tr>
                                 </thead>
+                                <div class="table-responsive custom-table" style="max-height: calc(95vh - 300px); overflow-y: auto;"></div>
                                 <tbody id="menu-list">
                                     <!-- Dynamic menu list based on module ID -->
                                 </tbody>
+                            </div>
                             </table>
-                        </div>
                         <div class="row align-items-center">
                             <div class="col-md-6">
                                 <div class="datatable-length"></div>

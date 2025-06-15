@@ -59,7 +59,7 @@
 									<tr>
 										<td>{{ role.role_name }}</td>
 										<td>{{ role.role_description }}</td>
-										<td>{{ role.created_on }}</td>
+										<td>{{ role.created_on|date:"d-m-Y" }}</td>
 										<td>
 											<span
 												class="badge {% if role.is_active %}badge-pill badge-status bg-success{% else %}badge-pill badge-status bg-danger{% endif %}">

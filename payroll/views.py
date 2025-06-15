@@ -1780,6 +1780,7 @@ class CodeMasterList(View):
 
     @csrf_exempt
     def check_base_value_exists(self, request):
+        set_comp_code(request);
         base_value = request.POST.get("base_value")
         base_type = request.POST.get("base_type")
         if CodeMaster.objects.filter(base_type=base_type, base_value=base_value, comp_code=COMP_CODE).exists():
@@ -1787,6 +1788,7 @@ class CodeMasterList(View):
         return JsonResponse({"exists": False})
 
     def update_base_description(self, request):
+        set_comp_code(request);
         base_code = request.POST.get("base_code")
         base_value = request.POST.get("base_value")
         base_description = request.POST.get("base_description")
@@ -1809,6 +1811,7 @@ class CodeMasterList(View):
 
     @csrf_exempt
     def handle_ajax(self, request):
+        set_comp_code(request);
         base_code = request.POST.get("base_code")
         if base_code:
             base_values = CodeMaster.objects.filter(base_type=base_code, comp_code=COMP_CODE).values("base_value", "is_active")
@@ -1817,6 +1820,7 @@ class CodeMasterList(View):
         return JsonResponse({"success": False, "error": "Invalid base code"})
 
     def handle_form_submission(self, request):
+        set_comp_code(request);
         base_description = request.POST.get("base_description")
         base_value = request.POST.get("base_value")
         description = request.POST.get("description")
@@ -1842,6 +1846,7 @@ class CodeMasterList(View):
 
     @csrf_exempt
     def fetch_base_description(self, request):
+        set_comp_code(request);
         base_code = request.POST.get("base_code")
         base_value = request.POST.get("base_value")
         if base_code and base_value:
@@ -1855,6 +1860,7 @@ class CodeMasterList(View):
 
     @csrf_exempt
     def delete_base_value(self, request):
+        set_comp_code(request);
         base_code = request.POST.get("base_code")
         base_value = request.POST.get("base_value")
 
@@ -1977,8 +1983,8 @@ class UserMasterCreate(View):
                 is_active=request.POST.get('is_active') == 'on',
                 instance_id=100000000,
                 profile_picture=request.FILES.get('profile_picture'),
-                created_by=request.POST.get('created_by'),
-                modified_by=request.POST.get('modified_by'),
+                created_by=1,
+                modified_by=1,
                 emp_code=request.POST.get('emp_code'),
                 user_paycycles=user_paycycles_str,  # Save as colon-separated string
                 view_emp_salary=request.POST.get('view_emp_salary'),

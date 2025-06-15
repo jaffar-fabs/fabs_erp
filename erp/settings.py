@@ -142,7 +142,7 @@ DATABASES = {
         # 'HOST': '92.96.253.84',
         'PORT': '5432',
         'OPTIONS': {
-            'sslmode' : 'prefer'
+            'sslmode': 'disable'
         }
     }
 }
