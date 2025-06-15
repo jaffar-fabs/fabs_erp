@@ -22,7 +22,7 @@
                                 <select class="form-select" required aria-label="select example" name="process_cycle" id="processCycleDropdown">
                                     <option value="">Select</option>
                                     {% for paycycle in paycycle_data %}
-                                        <option value="{{ paycycle.base_value }}">{{ paycycle.base_description }}</option>
+                                        <option value="{{ paycycle.base_value }}">{{ paycycle.base_value }}-{{ paycycle.base_description }}</option>
                                     {% endfor %}
                                 </select>
                                 <div class="invalid-feedback" id="processCycleError">This process cycle already exists.</div>
@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="">Select</option>
                                 {% for paycycle in paycycle_data %}
                                     <option value="{{ paycycle.base_value }}" {% if paycycle.base_value == employee.process_cycle %}selected{% endif %}>
-                                        {{ paycycle.base_description }}
+                                        {{ paycycle.base_value }} - {{ paycycle.base_description }}
                                     </option>
                                 {% endfor %}
                             </select>

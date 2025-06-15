@@ -223,9 +223,9 @@
                                         <label class="col-form-label" id="staff_category_label">Category</label>
                                         <select name="staff_category" id="staff_category" class="form-select">
                                             <option value="">Select</option>
-                                            <option value="staff">Staff</option>
-                                            <option value="field-staff">Field Staff</option>
-                                            <option value="management">Management</option>
+                                            {% for statuses in staff_category_data %}
+                                                <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label" id="depend_count_label">Dependent Count</label>
-                                        <input type="number" name="depend_count" id="depend_count" class="form-control">
+                                        <input type="number" name="depend_count" id="depend_count" class="form-control" min="0" required>
                                     </div>
                                 </div>
                                 
@@ -242,7 +242,7 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label" id="child_count_label">Child Count</label>
-                                        <input type="number" name="child_count" id="child_count" class="form-control">
+                                        <input type="number" name="child_count" id="child_count" class="form-control" min="0" required>
                                     </div>
                                 </div>
                                 
@@ -253,7 +253,7 @@
                                     const childCount = document.getElementById('child_count');
                                 
                                     categorySelect.addEventListener('change', function() {
-                                        if (this.value === 'field-staff') {
+                                        if (this.value === 'FIELD_STAFF') {
                                             // Disable both fields for field-staff
                                             dependCount.disabled = true;
                                             childCount.disabled = true;
@@ -269,7 +269,7 @@
                                     });
                                 
                                     // Initialize state on page load
-                                    if (categorySelect.value === 'field-staff') {
+                                    if (categorySelect.value === 'FIELD_STAFF') {
                                         dependCount.disabled = true;
                                         childCount.disabled = true;
                                     }
@@ -1670,3 +1670,107 @@ function removeLicenseRow_add(button, licenseId = null) {
     </div>
 </div>
 <!-- /Add Employee Offcanvas -->
+
+<script>
+document.querySelectorAll('input[name="depend_count"], input[name="child_count"]').forEach(function(input) {
+    input.addEventListener('input', function() {
+        if (parseInt(this.value) < 0) {
+            alert(this.name.replace('_', ' ') + ' cannot be negative!');
+            this.value = '';
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var dobInput = document.getElementById('dob');
+    if (dobInput) {
+        var today = new Date();
+        var year = today.getFullYear() - 16;
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var day = String(today.getDate()).padStart(2, '0');
+        var maxDate = year + '-' + month + '-' + day;
+        dobInput.max = maxDate;
+    }
+});
+
+function validateIssueExpiry(issueInput, expiryInput, label) {
+    if (!issueInput.value || !expiryInput.value) return;
+    const issueDate = new Date(issueInput.value);
+    const expiryDate = new Date(expiryInput.value);
+
+    if (issueDate.getTime() === expiryDate.getTime()) {
+        alert(label + ' Issue and Expiry date cannot be the same.');
+        expiryInput.value = '';
+        expiryInput.focus();
+    } else if (expiryDate < issueDate) {
+        alert(label + ' Expiry date must be after Issue date.');
+        expiryInput.value = '';
+        expiryInput.focus();
+    }
+}
+
+// For single fields
+function setupSingleDateValidation(issueId, expiryId, label) {
+    const issueInput = document.getElementById(issueId);
+    const expiryInput = document.getElementById(expiryId);
+    if (issueInput && expiryInput) {
+        issueInput.addEventListener('change', function() {
+            validateIssueExpiry(issueInput, expiryInput, label);
+        });
+        expiryInput.addEventListener('change', function() {
+            validateIssueExpiry(issueInput, expiryInput, label);
+        });
+    }
+}
+
+// For table rows (multiple fields)
+function setupTableDateValidation(issueSelector, expirySelector, label) {
+    document.addEventListener('change', function(e) {
+        if (e.target.matches(issueSelector) || e.target.matches(expirySelector)) {
+            // Find the row
+            const row = e.target.closest('tr');
+            if (!row) return;
+            const issueInput = row.querySelector(issueSelector);
+            const expiryInput = row.querySelector(expirySelector);
+            if (issueInput && expiryInput) {
+                validateIssueExpiry(issueInput, expiryInput, label);
+            }
+        }
+    });
+}
+
+// Setup for single fields
+setupSingleDateValidation('issued_date', 'expiry_date', 'Travel Document');
+setupSingleDateValidation('visa_issued', 'visa_expiry', 'Visa');
+setupSingleDateValidation('emirate_issued', 'emirate_expiry', 'Emirates ID');
+
+// Setup for tables (dynamic rows)
+setupTableDateValidation('input[name="dependent_issued_date[]"]', 'input[name="dependent_expiry_date[]"]', 'Dependent');
+setupTableDateValidation('input[name="license_issued_date[]"]', 'input[name="license_expiry_date[]"]', 'License/Pass');
+
+// Validate Basic Salary and all Amount fields (including dynamic)
+function setupNonNegativeValidation() {
+    // For static fields
+    const basicPay = document.getElementById('basic_pay');
+    if (basicPay) {
+        basicPay.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                alert('Basic salary cannot be negative!');
+                this.value = '';
+            }
+        });
+    }
+
+    // For all amount fields (including dynamic)
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('input[name="entry_amount[]"]')) {
+            if (parseFloat(e.target.value) < 0) {
+                alert('Amount cannot be negative!');
+                e.target.value = '';
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', setupNonNegativeValidation);
+</script>

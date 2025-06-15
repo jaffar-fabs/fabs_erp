@@ -356,4 +356,16 @@
             }
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var effectiveDateInput = document.getElementById('effective_date');
+        if (effectiveDateInput) {
+            var today = new Date();
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            var minDate = yyyy + '-' + mm + '-' + dd;
+            effectiveDateInput.setAttribute('min', minDate);
+        }
+    });
 </script>

@@ -457,4 +457,51 @@
     
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    // For Add form
+    const startDateAdd = document.getElementById('start_date');
+    const endDateAdd = document.getElementById('end_date');
+    if (startDateAdd && endDateAdd) {
+        function validateAddDates() {
+            if (startDateAdd.value && endDateAdd.value) {
+                const start = new Date(startDateAdd.value);
+                const end = new Date(endDateAdd.value);
+                if (start.getTime() === end.getTime()) {
+                    alert('Start Date and End Date cannot be the same.');
+                    endDateAdd.value = '';
+                    endDateAdd.focus();
+                } else if (end < start) {
+                    alert('End Date must be after Start Date.');
+                    endDateAdd.value = '';
+                    endDateAdd.focus();
+                }
+            }
+        }
+        startDateAdd.addEventListener('change', validateAddDates);
+        endDateAdd.addEventListener('change', validateAddDates);
+    }
+
+    // For Edit form
+    const startDateEdit = document.getElementById('edit_start_date');
+    const endDateEdit = document.getElementById('edit_end_date');
+    if (startDateEdit && endDateEdit) {
+        function validateEditDates() {
+            if (startDateEdit.value && endDateEdit.value) {
+                const start = new Date(startDateEdit.value);
+                const end = new Date(endDateEdit.value);
+                if (start.getTime() === end.getTime()) {
+                    alert('Start Date and End Date cannot be the same.');
+                    endDateEdit.value = '';
+                    endDateEdit.focus();
+                } else if (end < start) {
+                    alert('End Date must be after Start Date.');
+                    endDateEdit.value = '';
+                    endDateEdit.focus();
+                }
+            }
+        }
+        startDateEdit.addEventListener('change', validateEditDates);
+        endDateEdit.addEventListener('change', validateEditDates);
+    }
+});
 </script>

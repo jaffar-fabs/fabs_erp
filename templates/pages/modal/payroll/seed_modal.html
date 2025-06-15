@@ -294,3 +294,80 @@
 </div>
 
 <!-- Confirmation Modal -->
+
+<script>
+// --- Timeline From/To Date Validation ---
+// For Add: Use name selectors
+['seed_timeline_from', 'seed_timeline_to'].forEach(function(name) {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(input) {
+        input.addEventListener('change', function() {
+            var form = input.closest('form') || document;
+            var from = form.querySelector('input[name="seed_timeline_from"]');
+            var to = form.querySelector('input[name="seed_timeline_to"]');
+            if (from && to && from.value && to.value) {
+                const fromDate = new Date(from.value);
+                const toDate = new Date(to.value);
+                if (fromDate.getTime() === toDate.getTime()) {
+                    alert('Timeline From and To date cannot be the same.');
+                    to.value = '';
+                    to.focus();
+                } else if (toDate < fromDate) {
+                    alert('Timeline To date must be after From date.');
+                    to.value = '';
+                    to.focus();
+                }
+            }
+        });
+    });
+});
+// For Edit: Use id selectors
+function setupEditTimelineValidation(fromId, toId) {
+    const fromInput = document.getElementById(fromId);
+    const toInput = document.getElementById(toId);
+    if (fromInput && toInput) {
+        function validate() {
+            if (fromInput.value && toInput.value) {
+                const fromDate = new Date(fromInput.value);
+                const toDate = new Date(toInput.value);
+                if (fromDate.getTime() === toDate.getTime()) {
+                    alert('Timeline From and To date cannot be the same.');
+                    toInput.value = '';
+                    toInput.focus();
+                } else if (toDate < fromDate) {
+                    alert('Timeline To date must be after From date.');
+                    toInput.value = '';
+                    toInput.focus();
+                }
+            }
+        }
+        fromInput.addEventListener('change', validate);
+        toInput.addEventListener('change', validate);
+    }
+}
+setupEditTimelineValidation('edit_seed_timeline_from', 'edit_seed_timeline_to');
+
+// --- Prevent Negative Values for Length, Start Num, Next Num, Inc By ---
+// For Add: Use name selectors
+['seed_length', 'seed_start_num', 'seed_next_num', 'seed_inc_by'].forEach(function(name) {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(input) {
+        input.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                alert('This field cannot be negative!');
+                this.value = '';
+            }
+        });
+    });
+});
+// For Edit: Use id selectors
+['seed_length', 'seed_start_num', 'seed_next_num', 'seed_inc_by'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+        el.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                alert('This field cannot be negative!');
+                this.value = '';
+            }
+        });
+    }
+});
+</script>

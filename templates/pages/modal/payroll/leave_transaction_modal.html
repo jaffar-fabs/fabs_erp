@@ -14,7 +14,7 @@
                     <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
                     <select class="form-control" name="employee" id="add_employee_code" required>
                         <option value="">Select Employee</option>
-                        {% for emp in employees %}
+                        {% for emp in employee_data %}
                         <option value="{{ emp.emp_code }}" 
                                 data-name="{{ emp.emp_name }}"
                                 data-department="{{ emp.department }}"

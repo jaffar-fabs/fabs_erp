@@ -404,7 +404,7 @@ class RoleMenu(models.Model):
 class PaycycleMaster(models.Model):
 
     comp_code = models.CharField(max_length=20)  # Removed default value
-    process_cycle_id = models.BigIntegerField(null=False, blank=False)
+    process_cycle_id = models.AutoField(primary_key=True)
     process_cycle = models.CharField(max_length=50, null=False, blank=False)
     process_description = models.CharField(max_length=500, null=False, blank=False)
     pay_process_month = models.CharField(max_length=20, null=False, blank=False)

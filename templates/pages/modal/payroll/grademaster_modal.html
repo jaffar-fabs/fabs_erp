@@ -44,8 +44,11 @@
                         <label class="col-form-label" for="validationCustom01">Category <span class="text-danger">*</span></label>
                         <select name="grade_desc" class="form-control" id="validationCustom01" required>
                             <option value="">Select Category</option>
-                            <option value="Worker">Worker</option>
-                            <option value="Staff">Staff</option>
+                            {% for statuses in staff_category_data %}
+                                <option value="{{ statuses.base_value }}">
+                                    {{ statuses.base_description }}
+                                </option>   
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please provide a Category.</div>
                     </div>                    
@@ -172,8 +175,11 @@
                         <label class="col-form-label">Category <span class="text-danger">*</span></label>
                         <select name="grade_desc" class="form-control" required>
                             <option value="">Select Category</option>
-                            <option value="Worker">Worker</option>
-                            <option value="Staff">Staff</option>
+                            {% for statuses in staff_category_data %}
+                                <option value="{{ statuses.base_value }}" {% if statuses.base_value == grade.designation %}selected{% endif %}>
+                                    {{ statuses.base_description }}
+                                </option>
+                            {% endfor %}
                         </select>
                     </div>                    
                 </div>
@@ -221,7 +227,7 @@
                 // Fetch data attributes from row
                 document.querySelector('#grade_id').value = row.getAttribute('data-id');
                 document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
-                document.querySelector('#offcanvas_edit input[name="grade_desc"]').value = row.getAttribute('data-desc');
+                document.querySelector('#offcanvas_edit select[name="grade_desc"]').value = row.getAttribute('data-desc') || '';
                 document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation') || '';
                 document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult') || 0;
                 document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child') || 0;
@@ -289,6 +295,20 @@
             document.getElementById("deleteForm").submit();
         });
     });
+</script>
+
+<script>
+// Prevent negative values for passage amount fields (add & edit)
+['passage_amount_adult', 'passage_amount_child'].forEach(function(name) {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function(input) {
+        input.addEventListener('input', function() {
+            if (parseFloat(this.value) < 0) {
+                alert('Passage amount cannot be negative!');
+                this.value = '';
+            }
+        });
+    });
+});
 </script>
 
 

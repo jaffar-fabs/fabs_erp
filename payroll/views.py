@@ -1159,22 +1159,22 @@ class Paycycle(View):
         pay_process_month = request.POST.get('pay_process_month')
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
-        process_date = request.POST.get('process_date')
+        process_date = request.POST.get('process_date') or None
         attendance_uom = request.POST.get('attendance_uom')
         default_project = request.POST.get('default_project')
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
-        hours_per_day = request.POST.get('hours_per_day')
+        hours_per_day = request.POST.get('hours_per_day') or 0
         days_per_month = request.POST.get('days_per_month')
         travel_time = request.POST.get('travel_time') or None
         lunch_break = request.POST.get('lunch_break') or None
         ot_eligible = request.POST.get('ot_eligible')
         ot2_eligible = request.POST.get('ot2_eligible')
-        max_mn_hrs = request.POST.get('max_mn_hrs')
-        max_an_hrs = request.POST.get('max_an_hrs')
-        max_ot1_hrs = request.POST.get('max_ot1_hrs')
+        max_mn_hrs = request.POST.get('max_mn_hrs') or 0
+        max_an_hrs = request.POST.get('max_an_hrs') or 0
+        max_ot1_hrs = request.POST.get('max_ot1_hrs')or 0
         ot1_amt = request.POST.get('ot1_amt') or 0
-        max_ot2_hrs = request.POST.get('max_ot2_hrs')
+        max_ot2_hrs = request.POST.get('max_ot2_hrs')or 0
         ot2_amt = request.POST.get('ot2_amt') or 0
         process_comp_flag = request.POST.get('process_comp_flag')
         is_active = "Y" if "is_active" in request.POST else "N"
@@ -1212,7 +1212,6 @@ class Paycycle(View):
             PaycycleMaster.objects.create(
                 comp_code=COMP_CODE,
                 process_description=process_description,
-                process_cycle_id=self.get_next_process_cycle_id(),
                 process_cycle=process_cycle,
                 pay_process_month=pay_process_month,
                 date_from=date_from,
@@ -1256,10 +1255,10 @@ class Paycycle(View):
         except (ValueError, TypeError):
             return None
 
-    def get_next_process_cycle_id(request,self):
-        set_comp_code(request)
-        auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
-        return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
+    # def get_next_process_cycle_id(request,self):
+    #     set_comp_code(request)
+    #     auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
+    #     return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
 def project(request):
     if request.method == 'POST':
@@ -3481,34 +3480,35 @@ class AdvanceMasterList(View):
 
         return render(request, self.template_name, context)    
     def post(self, request, *args, **kwargs):
+        set_comp_code(request);
         data = request.POST
         advance_id = data.get('advance_id')  # Fetch the advance_id from the form
-        try:
-            # Process date fields
-            reference_date = datetime.strptime(data.get('reference_date'), '%d-%m-%Y').date()
-            repayment_from = datetime.strptime(data.get('repayment_from'), '%d-%m-%Y').date()
-            next_repayment_date = datetime.strptime(data.get('next_repayment_date'), '%d-%m-%Y').date()
-            waiver_date = datetime.strptime(data.get('waiver_date'), '%d-%m-%Y').date() if data.get('waiver_date') else None
-        except ValueError:
-            return self.render_with_error(request, "Invalid date format. Please use DD-MM-YYYY.")
-
+        # try:
+        #     # Process date fields
+        #     reference_date = datetime.strptime(data.get('reference_date'), '%d-%m-%Y').date()
+        #     repayment_from = datetime.strptime(data.get('repayment_from'), '%d-%m-%Y').date()
+        #     next_repayment_date = datetime.strptime(data.get('next_repayment_date'), '%d-%m-%Y').date()
+        #     waiver_date = datetime.strptime(data.get('waiver_date'), '%d-%m-%Y').date() if data.get('waiver_date') else None
+        # except ValueError:
+        #     return self.render_with_error(request, "Invalid date format. Please use DD-MM-YYYY.")
+        print(data)
         # Prepare the data
         advance_data = {
             'comp_code': COMP_CODE,
             'emp_code': data.get('emp_code'),
             'advance_code': data.get('advance_code'),
             'advance_reference': data.get('advance_reference'),
-            'reference_date': reference_date,
+            'reference_date': data.get('reference_date'),
             'total_amt': data.get('total_amt'),
             'instalment_amt': data.get('instalment_amt'),
             'paid_amt': data.get('paid_amt'),
             'total_no_instalment': data.get('total_no_instalment'),
             'balance_no_instalment': data.get('balance_no_instalment'),
-            'repayment_from': repayment_from,
-            'next_repayment_date': next_repayment_date,
-            'default_count': data.get('default_count'),
-            'waiver_amt': data.get('waiver_amt'),
-            'waiver_date': waiver_date,
+            'repayment_from': data.get('repayment_from'),
+            'next_repayment_date': data.get('next_repayment_date'),
+            'default_count': data.get('default_count') or 0,
+            'waiver_amt': data.get('waiver_amt') or 0,
+            'waiver_date': data.get('waiver_date'),
             'is_active': data.get('is_active') == 'true',
             'modified_by': '1',
             'created_by': '1',
@@ -3529,8 +3529,10 @@ class AdvanceMasterList(View):
         except AdvanceMaster.DoesNotExist:
             return self.render_with_error(request, "Record not found for the provided Advance ID.")
         except Exception as e:
+            print(e);
             logger.error("Error saving advance master: %s", e)
             return self.render_with_error(request, "An error occurred while saving the data.")
+            
 
     def render_with_error(self, request, error_message):
         context = {
@@ -3560,8 +3562,9 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def get_advance_details(request, advance_id):
+    set_comp_code(request);
     try:
-        advance = AdvanceMaster.objects.get(advance_id=advance_id)
+        advance = AdvanceMaster.objects.get(advance_id=advance_id, comp_code = COMP_CODE)
         data = {
             'advance_id': advance.advance_id,
             'emp_code': advance.emp_code,
@@ -3586,9 +3589,10 @@ def get_advance_details(request, advance_id):
 
 @csrf_exempt
 def update_advance_details(request, advance_id):
+    set_comp_code(request)
     if request.method == 'POST':
         try:
-            advance = get_object_or_404(AdvanceMaster, advance_id=advance_id)
+            advance = get_object_or_404(AdvanceMaster, advance_id=advance_id, comp_code = COMP_CODE)
             data = request.POST
 
             # Update fields with validation
@@ -3603,10 +3607,10 @@ def update_advance_details(request, advance_id):
             next_repayment_date = data.get('next_repayment_date')
             waiver_date = data.get('waiver_date')
 
-            advance.reference_date = datetime.strptime(reference_date, '%d-%m-%Y').date() if reference_date else None
-            advance.repayment_from = datetime.strptime(repayment_from, '%d-%m-%Y').date() if repayment_from else None
-            advance.next_repayment_date = datetime.strptime(next_repayment_date, '%d-%m-%Y').date() if next_repayment_date else None
-            advance.waiver_date = datetime.strptime(waiver_date, '%d-%m-%Y').date() if waiver_date else None
+            advance.reference_date = datetime.strptime(reference_date, '%Y-%m-%d').date() if reference_date else None
+            advance.repayment_from = datetime.strptime(repayment_from, '%Y-%m-%d').date() if repayment_from else None
+            advance.next_repayment_date = datetime.strptime(next_repayment_date, '%Y-%m-%d').date() if next_repayment_date else None
+            advance.waiver_date = datetime.strptime(waiver_date, '%Y-%m-%d').date() if waiver_date else None
 
             # Handle other fields
             advance.total_amt = data.get('total_amt')
@@ -3622,6 +3626,7 @@ def update_advance_details(request, advance_id):
             return JsonResponse({'success': True, 'message': 'Record updated successfully!'})
         except Exception as e:
             logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
+            print(e)
             return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
 

@@ -626,5 +626,114 @@
                 row.parentNode.removeChild(row);
             }
         </script>
+        <script>
+            // --- Start/End Date Validation ---
+            // For Add: Use name selectors (for possibly multiple pairs)
+            document.querySelectorAll('input[name$="_start_date"], input[name$="_end_date"]').forEach(function(input) {
+                input.addEventListener('change', function() {
+                    // Determine the base name (e.g., ejari, rental_contratc, etc.)
+                    let base = input.name.replace(/(_start_date|_end_date)$/, '');
+                    let form = input.closest('form') || document;
+                    let start = form.querySelector('input[name="' + base + '_start_date"]');
+                    let end = form.querySelector('input[name="' + base + '_end_date"]');
+                    if (start && end && start.value && end.value) {
+                        const startDate = new Date(start.value);
+                        const endDate = new Date(end.value);
+                        let label = base.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        if (startDate.getTime() === endDate.getTime()) {
+                            alert(label + ' Start and End date cannot be the same.');
+                            end.value = '';
+                            end.focus();
+                        } else if (endDate < startDate) {
+                            alert(label + ' End date must be after Start date.');
+                            end.value = '';
+                            end.focus();
+                        }
+                    }
+                });
+            });
+            // For Edit: Use id selectors (for unique fields)
+            function setupEditStartEndValidation(startId, endId, label) {
+                const startInput = document.getElementById(startId);
+                const endInput = document.getElementById(endId);
+                if (startInput && endInput) {
+                    startInput.addEventListener('change', function() {
+                        validateEditStartEnd(startInput, endInput, label);
+                    });
+                    endInput.addEventListener('change', function() {
+                        validateEditStartEnd(startInput, endInput, label);
+                    });
+                }
+            }
+            function validateEditStartEnd(startInput, endInput, label) {
+                if (!startInput.value || !endInput.value) return;
+                const startDate = new Date(startInput.value);
+                const endDate = new Date(endInput.value);
+                if (startDate.getTime() === endDate.getTime()) {
+                    alert(label + ' Start and End date cannot be the same.');
+                    endInput.value = '';
+                    endInput.focus();
+                } else if (endDate < startDate) {
+                    alert(label + ' End date must be after Start date.');
+                    endInput.value = '';
+                    endInput.focus();
+                }
+            }
+            // Example for edit fields:
+            setupEditStartEndValidation('ejari_start_date_edit', 'ejari_end_date_edit', 'Ejari (Edit)');
+            setupEditStartEndValidation('rental_contratc_start_date_edit', 'rental_contratc_end_date_edit', 'Rental Contract (Edit)');
+            // Add more pairs as needed
+
+            // --- Amount Fields: Prevent Negative Values ---
+            // For Add: Use name selectors
+
+            document.addEventListener('input', function(e) {
+                if (
+                    e.target.matches('input[type="number"][name*="amount"], input[type="number"][name*="value"], input[type="number"][name*="pay"], input[type="number"][name*="rent"]') && !e.target.id
+                ) {
+                    if (parseFloat(e.target.value) < 0) {
+                        alert('Amount fields cannot be negative!');
+                        e.target.value = '';
+                    }
+                }
+            });
+            // For Edit: Use id selectors (add your actual edit field ids below)
+            ['amount_edit', 'value_edit', 'pay_edit', 'rent_edit'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', function() {
+                        if (parseFloat(this.value) < 0) {
+                            alert('Amount fields cannot be negative!');
+                            this.value = '';
+                        }
+                    });
+                }
+            });
+
+            // For Add: by name
+            document.addEventListener('input', function(e) {
+                if (
+                    e.target.matches('input[type="text"][name="cheque_amount[]"]') && !e.target.id
+                ) {
+                    if (parseFloat(e.target.value) < 0) {
+                        alert('Cheque amount cannot be negative!');
+                        e.target.value = '';
+                    }
+                }
+            });
+
+            // For Edit: by id (replace with your actual edit field id)
+            ['cheque_amount_edit'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', function() {
+                        if (parseFloat(this.value) < 0) {
+                            alert('Cheque amount cannot be negative!');
+                            this.value = '';
+                        }
+                    });
+                }
+            });
+        </script>
     </div>
 </div>
