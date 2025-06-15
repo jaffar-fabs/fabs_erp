@@ -161,19 +161,25 @@ class UserRoleMappingUpdate(View):
 
             # Check if the user already has a role assigned (excluding the current mapping)
             if UserRoleMapping.objects.filter(userid=user_master.user_master_id).exclude(mappingid=mappingid).exists():
-                return JsonResponse({'error': 'User has already been assigned a role.'}, status=400)
+                return JsonResponse({'error': 'User  has already been assigned a role.'}, status=400)
 
             mapping.userid = user_master.user_master_id
             mapping.roleid = role.id
-            mapping.role_start_date = request.POST.get('role_start_date') or None
-            mapping.role_to_date = request.POST.get('role_to_date') or None
+            
+            # Set role_start_date and role_to_date to None if they are empty
+            role_start_date = request.POST.get('role_start_date')
+            role_to_date = request.POST.get('role_to_date')
+            mapping.role_start_date = role_start_date if role_start_date else None
+            mapping.role_to_date = role_to_date if role_to_date else None
+            
             mapping.is_active = request.POST.get('is_active') == 'on'
             mapping.modified_by = 5  # Hard-coded value
             mapping.full_clean()
             mapping.save()
-            return JsonResponse({'success': 'User role mapping updated successfully.'}, status=200)
+            return JsonResponse({'success': 'User  role mapping updated successfully.'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
+
 
 class UserRoleMappingDelete(View):
     def post(self, request, mappingid):
