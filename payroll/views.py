@@ -413,7 +413,7 @@ def save_employee(request):
         employee.date_of_join = request.POST.get("date_of_join") or None
         employee.date_of_rejoin = request.POST.get("date_of_rejoin") or None
         employee.depend_count = request.POST.get("depend_count") or None
-        employee.staff_category = request.POST.get("staff_category")
+        employee.category = request.POST.get("staff_category")
         employee.child_count = request.POST.get("child_count") or None
         employee.employee_bank = request.POST.get("employee_bank")
         employee.bank_branch = request.POST.get("bank_branch")
