@@ -26188,10 +26188,10 @@ td .badge-pill {
 }
 
 .account-bg-01 {
-  background-image: url(../img/authentication/bk1.jpg);
+  background-image: url(../img/authentication/bg-2.jpg);
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background-size: contain;
+  background-position: right;
 }
 
 .account-bg-02 {

@@ -7,6 +7,30 @@
     .checkboxs input ~ .checkmarks{
         border: 1px solid grey;
     }
+    .permission-table {
+        width: 100%;
+        table-layout: fixed;
+        margin-bottom: 0;
+    }
+    .tbody-scroll {
+        max-height: calc(95vh - 370px); /* Adjust as needed */
+        overflow-y: auto;
+    }
+    .tbody-scroll table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    .tbody-scroll td, .permission-table th {
+        text-align: center;
+    }
+    .permission-table th:first-child,
+    .tbody-scroll td:first-child {
+        text-align: left;
+        width: 33%;
+    }
+    .dataTables_empty{
+        display: none;
+    }
 </style>
 
 <div class="page-wrapper">
@@ -56,15 +80,9 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive custom-table">
-                            <select id="module-select" class="select2">
-                                <option>Choose Module ID</option>
-                                {% for module_id in module_ids %}
-                                <option value="{{ module_id.module_id }}">{{ module_id.module_id }}</option>
-                                {% endfor %}
-                            </select>
-                                <table class="table datatable">
-                                    <thead class="thead-light">
-                                        <tr>
+                            <table class="table datatable permission-table">
+                                <thead class="thead-light">
+                                    <tr>
                                         <th>Menu Name</th>
                                         <th>Create</th>
                                         <th>Edit</th>
@@ -73,12 +91,15 @@
                                         <th>Allow All</th>
                                     </tr>
                                 </thead>
-                                <div class="table-responsive custom-table" style="max-height: calc(95vh - 300px); overflow-y: auto;"></div>
-                                <tbody id="menu-list">
-                                    <!-- Dynamic menu list based on module ID -->
-                                </tbody>
-                            </div>
                             </table>
+                            <div class="tbody-scroll">
+                                <table class="table datatable permission-table">
+                                    <tbody id="menu-list">
+                                        <!-- Dynamic menu list based on module ID -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div class="row align-items-center">
                             <div class="col-md-6">
                                 <div class="datatable-length"></div>
