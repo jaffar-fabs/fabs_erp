@@ -55,9 +55,8 @@ def set_comp_code(request):
     COMP_CODE = request.session.get("comp_code")
     pay_cycles_raw = request.session.get("user_paycycles", "")
 
-    # Split pay cycles by ":" if it's a string, default to empty list
     PAY_CYCLES = pay_cycles_raw.split(":") if isinstance(pay_cycles_raw, str) else []
-
+    
     projects_raw = request.session.get("user_project","")
 
     PROJECTS = projects_raw.split(":") if isinstance(projects_raw, str) else []
@@ -78,8 +77,9 @@ def employee_master(request):
 
     # Base query
     # query = Employee.objects.filter(comp_code=COMP_CODE)
+
     query = Employee.objects.filter(
-        Q(staff_category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
+        Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
         comp_code=COMP_CODE
     )
 
@@ -3494,7 +3494,7 @@ class AdvanceMasterList(View):
         #     waiver_date = datetime.strptime(data.get('waiver_date'), '%d-%m-%Y').date() if data.get('waiver_date') else None
         # except ValueError:
         #     return self.render_with_error(request, "Invalid date format. Please use DD-MM-YYYY.")
-        print(data)
+
         # Prepare the data
         advance_data = {
             'comp_code': COMP_CODE,

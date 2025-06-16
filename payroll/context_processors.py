@@ -181,7 +181,7 @@ def project(request):
 def employee(request):
     comp_code = get_comp_code(request)
     employee_data = Employee.objects.filter(
-    Q(staff_category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
+    Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
     comp_code=comp_code).order_by('emp_code')
     return {
         'employee_data': employee_data

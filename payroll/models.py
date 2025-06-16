@@ -311,8 +311,8 @@ class Employee(models.Model):
     client_location = models.CharField(max_length=150, null=True,blank=True)
 
     # Audit Fields
-    created_by = models.BigIntegerField(default=1)  # Created by
-    modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
+    created_by = models.CharField(max_length=50, null=True, blank=True)  # Created by
+    modified_by = models.CharField(max_length=50, null=True, blank=True)  # Modified by
     created_on = models.DateTimeField(auto_now_add=True, null=True)  # Created on
     modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
 
