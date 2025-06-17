@@ -76,12 +76,12 @@ def employee_master(request):
         current_url = f"{get_url}?"
 
     # Base query
-    # query = Employee.objects.filter(comp_code=COMP_CODE)
+    query = Employee.objects.filter(comp_code=COMP_CODE)
 
-    query = Employee.objects.filter(
-        Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
-        comp_code=COMP_CODE
-    )
+    # query = Employee.objects.filter(
+    #     Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
+    #     comp_code=COMP_CODE
+    # )
 
     # Search filter
     if keyword:
