@@ -134,10 +134,7 @@ def employee_master(request):
         'employees': employees_page,
         'current_url': current_url,
         'keyword': keyword,
-        'result_cnt': query.count(),
-        'paycyle': PAY_CYCLES,
-        'compcode': COMP_CODE,
-        'project': PROJECTS
+        'result_cnt': query.count()
     }
 
     return render(request, 'pages/payroll/employee_master/employee_master.html', context)
