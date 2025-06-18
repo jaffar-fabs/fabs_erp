@@ -200,7 +200,14 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label class="col-form-label" id="release_reason_label">Release Reason</label>
-                                        <input type="text" name="release_reason" id="release_reason" class="form-control">
+                                        <select name="release_reason" id="release_reason" class="form-select">
+                                            <option value="">Select</option>
+                                            {% for status in pass_data %}
+                                            <option value="{{ status.base_value }}">
+                                                {{ status.base_description }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>                        
 
@@ -272,6 +279,26 @@
                                     if (categorySelect.value === 'FIELD_STAFF') {
                                         dependCount.disabled = true;
                                         childCount.disabled = true;
+                                    }
+
+                                    // Passport Control and Release Reason functionality
+                                    const passportRelease = document.getElementById('passport_release');
+                                    const releaseReason = document.getElementById('release_reason');
+                                
+                                    passportRelease.addEventListener('change', function() {
+                                        if (this.value === 'Yes') {
+                                            // Enable release reason when passport control is Yes
+                                            releaseReason.disabled = false;
+                                        } else {
+                                            // Disable and clear release reason when passport control is No or empty
+                                            releaseReason.disabled = true;
+                                            releaseReason.value = '';
+                                        }
+                                    });
+                                
+                                    // Initialize passport control state on page load
+                                    if (passportRelease.value !== 'Yes') {
+                                        releaseReason.disabled = true;
                                     }
                                 });
                                 </script>

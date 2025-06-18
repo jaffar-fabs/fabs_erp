@@ -111,7 +111,9 @@ TEMPLATES = [
                 'payroll.context_processors.get_party_type',
                 'payroll.context_processors.get_leave_types',
                 'payroll.context_processors.get_staff_category',
-                'payroll.context_processors.get_company'
+                'payroll.context_processors.get_company',
+                'payroll.context_processors.get_pass_reason',
+
             ],
         },
     },

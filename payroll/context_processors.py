@@ -394,3 +394,10 @@ def get_staff_category(request):
     return {
         'staff_category_data': staff_category_data
         }
+
+def get_pass_reason(request):
+    comp_code = get_comp_code(request)
+    pass_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'PASS_REASON')
+    return {
+        'pass_data': pass_data
+    }

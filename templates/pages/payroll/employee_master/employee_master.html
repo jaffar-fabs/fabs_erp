@@ -278,6 +278,17 @@
                         $("#religion").val(response.data.religion);
                         $("#passport_release").val(response.data.passport_release);
                         $("#release_reason").val(response.data.release_reason);
+                        
+                        // Handle passport control and release reason functionality for edit
+                        const passportRelease = document.getElementById('passport_release');
+                        const releaseReason = document.getElementById('release_reason');
+                        
+                        if (response.data.passport_release === 'Yes') {
+                            releaseReason.disabled = false;
+                        } else {
+                            releaseReason.disabled = true;
+                        }
+                        
                         $("#depend_count").val(response.data.depend_count);
                         $("#child_count").val(response.data.child_count);
                         $("#emp_marital_status").val(response.data.emp_marital_status);
