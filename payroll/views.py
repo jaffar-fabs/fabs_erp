@@ -79,8 +79,8 @@ def employee_master(request):
     # query = Employee.objects.filter(comp_code=COMP_CODE)
 
     query = Employee.objects.filter(
-        Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS)
-        # comp_code=COMP_CODE
+        Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
+        comp_code=COMP_CODE
     )
 
     # Search filter
@@ -134,7 +134,10 @@ def employee_master(request):
         'employees': employees_page,
         'current_url': current_url,
         'keyword': keyword,
-        'result_cnt': query.count()
+        'result_cnt': query.count(),
+        'paycyle': PAY_CYCLES,
+        'compcode': COMP_CODE,
+        'project': PROJECTS
     }
 
     return render(request, 'pages/payroll/employee_master/employee_master.html', context)
