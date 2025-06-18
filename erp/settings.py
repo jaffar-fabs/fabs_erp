@@ -210,6 +210,14 @@ MEDIA_URL = 'media/'
 
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Session Configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 86400  # 24 hours in seconds
+SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_SAVE_EVERY_REQUEST = True
+
 # Add this setting to allow your site to be displayed in an iframe
 X_FRAME_OPTIONS = 'ALLOWALL'
 
