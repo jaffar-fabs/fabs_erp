@@ -236,6 +236,27 @@
         console.log(employeeId);
     })
 
+    // Add Employee Button - Reset Form
+    $(".add-btn").on("click", function (event) {
+        event.preventDefault();
+        
+        // Reset the form
+        // Reset form fields
+        $("#addEmployeeForm")[0].reset();
+        
+        // Clear any preview images/documents
+        $("#profile_picture_preview").empty();
+        $("#work_permit_document_preview").empty();
+        $("#iloe_document_preview").empty();
+        
+        // Reset dynamic tables
+        $("#multiEntryTable_add tbody").empty();
+        $("#documentList").empty();
+        $("#existingDependents").empty();
+        $("#existingLicenses").empty();
+        $("#existingRecruitmentEntries").empty();
+    });
+
     $(".edit-employee-btn").on("click", function (event) {
         event.preventDefault();
         var employeeId = $(this).data("id");
@@ -532,6 +553,60 @@
         });
 
         // Helper functions for dynamic sections
+        
+        // Function to add event listeners to entry rows
+        function addEntryRowEventListeners(row) {
+            const entryTypeSelect = row.querySelector('.entry-type');
+            const amountInput = row.querySelector('.entry-amount');
+            
+            // Add change event for entry type
+            entryTypeSelect.addEventListener('change', function() {
+                calculateTotals();
+            });
+            
+            // Add input event for amount
+            amountInput.addEventListener('input', function() {
+                calculateTotals();
+            });
+        }
+
+        // Function to calculate totals
+        function calculateTotals() {
+            let totalEarnings = 0;
+            let totalDeductions = 0;
+            const basicPay = parseFloat(document.getElementById('basic_pay').value) || 0;
+            
+            // Get all entry rows
+            const entryRows = document.querySelectorAll('#multiEntryTable_add tbody tr');
+            
+            entryRows.forEach(row => {
+                const entryType = row.querySelector('.entry-type').value;
+                const amount = parseFloat(row.querySelector('.entry-amount').value) || 0;
+                
+                if (entryType === 'EARNINGS') {
+                    totalEarnings += amount;
+                } else if (entryType === 'DEDUCTION') {
+                    totalDeductions += amount;
+                }
+            });
+            
+            // Update display fields
+            const totalEarningsField = document.getElementById('total_earnings');
+            const totalDeductionsField = document.getElementById('total_deductions');
+            const totalSalaryField = document.getElementById('total_salary');
+            
+            if (totalEarningsField) {
+                totalEarningsField.value = totalEarnings.toFixed(2);
+            }
+            if (totalDeductionsField) {
+                totalDeductionsField.value = totalDeductions.toFixed(2);
+            }
+            if (totalSalaryField) {
+                const totalSalary = basicPay + totalEarnings - totalDeductions;
+                totalSalaryField.value = totalSalary.toFixed(2);
+            }
+        }
+        
         function populateEarnDeducts(earnDeducts) {
             const tableBody = document.querySelector('#multiEntryTable_add tbody');
             tableBody.innerHTML = ''; // Clear existing rows
@@ -554,7 +629,7 @@
                             </select>
                         </td>
                         <td>
-                            <input type="number" name="entry_amount[]" class="form-control" value="${item.earn_deduct_amt}" min="0" step="0.01">
+                            <input type="number" name="entry_amount[]" class="form-control entry-amount" value="${item.earn_deduct_amt}" min="0" step="0.01">
                         </td>
                         <td>
                             <select name="entry_proated_flag[]" class="form-control">
@@ -612,7 +687,7 @@
                         </select>
                     </td>
                     <td>
-                        <input type="number" name="entry_amount[]" class="form-control" min="0" step="0.01">
+                        <input type="number" name="entry_amount[]" class="form-control entry-amount" min="0" step="0.01">
                     </td>
                     <td>
                         <select name="entry_proated_flag[]" class="form-control">
@@ -628,6 +703,17 @@
                 `;
                 tableBody.appendChild(newRow);
             }
+            
+            // Add event listeners to all rows and calculate totals
+            const allRows = tableBody.querySelectorAll('tr');
+            allRows.forEach(row => {
+                addEntryRowEventListeners(row);
+            });
+            
+            // Calculate totals after populating data
+            setTimeout(() => {
+                calculateTotals();
+            }, 100);
         }
 
         function populateDocuments(documents) {
