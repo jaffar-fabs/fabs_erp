@@ -522,7 +522,7 @@
                                 </select>
                             </td>
                             <td>
-                                <input type="number" name="entry_amount[]" class="form-control entry-amount" min="0" step="0.01">
+                                <input type="number" name="entry_amount[]" class="form-control" min="0" step="0.01">
                             </td>
                             <td>
                                 <select name="entry_proated_flag[]" class="form-control">
@@ -537,45 +537,6 @@
                     </tbody>
                 </table>
                 <button type="button" class="btn btn-primary" id="addEntry_add">Add Entry</button>
-                
-                <!-- Total Calculation Section -->
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <h6 class="card-title">Total Earning and Deductions</h6>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">Total Earnings:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">AED</span>
-                                            <input type="text" id="total_earnings" class="form-control" readonly value="0.00">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">Total Deductions:</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">AED</span>
-                                            <input type="text" id="total_deductions" class="form-control" readonly value="0.00">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card bg-primary text-white">
-                            <div class="card-body">
-                                <h6 class="card-title">Total Salary</h6>
-                                <div class="input-group">
-                                    <span class="input-group-text">AED</span>
-                                    <input type="text" id="total_salary" class="form-control" readonly value="0.00">
-                                </div>
-                                <small class="form-text">Basic Pay + Total Earnings - Total Deductions</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -599,7 +560,7 @@
             </select>
         </td>
         <td>
-            <input type="number" name="entry_amount[]" class="form-control entry-amount" required min="0" step="0.01">
+            <input type="number" name="entry_amount[]" class="form-control" required min="0" step="0.01">
         </td>
         <td>
             <select name="entry_proated_flag[]" class="form-control">
@@ -610,55 +571,7 @@
         <td><button type="button" class="btn btn-danger remove-entry">Remove</button></td>
     `;
     tableBody.appendChild(newRow);
-    
-    // Add event listeners to new row
-    addEntryRowEventListeners(newRow);
 });
-
-// Function to add event listeners to entry rows
-function addEntryRowEventListeners(row) {
-    const entryTypeSelect = row.querySelector('.entry-type');
-    const amountInput = row.querySelector('.entry-amount');
-    
-    // Add change event for entry type
-    entryTypeSelect.addEventListener('change', function() {
-        calculateTotals();
-    });
-    
-    // Add input event for amount
-    amountInput.addEventListener('input', function() {
-        calculateTotals();
-    });
-}
-
-// Function to calculate totals
-function calculateTotals() {
-    let totalEarnings = 0;
-    let totalDeductions = 0;
-    const basicPay = parseFloat(document.getElementById('basic_pay').value) || 0;
-    
-    // Get all entry rows
-    const entryRows = document.querySelectorAll('#multiEntryTable_add tbody tr');
-    
-    entryRows.forEach(row => {
-        const entryType = row.querySelector('.entry-type').value;
-        const amount = parseFloat(row.querySelector('.entry-amount').value) || 0;
-        
-        if (entryType === 'EARNINGS') {
-            totalEarnings += amount;
-        } else if (entryType === 'DEDUCTION') {
-            totalDeductions += amount;
-        }
-    });
-    
-    // Update display fields
-    document.getElementById('total_earnings').value = totalEarnings.toFixed(2);
-    document.getElementById('total_deductions').value = totalDeductions.toFixed(2);
-    
-    // Calculate total salary
-    const totalSalary = basicPay + totalEarnings - totalDeductions;
-    document.getElementById('total_salary').value = totalSalary.toFixed(2);
-}
 
 // Event delegation for dynamically added rows
 document.querySelector('#multiEntryTable_add').addEventListener('change', function(e) {
@@ -684,34 +597,13 @@ document.querySelector('#multiEntryTable_add').addEventListener('change', functi
                 })
                 .catch(error => console.error('Error fetching codes:', error));
         }
-        
-        // Calculate totals when type changes
-        calculateTotals();
     }
 });
 
 document.querySelector('#multiEntryTable_add').addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-entry')) {
         e.target.closest('tr').remove();
-        calculateTotals(); // Recalculate after removing row
     }
-});
-
-// Add event listener for basic pay changes
-document.addEventListener('DOMContentLoaded', function() {
-    const basicPayInput = document.getElementById('basic_pay');
-    if (basicPayInput) {
-        basicPayInput.addEventListener('input', calculateTotals);
-    }
-    
-    // Add event listeners to existing rows
-    const existingRows = document.querySelectorAll('#multiEntryTable_add tbody tr');
-    existingRows.forEach(row => {
-        addEntryRowEventListeners(row);
-    });
-    
-    // Initial calculation
-    calculateTotals();
 });
 </script>
                 <!-- Account Details -->
