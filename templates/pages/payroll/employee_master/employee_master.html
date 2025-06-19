@@ -231,6 +231,19 @@
     $(document).ready(function () {
     // Edit Employee Functionality
 
+    $(".add-btn").on("click", function (event) {
+        event.preventDefault();
+        
+        // Reset the form
+        // Reset all fields
+        $("#addEmployeeForm")[0].reset();
+        $("#profile_picture_preview").empty();
+        $("#emp_code").val('');
+        $("#emp_name_passport").val('');
+        
+
+    });
+
     $(document).on("click",".edit-employee-btn", function (event) {
         var employeeId = $(this).data("id");
         console.log(employeeId);
