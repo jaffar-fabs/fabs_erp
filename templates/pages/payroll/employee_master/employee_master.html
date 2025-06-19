@@ -241,6 +241,10 @@
         $("#emp_code").val('');
         $("#emp_name_passport").val('');
         
+        // Reset salary totals
+        if (typeof calculateSalaryTotals === 'function') {
+            calculateSalaryTotals();
+        }
 
     });
 
@@ -533,6 +537,13 @@
                         populateDependents(response.data.dependents);
                         populateLicenses(response.data.license_and_passes);
                         populateRecruitment(response.data.recruitment_details);
+                        
+                        // Calculate salary totals after populating all data
+                        setTimeout(() => {
+                            if (typeof calculateSalaryTotals === 'function') {
+                                calculateSalaryTotals();
+                            }
+                        }, 200);
                     } else {
                         alert(response.error || "Failed to fetch employee details.");
                     }
@@ -641,6 +652,13 @@
                 `;
                 tableBody.appendChild(newRow);
             }
+            
+            // Calculate totals after populating earn/deduct data
+            setTimeout(() => {
+                if (typeof calculateSalaryTotals === 'function') {
+                    calculateSalaryTotals();
+                }
+            }, 100);
         }
 
         function populateDocuments(documents) {
@@ -1034,6 +1052,67 @@
                 }
             }
         }
+
+        // Function to calculate salary totals (same as in modal)
+        function calculateSalaryTotals() {
+            let basicPay = parseFloat(document.getElementById('basic_pay').value) || 0;
+            let totalEarnings = 0;
+            let totalDeductions = 0;
+
+            // Calculate earnings and deductions from the multi-entry table
+            const rows = document.querySelectorAll('#multiEntryTable_add tbody tr');
+            rows.forEach(row => {
+                const typeSelect = row.querySelector('select[name="entry_type[]"]');
+                const amountInput = row.querySelector('input[name="entry_amount[]"]');
+                
+                if (typeSelect && amountInput) {
+                    const type = typeSelect.value;
+                    const amount = parseFloat(amountInput.value) || 0;
+                    
+                    if (type === 'EARNINGS') {
+                        totalEarnings += amount;
+                    } else if (type === 'DEDUCTION') {
+                        totalDeductions += amount;
+                    }
+                }
+            });
+
+            // Calculate total salary
+            const totalSalary = basicPay + totalEarnings - totalDeductions;
+
+            // Update display fields
+            const displayBasicPay = document.getElementById('display_basic_pay');
+            const totalEarningsEl = document.getElementById('total_earnings');
+            const totalDeductionsEl = document.getElementById('total_deductions');
+            const totalSalaryEl = document.getElementById('total_salary');
+
+            if (displayBasicPay) displayBasicPay.textContent = basicPay.toFixed(2);
+            if (totalEarningsEl) totalEarningsEl.textContent = totalEarnings.toFixed(2);
+            if (totalDeductionsEl) totalDeductionsEl.textContent = totalDeductions.toFixed(2);
+            if (totalSalaryEl) totalSalaryEl.textContent = totalSalary.toFixed(2);
+        }
+
+        // Add event listeners for salary calculations
+        $(document).ready(function() {
+            // Listen for basic pay changes
+            $(document).on('input', '#basic_pay', function() {
+                calculateSalaryTotals();
+            });
+
+            // Listen for changes in the multi-entry table
+            $(document).on('input', '#multiEntryTable_add input[name="entry_amount[]"]', function() {
+                calculateSalaryTotals();
+            });
+
+            $(document).on('change', '#multiEntryTable_add select[name="entry_type[]"]', function() {
+                calculateSalaryTotals();
+            });
+
+            // Initial calculation
+            setTimeout(() => {
+                calculateSalaryTotals();
+            }, 100);
+        });
 
     });
 </script>

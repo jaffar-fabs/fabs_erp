@@ -489,10 +489,6 @@
                     </div>
                 </div>
 
-            </div>
-
-            </div>
-
             <!-- Multi Entry Section -->
             <div class="mt-4">
                 <h5>Additional Earnings/Deductions</h5>
@@ -538,6 +534,43 @@
                 </table>
                 <button type="button" class="btn btn-primary" id="addEntry_add">Add Entry</button>
             </div>
+            <!-- Salary Summary Fields -->
+            <div class="col-md-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">Salary Summary</h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="col-form-label fw-bold">Basic Pay:</label>
+                                    <div class="form-control-plaintext" id="display_basic_pay">0.00</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="col-form-label fw-bold">Total Earnings:</label>
+                                    <div class="form-control-plaintext text-success" id="total_earnings">0.00</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="col-form-label fw-bold">Total Deductions:</label>
+                                    <div class="form-control-plaintext text-danger" id="total_deductions">0.00</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-3">
+                                    <label class="col-form-label fw-bold">Total Salary:</label>
+                                    <div class="form-control-plaintext text-primary fw-bold" id="total_salary">0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
         </div>
     </div>
 
@@ -603,7 +636,67 @@ document.querySelector('#multiEntryTable_add').addEventListener('change', functi
 document.querySelector('#multiEntryTable_add').addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-entry')) {
         e.target.closest('tr').remove();
+        calculateSalaryTotals(); // Recalculate totals when row is removed
     }
+});
+
+// Function to calculate salary totals
+function calculateSalaryTotals() {
+    let basicPay = parseFloat(document.getElementById('basic_pay').value) || 0;
+    let totalEarnings = 0;
+    let totalDeductions = 0;
+
+    // Calculate earnings and deductions from the multi-entry table
+    const rows = document.querySelectorAll('#multiEntryTable_add tbody tr');
+    rows.forEach(row => {
+        const typeSelect = row.querySelector('select[name="entry_type[]"]');
+        const amountInput = row.querySelector('input[name="entry_amount[]"]');
+        
+        if (typeSelect && amountInput) {
+            const type = typeSelect.value;
+            const amount = parseFloat(amountInput.value) || 0;
+            
+            if (type === 'EARNINGS') {
+                totalEarnings += amount;
+            } else if (type === 'DEDUCTION') {
+                totalDeductions += amount;
+            }
+        }
+    });
+
+    // Calculate total salary
+    const totalSalary = basicPay + totalEarnings - totalDeductions;
+
+    // Update display fields
+    document.getElementById('display_basic_pay').textContent = basicPay.toFixed(2);
+    document.getElementById('total_earnings').textContent = totalEarnings.toFixed(2);
+    document.getElementById('total_deductions').textContent = totalDeductions.toFixed(2);
+    document.getElementById('total_salary').textContent = totalSalary.toFixed(2);
+}
+
+// Add event listeners for basic pay and multi-entry table changes
+document.addEventListener('DOMContentLoaded', function() {
+    // Listen for basic pay changes
+    const basicPayInput = document.getElementById('basic_pay');
+    if (basicPayInput) {
+        basicPayInput.addEventListener('input', calculateSalaryTotals);
+    }
+
+    // Listen for changes in the multi-entry table
+    document.addEventListener('input', function(e) {
+        if (e.target.matches('#multiEntryTable_add input[name="entry_amount[]"]')) {
+            calculateSalaryTotals();
+        }
+    });
+
+    document.addEventListener('change', function(e) {
+        if (e.target.matches('#multiEntryTable_add select[name="entry_type[]"]')) {
+            calculateSalaryTotals();
+        }
+    });
+
+    // Initial calculation
+    calculateSalaryTotals();
 });
 </script>
                 <!-- Account Details -->
