@@ -181,7 +181,7 @@ def get_employee_details(request):
             'passport_release': employee.passport_release,
             'release_reason': employee.release_reason,
             'emp_marital_status': employee.emp_marital_status,
-            'staff_category': employee.staff_category,
+            'staff_category': employee.category,
             'depend_count': employee.depend_count,
             'child_count': employee.child_count,
             'profile_picture': employee.profile_picture.url if employee.profile_picture else None,
