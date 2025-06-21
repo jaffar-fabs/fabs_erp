@@ -83,6 +83,8 @@ def employee_master(request):
         comp_code=COMP_CODE
     )
 
+    salary = request.session.get("user_salary")
+
     # Search filter
     if keyword:
         try:
@@ -873,6 +875,8 @@ def my_login_view(request):
                 request.session["user_paycycles"] = user.user_paycycles
 
                 request.session["user_project"] = user.project
+
+                request.session["user_salary"] = user.view_emp_salary
 
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
