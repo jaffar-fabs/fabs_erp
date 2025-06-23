@@ -146,9 +146,19 @@ DATABASES = {
         'OPTIONS': {
             'sslmode': 'disable'
         }
-    }
+    },
+    # 'oracle': {
+    #     'ENGINE': 'django.db.backends.oracle',
+    #     'NAME': 'sanaerp.oracleapexservices.com:1521/XEPDB1',
+    #     'USER': 'sanaerp68',
+    #     'PASSWORD': 'snVpaEtbL6',
+    #     'HOST': '',
+    #     'PORT': '',
+    # }
 }
 
+# Database Router Configuration
+# DATABASE_ROUTERS = ['erp.database_router.DatabaseRouter']
 
 # DATABASES = {
 #     'default': {

@@ -37,6 +37,7 @@ from django.core.paginator import Paginator
 from .models import GratuitySettlement
 from .models import EmployeePPDetails
 from .utils import export_to_excel, export_to_pdf
+from django.db import connection, connections
 
 
 PAGINATION_SIZE = 6
