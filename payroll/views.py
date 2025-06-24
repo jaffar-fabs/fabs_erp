@@ -3057,6 +3057,7 @@ def payroll_processing(request):
             return redirect('payroll_processing')
 
         try:
+            from decimal import Decimal
             # Fetch paycycle data
             paycycle_data = PaycycleMaster.objects.filter(
                 comp_code=COMP_CODE, process_cycle=paycycle, pay_process_month=paymonth, process_comp_flag=status
@@ -3083,8 +3084,8 @@ def payroll_processing(request):
                     total_ot1=Sum('ot1'),
                     total_ot2=Sum('ot2')
                 )
-                total_morning = attendance_data.get('total_morning')
-                total_afternoon = attendance_data.get('total_afternoon')
+                total_morning = Decimal(str(attendance_data.get('total_morning') or 0))
+                total_afternoon = Decimal(str(attendance_data.get('total_afternoon') or 0))
 
                 # 🔥 Skip this employee if both morning and afternoon are None or 0
                 if not total_morning and not total_afternoon:
@@ -3097,26 +3098,30 @@ def payroll_processing(request):
                     next_repayment_date__range=(paycycle_data.date_from, paycycle_data.date_to)
                 )
 
-                total_installment_amt = 0
+                total_installment_amt = Decimal('0')
                 for advance in advance_data:
                     next_repayment_date = advance.next_repayment_date
                     if next_repayment_date and (paycycle_data.date_from <= next_repayment_date <= paycycle_data.date_to):
-                        total_installment_amt += advance.instalment_amt
+                        total_installment_amt += Decimal(str(advance.instalment_amt or 0))
 
                 # Calculate total working hours
-                total_working_days = (attendance_data.get('total_morning', 0) + attendance_data.get('total_afternoon', 0)) / 8
+                total_working_days = (total_morning + total_afternoon) / Decimal('8')
 
                 # Calculate basic and allowance per day
-                basic_per_day = employee.basic_pay / paycycle_data.days_per_month if employee.basic_pay else 0
-                allowance_per_day = employee.allowance / paycycle_data.days_per_month if employee.allowance else 0
+                basic_pay = Decimal(str(employee.basic_pay or 0))
+                allowance = Decimal(str(employee.allowance or 0))
+                days_per_month = Decimal(str(paycycle_data.days_per_month or 1))
+                
+                basic_per_day = basic_pay / days_per_month if basic_pay else Decimal('0')
+                allowance_per_day = allowance / days_per_month if allowance else Decimal('0')
 
                 # Calculate total basic and allowance
                 total_basic = basic_per_day * total_working_days
                 total_allowance = allowance_per_day * total_working_days
 
                 # Initialize earnings and deductions
-                earn_amount = 0
-                deduct_amount = 0
+                earn_amount = Decimal('0')
+                deduct_amount = Decimal('0')
 
                 # Fetch Earnings and Deductions Fixed
                 earn_deduct_data = EarnDeductMaster.objects.filter(
@@ -3126,20 +3131,21 @@ def payroll_processing(request):
                 )
 
                 for record in earn_deduct_data:
+                    earn_deduct_amt = Decimal(str(record.earn_deduct_amt or 0))
                     if record.earn_type == 'EARNINGS':
                         if record.prorated_flag:
-                            earn_amount += (record.earn_deduct_amt / paycycle_data.days_per_month) * total_working_days
+                            earn_amount += (earn_deduct_amt / days_per_month) * total_working_days
                         else:
-                            earn_amount += record.earn_deduct_amt
+                            earn_amount += earn_deduct_amt
                     elif record.earn_type == 'DEDUCTIONS':
                         if record.prorated_flag:
-                            deduct_amount += (record.earn_deduct_amt / paycycle_data.days_per_month) * total_working_days
+                            deduct_amount += (earn_deduct_amt / days_per_month) * total_working_days
                         else:
-                            deduct_amount += record.earn_deduct_amt
+                            deduct_amount += earn_deduct_amt
 
                 # Fetch Adhoc Earnings and Deductions
-                adhoc_earn_amount = 0
-                adhoc_deduct_amount = 0
+                adhoc_earn_amount = Decimal('0')
+                adhoc_deduct_amount = Decimal('0')
 
                 adhoc_earn_deduct_data = PayrollEarnDeduct.objects.filter(
                     comp_code=COMP_CODE,
@@ -3149,17 +3155,18 @@ def payroll_processing(request):
                 )
 
                 for adhoc_record in adhoc_earn_deduct_data:
+                    pay_amount = Decimal(str(adhoc_record.pay_amount or 0))
                     if adhoc_record.earn_deduct_type == 'EARNINGS':
-                        adhoc_earn_amount += adhoc_record.pay_amount
+                        adhoc_earn_amount += pay_amount
                     else:
-                        adhoc_deduct_amount += adhoc_record.pay_amount
+                        adhoc_deduct_amount += pay_amount
 
                 # Calculate OT1 and OT2 amounts
-                ot1_hrs = attendance_data.get('total_ot1', 0)
-                ot2_hrs = attendance_data.get('total_ot2', 0)
-                basic_per_hour = basic_per_day / 8
-                ot1_amt = (basic_per_hour * paycycle_data.ot1_amt) * ot1_hrs
-                ot2_amt = (basic_per_hour * paycycle_data.ot2_amt) * ot2_hrs
+                ot1_hrs = Decimal(str(attendance_data.get('total_ot1') or 0))
+                ot2_hrs = Decimal(str(attendance_data.get('total_ot2') or 0))
+                basic_per_hour = basic_per_day / Decimal('8')
+                ot1_amt = (basic_per_hour * Decimal(str(paycycle_data.ot1_amt or 0))) * ot1_hrs
+                ot2_amt = (basic_per_hour * Decimal(str(paycycle_data.ot2_amt or 0))) * ot2_hrs
 
                 other_earnings = earn_amount + adhoc_earn_amount
                 # Total Earnings and Deductions
@@ -3167,37 +3174,37 @@ def payroll_processing(request):
                 total_deductions = deduct_amount + adhoc_deduct_amount + total_installment_amt
 
                 # Calculate Net Pay
-                net_pay =  total_earnings - total_deductions
+                net_pay = total_earnings - total_deductions
                 
                 # Append data for HTML rendering
                 payroll_data.append({
                     'employee_code': employee.emp_code,
                     'employee_name': employee.emp_name,
                     'Designation' : employee.designation,
-                    'Basic': f"{employee.basic_pay:.2f}" if employee.basic_pay else "0.00",
-                    'Allowance': f"{employee.allowance:.2f}" if employee.allowance else "0.00",
-                    'basic_per_day': f"{basic_per_day:.2f}",
-                    'basic_per_hour': f"{basic_per_hour:.2f}",
-                    'allowance_per_day': f"{allowance_per_day:.2f}",
-                    'total_basic': f"{total_basic:.2f}",
-                    'total_allowance': f"{total_allowance:.2f}",
-                    'earn_amount': f"{earn_amount:.2f}",
-                    'deduct_amount': f"{deduct_amount:.2f}",
-                    'adhoc_earn_amount': f"{adhoc_earn_amount:.2f}",
-                    'adhoc_deduct_amount': f"{adhoc_deduct_amount:.2f}",
-                    'total_earnings': f"{total_earnings:.2f}",
-                    'total_deductions': f"{total_deductions:.2f}",
-                    'ot1_amt': f"{ot1_amt:.2f}",
-                    'ot2_amt': f"{ot2_amt:.2f}",
-                    'installment_amt': f"{total_installment_amt:.2f}",
-                    'net_pay': f"{net_pay:.2f}",
+                    'Basic': f"{float(basic_pay):.2f}" if basic_pay else "0.00",
+                    'Allowance': f"{float(allowance):.2f}" if allowance else "0.00",
+                    'basic_per_day': f"{float(basic_per_day):.2f}",
+                    'basic_per_hour': f"{float(basic_per_hour):.2f}",
+                    'allowance_per_day': f"{float(allowance_per_day):.2f}",
+                    'total_basic': f"{float(total_basic):.2f}",
+                    'total_allowance': f"{float(total_allowance):.2f}",
+                    'earn_amount': f"{float(earn_amount):.2f}",
+                    'deduct_amount': f"{float(deduct_amount):.2f}",
+                    'adhoc_earn_amount': f"{float(adhoc_earn_amount):.2f}",
+                    'adhoc_deduct_amount': f"{float(adhoc_deduct_amount):.2f}",
+                    'total_earnings': f"{float(total_earnings):.2f}",
+                    'total_deductions': f"{float(total_deductions):.2f}",
+                    'ot1_amt': f"{float(ot1_amt):.2f}",
+                    'ot2_amt': f"{float(ot2_amt):.2f}",
+                    'installment_amt': f"{float(total_installment_amt):.2f}",
+                    'net_pay': f"{float(net_pay):.2f}",
                     'paycycle': paycycle,
                     'paymonth': paymonth,
                     'total_days': paycycle_data.days_per_month,
-                    'working_days': f"{total_working_days:.2f}",
-                    'total_ot1': f"{ot1_hrs:.2f}",
-                    'total_ot2': f"{ot2_hrs:.2f}",
-                    'other_earnings': f"{other_earnings:.2f}"
+                    'working_days': f"{float(total_working_days):.2f}",
+                    'total_ot1': f"{float(ot1_hrs):.2f}",
+                    'total_ot2': f"{float(ot2_hrs):.2f}",
+                    'other_earnings': f"{float(other_earnings):.2f}"
                 })
 
                 # Delete existing records for the employee in the given pay cycle and month
@@ -3220,11 +3227,11 @@ def payroll_processing(request):
                     project_code=employee.department,
                     earn_type='NET',
                     earn_code='ER999',
-                    morning=attendance_data.get('total_morning', 0),
-                    afternoon=attendance_data.get('total_afternoon', 0),
-                    ot1=ot1_hrs,
-                    ot2=ot2_hrs,
-                    amount=net_pay,
+                    morning=float(total_morning),
+                    afternoon=float(total_afternoon),
+                    ot1=float(ot1_hrs),
+                    ot2=float(ot2_hrs),
+                    amount=float(net_pay),
                     earn_reports='NET PAY'
                 ))
 
@@ -3236,11 +3243,11 @@ def payroll_processing(request):
                     project_code=employee.prj_code,
                     earn_type='EARNINGS',
                     earn_code='ER001',
-                    morning=attendance_data.get('total_morning', 0),
-                    afternoon=attendance_data.get('total_afternoon', 0),
-                    ot1=ot1_hrs,
-                    ot2=ot2_hrs,
-                    amount=total_basic,
+                    morning=float(total_morning),
+                    afternoon=float(total_afternoon),
+                    ot1=float(ot1_hrs),
+                    ot2=float(ot2_hrs),
+                    amount=float(total_basic),
                     earn_reports='EARN BASIC'
                 ))
 
@@ -3252,11 +3259,11 @@ def payroll_processing(request):
                     project_code=employee.prj_code,
                     earn_type='EARNINGS',
                     earn_code='ER002',
-                    morning=attendance_data.get('total_morning', 0),
-                    afternoon=attendance_data.get('total_afternoon', 0),
-                    ot1=ot1_hrs,
-                    ot2=ot2_hrs,
-                    amount=total_allowance,
+                    morning=float(total_morning),
+                    afternoon=float(total_afternoon),
+                    ot1=float(ot1_hrs),
+                    ot2=float(ot2_hrs),
+                    amount=float(total_allowance),
                     earn_reports='EARN ALLOWANCE'
                 ))
 
@@ -3268,11 +3275,11 @@ def payroll_processing(request):
                     project_code=employee.prj_code,
                     earn_type='EARNINGS',
                     earn_code='ER003',
-                    # morning=attendance_data.get('total_morning', 0),
-                    # afternoon=attendance_data.get('total_afternoon', 0),
-                    ot1=ot1_hrs,
-                    # ot2=ot2_hrs,
-                    amount=ot1_amt,
+                    # morning=float(total_morning),
+                    # afternoon=float(total_afternoon),
+                    ot1=float(ot1_hrs),
+                    # ot2=float(ot2_hrs),
+                    amount=float(ot1_amt),
                     earn_reports='EARN OT1'
                 ))
 
@@ -3284,11 +3291,11 @@ def payroll_processing(request):
                     project_code=employee.prj_code,
                     earn_type='EARNINGS',
                     earn_code='ER004',
-                    # morning=attendance_data.get('total_morning', 0),
-                    # afternoon=attendance_data.get('total_afternoon', 0),
-                    # ot1=ot1_hrs,
-                    ot2=ot2_hrs,
-                    amount=ot2_amt,
+                    # morning=float(total_morning),
+                    # afternoon=float(total_afternoon),
+                    # ot1=float(ot1_hrs),
+                    ot2=float(ot2_hrs),
+                    amount=float(ot2_amt),
                     earn_reports='EARN OT2'
                 ))
 
@@ -3302,7 +3309,7 @@ def payroll_processing(request):
                         project_code=employee.prj_code,
                         earn_type=record.earn_type,
                         earn_code=record.earn_deduct_code,
-                        amount=record.earn_deduct_amt,
+                        amount=float(Decimal(str(record.earn_deduct_amt or 0))),
                         earn_reports=record.earn_deduct_code
                     ))
 
@@ -3316,7 +3323,7 @@ def payroll_processing(request):
                         project_code=employee.prj_code,
                         earn_type=adhoc_record.earn_deduct_type,
                         earn_code=adhoc_record.earn_deduct_code,
-                        amount=adhoc_record.pay_amount,
+                        amount=float(Decimal(str(adhoc_record.pay_amount or 0))),
                         earn_reports=adhoc_record.earn_deduct_code
                     ))
 
@@ -3329,7 +3336,7 @@ def payroll_processing(request):
                         project_code=employee.prj_code,
                         earn_type='DEDUCTIONS',
                         earn_code=advance_record.advance_code,
-                        amount=advance_record.instalment_amt,
+                        amount=float(Decimal(str(advance_record.instalment_amt or 0))),
                         earn_reports='Advance Loan'
                     ))
 
