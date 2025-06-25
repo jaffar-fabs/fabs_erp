@@ -1268,7 +1268,9 @@ class Paycycle(View):
     #     auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
     #     return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
     
+    
 def project(request):
+    set_comp_code(request)
     if request.method == 'POST':
         try:
             # Check if it's an Excel upload
@@ -1309,7 +1311,6 @@ def project(request):
                                 'error': f'Missing required fields: {", ".join(missing_fields)}'
                             })
                             continue
-
 
                         # Validate dates
                         try:
@@ -1356,7 +1357,8 @@ def project(request):
                         'invalid_records': invalid_records
                     })
 
-                # If this is the final upload
+                    
+                    
                 if request.POST.get('confirm_upload') == 'true':
                     success_count = 0
                     for record in valid_records:
@@ -1366,7 +1368,7 @@ def project(request):
                             
                             # Create project
                             project = projectMaster(
-                                comp_code=request.session.get('comp_code'),
+                                comp_code=COMP_CODE,
                                 prj_code=row_data['Project Code*'],
                                 prj_name=row_data['Project Name*'],
                                 project_description=row_data['Project Description*'],
@@ -1391,18 +1393,29 @@ def project(request):
                                 project_status=row_data.get('Project Status', ''),
                                 created_by=1
                             )
+                            
+                            # Validate the project before saving
+                            project.full_clean()  # This will raise ValidationError if there are issues
                             project.save()
                             success_count += 1
+                        except ValidationError as ve:
+                            invalid_records.append({
+                                'row': record['row'],
+                                'error': f'Validation error: {ve.messages}'
+                            })
+                            print(f"Validation error at row {record['row']}: {ve.messages}")
                         except Exception as e:
                             invalid_records.append({
                                 'row': record['row'],
                                 'error': f'Error saving record: {str(e)}'
                             })
+                            print(f"Error saving record at row {record['row']}: {str(e)}")
 
                     return JsonResponse({
                         'status': 'success',
                         'message': f'Successfully imported {success_count} projects'
                     })
+                    
 
             # Handle regular form submission
             else:
@@ -1416,10 +1429,9 @@ def project(request):
             })
         
     # GET request handling
-    # Your existing GET request code here
     set_comp_code(request)
     template_name = 'pages/payroll/project_master/projects.html'
-    
+
     def col2num(self, col):
         import string
         num = 0
@@ -3655,7 +3667,6 @@ def update_advance_details(request, advance_id):
             return JsonResponse({'success': True, 'message': 'Record updated successfully!'})
         except Exception as e:
             logger.error(f"Error updating AdvanceMaster with ID {advance_id}: {e}")
-            print(e)
             return JsonResponse({'success': False, 'message': 'An error occurred while updating!'})
     return JsonResponse({'success': False, 'message': 'Invalid request method!'})
 

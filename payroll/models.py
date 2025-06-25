@@ -478,14 +478,14 @@ class projectMaster(models.Model):
 
     comp_code = models.CharField(max_length=15)  # Removed default value
     project_id = models.BigAutoField(primary_key=True)
-    prj_code = models.CharField(max_length=50)
-    prj_name = models.CharField(max_length=50)
+    prj_code = models.CharField(max_length=100)
+    prj_name = models.CharField(max_length=100)
     project_description = models.TextField(max_length=500)
-    project_type = models.CharField(max_length=50, null=True, blank=True)
-    project_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    project_type = models.CharField(max_length=100, null=True, blank=True)
+    project_value = models.CharField(max_length=100, null=True, blank=True)
     timeline_from = models.DateField(null=False, blank=False)
     timeline_to = models.DateField(null=False, blank=False)
-    prj_city = models.CharField(max_length=50, null=True, blank=True)
+    prj_city = models.CharField(max_length=500, null=True, blank=True)
     instance_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     created_by = models.BigIntegerField()
     created_on = models.DateTimeField(auto_now_add=True)
@@ -504,8 +504,8 @@ class projectMaster(models.Model):
     project_supervisor = models.CharField(max_length=500, null=True, blank=True)
     procurement_user = models.CharField(max_length=500, null=True, blank=True)
     indent_user = models.CharField(max_length=500, null=True, blank=True)
-    final_contract_value = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
-    project_status = models.CharField(max_length=50, null=True, blank=True)
+    final_contract_value = models.CharField(max_length=100, null=True, blank=True)
+    project_status = models.CharField(max_length=100, null=True, blank=True)
 
     
     def __str__(self):
