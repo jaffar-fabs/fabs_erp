@@ -2849,6 +2849,7 @@ def company_edit(request):
             return redirect('company_list')
 
         except Exception as e:
+            print(e)
             return JsonResponse({"error": "Error updating company data."}, status=500)
 
     return redirect('company_list')
