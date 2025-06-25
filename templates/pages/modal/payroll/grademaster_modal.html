@@ -33,8 +33,17 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label" for="validationCustom01">Grade Code </label>
-                        <input type="text" name="grade_code" class="form-control" autocomplete="off" readonly/>
+                        <label class="col-form-label" for="validationCustom01">Grade Code <span
+                                class="text-danger">*</span></label>
+                        <select name="grade_code" class="form-control" required>
+                            <option value="">Select</option>
+                            {% for statuses in grade_code_data %}
+                                <option value="{{ statuses.base_value }}">
+                                    {{ statuses.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">Please provide a Grade Code.</div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -164,8 +173,15 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Grade Code</label>
-                        <input type="text" name="grade_code" class="form-control" autocomplete="off" readonly />
+                        <label class="col-form-label">Grade Code <span class="text-danger">*</span></label>
+                        <select name="grade_code" class="form-control" required>
+                            <option value="">Select</option>
+                            {% for statuses in grade_code_data %}
+                                <option value="{{ statuses.base_value }}">
+                                    {{ statuses.base_description }}
+                                </option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -224,7 +240,7 @@
     
                 // Fetch data attributes from row
                 document.querySelector('#grade_id').value = row.getAttribute('data-id');
-                document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
+                document.querySelector('#offcanvas_edit select[name="grade_code"]').value = row.getAttribute('data-code') || '';
                 document.querySelector('#offcanvas_edit select[name="grade_desc"]').value = row.getAttribute('data-desc') || '';
                 
                 // Handle comma-separated designation values

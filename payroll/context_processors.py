@@ -401,3 +401,11 @@ def get_pass_reason(request):
     return {
         'pass_data': pass_data
     }
+
+# make the grade_code not in grade master
+def get_grade_code(request):
+    comp_code = get_comp_code(request)
+    grade_code_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'GRADE_CODE')
+    return {
+        'grade_code_data': grade_code_data
+    }

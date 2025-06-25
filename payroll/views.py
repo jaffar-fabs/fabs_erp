@@ -2165,15 +2165,15 @@ class GradeMasterList(View):
             grade.modified_on = now()
             grade.save()
         else:
-            code = GradeMaster.objects.filter(comp_code=COMP_CODE).count()
-            if code:
-                code = int(code) + 1
-            else:
-                code = 1
+            # code = GradeMaster.objects.filter(comp_code=COMP_CODE).count()
+            # if code:
+            #     code = int(code) + 1
+            # else:
+            #     code = 1
             # Create new grade
             grade = GradeMaster.objects.create(
                 comp_code=COMP_CODE,
-                grade_code=code,
+                grade_code=grade_code,
                 grade_desc=grade_desc,
                 nationality=nationality,
                 attendance_days=int(attendance_days),

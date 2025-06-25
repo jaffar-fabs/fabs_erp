@@ -114,6 +114,7 @@ TEMPLATES = [
                 'payroll.context_processors.get_company',
                 'payroll.context_processors.get_pass_reason',
                 'payroll.context_processors.get_agent', 
+                'payroll.context_processors.get_grade_code',
 
             ],
         },
