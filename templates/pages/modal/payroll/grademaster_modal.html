@@ -20,7 +20,7 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
+                        <select name="designation" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for statuses in desig_data %}
                                 <option value="{{ statuses.base_value }}">
@@ -154,10 +154,10 @@
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Designation</label>
-                        <select name="designation" class="form-control">
+                        <select name="designation" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for statuses in desig_data %}
-                                <option value="{{ statuses.base_value }}" {% if statuses.base_value == grade.designation %}selected{% endif %}>
+                                <option value="{{ statuses.base_value }}">
                                     {{ statuses.base_description }}
                                 </option>
                             {% endfor %}
@@ -228,7 +228,20 @@
                 document.querySelector('#grade_id').value = row.getAttribute('data-id');
                 document.querySelector('#offcanvas_edit input[name="grade_code"]').value = row.getAttribute('data-code');
                 document.querySelector('#offcanvas_edit select[name="grade_desc"]').value = row.getAttribute('data-desc') || '';
-                document.querySelector('#offcanvas_edit select[name="designation"]').value = row.getAttribute('data-designation') || '';
+                
+                // Handle comma-separated designation values
+                const designationValue = row.getAttribute('data-designation') || '';
+                const designationSelect = document.querySelector('#offcanvas_edit select[name="designation"]');
+                
+                // Clear previous selections
+                $(designationSelect).val(null);
+                
+                // Split by comma and set selected values
+                if (designationValue) {
+                    const designations = designationValue.split(',').map(item => item.trim());
+                    $(designationSelect).val(designations);
+                }
+                
                 document.querySelector('#offcanvas_edit input[name="passage_amount_adult"]').value = row.getAttribute('data-passage-adult') || 0;
                 document.querySelector('#offcanvas_edit input[name="passage_amount_child"]').value = row.getAttribute('data-passage-child') || 0;
     

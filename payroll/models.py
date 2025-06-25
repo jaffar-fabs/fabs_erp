@@ -586,7 +586,7 @@ class GradeMaster(models.Model):
     allowance6 = models.CharField(max_length=20 , null=True)
     allowance7 = models.CharField(max_length=20 , null=True)
     allowance8 = models.CharField(max_length=20 , null=True)
-    designation = models.CharField(max_length=50, blank=True, null=True)
+    designation = models.CharField(max_length=1000, blank=True, null=True)
     is_active = models.CharField(max_length=1)
     instance_id = models.CharField(max_length=50)
     created_by = models.IntegerField()

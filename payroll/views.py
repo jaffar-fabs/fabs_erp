@@ -2079,20 +2079,17 @@ from django.utils.timezone import now
 class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
-    # def get(self, request):
-    #     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-    #         grade_code = request.GET.get('grade_code', None)
-    #         data = {
-    #             'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
-    #         }
-    #         return JsonResponse(data)
-
-    #     datas = GradeMaster.objects.filter(comp_code=COMP_CODE)
-    #     return render(request, self.template_name, {'datas': datas})
-    
-    
-    
     def get(self, request):
+        set_comp_code(request)
+        
+        # Handle AJAX request for grade code validation
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            grade_code = request.GET.get('grade_code', None)
+            data = {
+                'exists': GradeMaster.objects.filter(grade_code=grade_code, comp_code=COMP_CODE).exists()
+            }
+            return JsonResponse(data)
+
         # Fetch all relevant data from the database
         datas = GradeMaster.objects.filter(comp_code=COMP_CODE).values(
             'grade_id',
@@ -2106,17 +2103,24 @@ class GradeMasterList(View):
             'allowance3',
             'is_active'
         )
-        return render(request, "pages/payroll/grade_master/grade_master_list.html", {'datas': datas})
 
+        
+        context = {
+            'datas': datas,
+        }
+        
+        return render(request, self.template_name, context)
 
     def post(self, request):
+        set_comp_code(request)
+        
         # Check for delete request
         if "delete_grade_id" in request.POST:
             grade_id = request.POST.get("delete_grade_id")
             GradeMaster.objects.filter(grade_id=grade_id, comp_code=COMP_CODE).update(is_active="N")
             return redirect("grade_master")
 
-        # Extract form data for edit operation
+        # Extract form data
         grade_id = request.POST.get("grade_id")
         grade_code = request.POST.get("grade_code")
         grade_desc = request.POST.get("grade_desc")
@@ -2138,9 +2142,13 @@ class GradeMasterList(View):
             "allowance8": request.POST.get("allowance8") or None,
         }
         is_active = "Y" if "is_active" in request.POST else "N"
-        designation = request.POST.get("designation")
+        
+        # Handle multiple designations from Select2
+        designations = request.POST.getlist("designation")  # Use getlist for multiple values
+        designation_str = ",".join(designations) if designations else ""  # Join multiple values with comma
 
         if grade_id:
+            # Update existing grade
             grade = get_object_or_404(GradeMaster, grade_id=grade_id, comp_code=COMP_CODE)
             grade.grade_code = grade_code
             grade.grade_desc = grade_desc
@@ -2152,12 +2160,12 @@ class GradeMasterList(View):
             for key, value in allowances.items():
                 setattr(grade, key, value)
             grade.is_active = is_active
-            grade.designation = designation
+            grade.designation = designation_str  # Store comma-separated designations
             grade.modified_by = 1
             grade.modified_on = now()
             grade.save()
         else:
-            set_comp_code(request)
+            # Create new grade
             grade = GradeMaster.objects.create(
                 comp_code=COMP_CODE,
                 grade_code=grade_code,
@@ -2171,14 +2179,13 @@ class GradeMasterList(View):
                 created_by=1,
                 created_on=now(),
                 instance_id='INSTANCE001',
-                designation=designation,
+                designation=designation_str,  # Store comma-separated designations
             )
             for key, value in allowances.items():
                 setattr(grade, key, value)
             grade.save()
 
         return redirect("grade_master")
-
 
 # HOLIDAY ---------------------------------  HOLIDAY ----------------------------------------
 
