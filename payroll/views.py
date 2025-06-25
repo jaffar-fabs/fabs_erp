@@ -2626,7 +2626,8 @@ def company_master(request):
     if request.session.get('username') == "SYSTEM":
         query = CompanyMaster.objects.all()
     else:
-        query = CompanyMaster.objects.filter(company_code=COMP_CODE)
+        # query = CompanyMaster.objects.filter(company_code=COMP_CODE)
+        query = CompanyMaster.objects.all()
 
     # Apply search filter if a keyword is provided
     if keyword:
