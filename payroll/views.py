@@ -7183,8 +7183,15 @@ def salary_register_report(request):
                 AND ABS.PAY_CYCLE = A.PAY_CYCLE
                 
                 WHERE 
-                        A.COMP_CODE = '1000'
-                        
+                        A.COMP_CODE = '1000'"""
+            
+            # Add employee filter if employee_id is provided
+            params = []
+            if employee_id:
+                query += " AND A.EMPLOYEE_CODE = %s"
+                params.append(employee_id)
+
+            query += """
 
                 GROUP BY  
                     A.COMP_CODE,
@@ -7204,7 +7211,7 @@ def salary_register_report(request):
         
         # Execute the query and get results
         with connection.cursor() as cursor:
-            cursor.execute(query, [employee_id])
+            cursor.execute(query, params)
             columns = [col[0] for col in cursor.description]
             results = [dict(zip(columns, row)) for row in cursor.fetchall()]
         
