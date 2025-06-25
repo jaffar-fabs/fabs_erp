@@ -7226,3 +7226,204 @@ def salary_register_report(request):
             'status': 'error',
             'message': str(e)
         }, status=400)
+
+
+def salary_register_multi_line(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/salary_register_multi.html')
+
+def salary_register_multi_line_report(request):
+    set_comp_code(request)
+    """View to generate multi-line salary register report"""
+    try:
+        if request.method == 'POST':
+            employee_id = request.POST.get('employee_id', '')
+
+            # First query - Employee header information
+            header_query = """
+                SELECT DISTINCT
+                    a.emp_code,
+                    a.emp_name,
+                    a.designation,
+                    a.religion,
+                    a.department,
+                    a.process_cycle,
+                    a.emp_status,
+                    a.basic_pay,
+                    f.process_comp_flag,
+                    CASE
+                        WHEN f.attendance_uom = 'DAYS' THEN
+                            ( CAST(((CAST(SUM(
+                                CASE WHEN d.earn_code = 'ER001' THEN d.morning END
+                            ) AS DECIMAL(18, 1)) + CAST(SUM(
+                                CASE WHEN d.earn_code = 'ER001' THEN d.afternoon END
+                            ) AS DECIMAL(18, 1))) / 8) AS DECIMAL(18, 1)) )
+                        ELSE
+                            ( CAST(((CAST(SUM(
+                                CASE WHEN d.earn_code = 'ER001' THEN d.morning END
+                            ) AS DECIMAL(18, 1)) + CAST(SUM(
+                                CASE WHEN d.earn_code = 'ER001' THEN d.afternoon END
+                            ) AS DECIMAL(18, 1)))) AS DECIMAL(18, 1)) )
+                    END AS workdays,
+                    CASE WHEN a.employee_bank IS NULL THEN 'CASH' ELSE 'BANK' END AS mode,
+                    COALESCE(a.date_of_rejoin, a.date_of_join) AS doj
+                FROM
+                    payroll_employee a
+                    RIGHT JOIN payroll_payprocess d ON a.comp_code = d.comp_code AND d.employee_code = a.emp_code
+                    INNER JOIN payroll_paycyclemaster f ON a.comp_code = f.comp_code AND d.pay_cycle = f.process_cycle
+                WHERE
+                    a.emp_code IN (SELECT DISTINCT employee_code FROM payroll_payprocess)
+                    AND a.comp_code = '1000'
+                GROUP BY
+                    a.emp_code,
+                    a.emp_name,
+                    a.designation,
+                    a.religion,
+                    a.department,
+                    a.process_cycle,
+                    a.emp_status,
+                    a.basic_pay,
+                    f.process_comp_flag,
+                    a.employee_bank,
+                    a.date_of_rejoin,
+                    a.date_of_join,
+                    f.attendance_uom
+                ORDER BY a.emp_code
+            """
+
+            # Second query - Earnings and deductions details
+            detail_query = """
+                SELECT
+                    earn_code AS code,
+                    earn_type,
+                    earn_reports AS description,
+                    CASE
+                        WHEN earn_reports = 'EARN OT1' THEN COALESCE(SUM(ot1), 0)
+                        WHEN earn_reports = 'EARN OT2' THEN COALESCE(SUM(ot2), 0)
+                        ELSE 0
+                    END AS othrs,
+                    CASE
+                        WHEN earn_type IN ('EARNINGS', 'EARN') THEN ROUND(COALESCE(SUM(amount), 0), 0)
+                        ELSE (SUM(amount) * -1)
+                    END AS amount,
+                    employee_code AS emp_code
+                FROM
+                    payroll_payprocess
+                WHERE
+                    comp_code = COALESCE(%s, comp_code)
+                    AND earn_code NOT IN ('ER900', 'ER999', 'DD900')
+                    AND employee_code = COALESCE(%s, employee_code)
+                GROUP BY
+                    employee_code,
+                    earn_code,
+                    earn_reports,
+                    earn_type
+                ORDER BY
+                    employee_code,
+                    earn_type DESC,
+                    earn_code ASC
+            """
+
+            # Execute header query
+            header_params = [COMP_CODE]
+            with connection.cursor() as cursor:
+                cursor.execute(header_query, header_params)
+                header_columns = [col[0] for col in cursor.description]
+                header_results = [dict(zip(header_columns, row)) for row in cursor.fetchall()]
+
+            # Execute detail query
+            detail_params = [COMP_CODE, employee_id]
+            with connection.cursor() as cursor:
+                cursor.execute(detail_query, detail_params)
+                detail_columns = [col[0] for col in cursor.description]
+                detail_results = [dict(zip(detail_columns, row)) for row in cursor.fetchall()]
+
+            # Create multi-line report data
+            report_data = []
+
+            for header_row in header_results:
+                emp_code = header_row['emp_code']
+
+                # Add header row
+                header_data = {
+                    'emp_code': header_row['emp_code'],
+                    'emp_name': header_row['emp_name'],
+                    'designation': header_row['designation'],
+                    'religion': header_row['religion'],
+                    'department': header_row['department'],
+                    'process_cycle': header_row['process_cycle'],
+                    'emp_status': header_row['emp_status'],
+                    'basic_pay': header_row['basic_pay'],
+                    'process_comp_flag': header_row['process_comp_flag'],
+                    'workdays': header_row['workdays'],
+                    'mode': header_row['mode'],
+                    'doj': header_row['doj'],
+                    'code': '',
+                    'earn_type': '',
+                    'description': '',
+                    'othrs': '',
+                    'amount': '',
+                    'row_type': 'HEADER'
+                }
+                report_data.append(header_data)
+
+                # Add detail rows for this employee
+                employee_details = [d for d in detail_results if d['emp_code'] == emp_code]
+                for detail_row in employee_details:
+                    detail_data = {
+                        'emp_code': '',
+                        'emp_name': '',
+                        'designation': '',
+                        'religion': '',
+                        'department': '',
+                        'process_cycle': '',
+                        'emp_status': '',
+                        'basic_pay': '',
+                        'process_comp_flag': '',
+                        'workdays': '',
+                        'mode': '',
+                        'doj': '',
+                        'code': detail_row['code'],
+                        'earn_type': detail_row['earn_type'],
+                        'description': detail_row['description'],
+                        'othrs': detail_row['othrs'],
+                        'amount': detail_row['amount'],
+                        'row_type': 'DETAIL'
+                    }
+                    report_data.append(detail_data)
+
+                # Add empty row for spacing
+                if employee_details:
+                    spacing_data = {
+                        'emp_code': '',
+                        'emp_name': '',
+                        'designation': '',
+                        'religion': '',
+                        'department': '',
+                        'process_cycle': '',
+                        'emp_status': '',
+                        'basic_pay': '',
+                        'process_comp_flag': '',
+                        'workdays': '',
+                        'mode': '',
+                        'doj': '',
+                        'code': '',
+                        'earn_type': '',
+                        'description': '',
+                        'othrs': '',
+                        'amount': '',
+                        'row_type': 'SPACING'
+                    }
+                    report_data.append(spacing_data)
+
+            # Convert results to DataFrame
+            df = pd.DataFrame(report_data)
+
+            # Export to PDF
+            return export_to_pdf(df, 'salary_register_multiline_report', 'Salary Register Multi-Line Report')
+
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
