@@ -1,7 +1,8 @@
 DECLARE
     vSerl number := 0;
-    vDocumentNo varchar2(30) := apex_application.g_x01;    
+    vDocumentNo varchar2(30) := '';    
     vID number := 0;
+    vComp varchar(50) := '1000';
     
     -- Header variables
     vCustomer varchar2(100) := '';
@@ -13,24 +14,43 @@ DECLARE
     vPaymentType varchar2(100) := '';
     vAlternateNo varchar2(100) := '';
     vDate varchar2(100) := '';
-    vTotal varchar2(100) := 0;
+    vTotal number := 0;  -- Changed to number
     vPaymentMode varchar2(100) := '';
     vTranNumber varchar2(100) := '';
     vTotalInWords varchar2(100) := '';
     vToken varchar2(100) := '';
-    vDiscount varchar2(50) := '';
-    vSubTot varchar2(50) := '';
-    vVat varchar(50) := '';
+    vDiscount number := 0;  -- Changed to number
+    vSubTot number := 0;    -- Changed to number
+    vVat number := 0;       -- Changed to number
     vOrderId number := :P12_ORDER_ID;
 
     vTranCount number := 0;
     vDetailsCount NUMBER := 0;
     vGlobalDiscount NUMBER := 0;
+    
+    -- Item calculation variables
+    vItemAmount NUMBER := 0;
+    vItemDiscount NUMBER := 0;
+    vItemVat NUMBER := 0;
+    vItemTotal NUMBER := 0;
 
 BEGIN
+    -- Debug: Check if order exists
+    htp.p('{"Debug" : "Processing Order ID: ' || :P12_ORDER_ID || '"}');
+    
+    -- Check if order exists first
+    SELECT COUNT(*) INTO vTranCount FROM ORDER_HEADER WHERE ORDER_ID = :P12_ORDER_ID;
+    htp.p('{"Debug" : "Order count found: ' || vTranCount || '"}');
+    
+    IF vTranCount = 0 THEN
+        htp.p('{"Status" : 2, "Msg" : "Order ID ' || :P12_ORDER_ID || ' not found"}');
+        RETURN;
+    END IF;
+    
     -- Get new document number if not provided
-    IF nvl(vDocumentNo,'0') = '0' THEN
-        FF_GET_SEED_NO(:COMP_CODE,'','INV',vDocumentNo);
+    IF vDocumentNo = '' THEN
+        FF_GET_SEED_NO(vComp,'','ONINV',vDocumentNo);
+        htp.p('{"Debug" : "Generated Document No: ' || vDocumentNo || '"}');
     END IF;
 
     -- Get header data from ORDER_HEADER and SHIPPING tables
@@ -72,46 +92,57 @@ BEGIN
         vPaymentMode,
         vTranNumber,
         vSubTot,
-        vVat
+        vVat,
+        vToken,
+        vPaymentMode,
+        vPaymentMode,
+        vPaymentMode,
+        vPaymentMode
     FROM ORDER_HEADER oh
     LEFT JOIN SHIPPING s ON oh.SHIPPING_ID = s.SHIPPING_ID
     WHERE oh.ORDER_ID = :P12_ORDER_ID;
 
+    -- Debug: Check retrieved values
+    htp.p('{"Debug" : "Customer: ' || vCustomer || '"}');
+    htp.p('{"Debug" : "Customer Name: ' || vCustomerName || '"}');
+    htp.p('{"Debug" : "Total: ' || vTotal || '"}');
+    htp.p('{"Debug" : "Date: ' || vDate || '"}');
+
     -- Set customer name as combination of first and last name
-    vCustomerName := vCustomerName || ' ' || vPrimaryNo;
+    vCustomerName := NVL(vCustomerName, '') || ' ' || NVL(vPrimaryNo, '');
     
     -- Set address as complete address
-    vAddress := vAddress || ', ' || vLocation || ', ' || vPaymentMode || ', ' || vTranNumber;
+    vAddress := NVL(vAddress, '') || ', ' || NVL(vLocation, '') || ', ' || NVL(vPaymentMode, '') || ', ' || NVL(vTranNumber, '');
     
     -- Set phone as primary contact
-    vPrimaryNo := vEmail;
+    vPrimaryNo := NVL(vEmail, '');
     
     -- Set alternate number as WhatsApp
-    vAlternateNo := vAlternateNo;
+    vAlternateNo := NVL(vAlternateNo, '');
     
     -- Set payment mode
-    vPaymentMode := vPaymentMode;
+    vPaymentMode := NVL(vPaymentMode, '');
     
     -- Set total in words (you may need to implement a function for this)
     vTotalInWords := 'Total Amount in Words'; -- Placeholder
     
     -- Set transaction number
-    vTranNumber := vOrderId;
+    vTranNumber := TO_CHAR(vOrderId);
 
-    -- Insert/Update customer if needed
-    IF vCustomer IS NULL THEN
-        FF_GET_SEED_NO(:COMP_CODE,NULL,'CUS',vCustomer);
+    -- Debug: Check processed values
+    htp.p('{"Debug" : "Processed Customer Name: ' || vCustomerName || '"}');
+    htp.p('{"Debug" : "Processed Address: ' || vAddress || '"}');
+    htp.p('{"Debug" : "Document No: ' || vDocumentNo || '"}');
 
-        INSERT INTO ff_customer_master(
-            comp_code, customer_no, customer_name, customer_phone_number,
-            customer_email, location, CUSTOMER_ADDRESS_1, payment_mode,
-            customer_alternate_phone, is_active
-        ) VALUES (
-            :COMP_CODE, vCustomer, vCustomerName, vPrimaryNo,
-            vEmail, vLocation, vAddress, vPaymentType,
-            vAlternateNo, 'Y'
-        );
-    END IF;
+    -- Check if FF_INVOICE_HEADER table exists and is accessible
+    BEGIN
+        SELECT COUNT(*) INTO vTranCount FROM FF_INVOICE_HEADER WHERE ROWNUM = 1;
+        htp.p('{"Debug" : "FF_INVOICE_HEADER table accessible"}');
+    EXCEPTION
+        WHEN OTHERS THEN
+            htp.p('{"Status" : 2, "Msg" : "FF_INVOICE_HEADER table not accessible: ' || SQLERRM || '"}');
+            RETURN;
+    END;
 
     -- Insert header
     INSERT INTO FF_INVOICE_HEADER (
@@ -120,42 +151,64 @@ BEGIN
         IS_APPROVED, CREATED_BY, CREATED_ON, TOTAL_AMOUNT,
         PAYMENT_MODE, REF_NUMBER, AMOUNT_IN_WORDS, TOKEN_NO, VAT, DISCOUNT, SUB_TOTAL
     ) VALUES (
-        :COMP_CODE, vDocumentNo, 'INV', to_date(vDate,'DD-MON-YYYY'),
+        vComp, vDocumentNo, 'INV', TO_DATE(vDate,'DD-MON-YYYY'),
         vCustomer, NULL, vPaymentType, 'Y',
         'Y', :APP_USER, SYSDATE, vTotal,
         vPaymentMode, vTranNumber, vTotalInWords, vToken, vVat, vDiscount, vSubTot
     ) RETURNING ID INTO vID;
 
-    :P87_VID := vID;
+    htp.p('{"Debug" : "Inserted Header ID: ' || vID || '"}');
+    :P12_VID := vID;
 
-    -- Process details (you may need to add logic to get order details from another table)
-    -- For now, this section is commented out as we need order details table
-    /*
+    -- Check if ORDER_DETAIL has data
+    SELECT COUNT(*) INTO vDetailsCount FROM ORDER_DETAIL WHERE ORDER_ID = :P12_ORDER_ID;
+    htp.p('{"Debug" : "Order details count: ' || vDetailsCount || '"}');
+
+    -- Process details from ORDER_DETAIL table
     FOR dy IN (
-        SELECT * FROM ORDER_DETAILS 
-        WHERE ORDER_ID = :P12_ORDER_ID
+        SELECT 
+            od.DETAIL_ID,
+            od.ORDER_ID,
+            od.PRODUCT_ID,
+            od.SKU_ID,
+            od.SSIZE,
+            od.SCOLOR,
+            od.QUANTITY,
+            od.UNIT_PRICE,
+            od.IMG_SRC,
+            od.TITLE
+        FROM ORDER_DETAIL od
+        WHERE od.ORDER_ID = :P12_ORDER_ID
     ) LOOP
         vSerl := vSerl + 1;
         
+        -- Calculate amounts
+        vItemAmount := dy.QUANTITY * dy.UNIT_PRICE;
+        vItemDiscount := 0; -- Set discount as needed
+        vItemVat := 0; -- Set VAT as needed
+        vItemTotal := vItemAmount - vItemDiscount + vItemVat;
+        
+        htp.p('{"Debug" : "Processing Detail - Product: ' || dy.PRODUCT_ID || ', Qty: ' || dy.QUANTITY || ', Amount: ' || vItemAmount || '"}');
+        
         INSERT INTO FF_INVOICE_DETAILS (
             COMP_CODE, REQUEST_ID, ITEM_CODE, ITEM_DESC,
-            ITEMS_SIZES, ITEM_COLOR, ACTUAL_PRICE, PRICE,
-            QUANTITY, ITEM_DISCOUNT, AMOUNT, SERL_NUMBER,
-            ITEM_VAT, ITEM_TOTAL, IS_ACTIVE, CREATED_BY, CREATED_ON
+            QUANTITY, PRICE, AMOUNT, SERL_NUMBER,
+            IS_ACTIVE, CREATED_BY, CREATED_ON
         ) VALUES (
-            :COMP_CODE, vID, dy.PRODUCT_ID, dy.PRODUCT_NAME,
-            dy.SIZE, dy.COLOR, dy.PRICE, dy.PRICE,
-            dy.QUANTITY, dy.DISCOUNT, dy.SUBTOTAL, vSerl,
-            dy.VAT, dy.TOTAL, 'Y', :APP_USER, SYSDATE
+            vComp, vID, dy.PRODUCT_ID, dy.TITLE,
+            dy.QUANTITY, dy.UNIT_PRICE, vItemAmount, vSerl,
+            'Y', :APP_USER, SYSDATE
         );
     END LOOP;
-    */
 
+    htp.p('{"Debug" : "Total Details Processed: ' || vSerl || '"}');
     COMMIT;
     htp.p('{"Status" : 1, "Msg" : "'|| vDocumentNo ||'","ID" : "'|| vID ||'"}');
 EXCEPTION 
+    WHEN NO_DATA_FOUND THEN
+        ROLLBACK;
+        htp.p('{"Status" : 2, "Msg" : "No data found for Order ID: ' || :P12_ORDER_ID || '" }');
     WHEN OTHERS THEN
         ROLLBACK;
-        htp.p('{"Status" : 2, "Msg" : "'|| SQLERRM ||'" }');
+        htp.p('{"Status" : 2, "Msg" : "'|| SQLERRM ||'", "Error_Code" : "'|| SQLCODE ||'" }');
 END;
-    

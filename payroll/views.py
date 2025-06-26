@@ -7452,3 +7452,83 @@ def salary_register_multi_line_report(request):
             'status': 'error',
             'message': str(e)
         }, status=400)
+
+from pyreportjasper import PyReportJasper
+import tempfile
+
+
+def generate_report(request):
+    """
+    Generate Jasper report based on request parameters
+    """
+    try:
+        # Get parameters from request
+        report_type = request.GET.get('report_type', 'salary_register')
+        employee_id = request.GET.get('employee_id', '')
+        pay_cycle = request.GET.get('pay_cycle', '')
+        comp_code = request.GET.get('comp_code', '1000')
+        
+        # Set company code
+        set_comp_code(request)
+        
+        # Define report file paths
+        reports_dir = os.path.join(settings.BASE_DIR, 'reports')
+        
+        if report_type == 'salary_register':
+            jasper_file = os.path.join(reports_dir, 'PY_Salary_Register(Single)for_ZB.jasper')
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Unsupported report type: {report_type}'
+            }, status=400)
+        
+        # Check if Jasper file exists
+        if not os.path.exists(jasper_file):
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Report file not found: {jasper_file}'
+            }, status=404)
+        
+        # Prepare parameters for Jasper
+        parameters = {
+            'COMP_CODE': comp_code,
+            'EMPLOYEE_ID': employee_id,
+            'PAY_CYCLE': pay_cycle
+        }
+        
+        # Database connection parameters
+        db_config = {
+            'driver': 'postgres',  # Adjust based on your database
+            'host': settings.DATABASES['default']['HOST'],
+            'port': settings.DATABASES['default']['PORT'],
+            'database': settings.DATABASES['default']['NAME'],
+            'username': settings.DATABASES['default']['USER'],
+            'password': settings.DATABASES['default']['PASSWORD']
+        }
+        
+        # Use a temporary directory for output
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            output_file = os.path.join(tmpdirname, 'output')
+            prj = PyReportJasper()
+            prj.config(
+                input_file=jasper_file,
+                output_file=output_file,
+                output_formats=['pdf'],
+                parameters=parameters,
+                db_connection=db_config,
+                locale='en_US'
+            )
+            prj.process_report()
+            pdf_file = output_file + '.pdf'
+            if not os.path.exists(pdf_file):
+                return JsonResponse({'status': 'error', 'message': 'PDF not generated.'}, status=500)
+            with open(pdf_file, 'rb') as f:
+                pdf_data = f.read()
+            response = HttpResponse(pdf_data, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{report_type}_report.pdf"'
+            return response
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Error generating report: {str(e)}'
+        }, status=500)

@@ -242,8 +242,8 @@ urlpatterns = [
 
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),
-    path('submit_salary_register/', views.submit_salary_register, name='submit_salary_register'),
-    path('salary_register_report/', views.salary_register_report, name='salary_register_report'),
+    path('submit_salary_register/', views.generate_report, name='submit_salary_register'),
+    path('salary_register_report/', views.generate_report, name='salary_register_report'),
     path('salary_register_multi_line/', views.salary_register_multi_line, name='salary_register_multi_line'),
     path('salary_register_multi_line_report/', views.salary_register_multi_line_report, name='salary_register_multi_line_report'),
 
