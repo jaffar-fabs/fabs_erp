@@ -7467,13 +7467,14 @@ def generate_report(request):
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
         
         # Use Salary Register report which requires subreports
-        jasper_file = os.path.join(reports_dir, 'PY_Salary_Register(Single)for_ZB.jasper')
+        jasper_file = os.path.join(reports_dir, 'PY_Paymentwise_Report.jasper')
         output_filename = 'salary_register_report.pdf'
         
         # Check if subreport files exist
         subreport_files = [
             'PY_company_name.jasper',
-            'PY_Company_Details.jasper'
+            'PY_Company_Details.jasper',
+            'PY_sub-report(multi-line).jasper'
         ]
         
         for subreport in subreport_files:
@@ -7490,12 +7491,11 @@ def generate_report(request):
         # Report parameters - these are required by the Jasper report
         parameters = {
             'P0': company_code,  # Company code for subreports
-            'P1': '',  # Additional parameters that might be needed
-            'P2': '',
-            'P3': '',
-            'P999': ''
+            # 'P1': '',  # Additional parameters that might be needed
+            # 'P2': '052025',
+            # 'P3': '',
+            # 'P999': ''
         }
-        print(parameters)
         
         # Check if Jasper file exists
         if not os.path.exists(jasper_file):
@@ -7528,7 +7528,7 @@ def generate_report(request):
             db_connection=db_config,
             locale='en_US'
         )
-        prj.process_report()
+        prj.process_report()        
         
         # Check if the PDF was generated
         if not os.path.exists(output_file):

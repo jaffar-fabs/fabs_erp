@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-06-27T19:04:59 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_sub-report(multi-line)" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8efddda3-2f43-414c-9799-334536293415">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
+	<parameter name="P3" class="java.lang.String"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    EARN_CODE AS "CODE",
+    EARN_TYPE AS "EARN_TYPE",
+    EARN_REPORTS AS "DESCRIPTION",
+    CASE
+        WHEN EARN_REPORTS = 'EARN OT1' THEN
+            COALESCE(SUM(OT1), 0)
+        WHEN EARN_REPORTS = 'EARN OT2' THEN
+            COALESCE(SUM(OT2), 0)
+    END AS "OTHRS",
+    CASE
+        WHEN EARN_TYPE = 'EARNINGS' OR EARN_TYPE = 'EARN' THEN
+            ROUND(COALESCE(SUM(AMOUNT), 0), 0)
+        ELSE
+            (SUM(AMOUNT) * -1)
+    END AS "AMOUNT",
+    EMPLOYEE_CODE AS "EMP_CODE"
+FROM
+    payroll_payprocess
+WHERE
+    COMP_CODE = COALESCE($P{P0}, COMP_CODE)
+    AND EARN_CODE NOT IN ('ER900', 'ER999', 'DD900')
+    AND PAY_CYCLE = COALESCE($P{P1}, PAY_CYCLE)
+    AND PAY_MONTH = COALESCE($P{P2}, PAY_MONTH)
+    AND EMPLOYEE_CODE = COALESCE($P{P3}, EMPLOYEE_CODE)
+GROUP BY
+    EMPLOYEE_CODE,
+    EARN_CODE,
+    EARN_REPORTS,
+    EARN_TYPE
+ORDER BY
+    EMPLOYEE_CODE,
+    EARN_TYPE DESC,
+    EARN_CODE ASC;]]>
+	</queryString>
+	<field name="CODE" class="java.lang.String"/>
+	<field name="EARN_TYPE" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="OTHRS" class="java.math.BigDecimal"/>
+	<field name="AMOUNT" class="java.math.BigDecimal"/>
+	<field name="EMP_CODE" class="java.lang.String"/>
+	<variable name="Sum" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="3" y="0" width="40" height="10" uuid="f9f806f9-a514-45b9-be95-3bc98aa112a2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_TYPE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="0" width="77" height="10" uuid="0e6ac54b-759a-41cf-afbb-6c3060c45c22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="40" height="10" uuid="a938a741-4085-491b-93e4-64adea40d883"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OTHRS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="160" y="0" width="40" height="10" uuid="1d804686-e406-4949-bbcf-a4dc073d9294"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AMOUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="9">
+			<line>
+				<reportElement x="0" y="0" width="212" height="1" uuid="40eb04ee-4e64-484d-bf49-b51ba9240d19">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="97" y="0" width="63" height="9" uuid="1943c3aa-774a-41fc-8b27-b7ce55b9d469">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount Payee :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="160" y="0" width="40" height="9" uuid="616d0db7-f0a3-4a1b-af64-1a01a01ad9d1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Sum}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
