@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-04-20T01:03:57 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Company_Details" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="06c266ff-98d9-4658-a7b0-7f31e5b56128">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from  payroll_companymaster 
+where company_code = $P{P0}]]>
+	</queryString>
+	<field name="company_id" class="java.lang.Long"/>
+	<field name="company_code" class="java.lang.String"/>
+	<field name="company_name" class="java.lang.String"/>
+	<field name="company_status" class="java.lang.String"/>
+	<field name="inception_date" class="java.lang.String"/>
+	<field name="labour_ministry_id" class="java.lang.String"/>
+	<field name="labour_bank_acc_no" class="java.lang.String"/>
+	<field name="currency_code" class="java.lang.String"/>
+	<field name="address_line1" class="java.lang.String"/>
+	<field name="address_line2" class="java.lang.String"/>
+	<field name="address_line_city" class="java.lang.String"/>
+	<field name="address_line_state" class="java.lang.String"/>
+	<field name="country_code" class="java.lang.String"/>
+	<field name="telephone1" class="java.lang.String"/>
+	<field name="telephone2" class="java.lang.String"/>
+	<field name="fax_number" class="java.lang.String"/>
+	<field name="mail_id" class="java.lang.String"/>
+	<field name="social_media_id" class="java.lang.String"/>
+	<field name="instance_id" class="java.lang.String"/>
+	<field name="is_active" class="java.lang.Boolean"/>
+	<field name="created_by" class="java.lang.Long"/>
+	<field name="created_on" class="java.sql.Timestamp"/>
+	<field name="modified_by" class="java.lang.Long"/>
+	<field name="modified_on" class="java.sql.Timestamp"/>
+	<field name="image_url" class="java.lang.String"/>
+	<field name="salary_roundoff" class="java.lang.String"/>
+	<field name="logo_blob" class="java.lang.Object"/>
+	<field name="po_box" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnFooter>
+		<band height="15" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<rectangle radius="5">
+				<reportElement mode="Transparent" x="0" y="0" width="802" height="15" uuid="dd64959f-1a28-4419-9c94-b7f130403fe7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="139" height="14" uuid="6b5fc386-b559-4b02-bf92-538b97ff1417"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="140" y="0" width="160" height="14" uuid="d1ba24f8-4cb0-4e6f-a0bb-ed6d66c69940"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["P.O.BOX:\t"+$F{po_box}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="300" y="0" width="170" height="14" uuid="271a02ab-03e2-4d96-9959-5eb6060e3965"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TEL PHONE:\t"+$F{telephone1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="470" y="0" width="170" height="14" uuid="25b0d424-6f07-4484-8042-0b530cba229b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["FAX:\t"+$F{fax_number}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="640" y="0" width="160" height="14" uuid="9204e242-6014-4517-a2cd-a935c030f56c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["EMAIL:\t"+$F{mail_id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>
