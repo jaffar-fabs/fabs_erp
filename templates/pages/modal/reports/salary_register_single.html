@@ -20,14 +20,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="employee-id">Employee ID</label>
-                                        <input type="text" id="employee-id" name="employee_id" class="form-control" placeholder="Enter Employee ID">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="month">Month</label>
-                                        <input type="month" id="month" name="month" class="form-control">
+                                        <input type="hidden" name="rname" id="rname" value="PY_Salary_Register(Single)for_ZB.jasper">
+                                        <label for="paycycle">Select Paycycle</label>
+                                        <select name="P1" id="paycycle" class="form-control">
+                                            {% for paycycle in paycycles %}
+                                                <option value="{{ paycycle.process_cycle }}">{{ paycycle.process_cycle }} - {{ paycycle.pay_process_month }}</option>
+                                            {% endfor %}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
