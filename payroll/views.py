@@ -7086,10 +7086,110 @@ def salary_register_multi_line(request):
     }
     return render(request, 'pages/modal/reports/salary_register_multi.html', context)
 
+# import os
+# from django.conf import settings
+# from django.http import JsonResponse, HttpResponse
+# from pyreportjasper import PyReportJasper
+
+# def generate_report(request):
+#     set_comp_code(request)
+
+#     rname = request.POST.get('rname')
+#     p1 = request.POST.get('P1')    
+#     try:
+#         # Define report file path
+#         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
+        
+#         # Use Salary Register report which requires subreports
+#         jasper_file = os.path.join(reports_dir, rname)
+#         output_filename = rname.replace('.jasper', '.pdf')
+        
+#         # Check if subreport files exist
+#         # subreport_files = [
+#         #     'PY_company_name.jasper',
+#         #     'PY_Company_Details.jasper',
+#         #     'PY_sub-report(multi-line).jasper'
+#         # ]
+        
+#         # for subreport in subreport_files:
+#         #     subreport_path = os.path.join(reports_dir, subreport)
+#         #     if not os.path.exists(subreport_path):
+#         #         return JsonResponse({
+#         #             'status': 'error',
+#         #             'message': f'Subreport file not found: {subreport_path}'
+#         #         }, status=404)
+        
+#         # Get company code from request or use default
+#         company_code = COMP_CODE
+        
+#         # Report parameters - these are required by the Jasper report
+#         if rname == 'PY_Salary_Register(Single)for_ZB.jasper' or rname == 'PY_Salary_Register(Multi).jasper' or rname == 'PY_Control_Statement.jasper':
+#             split_p1 = p1.split(',')
+#             parameters = {
+#                 'P0': company_code,  
+#                 'P1': split_p1[0],  
+#                 'P2': split_p1[1],  
+#             }
+        
+#         # Check if Jasper file exists
+#         if not os.path.exists(jasper_file):
+#             return JsonResponse({
+#                 'status': 'error',
+#                 'message': f'Report file not found: {jasper_file}'
+#             }, status=404)
+        
+#         # Database connection parameters
+#         db_config = {
+#             'driver': 'postgres',
+#             'host': settings.DATABASES['default']['HOST'],
+#             'port': settings.DATABASES['default']['PORT'],
+#             'database': settings.DATABASES['default']['NAME'],
+#             'username': settings.DATABASES['default']['USER'],
+#             'password': settings.DATABASES['default']['PASSWORD'],
+#             'jdbc_driver': 'org.postgresql.Driver',
+#             'jdbc_dir': reports_dir  # Set to reports directory so subreports can be found
+#         }
+        
+#         # Define the output file path in the user's downloads folder
+#         output_file = os.path.join(os.path.expanduser('~'), 'Downloads', output_filename)
+        
+#         prj = PyReportJasper()
+#         prj.config(
+#             input_file=jasper_file,
+#             output_file=output_file,
+#             output_formats=['pdf'],
+#             parameters=parameters,
+#             db_connection=db_config,
+#             locale='en_US'
+#         )
+#         prj.process_report()        
+        
+#         # Check if the PDF was generated
+#         if not os.path.exists(output_file):
+#             return JsonResponse({'status': 'error', 'message': 'PDF not generated.'}, status=500)
+        
+#         # Read the generated PDF file
+#         with open(output_file, 'rb') as f:
+#             pdf_data = f.read()
+        
+#         # Prepare the response
+#         response = HttpResponse(pdf_data, content_type='application/pdf')
+#         response['Content-Disposition'] = f'attachment; filename="{output_filename}"'
+#         return response
+    
+#     except Exception as e:
+#         print(e)
+#         return JsonResponse({
+#             'status': 'error',
+#             'message': f'Error generating report: {str(e)}'
+#         }, status=500)
+
+
 import os
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from pyreportjasper import PyReportJasper
+import tempfile
 
 def generate_report(request):
     set_comp_code(request)
@@ -7103,21 +7203,6 @@ def generate_report(request):
         # Use Salary Register report which requires subreports
         jasper_file = os.path.join(reports_dir, rname)
         output_filename = rname.replace('.jasper', '.pdf')
-        
-        # Check if subreport files exist
-        # subreport_files = [
-        #     'PY_company_name.jasper',
-        #     'PY_Company_Details.jasper',
-        #     'PY_sub-report(multi-line).jasper'
-        # ]
-        
-        # for subreport in subreport_files:
-        #     subreport_path = os.path.join(reports_dir, subreport)
-        #     if not os.path.exists(subreport_path):
-        #         return JsonResponse({
-        #             'status': 'error',
-        #             'message': f'Subreport file not found: {subreport_path}'
-        #         }, status=404)
         
         # Get company code from request or use default
         company_code = COMP_CODE
@@ -7150,27 +7235,22 @@ def generate_report(request):
             'jdbc_dir': reports_dir  # Set to reports directory so subreports can be found
         }
         
-        # Define the output file path in the user's downloads folder
-        output_file = os.path.join(os.path.expanduser('~'), 'Downloads', output_filename)
-        
-        prj = PyReportJasper()
-        prj.config(
-            input_file=jasper_file,
-            output_file=output_file,
-            output_formats=['pdf'],
-            parameters=parameters,
-            db_connection=db_config,
-            locale='en_US'
-        )
-        prj.process_report()        
-        
-        # Check if the PDF was generated
-        if not os.path.exists(output_file):
-            return JsonResponse({'status': 'error', 'message': 'PDF not generated.'}, status=500)
-        
-        # Read the generated PDF file
-        with open(output_file, 'rb') as f:
-            pdf_data = f.read()
+        # Use a temporary file
+        with tempfile.NamedTemporaryFile(suffix='.pdf') as temp_output:
+            prj = PyReportJasper()
+            prj.config(
+                input_file=jasper_file,
+                output_file=temp_output.name,
+                output_formats=['pdf'],
+                parameters=parameters,
+                db_connection=db_config,
+                locale='en_US'
+            )
+            prj.process_report()        
+            
+            # Read the generated PDF data
+            temp_output.seek(0)
+            pdf_data = temp_output.read()
         
         # Prepare the response
         response = HttpResponse(pdf_data, content_type='application/pdf')
