@@ -15,16 +15,28 @@
                         <h5 class="card-title">Generate Salary Register</h5>
                     </div>
                     <div class="card-body">
-                        <form id="salary-register-form" method="POST" action="{% url 'salary_register_report' %}">
+                        <form id="salary-register-form" method="POST" action="{% url 'generate_report' %}">
                             {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="hidden" name="rname" id="rname" value="PY_Salary_Register(Single)for_ZB.jasper">
-                                        <label for="paycycle">Select Paycycle</label>
-                                        <select name="P1" id="paycycle" class="form-control">
+                                        <label for="rname">Select Report <span class="text-danger">*</span></label>
+                                        <select name="rname" id="rname" class="form-control" required>
+                                            <option value="">Select Report</option>
+                                            <option value="PY_Salary_Register(Single)for_ZB.jasper">Salary Register (Single)</option>
+                                            <option value="PY_Salary_Register(Multi).jasper">Salary Register (Multi)</option>
+                                            <option value="PY_Control_Statement.jasper">Control Statement</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <!-- <input type="hidden" name="rname" id="rname" value="PY_Salary_Register(Single)for_ZB.jasper"> -->
+                                        <label for="paycycle">Select Paycycle <span class="text-danger">*</span></label>
+                                        <select name="P1" id="paycycle" class="form-control" required>
+                                            <option value="">Select Paycycle</option>
                                             {% for paycycle in paycycles %}
-                                                <option value="{{ paycycle.process_cycle }}">{{ paycycle.process_cycle }} - {{ paycycle.pay_process_month }}</option>
+                                                <option value="{{ paycycle.process_cycle }},{{ paycycle.pay_process_month }}">{{ paycycle.process_cycle }} - {{ paycycle.pay_process_month }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

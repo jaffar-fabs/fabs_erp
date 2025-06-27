@@ -7076,12 +7076,15 @@ def salary_register_single_line(request):
     context = {
         'paycycles': query
     }
-    print(query)
     return render(request, 'pages/modal/reports/salary_register_single.html', context)
 
 def salary_register_multi_line(request):
     set_comp_code(request)  # Ensure the company code is set
-    return render(request, 'pages/modal/reports/salary_register_multi.html')
+    query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/salary_register_multi.html', context)
 
 import os
 from django.conf import settings
@@ -7092,15 +7095,14 @@ def generate_report(request):
     set_comp_code(request)
 
     rname = request.POST.get('rname')
-    p1 = request.POST.get('P1')
-    print(rname, p1)
+    p1 = request.POST.get('P1')    
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
         
         # Use Salary Register report which requires subreports
         jasper_file = os.path.join(reports_dir, rname)
-        output_filename = 'salary_register_report.pdf'
+        output_filename = rname.replace('.jasper', '.pdf')
         
         # Check if subreport files exist
         # subreport_files = [
@@ -7118,16 +7120,15 @@ def generate_report(request):
         #         }, status=404)
         
         # Get company code from request or use default
-        company_code = request.GET.get('company_code', '1000')
+        company_code = COMP_CODE
         
         # Report parameters - these are required by the Jasper report
-        if rname == 'PY_Salary_Register(Single)for_ZB.jasper':
+        if rname == 'PY_Salary_Register(Single)for_ZB.jasper' or rname == 'PY_Salary_Register(Multi).jasper' or rname == 'PY_Control_Statement.jasper':
+            split_p1 = p1.split(',')
             parameters = {
-                'P0': company_code,  # Company code for subreports
-                'P1': p1,  # Additional parameters that might be needed
-                # 'P2': '052025',
-                # 'P3': '',
-                # 'P999': ''
+                'P0': company_code,  
+                'P1': split_p1[0],  
+                'P2': split_p1[1],  
             }
         
         # Check if Jasper file exists
