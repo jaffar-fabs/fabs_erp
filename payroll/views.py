@@ -7110,6 +7110,14 @@ def payment_wise_report(request):
     }
     return render(request, 'pages/modal/reports/payment_wise.html', context)
 
+def project_wise_job_summary(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/project_wise_job_summary.html')
+
+def project_wise_report(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/project_wise.html')
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7255,6 +7263,11 @@ def generate_report(request):
                 'P1':split_p1[0],
                 'P2':split_p1[1],
                 'P3':p3 if p3 else None,
+            }
+        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper':
+            parameters = {
+                'P0': company_code,  
+                'P1':p1 if p1 else None,
             }
 
         
