@@ -1,0 +1,58 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Payment Wise Report" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Generate Payment Wise Report</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="salary-register-form" method="POST" action="{% url 'generate_report' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="hidden" name="rname" id="rname" value="PY_Payment_Wise_Report.jasper">
+                                        <label for="paycycle">Select Paycycle <span class="text-danger">*</span></label>
+                                        <select name="P1" id="paycycle" class="form-control" required>
+                                            <option value="">Select Paycycle</option>
+                                            {% for paycycle in paycycles %}
+                                                <option value="{{ paycycle.process_cycle }},{{ paycycle.pay_process_month }}">{{ paycycle.process_cycle }} - {{ paycycle.pay_process_month }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="ti ti-file-text me-2"></i>Generate Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+    $(document).ready(function () {
+        // Add any JavaScript logic if needed
+        $('#salary-register-form').on('submit', function (e) {
+            e.preventDefault();
+            // Perform validation or AJAX submission if required
+            alert('Form submitted successfully!');
+        });
+    });
+</script> -->
+
+{% endblock content %}

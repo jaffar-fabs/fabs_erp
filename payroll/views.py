@@ -7102,6 +7102,14 @@ def pay_slip(request):
     }
     return render(request, 'pages/modal/reports/pay_slip.html', context)
 
+def payment_wise_report(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/payment_wise.html', context)
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7213,6 +7221,7 @@ def generate_report(request):
     rname = request.POST.get('rname')
     p1 = request.POST.get('P1')  
     p2 = request.POST.get('P2')
+    p3 = request.POST.get('P3')
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
@@ -7238,6 +7247,14 @@ def generate_report(request):
                 'P0': company_code,  
                 'P2': split_p2[0],  
                 'P1': p1 if p1 else None,  # Use None if p2 is empty or None
+            }
+        elif rname == 'PY_Payment_Wise_Report.jasper':
+            split_p1 = p1.split(',')
+            parameters = {
+                'P0': company_code,  
+                'P1':split_p1[0],
+                'P2':split_p1[1],
+                'P3':p3 if p3 else None,
             }
 
         
