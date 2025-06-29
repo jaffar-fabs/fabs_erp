@@ -22,7 +22,7 @@
                                     <div class="form-group">
                                         <input type="hidden" name="rname" id="rname" value="PY_Pay_Slip.jasper">
                                         <label for="paycycle">Select Paycycle <span class="text-danger">*</span></label>
-                                        <select name="P1" id="paycycle" class="form-control" required>
+                                        <select name="P2" id="paycycle" class="form-control" required>
                                             <option value="">Select Paycycle</option>
                                             {% for paycycle in paycycles %}
                                                 <option value="{{ paycycle.process_cycle }},{{ paycycle.pay_process_month }}">{{ paycycle.process_cycle }} - {{ paycycle.pay_process_month }}</option>

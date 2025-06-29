@@ -7233,16 +7233,12 @@ def generate_report(request):
                 'P2': split_p1[1],  
             }
         elif rname == 'PY_Pay_Slip.jasper':
-            split_p1 = p1.split(',')
+            split_p2 = p2.split(',')
             parameters = {
                 'P0': company_code,  
-                'P1': split_p1[0],  
-                'P2': p2 if p2 else None,  # Use None if p2 is empty or None
+                'P2': split_p2[0],  
+                'P1': p1 if p1 else None,  # Use None if p2 is empty or None
             }
-
-            # Remove 'P2' from parameters if it is None
-            if parameters['P2'] is None:
-                del parameters['P2']
 
         
         # Check if Jasper file exists
