@@ -7094,6 +7094,14 @@ def control_statement(request):
     }
     return render(request, 'pages/modal/reports/control_statement.html', context)
 
+def pay_slip(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/pay_slip.html', context)
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7203,7 +7211,8 @@ def generate_report(request):
     set_comp_code(request)
 
     rname = request.POST.get('rname')
-    p1 = request.POST.get('P1')    
+    p1 = request.POST.get('P1')  
+    p2 = request.POST.get('P2')
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
@@ -7223,6 +7232,18 @@ def generate_report(request):
                 'P1': split_p1[0],  
                 'P2': split_p1[1],  
             }
+        elif rname == 'PY_Pay_Slip.jasper':
+            split_p1 = p1.split(',')
+            parameters = {
+                'P0': company_code,  
+                'P1': split_p1[0],  
+                'P2': p2 if p2 else None,  # Use None if p2 is empty or None
+            }
+
+            # Remove 'P2' from parameters if it is None
+            if parameters['P2'] is None:
+                del parameters['P2']
+
         
         # Check if Jasper file exists
         if not os.path.exists(jasper_file):
