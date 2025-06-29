@@ -7248,7 +7248,7 @@ def generate_report(request):
                 'P2': split_p2[0],  
                 'P1': p1 if p1 else None,  # Use None if p2 is empty or None
             }
-        elif rname == 'PY_Payment_Wise_Report.jasper':
+        elif rname == 'PY_Paymentwise_Report.jasper':
             split_p1 = p1.split(',')
             parameters = {
                 'P0': company_code,  
