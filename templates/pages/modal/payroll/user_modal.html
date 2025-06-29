@@ -163,7 +163,10 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class="col-form-label">Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password" class="form-control" value="{{ user.password }}" required tabindex="4">
+                        <div class="pass-group">
+                            <input type="password" name="password" class="pass-input form-control" value="{{ user.password }}" required tabindex="4">
+                            <span class="ti toggle-password ti-eye-off"></span>
+                        </div>
                         <div id="password_invalid_feedback_edit_{{ user.user_master_id }}" class="invalid-feedback"></div>
                     </div>
                     <div class="form-group mb-3">

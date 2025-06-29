@@ -729,17 +729,19 @@ def index(request):
         end_date__gte=timezone.now(),
         hr_status='Approved'
     ).count()
-    inactive_employees = Employee.objects.filter(emp_status='INACTIVE').count()
-
+    # on_job active - leave
+    on_job_active_employees = active_employees - on_leave_employees
+    # inactive_employees = Employee.objects.filter(emp_status='INACTIVE').count()
+    
     # Recent Leave Requests
     recent_leaves = LeaveTransaction.objects.filter(
-        created_on__gte=timezone.now() - timedelta(days=30)
+        created_on__gte=timezone.now() - timedelta(days=10)
     ).order_by('-created_on')[:5]
 
     # Chart Data
     chart_data = {
         'labels': json.dumps(['Active', 'On Leave', 'Inactive']),
-        'values': json.dumps([active_employees, on_leave_employees, inactive_employees])
+        'values': json.dumps([active_employees, on_leave_employees, on_job_active_employees])
     }
 
     # Department Distribution
@@ -762,7 +764,8 @@ def index(request):
         'total_employees': total_employees,
         'active_employees': active_employees,
         'on_leave_employees': on_leave_employees,
-        'inactive_employees': inactive_employees,
+        # 'inactive_employees': inactive_employees,
+        'on_job_active_employees': on_job_active_employees,
         'recent_leaves': recent_leaves,
         'chart_data': chart_data,
         'department_data': department_data,
@@ -1923,7 +1926,11 @@ class UserMasterList(View):
             current_url = f"{get_url}?"
 
         # Initialize the query
-        query = UserMaster.objects.filter(comp_code=COMP_CODE)
+        if request.session.get('username') == 'SYSTEM':
+            query = UserMaster.objects.filter(comp_code=COMP_CODE)
+        else:
+            query = UserMaster.objects.filter(comp_code=COMP_CODE).exclude(user_id='SYSTEM')
+
 
         # Apply search filter if a keyword is provided
         if keyword:
