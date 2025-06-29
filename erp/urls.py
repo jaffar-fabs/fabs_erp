@@ -244,6 +244,7 @@ urlpatterns = [
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),
     path('generate_report/', views.generate_report, name='generate_report'),
     path('salary_register_multi_line/', views.salary_register_multi_line, name='salary_register_multi_line'),
+    path('control_statement/', views.control_statement, name='control_statement'),
     # path('salary_register_multi_line_report/', views.salary_register_multi_line_report, name='salary_register_multi_line_report'),
 
 

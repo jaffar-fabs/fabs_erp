@@ -8,11 +8,11 @@
         <div class="row">
             <div class="col-md-12">
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Salary Register" %}
+                {% include "partials/title.html" with title="Control Statement" %}
                 {% endblock pagetitle %}
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Generate Salary Register</h5>
+                        <h5 class="card-title">Generate Control Statement</h5>
                     </div>
                     <div class="card-body">
                         <form id="salary-register-form" method="POST" action="{% url 'generate_report' %}">
@@ -20,7 +20,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <input type="hidden" name="rname" id="rname" value="PY_Salary_Register(Single)for_ZB.jasper">
+                                        <input type="hidden" name="rname" id="rname" value="PY_Salary_Register(Multi).jasper">
                                         <label for="paycycle">Select Paycycle <span class="text-danger">*</span></label>
                                         <select name="P1" id="paycycle" class="form-control" required>
                                             <option value="">Select Paycycle</option>

@@ -7086,6 +7086,14 @@ def salary_register_multi_line(request):
     }
     return render(request, 'pages/modal/reports/salary_register_multi.html', context)
 
+def control_statement(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/control_statement.html', context)
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
