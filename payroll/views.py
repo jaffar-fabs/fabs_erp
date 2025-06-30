@@ -1398,7 +1398,6 @@ def project(request):
                             )
                             
                             # Validate the project before saving
-                            project.full_clean()  # This will raise ValidationError if there are issues
                             project.save()
                             success_count += 1
                         except ValidationError as ve:
