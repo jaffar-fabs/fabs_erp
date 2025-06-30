@@ -1366,37 +1366,37 @@ def project(request):
                     success_count = 0
                     for record in valid_records:
                         try:
-                            # Get the original row data
-                            row_data = df.iloc[record['row'] - 2]
-                            
                             # Create project
                             project = projectMaster(
                                 comp_code=COMP_CODE,
-                                prj_code=row_data['Project Code*'],
-                                prj_name=row_data['Project Name*'],
-                                project_description=row_data['Project Description*'],
-                                project_type=row_data['Project Type*'],
-                                project_value=row_data['Project Value*'],
-                                timeline_from=pd.to_datetime(row_data['Start Date* (YYYY-MM-DD)']).date(),
-                                timeline_to=pd.to_datetime(row_data['End Date* (YYYY-MM-DD)']).date(),
-                                prj_city=row_data.get('Project City', ''),
-                                service_type=row_data.get('Service Type', ''),
-                                service_category=row_data.get('Service Category', ''),
-                                pro_sub_location=row_data.get('Project Sub Location', ''),
-                                customer=row_data.get('Customer Code', ''),
-                                agreement_ref=row_data.get('Agreement Ref', ''),
-                                op_head=row_data.get('OP Head Code', ''),
-                                manager=row_data.get('Manager Code', ''),
-                                commercial_manager=row_data.get('Commercial Manager Code', ''),
-                                project_engineer=row_data.get('Project Engineer Code', ''),
-                                project_supervisor=row_data.get('Project Supervisor Code', ''),
-                                procurement_user=row_data.get('Procurement User Code', ''),
-                                indent_user=row_data.get('Indent User Code', ''),
-                                final_contract_value=row_data.get('Final Contract Value', 0),
-                                project_status=row_data.get('Project Status', ''),
+                                prj_code=record['Project Code*'],
+                                prj_name=record['Project Name*'],
+                                project_description=record['Project Description*'],
+                                project_type=record['Project Type*'],
+                                project_value=record['Project Value*'],
+                                timeline_from=pd.to_datetime(record['Start Date* (YYYY-MM-DD)']).date(),
+                                timeline_to=pd.to_datetime(record['End Date* (YYYY-MM-DD)']).date(),
+                                prj_city=record.get('Project City', ''),
+                                service_type=record.get('Service Type', ''),
+                                service_category=record.get('Service Category', ''),
+                                pro_sub_location=record.get('Project Sub Location', ''),
+                                customer=record.get('Customer Code', ''),
+                                agreement_ref=record.get('Agreement Ref', ''),
+                                op_head=record.get('OP Head Code', ''),
+                                manager=record.get('Manager Code', ''),
+                                commercial_manager=record.get('Commercial Manager Code', ''),
+                                project_engineer=record.get('Project Engineer Code', ''),
+                                project_supervisor=record.get('Project Supervisor Code', ''),
+                                procurement_user=record.get('Procurement User Code', ''),
+                                indent_user=record.get('Indent User Code', ''),
+                                final_contract_value=record.get('Final Contract Value', 0),
+                                project_status=record.get('Project Status', ''),
                                 created_by=1
                             )
                             
+                            # Log the project data for debugging
+                            print(f"Attempting to save project: {project.__dict__}")
+
                             # Validate the project before saving
                             project.full_clean()  # This will raise ValidationError if there are issues
                             project.save()
@@ -1413,6 +1413,7 @@ def project(request):
                                 'error': f'Error saving record: {str(e)}'
                             })
                             print(f"Error saving record at row {record['row']}: {str(e)}")
+
 
                     return JsonResponse({
                         'status': 'success',
