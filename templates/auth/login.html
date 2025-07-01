@@ -41,12 +41,12 @@
                             <span class="ti toggle-password ti-eye-off"></span>
                         </div>
                     </div>
-                    <!-- <div class="mb-3" id="company-select-container" style="display: none;">
+                    <div class="mb-3" id="company-select-container" style="display: none;">
                         <label class="col-form-label">Select Company</label>
                         <select name="selected_company" class="form-select" required>
                             <option value="">Select a company</option>
                         </select>
-                    </div> -->
+                    </div>
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <!-- <div class="form-check form-check-md d-flex align-items-center">
                             <input class="form-check-input" name="remember" type="checkbox" value="" id="checkebox-md" checked="">
@@ -102,7 +102,7 @@
     </div>
 </div>
 
-<!-- <script>
+<script>
 document.getElementById('username').addEventListener('blur', function() {
     const username = this.value;
     if (username) {
@@ -119,10 +119,10 @@ document.getElementById('username').addEventListener('blur', function() {
             const companySelect = document.querySelector('select[name="selected_company"]');
             const companyContainer = document.getElementById('company-select-container');
             
-            if (data.companies && data.companies.length > 1) {
+            if (data.success && data.dropdown_options && data.dropdown_options.length > 1) {
                 companySelect.innerHTML = '<option value="">Select a company</option>';
-                data.companies.forEach(company => {
-                    companySelect.innerHTML += `<option value="${company}">${company}</option>`;
+                data.dropdown_options.forEach(option => {
+                    companySelect.innerHTML += `<option value="${option.value}">${option.text}</option>`;
                 });
                 companyContainer.style.display = 'block';
                 companySelect.required = true;
@@ -130,12 +130,15 @@ document.getElementById('username').addEventListener('blur', function() {
                 companyContainer.style.display = 'none';
                 companySelect.required = false;
             }
+        })
+        .catch(error => {
+            console.error('Error fetching companies:', error);
         });
     }
 });
 
 
-</script> -->
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -722,9 +722,10 @@ def deactivate_employee(request, employee_id):
 def index(request):
     set_comp_code(request)
     # Employee Statistics
-    total_employees = Employee.objects.count()
-    active_employees = Employee.objects.filter(emp_status='ACTIVE').count()
+    total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
+    active_employees = Employee.objects.filter(comp_code = COMP_CODE,emp_status='ACTIVE').count()
     on_leave_employees = LeaveTransaction.objects.filter(
+        comp_code = COMP_CODE,
         start_date__lte=timezone.now(),
         end_date__gte=timezone.now(),
         hr_status='Approved'
@@ -735,6 +736,7 @@ def index(request):
     
     # Recent Leave Requests
     recent_leaves = LeaveTransaction.objects.filter(
+        comp_code = COMP_CODE,
         created_on__gte=timezone.now() - timedelta(days=10)
     ).order_by('-created_on')[:5]
 
@@ -745,7 +747,7 @@ def index(request):
     }
 
     # Department Distribution
-    departments = Employee.objects.values('department').annotate(
+    departments = Employee.objects.filter(comp_code=COMP_CODE).values('department').annotate(
         count=Count('employee_id')
     ).exclude(department__isnull=True).order_by('-count')[:5]
 
@@ -755,8 +757,8 @@ def index(request):
     }
 
     # Camp Occupancy
-    total_beds = CampBeds.objects.count()
-    occupied_beds = CampBeds.objects.filter(bed_status='Occupied').count()
+    total_beds = CampBeds.objects.filter(comp_code=COMP_CODE).count()
+    occupied_beds = CampBeds.objects.filter(comp_code=COMP_CODE,bed_status='Occupied').count()
     camp_occupancy = round((occupied_beds / total_beds * 100) if total_beds > 0 else 0, 1)
     available_beds_percentage = round(100 - camp_occupancy, 1)  # Calculate available beds percentage
 
@@ -867,14 +869,14 @@ def my_login_view(request):
             if password == user.password:
                 request.session["username"] = user.user_id
 
-                # get_companies = user.company.split(':') if user.company else []
-                # if len(get_companies) > 1:
-                #     if not selected_company:
-                #         messages.error(request, "Please select a company.")
-                #         return render(request, "auth/login.html")
-                #     request.session["comp_code"] = selected_company
-                # else:
-                request.session["comp_code"] = user.comp_code
+                get_companies = user.company.split(':') if user.company else []
+                if len(get_companies) > 1:
+                    if not selected_company:
+                        messages.error(request, "Please select a company.")
+                        return render(request, "auth/login.html")
+                    request.session["comp_code"] = selected_company
+                else:
+                    request.session["comp_code"] = user.comp_code
 
                 request.session["user_paycycles"] = user.user_paycycles
 
@@ -886,11 +888,11 @@ def my_login_view(request):
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
 
                 # Fetch role ID from UserRoleMapping    
-                user_role_mapping = UserRoleMapping.objects.get(userid=user.user_master_id, is_active=True)
+                user_role_mapping = UserRoleMapping.objects.get(comp_code = COMP_CODE,userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
 
                 # Fetch role name from RoleMaster
-                role = RoleMaster.objects.get(id=role_id)
+                role = RoleMaster.objects.get(id=role_id,comp_code=COMP_CODE)
                 request.session["role"] = role.role_name
                 request.session["role_id"] = role_id
 
@@ -917,10 +919,22 @@ def check_user_companies(request):
             
             user = UserMaster.objects.get(user_id=username, is_active=True)
             companies = user.company.split(':')
-            
+
+            # get all companies from user with both code and name
+            companies_data = CompanyMaster.objects.filter(company_code__in=companies).values('company_code','company_name')
+
+            # Format data for dropdown: name for display, code for value
+            dropdown_options = []
+            for company in companies_data:
+                dropdown_options.append({
+                    'value': company['company_code'],
+                    'text': company['company_name']
+                })
+
             return JsonResponse({
                 'success': True,
-                'companies': companies
+                'companies': companies,
+                'dropdown_options': dropdown_options
             })
         except UserMaster.DoesNotExist:
             return JsonResponse({
@@ -943,8 +957,8 @@ def dashboard_view(request):
         role_id = request.session.get("role_id")
         permission_data = list(RoleMenu.objects.filter(role_id=role_id, is_active=True).values('menu_id', 'view', 'add', 'edit', 'delete'))
         menu_ids = RoleMenu.objects.filter(role_id=role_id, view=True).values_list('menu_id', flat=True)
-        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent', comp_code=COMP_CODE).order_by('display_order').values('menu_id', 'screen_name'))
-        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, comp_code=COMP_CODE).exclude(parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url', 'parent_menu_id'))
+        parent_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids, parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url'))
+        child_menu_data = list(Menu.objects.filter(menu_id__in=menu_ids).exclude(parent_menu_id='No Parent').order_by('display_order').values('menu_id', 'screen_name', 'url', 'parent_menu_id'))
         response_data = {'status': 'success', 'parent_menu_data': parent_menu_data, 'child_menu_data': child_menu_data, 'permission_data': permission_data}
     except Exception as e:
         response_data = {'status': 'error', 'msg': str(e)}
@@ -6497,8 +6511,6 @@ def ao_entry_update(request):
             ao_entry.acceptance_date = request.POST.get('acceptance_date') or None
             ao_entry.document_status = request.POST.get('document_status')
             ao_entry.interview_date = request.POST.get('interview_date') or None
-            # ao_entry.modified_by = request.user.id
-            # ao_entry.modified_on = datetime.now()
             
             ao_entry.save()
             messages.success(request, 'AO Entry updated successfully!')
