@@ -6,7 +6,7 @@
 	display: none;
   }
   .header .header-left .logo img{
-	width:auto !important;
+	width:155px !important;
   }
 </style>
   <!-- Header -->
@@ -24,7 +24,7 @@
 <!-- Header -->
 <div class="header">
 	<!-- Logo -->
-	<div class="header-left active" style=" background-color: #003366;">
+	<div class="header-left active" style=" background-color: black; opacity: 90%;">
 		<a href="" class="logo logo-normal">
 			{% if request.session.username == 'SYSTEM' %}
 			<img src="{% static 'assets/img/FABS.png' %}" alt="Logo" />
@@ -48,7 +48,7 @@
 	</a>
 
 	<div class="header-user">
-		<ul class="nav user-menu" style="background-color: #003366;">
+		<ul class="nav user-menu" style="background-color: black; opacity: 90%;">
 			<!-- Search -->
 			<li class="nav-item nav-search-inputs me-auto">
 				<div class="top-nav-search">
