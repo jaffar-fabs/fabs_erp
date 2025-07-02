@@ -4,7 +4,7 @@
 <!-- Add New Project -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add">
     <div class="offcanvas-header border-bottom">
-        <h4>Add New Project</h4>
+        <h4>Add New Job</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -19,7 +19,7 @@
                 <!-- Project Code -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Code <span class="text-danger">*</span></label>
                         <input class="form-control" id="project_code" name="project_code" type="text" required>
                         <span id="project_code_error" class="text-danger"></span> <!-- Error message here -->
                     </div>
@@ -28,7 +28,7 @@
                 <!-- Project Name -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Name <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Name <span class="text-danger">*</span></label>
                         <input type="text" name="project_name" class="form-control" required>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                 <!-- Project City -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job City <span class="text-danger">*</span></label>
                         <select class="form-control select2" multiple="multiple" name="prj_city" required>
                             <option value="">Select</option>
                             {% for city in pro_city_data %}
@@ -81,7 +81,7 @@
                 <!-- project sub location -->
                  <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Sub Location</label>
+                        <label class="col-form-label">Job Sub Location</label>
                         <select name="pro_sub_location" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in pro_sub_location_data %}
@@ -165,7 +165,7 @@
                 <!-- Project Engineer -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Engineer</label>
+                        <label class="col-form-label">Job Engineer</label>
                         <select name="project_engineer" class="form-control select2" multiple="multiple">   
                             <option value="">Select</option>    
                             {% for type in employee_data %}
@@ -180,7 +180,7 @@
                 <!-- Project Supervisor --> 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Supervisor</label>
+                        <label class="col-form-label">Job Supervisor</label>
                         <select name="project_supervisor" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
@@ -225,7 +225,7 @@
                 <!-- Project Type -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Type <span class="text-danger">*</span></label>
                         <select class="form-select" select name="project_type" required>
                             <option value="">Select</option>
                             {% for type in pro_type_data %}
@@ -240,7 +240,7 @@
                 <!-- Project Value -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Value <span class="text-danger">*</span></label>
                         <input class="form-control" name="project_value" type="text" required>
                     </div>
                 </div>
@@ -273,7 +273,7 @@
                 <!-- project status -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Status</label>
+                        <label class="col-form-label">Job Status</label>
                         <select name="project_status" class="form-control select">
                             <option value="">Select</option>
                             {% for type in project_status_data %}
@@ -316,7 +316,7 @@
 <!-- Edit Project -->
 <div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit">
     <div class="offcanvas-header border-bottom">
-        <h4>Edit Project</h4>
+        <h4>Edit Job</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -332,13 +332,13 @@
                 <!-- Row 1 -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Code <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Code <span class="text-danger">*</span></label>
                         <input class="form-control" disabled id="prj_code" name="project_code" type="text" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Name <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Name <span class="text-danger">*</span></label>
                         <input type="text" id="prj_name" name="project_name" class="form-control" required>
                     </div>
                 </div>
@@ -373,7 +373,7 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project City <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job City <span class="text-danger">*</span></label>
                         <select class="form-control select2" multiple="multiple" name="prj_city" id="prj_city" required>
                             <option value="">Select</option>
                                 {% for city in pro_city_data %}
@@ -387,7 +387,7 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Sub Location</label>
+                        <label class="col-form-label">Job Sub Location</label>
                         <select name="pro_sub_location" id="pro_sub_location" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in pro_sub_location_data %}
@@ -468,7 +468,7 @@
                 <!-- Project Engineer -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Engineer</label>
+                        <label class="col-form-label">Job Engineer</label>
                         <select name="project_engineer" id="project_engineer" class="form-control select2" multiple="multiple"> 
                             <option value="">Select</option>
                             {% for type in employee_data %}
@@ -483,7 +483,7 @@
                 <!-- Project Supervisor --> 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Supervisor</label>
+                        <label class="col-form-label">Job Supervisor</label>
                         <select name="project_supervisor" id="project_supervisor" class="form-control select2" multiple="multiple">
                             <option value="">Select</option>
                             {% for type in employee_data %}
@@ -528,7 +528,7 @@
                 <!-- Row 2 -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Type <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Type <span class="text-danger">*</span></label>
                         <select class="select form-control" id="project_type" name="project_type" required>
                                 <option value="">Select</option>
                                 {% for type in pro_type_data %}
@@ -541,7 +541,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Value <span class="text-danger">*</span></label>
+                        <label class="col-form-label">Job Value <span class="text-danger">*</span></label>
                         <input class="form-control" id="project_value" name="project_value" type="text" required>
                     </div>
                 </div>
@@ -578,7 +578,7 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Project Status</label>
+                        <label class="col-form-label">Job Status</label>
                         <select name="project_status" id="project_status" class="form-control select">
                             <option value="">Select</option>
                             {% for type in project_status_data %}

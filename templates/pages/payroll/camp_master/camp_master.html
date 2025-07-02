@@ -162,7 +162,7 @@
                                                 <input type="hidden" name="camp_detail_id" value="${detail.camp_details_id || ''}">
                                                 <td><input class="form-control" name="block_name" value="${detail.block || ''}" type="text" readonly></td>
                                                 <td>
-                                                    <select name="floor" class="form-select" disabled>
+                                                    <select name="floor" class="form-select" disabled style="width: 150px;">
                                                         <option value="">Select Floor</option>
                                                         {% for floor in floor_data %}
                                                         <option value="{{ floor.base_value }}" ${detail.floor == "{{ floor.base_value }}" ? "selected" : ""}>{{ floor.base_description }}</option>
@@ -170,7 +170,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select name="type" class="form-select" disabled>
+                                                    <select name="type" class="form-select" disabled style="width: 150px;">
                                                         <option value="">Select Type</option>
                                                         {% for type in room_type_data %}
                                                         <option value="{{ type.base_value }}" ${detail.type == "{{ type.base_value }}" ? "selected" : ""}>{{ type.base_description }}</option>

@@ -724,12 +724,7 @@ def index(request):
     # Employee Statistics
     total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
     active_employees = Employee.objects.filter(comp_code = COMP_CODE,emp_status='ACTIVE').count()
-    on_leave_employees = LeaveTransaction.objects.filter(
-        comp_code = COMP_CODE,
-        start_date__lte=timezone.now(),
-        end_date__gte=timezone.now(),
-        hr_status='Approved'
-    ).count()
+    on_leave_employees = Employee.objects.filter(comp_code = COMP_CODE,release_reason='ON LEAVE').count()
     # on_job active - leave
     on_job_active_employees = active_employees - on_leave_employees
     # inactive_employees = Employee.objects.filter(emp_status='INACTIVE').count()

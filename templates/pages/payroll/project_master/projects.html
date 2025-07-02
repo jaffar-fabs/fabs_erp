@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-12">
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Projects" count=result_cnt %}
+                {% include "partials/title.html" with title="Jobs" count=result_cnt %}
                 {% endblock pagetitle %}
                 <div class="card">
                     <div class="card-header">
@@ -19,7 +19,7 @@
                                     <div class="icon-form mb-3 mb-sm-0">
                                         <span class="form-icon"><i class="ti ti-search"></i></span>
                                         <input type="text" name="keyword" class="form-control"
-                                            placeholder="Search Projects" value="{{ keyword }}">
+                                            placeholder="Search Jobs" value="{{ keyword }}">
                                     </div>
                                 </form>
                             </div>
@@ -50,7 +50,7 @@
                                     </button>
                                     <a href="javascript:void(0);" class="btn btn-primary add-btn" data-bs-toggle="offcanvas"
                                         data-bs-target="#offcanvas_add"><i
-                                            class="ti ti-square-rounded-plus me-2"></i>Add New Project</a>
+                                            class="ti ti-square-rounded-plus me-2"></i>Add New Job</a>
                                 </div>
                             </div>
                         </div>
@@ -66,13 +66,13 @@
                                             <label class="checkboxs"><input type="checkbox" id="select-all"><span class="checkmarks"></span></label>
                                         </th> -->
                                         {% comment %} <th></th> {% endcomment %}
-                                        <th>Project Code</th>
-                                        <th>Name</th>
+                                        <th>Job Code</th>
+                                        <th>Job Name</th>
                                         <th>Client</th>
                                         {% comment %} <th>Priority</th> {% endcomment %}
                                         <th>Start Date</th>
                                         <th>End Date</th>
-                                        <th>Type</th>
+                                        <th>Job Type</th>
                                         {% comment %} <th>Pipeline Stage</th> {% endcomment %}
                                         <th>Status</th>
                                         <th>Action</th>

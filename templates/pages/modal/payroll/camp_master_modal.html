@@ -136,7 +136,7 @@
                                         <tr>
                                             <td><input class="form-control" name="block_name[]" type="text"></td>
                                             <td>
-                                                <select name="floor[]" class="form-select">
+                                                <select name="floor[]" class="form-select" style="width: 150px;">
                                                     <option value="">Select Floor</option>
                                                     {% for floor in floor_data %}
                                                     <option value="{{ floor.base_value }}">{{ floor.base_description }}</option>
@@ -144,7 +144,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <select name="type[]" class="form-select">
+                                                <select name="type[]" class="form-select" style="width: 150px;">
                                                     <option value="">Select Type</option>
                                                     {% for type in room_type_data %}
                                                     <option value="{{ type.base_value }}">{{ type.base_description }}</option>
@@ -239,8 +239,8 @@
                             var table = document.getElementById("camp_details_add").getElementsByTagName('tbody')[0];
                             var newRow = table.insertRow(table.rows.length);
                             newRow.innerHTML = `<td><input class="form-control" name="block_name[]" type="text"></td>
-                                        <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
-                                        <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
+                                        <td><select name="floor[]" class="form-select" style="width: 150px;"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
+                                        <td><select name="type[]" class="form-select" style="width: 150px;"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
                                         <td><input class="form-control" name="room_no[]" type="text"></td>
                                         <td><input class="form-control" name="as_per_mohre[]" type="text"></td>
                                         <td><input class="form-control" name="allocated[]" type="text"></td>
@@ -592,8 +592,8 @@
                 var table = document.getElementById("camp_details_edit").getElementsByTagName('tbody')[0];
                 var newRow = table.insertRow(table.rows.length);
                 newRow.innerHTML = `<td><input class="form-control" name="block_name[]" type="text"></td>
-                            <td><select name="floor[]" class="form-select"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
-                            <td><select name="type[]" class="form-select"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
+                            <td><select name="floor[]" class="form-select" style="width: 150px;"><option value="">Select Floor</option>{% for floor in floor_data %}<option value="{{ floor.base_value }}">{{ floor.base_description }}</option>{% endfor %}</select></td>
+                            <td><select name="type[]" class="form-select" style="width: 150px;"><option value="">Select Type</option>{% for type in room_type_data %}<option value="{{ type.base_value }}">{{ type.base_description }}</option>{% endfor %}</select></td>
                             <td><input class="form-control" name="room_no[]" type="text"></td>
                             <td><input class="form-control" name="as_per_mohre[]" type="text"></td>
                             <td><input class="form-control" name="allocated[]" type="text"></td>
