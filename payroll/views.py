@@ -882,12 +882,15 @@ def my_login_view(request):
                 company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
                 request.session["image_url"] = str(company.image_url) if company.image_url else None
 
-                # Fetch role ID from UserRoleMapping    
-                user_role_mapping = UserRoleMapping.objects.get(comp_code = COMP_CODE,userid=user.user_master_id, is_active=True)
+                # Get the current company code from session for role mapping
+                current_comp_code = request.session["comp_code"]
+                
+                # Fetch role ID from UserRoleMapping using the current company code
+                user_role_mapping = UserRoleMapping.objects.get(comp_code=current_comp_code, userid=user.user_master_id, is_active=True)
                 role_id = user_role_mapping.roleid
 
-                # Fetch role name from RoleMaster
-                role = RoleMaster.objects.get(id=role_id,comp_code=COMP_CODE)
+                # Fetch role name from RoleMaster using the current company code
+                role = RoleMaster.objects.get(id=role_id, comp_code=current_comp_code)
                 request.session["role"] = role.role_name
                 request.session["role_id"] = role_id
 
