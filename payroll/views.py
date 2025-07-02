@@ -7265,7 +7265,7 @@ def generate_report(request):
                 'P1': split_p1[0],  
                 'P2': split_p1[1],  
             }
-        elif rname == 'PY_Pay_Slip.jasper':
+        elif rname == 'PY_Pay_Slip_2.jasper':
             split_p2 = p2.split(',')
             parameters = {
                 'P0': company_code,  
