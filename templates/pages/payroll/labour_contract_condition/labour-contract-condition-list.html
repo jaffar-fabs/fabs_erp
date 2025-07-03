@@ -1,0 +1,204 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Labour Contract Condition"%}
+                {% endblock pagetitle %}
+                <!-- /Page Header -->
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <!-- Search -->
+                <div class="row align-items-center">
+                    <div class="col-sm-4">
+                        <form method="get">
+                            <div class="icon-form mb-3 mb-sm-0">
+                                <span class="form-icon"><i class="ti ti-search"></i></span>
+                                <input type="text" name="keyword" class="form-control" placeholder="Search Labour Contract Condition" value="{{ keyword }}">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                            <div class="dropdown me-2">
+                                <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"><i
+                                        class="ti ti-package-export me-2"></i>Export</a>
+                                <div class="dropdown-menu  dropdown-menu-end">
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item"><i
+                                                    class="ti ti-file-type-pdf text-danger me-1"></i>Export as
+                                                PDF</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0);" class="dropdown-item"><i
+                                                    class="ti ti-file-type-xls text-green me-1"></i>Export as
+                                                Excel </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" class="btn btn-primary add-btn" data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvas_add_labour_contract"><i class="ti ti-square-rounded-plus me-2"></i>Add
+                                Labour Contract Condition</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Search -->
+            </div>
+            <div class="card-body">
+                <!-- Contact List -->
+                <div class="table-responsive custom-table">
+                    <table class="table datatable">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Attendance UOM</th>
+                                <th>Default Project</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Hours Per Day</th>
+                                <th>Max Mn Hrs</th>
+                                <th>OT1 Eligible</th>
+                                <th>OT2 Eligible</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in labour_contract_list %}
+                            <tr>
+                                <td>{{record.attendance_uom}}</td>
+                                <td>{{record.default_project}}</td>
+                                <td>{{record.start_time}}</td>
+                                <td>{{record.end_time}}</td>
+                                <td>{{record.hours_per_day}}</td>
+                                <td>{{record.max_mn_hrs}}</td>
+                                <td>
+                                    <span class="badge badge-pill badge-status 
+                                        {% if record.ot_eligible == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if record.ot_eligible == 'Y' %} Yes {% else %} No {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-pill badge-status 
+                                        {% if record.ot2_eligible == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if record.ot2_eligible == 'Y' %} Yes {% else %} No {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-pill badge-status 
+                                        {% if record.is_active == 'Y' %} bg-success {% else %} bg-danger {% endif %}">
+                                        {% if record.is_active == 'Y' %} Active {% else %} Inactive {% endif %}
+                                    </span>
+                                </td>                                
+                                <td>
+                                    <div class="dropdown table-action">
+                                        <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item edit-labour-contract" href="javascript:void(0);"
+                                                data-bs-toggle="offcanvas" data-bs-target="#offcanvas_edit_labour_contract"
+                                                data-labour-contract-id="{{ record.process_cycle_id }}"
+                                                data-attendance="{{ record.attendance_uom }}"
+                                                data-process-date="{{ record.process_date }}"
+                                                data-default-project="{{ record.default_project }}"
+                                                data-start-time="{{ record.start_time }}"
+                                                data-end-time="{{ record.end_time }}"
+                                                data-hours-per-day="{{ record.hours_per_day }}"
+                                                data-days-per-month="{{ record.days_per_month }}"
+                                                data-travel-time="{{ record.travel_time }}"
+                                                data-lunch-break="{{ record.lunch_break }}"
+                                                data-max-mn-hrs="{{ record.max_mn_hrs }}"
+                                                data-max-an-hrs="{{ record.max_an_hrs }}"
+                                                data-ot-eligible="{{ record.ot_eligible }}"
+                                                data-max-ot1-hrs="{{ record.max_ot1_hrs }}"
+                                                data-ot1-amt="{{ record.ot1_amt }}"
+                                                data-ot2-eligible="{{ record.ot2_eligible }}"
+                                                data-max-ot2-hrs="{{ record.max_ot2_hrs }}"
+                                                data-ot2-amt="{{ record.ot2_amt }}"
+                                                data-is-active="{{ record.is_active }}">
+                                                <i class="ti ti-edit text-blue"></i> Edit
+                                            </a>
+                                            <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal"
+                                                data-bs-target="#delete_labour_contract"
+                                                data-labour-contract-id="{{ record.process_cycle_id }}">
+                                                <i class="ti ti-trash text-danger"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="datatable-length"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="datatable-paginate"></div>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                {% if labour_contract_list.has_other_pages %}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="showing-entries">
+                        <span>Showing {{ labour_contract_list.start_index }} to {{ labour_contract_list.end_index }} of {{ result_cnt }} entries</span>
+                    </div>
+                    <ul class="pagination">
+                        {% if labour_contract_list.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ labour_contract_list.previous_page_number }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for page in labour_contract_list.paginator.page_range %}
+                        {% if labour_contract_list.number == page %}
+                        <li class="page-item active">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if labour_contract_list.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ current_url }}keyword={{ keyword }}&page={{ labour_contract_list.next_page_number }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+                <!-- /Contact List -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Page Wrapper -->
+
+{% block contacts_modal %}
+{% include "pages/modal/payroll/labour-contract-condition-modal.html" %}
+{% endblock %}
+
+{% endblock content %} 

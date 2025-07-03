@@ -1,0 +1,583 @@
+{% load static %}
+
+<!-- Add Labour Contract Condition -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add_labour_contract">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New Labour Contract Condition</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'labour_contract_condition' %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
+                            <select class="form-select" required aria-label="select example" name="attendance_uom">
+                                <option value="">Select</option>
+                                    {% for uom in at_uom_data %}
+                                        <option value="{{ uom.base_value }}">{{ uom.base_description }}</option>
+                                    {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Please provide a attendance uom.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Date</label>
+                            <div class="icon-form">
+                                <span class="form-icon"></i></span>
+                                <input type="date" class="form-control" name="process_date" autocomplete="off">
+                                <div class="invalid-feedback">Please provide a process date.</div>
+                                <div id="date-error-process" class="text-danger"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Default Project</label>
+                            <select class="form-select" aria-label="select example" name="default_project">
+                                <option value="">Select</option>
+                                    {% for pro_data in project_data %}
+                                        <option value="{{ pro_data.prj_code }}">{{ pro_data.prj_name }}</option>
+                                    {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Please provide a default project.</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Time</label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="start_time" autocomplete="off">
+                                <div class="invalid-feedback">Please provide a start time.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">End Time</label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="end_time" autocomplete="off">
+                                <div class="invalid-feedback">Please provide an end time.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Hours Per Day</label>
+                            <input class="form-control" type="number" name="hours_per_day" autocomplete="off">
+                            <div class="invalid-feedback">Please provide hours per day.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Days Per Month</label>
+                            <input class="form-control" type="number" name="days_per_month" id="days_per_month"
+                                autocomplete="off" readonly>
+                            <div class="invalid-feedback">Please provide days per month.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Transportation Time(Travel)</label>
+                            <input class="form-control" type="number" name="travel_time" autocomplete="off">
+                            <!-- <div class="invalid-feedback">Please provide a transportation time.</div> -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Lunch Break (In Minutes)</label>
+                            <input class="form-control" type="number" name="lunch_break" autocomplete="off">
+                            <!-- <div class="invalid-feedback">Please provide a lunch break.</div> -->
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max Mn Hrs</label>
+                            <input class="form-control" type="number" name="max_mn_hrs" id="max_mn_hrs"
+                                autocomplete="off">
+                            <div class="invalid-feedback">Please provide max mn hrs.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max An Hrs</label>
+                            <input class="form-control" type="number" name="max_an_hrs" id="max_an_hrs"
+                                autocomplete="off">
+                            <div class="invalid-feedback">Please provide max an hrs.</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Eligible</label>
+                            <select class="form-select" aria-label="select example" name="ot_eligible"
+                                id="add_ot_eligible" onchange="changeOTFields('ot1');">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                            <div class="invalid-feedback">Please provide ot1 eligible.</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT1 Hrs</label>
+                            <input class="form-control" type="number" name="max_ot1_hrs" id="max_ot1_hrs"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Amt</label>
+                            <input class="form-control" type="number" name="ot1_amt" id="ot1_amt" autocomplete="off" step="0.01"
+                                disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Eligible</label>
+                            <select class="form-select" aria-label="select example" name="ot2_eligible"
+                                id="add_ot2_eligible" onchange="changeOTFields('ot2');">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                            <div class="invalid-feedback">Please provide ot2 eligible.</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT2 Hrs</label>
+                            <input class="form-control" type="number" name="max_ot2_hrs" id="max_ot2_hrs"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Amt</label>
+                            <input class="form-control" type="number" name="ot2_amt" id="ot2_amt" autocomplete="off" step="0.01"
+                                disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-check form-check-md d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="Y" id="checkebox-md"
+                                checked />
+                            <label class="form-check-label" for="checkebox-md">is Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="createButton">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Add Labour Contract Condition -->
+
+<script>
+    function changeOTFields(type) {
+        var otEligibleDropdown, maxOtHrsInput, otAmtInput;
+        if (type === 'ot1') {
+            otEligibleDropdown = document.getElementById("add_ot_eligible");
+            maxOtHrsInput = document.getElementById("max_ot1_hrs");
+            otAmtInput = document.getElementById("ot1_amt");
+        } else if (type === 'ot2') {
+            otEligibleDropdown = document.getElementById("add_ot2_eligible");
+            maxOtHrsInput = document.getElementById("max_ot2_hrs");
+            otAmtInput = document.getElementById("ot2_amt");
+        }
+        if (otEligibleDropdown && otEligibleDropdown.value === "Y") {
+            maxOtHrsInput.disabled = false;
+            otAmtInput.disabled = false;
+        }
+        else {
+            maxOtHrsInput.disabled = true;
+            otAmtInput.disabled = true;
+            maxOtHrsInput.value = "";
+            otAmtInput.value = "";
+        }
+    }
+</script>
+
+<!-- Edit Labour Contract Condition -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit_labour_contract">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit Labour Contract Condition</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="POST" action="{% url 'labour_contract_condition' %}">
+            {% csrf_token %}
+            <input type="hidden" name="labour_contract_id" id="labour_contract_id" value="">
+            <div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
+                            <select class="form-select" required aria-label="select example" name="attendance_uom" id="edit_attendance_uom">
+                                <option value="">Select</option>
+                                {% for uom in at_uom_data %}
+                                    <option value="{{ uom.base_value }}" {% if uom.base_value == employee.attendance_uom %}selected{% endif %}>
+                                        {{ uom.base_description }}
+                                    </option>
+                                {% endfor %}
+                            </select>                            
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Process Date</label>
+                            <div class="icon-form">
+                                <span class="form-icon"></i></span>
+                                <input type="date" class="form-control" name="process_date" id="edit_process_date"
+                                    autocomplete="off">
+                                <div class="invalid-feedback">Please provide a process date.</div>
+                                <div class="text-danger" id="date-errors-process"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Default Project</label>
+                            <select class="select" name="default_project" id="edit_default_project">
+                                <option value="">Select</option>
+                                        {% for pro_data in project_data %}
+                                            <option value="{{ pro_data.prj_code }}" {% if pro_data.prj_code == user.project_code %}selected{% endif %}>
+                                                {{ pro_data.prj_name }}
+                                            </option>
+                                        {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Start Time</label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="start_time" id="edit_start_time"
+                                    autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">End Time</label>
+                            <div class="icon-form">
+                                <span class="form-icon"><i class=""></i></span>
+                                <input type="time" class="form-control" name="end_time" id="edit_end_time"
+                                    autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Hours Per Day</label>
+                            <input class="form-control" type="number" name="hours_per_day" id="edit_hours_per_day"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Days Per Month</label>
+                            <input class="form-control" type="number" name="days_per_month" id="edit_days_per_month"
+                                autocomplete="off" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Transportation Time(Travel)</label>
+                            <input class="form-control" type="number" name="travel_time" id="edit_travel_time"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Lunch Break (In Minutes)</label>
+                            <input class="form-control" type="number" name="lunch_break" id="edit_lunch_break"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max Mn Hrs</label>
+                            <input class="form-control" type="number" name="max_mn_hrs" id="edit_max_mn_hrs"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb3">
+                            <label class="col-form-label">Max An Hrs</label>
+                            <input class="form-control" type="number" name="max_an_hrs" id="edit_max_an_hrs"
+                                autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Eligible</label>
+                            <select class="select2" name="ot_eligible" id="edit_ot_eligible"
+                                onchange="toggleOTFields('ot1');">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT1 Hrs</label>
+                            <input class="form-control" type="number" name="max_ot1_hrs" id="edit_max_ot1_hrs"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT1 Amt</label>
+                            <input class="form-control" type="number" name="ot1_amt" id="edit_ot1_amt" step="0.01"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Eligible</label>
+                            <select class="select2" name="ot2_eligible" id="edit_ot2_eligible"
+                                onchange="toggleOTFields('ot2');">
+                                <option value="">Select</option>
+                                <option value="Y">Y</option>
+                                <option value="N">N</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">Max OT2 Hrs</label>
+                            <input class="form-control" type="number" name="max_ot2_hrs" id="edit_max_ot2_hrs"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="mb-3">
+                            <label class="col-form-label">OT2 Amt</label>
+                            <input class="form-control" type="number" name="ot2_amt" id="edit_ot2_amt" step="0.01"
+                                autocomplete="off" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="form-check form-check-md d-flex align-items-center">
+                            <input class="form-check-input" type="checkbox" name="is_active" value="Y"
+                                id="edit_checkebox_md" checked />
+                            <label class="form-check-label" for="edit_checkebox_md">is Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-end">
+                <button type="button" data-bs-dismiss="offcanvas" class="btn btn-light me-2">Cancel</button>
+                <button type="submit" class="btn btn-primary edit-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Labour Contract Condition -->
+
+<script>
+    function toggleOTFields(type) {
+        if (type === 'ot1') {
+            var otEligibleDropdown = document.getElementById("edit_ot_eligible");
+            var maxOt1HrsInput = document.getElementById("edit_max_ot1_hrs");
+            var ot1AmtInput = document.getElementById("edit_ot1_amt");
+
+            if (otEligibleDropdown.value === "Y") {
+                maxOt1HrsInput.disabled = false;
+                ot1AmtInput.disabled = false;
+            }
+            else {
+                maxOt1HrsInput.disabled = true;
+                ot1AmtInput.disabled = true;
+                maxOt1HrsInput.value = "";
+                ot1AmtInput.value = "";
+            }
+        }
+        else if (type === 'ot2') {
+            var ot2EligibleDropdown = document.getElementById("edit_ot2_eligible");
+            var maxOt2HrsInput = document.getElementById("edit_max_ot2_hrs");
+            var ot2AmtInput = document.getElementById("edit_ot2_amt");
+
+            if (ot2EligibleDropdown.value === "Y") {
+                maxOt2HrsInput.disabled = false;
+                ot2AmtInput.disabled = false;
+            }
+            else {
+                maxOt2HrsInput.disabled = true;
+                ot2AmtInput.disabled = true;
+                maxOt2HrsInput.value = "";
+                ot2AmtInput.value = "";
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var editButtons = document.querySelectorAll('.edit-labour-contract');
+        editButtons.forEach(function (button) {
+            var addOt1Dropdown = document.getElementById("add_ot_eligible");
+            var addOt2Dropdown = document.getElementById("add_ot2_eligible");
+
+            if (addOt1Dropdown) {
+                addOt1Dropdown.addEventListener('change', function () {
+                    toggleOTFields('ot1');
+                });
+            }
+
+            if (addOt2Dropdown) {
+                addOt2Dropdown.addEventListener('change', function () {
+                    toggleOTFields('ot2');
+                });
+            }
+            button.addEventListener('click', function () {
+                var labourContractId = button.getAttribute('data-labour-contract-id');
+                var attendance = button.getAttribute('data-attendance');
+                var processDate = button.getAttribute('data-process-date');
+                var defaultProject = button.getAttribute('data-default-project');
+                var startTime = button.getAttribute('data-start-time');
+                var endTime = button.getAttribute('data-end-time');
+                var hoursPerDay = button.getAttribute('data-hours-per-day');
+                var daysPerMonth = button.getAttribute('data-days-per-month');
+                var travelTime = button.getAttribute('data-travel-time');
+                var lunchBreak = button.getAttribute('data-lunch-break');
+                var maxMnHrs = button.getAttribute('data-max-mn-hrs');
+                var maxAnHrs = button.getAttribute('data-max-an-hrs');
+                var otEligible = button.getAttribute('data-ot-eligible');
+                var maxOt1Hrs = button.getAttribute('data-max-ot1-hrs');
+                var ot1Amt = button.getAttribute('data-ot1-amt');
+                var ot2Eligible = button.getAttribute('data-ot2-eligible');
+                var maxOt2Hrs = button.getAttribute('data-max-ot2-hrs');
+                var ot2Amt = button.getAttribute('data-ot2-amt');
+                var isActive = button.getAttribute('data-is-active');
+
+                document.getElementById('labour_contract_id').value = labourContractId;
+                document.getElementById('edit_attendance_uom').value = attendance;
+                document.getElementById('edit_process_date').value = formatDate(processDate);
+                document.getElementById('edit_default_project').value = defaultProject;
+                document.getElementById('edit_start_time').value = startTime;
+                document.getElementById('edit_end_time').value = endTime;
+                document.getElementById('edit_hours_per_day').value = hoursPerDay;
+                document.getElementById('edit_days_per_month').value = daysPerMonth;
+                document.getElementById('edit_travel_time').value = travelTime;
+                document.getElementById('edit_lunch_break').value = lunchBreak;
+                document.getElementById('edit_max_mn_hrs').value = maxMnHrs;
+                document.getElementById('edit_max_an_hrs').value = maxAnHrs;
+                document.getElementById('edit_ot_eligible').value = otEligible;
+                document.getElementById('edit_max_ot1_hrs').value = maxOt1Hrs;
+                document.getElementById('edit_ot1_amt').value = ot1Amt;
+                document.getElementById('edit_ot2_eligible').value = ot2Eligible;
+                document.getElementById('edit_max_ot2_hrs').value = maxOt2Hrs;
+                document.getElementById('edit_ot2_amt').value = ot2Amt;
+                document.getElementById('edit_checkebox_md').checked = (isActive === 'Y');
+                $('#edit_default_project').val(defaultProject).trigger('change');
+                $('#edit_ot_eligible').val(otEligible).trigger('change');
+                $('#edit_ot2_eligible').val(ot2Eligible).trigger('change');
+
+                toggleOTFields('ot1');
+                toggleOTFields('ot2');
+            });
+        });
+    });
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "";
+        var date = new Date(dateStr);
+        var day = ("0" + date.getDate()).slice(-2);
+        var month = ("0" + (date.getMonth() + 1)).slice(-2);
+        var year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+</script>
+
+<!-- Delete Labour Contract Condition Modal -->
+<div class="modal fade" id="delete_labour_contract" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove Labour Contract Condition?</h4>
+                    <p class="mb-0">Are you sure you want to delete the selected labour contract condition?</p>
+                    <input type="hidden" id="labourContractId" value="">
+                    <div class="d-flex align-items-center justify-content-center mt-4">
+                        <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteLabourContract">Yes, Delete it</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Delete Labour Contract Condition -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('[data-bs-target="#delete_labour_contract"]');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const labourContractId = this.getAttribute('data-labour-contract-id');
+            const confirmDeleteButton = document.getElementById('confirmDeleteLabourContract');
+
+            confirmDeleteButton.addEventListener('click', function () {
+                fetch(`/labour-contract/delete/${labourContractId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),  // Ensure CSRF token is included
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            console.log(data.message); // Placeholder for a better notification
+                            location.reload(); // Reload the page to reflect changes
+                        } else {
+                            console.log('Failed to delete the labour contract condition.'); // Placeholder
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error); // Log errors to the console
+                    });
+            });
+        });
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script> 

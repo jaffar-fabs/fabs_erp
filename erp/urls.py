@@ -240,6 +240,10 @@ urlpatterns = [
     path('attendance_enquiries/', views.attendance_enquiries, name='attendance_enquiries'),
     path('documents_enquiries/', payroll_views.documents_enquiries, name='documents_enquiries'),
 
+    #labour
+    path('labour_contract_condition/', views.LabourContractCondition.as_view(), name='labour_contract_condition'),
+    path('labour-contract/delete/<int:labour_contract_id>/', views.LabourContractCondition.as_view(), name='delete_labour_contract'),
+
     #reports
     path('salary_register_single_line/', views.salary_register_single_line, name='salary_register_single_line'),
     path('generate_report/', views.generate_report, name='generate_report'),

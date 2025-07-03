@@ -2578,9 +2578,10 @@ from security.models import RoleMaster
 import json
 
 def permission_view(request):
+    set_comp_code(request)
     role_name = request.GET.get('role_name', 'No role name provided')
     try:
-        role = RoleMaster.objects.get(role_name=role_name)
+        role = RoleMaster.objects.get(role_name=role_name, comp_code = COMP_CODE)
     except RoleMaster.DoesNotExist:
         role = None
 
@@ -7334,3 +7335,137 @@ def generate_report(request):
             'status': 'error',
             'message': f'Error generating report: {str(e)}'
         }, status=500)
+
+class LabourContractCondition(View):
+    template_name = "pages/payroll/labour_contract_condition/labour-contract-condition-list.html"
+
+    def get(self, request):
+        set_comp_code(request)
+        keyword = request.GET.get('keyword', '').strip()
+        page_number = request.GET.get('page', 1)
+        get_url = request.get_full_path()
+
+        # Adjust URL for pagination
+        if '?keyword' in get_url:
+            get_url = get_url.split('&page=')[0]
+            current_url = f"{get_url}&"
+        else:
+            get_url = get_url.split('?')[0]
+            current_url = f"{get_url}?"
+
+        # Initialize the query
+        query = PaycycleMaster.objects.filter(comp_code=COMP_CODE)
+
+        # Apply search filter if a keyword is provided
+        if keyword:
+            try:
+                query = query.filter(
+                    Q(attendance_uom__icontains=keyword) |
+                    Q(default_project__icontains=keyword) |
+                    Q(start_time__icontains=keyword) |
+                    Q(end_time__icontains=keyword) |
+                    Q(process_description__icontains=keyword)
+                )
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+        # Apply pagination
+        paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+        try:
+            labour_contract_page = paginator.get_page(page_number)
+        except PageNotAnInteger:
+            labour_contract_page = paginator.page(1)
+        except EmptyPage:
+            labour_contract_page = paginator.page(paginator.num_pages)
+
+        # Prepare the context for the template
+        context = {
+            "labour_contract_list": labour_contract_page,
+            "current_url": current_url,
+            "keyword": keyword,
+            "result_cnt": query.count()
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        set_comp_code(request)
+        labour_contract_id = request.POST.get('labour_contract_id')
+        attendance_uom = request.POST.get('attendance_uom')
+        process_date = request.POST.get('process_date') or None
+        default_project = request.POST.get('default_project')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        hours_per_day = request.POST.get('hours_per_day') or 0
+        days_per_month = request.POST.get('days_per_month') or 0
+        travel_time = request.POST.get('travel_time') or None
+        lunch_break = request.POST.get('lunch_break') or None
+        max_mn_hrs = request.POST.get('max_mn_hrs') or 0
+        max_an_hrs = request.POST.get('max_an_hrs') or 0
+        ot_eligible = request.POST.get('ot_eligible')
+        max_ot1_hrs = request.POST.get('max_ot1_hrs') or 0
+        ot1_amt = request.POST.get('ot1_amt') or 0
+        ot2_eligible = request.POST.get('ot2_eligible')
+        max_ot2_hrs = request.POST.get('max_ot2_hrs') or 0
+        ot2_amt = request.POST.get('ot2_amt') or 0
+        is_active = "Y" if "is_active" in request.POST else "N"
+        
+        if labour_contract_id:
+            labour_contract = get_object_or_404(PaycycleMaster, process_cycle_id=labour_contract_id, comp_code=COMP_CODE)
+            labour_contract.attendance_uom = attendance_uom
+            labour_contract.process_date = process_date
+            labour_contract.default_project = default_project
+            labour_contract.start_time = start_time
+            labour_contract.end_time = end_time
+            labour_contract.hours_per_day = hours_per_day
+            labour_contract.days_per_month = days_per_month
+            labour_contract.travel_time = travel_time
+            labour_contract.lunch_break = lunch_break
+            labour_contract.max_mn_hrs = max_mn_hrs
+            labour_contract.max_an_hrs = max_an_hrs
+            labour_contract.ot_eligible = ot_eligible
+            labour_contract.max_ot1_hrs = max_ot1_hrs
+            labour_contract.ot1_amt = ot1_amt
+            labour_contract.ot2_eligible = ot2_eligible
+            labour_contract.max_ot2_hrs = max_ot2_hrs
+            labour_contract.ot2_amt = ot2_amt
+            labour_contract.is_active = is_active
+            labour_contract.modified_by = 1
+            labour_contract.modified_on = now()
+            labour_contract.save()
+        else:
+            PaycycleMaster.objects.create(
+                comp_code=COMP_CODE,
+                attendance_uom=attendance_uom,
+                process_date=process_date,
+                default_project=default_project,
+                start_time=start_time,
+                end_time=end_time,
+                hours_per_day=hours_per_day,
+                days_per_month=days_per_month,
+                travel_time=travel_time,
+                lunch_break=lunch_break,
+                max_mn_hrs=max_mn_hrs,
+                max_an_hrs=max_an_hrs,
+                ot_eligible=ot_eligible,
+                max_ot1_hrs=max_ot1_hrs,
+                ot1_amt=ot1_amt,
+                ot2_eligible=ot2_eligible,
+                max_ot2_hrs=max_ot2_hrs,
+                ot2_amt=ot2_amt,
+                is_active=is_active,
+                created_by=1,
+                created_on=now(),
+            )
+
+        return redirect("labour_contract_condition")
+
+    def delete(self, request, labour_contract_id):
+        set_comp_code(request)
+        labour_contract = get_object_or_404(PaycycleMaster, process_cycle_id=labour_contract_id, comp_code=COMP_CODE)
+        labour_contract.is_active = "N"
+        labour_contract.save()
+        return JsonResponse({"status": "success", "message": "Labour Contract Condition deactivated successfully."})
+
+
