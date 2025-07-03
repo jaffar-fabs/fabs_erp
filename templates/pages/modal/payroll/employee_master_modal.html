@@ -467,14 +467,14 @@
 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">Select Job <span class="text-danger">*</span></label>
-                        <select name="prj_code" id="prj_code" class="form-control" required>
+                        <label class="col-form-label">Select Job </label>
+                        <select name="prj_code" id="prj_code" class="form-control">
                             <option value="">Select</option>
                             {% for statuses in project_data %}
                                 <option value="{{ statuses.prj_code }}">{{ statuses.prj_code }} - {{ statuses.prj_name }}</option>
                             {% endfor %}
                         </select>
-                        <div class="invalid-feedback">Please select a Job.</div>
+                        <!-- <div class="invalid-feedback">Please select a Job.</div> -->
                     </div>
                 </div>
                 
