@@ -11,7 +11,7 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="addEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <form id="addEmployeeForm" method="post" action="{% url 'create_employee' %}" enctype="multipart/form-data" class="needs-validation" novalidate onsubmit="return validateForm()">
             {% csrf_token %}
 
             <!-- Collapsible Sections -->
@@ -1894,5 +1894,142 @@ function setupNonNegativeValidation() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', setupNonNegativeValidation);
+document.addEventListener('DOMContentLoaded', function() {
+    setupNonNegativeValidation();
+    
+    // Clear validation errors when user starts typing or selecting
+    const form = document.getElementById('addEmployeeForm');
+    if (form) {
+        form.addEventListener('input', function(e) {
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.style.borderColor = '';
+                e.target.style.boxShadow = '';
+            }
+        });
+        
+        form.addEventListener('change', function(e) {
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+                e.target.style.borderColor = '';
+                e.target.style.boxShadow = '';
+            }
+        });
+    }
+});
+
+// Form validation function
+function validateForm() {
+    const mandatoryFields = [
+        { id: 'emp_name_passport', label: 'Employee Name (As per Passport)' },
+        { id: 'surname', label: 'Surname' },
+        { id: 'dob', label: 'Date of Birth' },
+        { id: 'emp_sex', label: 'Gender' },
+        { id: 'nationality', label: 'Nationality' },
+        { id: 'designation', label: 'Designation' },
+        { id: 'date_of_join', label: 'Date of Join' },
+        { id: 'department', label: 'Department' },
+        { id: 'res_addr_line1', label: 'Address Line 1' },
+        { id: 'res_city', label: 'City' },
+        { id: 'res_state', label: 'State' }
+    ];
+
+    // Add salary fields if user has salary permissions
+    const userSalary = '{{ request.session.user_salary }}';
+    if (userSalary === 'Yes') {
+        mandatoryFields.push(
+            { id: 'basic_pay', label: 'Basic Pay' }
+        );
+    }
+
+    const missingFields = [];
+
+    mandatoryFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            if (element.type === 'select-one') {
+                if (!element.value || element.value === '') {
+                    missingFields.push(field.label);
+                }
+            } else {
+                if (!element.value || element.value.trim() === '') {
+                    missingFields.push(field.label);
+                }
+            }
+        }
+    });
+
+    if (missingFields.length > 0) {
+        const fieldNames = missingFields.join('\n• ');
+        const message = 'Please fill in the following mandatory fields:\n\n• ' + fieldNames;
+        
+        // Create a custom modal for better UX
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'validationModal';
+        modal.innerHTML = `
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Required Fields Missing
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-3">Please fill in the following mandatory fields:</p>
+                        <ul class="list-group">
+                            ${missingFields.map(field => `<li class="list-group-item">• ${field}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
+        
+        // Remove modal from DOM after it's hidden
+        modal.addEventListener('hidden.bs.modal', function() {
+            document.body.removeChild(modal);
+        });
+        
+        // Highlight missing fields
+        highlightMissingFields(missingFields);
+        
+        return false;
+    }
+
+    // Clear any previous error highlighting
+    clearFieldErrors();
+    
+    return true;
+}
+
+// Function to highlight missing fields
+function highlightMissingFields(missingFields) {
+    missingFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            element.classList.add('is-invalid');
+            element.style.borderColor = '#dc3545';
+            element.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+        }
+    });
+}
+
+// Function to clear error highlighting
+function clearFieldErrors() {
+    const allFields = document.querySelectorAll('#addEmployeeForm input, #addEmployeeForm select');
+    allFields.forEach(field => {
+        field.classList.remove('is-invalid');
+        field.style.borderColor = '';
+        field.style.boxShadow = '';
+    });
+}
 </script>
