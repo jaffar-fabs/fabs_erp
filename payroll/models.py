@@ -189,90 +189,90 @@ class Employee(models.Model):
     comp_code = models.CharField(max_length=15)  # Removed default value
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
     emp_code = models.CharField(max_length=50, blank=True, null=True)  # Employee code
-    emp_name = models.CharField(max_length=100)  # Employee name (as per passport)
-    surname = models.CharField(max_length=50, blank=True, null=True)  # Surname
+    emp_name = models.CharField(max_length=500)  # Employee name (as per passport)
+    surname = models.CharField(max_length=500, blank=True, null=True)  # Surname
     dob = models.DateField(blank=True, null=True)  # Date of birth
-    emp_sex = models.CharField(max_length=1, choices=[('1', 'Male'), ('2', 'Female')], default='1')  # Gender
+    emp_sex = models.CharField(max_length=5, choices=[('1', 'Male'), ('2', 'Female')], default='1')  # Gender
     emp_status = models.CharField(max_length=50, blank=True, null=True)  # Employment status
     emp_sub_status = models.CharField(max_length=50, blank=True, null=True)  # Sub employment status
-    passport_release = models.CharField(max_length=10, blank=True, null=True)  # Yes or No
+    passport_release = models.CharField(max_length=100, blank=True, null=True)  # Yes or No
     release_reason = models.CharField(max_length=255, blank=True, null=True)  # Reason for passport release
-    father_name = models.CharField(max_length=50, blank=True, null=True)  # Father's name
-    mother_name = models.CharField(max_length=50, blank=True, null=True)  # Mother's name
-    nationality = models.CharField(max_length=50, blank=True, null=True)  # Nationality
-    religion = models.CharField(max_length=50, blank=True, null=True)  # Religion
-    qualification = models.CharField(max_length=50, blank=True, null=True)  # Qualification
+    father_name = models.CharField(max_length=500, blank=True, null=True)  # Father's name
+    mother_name = models.CharField(max_length=500, blank=True, null=True)  # Mother's name
+    nationality = models.CharField(max_length=200, blank=True, null=True)  # Nationality
+    religion = models.CharField(max_length=150, blank=True, null=True)  # Religion
+    qualification = models.CharField(max_length=250, blank=True, null=True)  # Qualification
     emp_marital_status = models.CharField(max_length=150, blank=True, null=True)  # Marital status
-    spouse_name = models.CharField(max_length=50, blank=True, null=True)  # Spouse's name
-    height = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Height in cm
-    weight = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)  # Weight in kg
-    family_status = models.CharField(max_length=50, blank=True, null=True)  # Family status
+    spouse_name = models.CharField(max_length=500, blank=True, null=True)  # Spouse's name
+    height = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Height in cm
+    weight = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Weight in kg
+    family_status = models.CharField(max_length=150, blank=True, null=True)  # Family status
 
     # Residential Address
-    res_country_code = models.CharField(max_length=20, blank=True, null=True)  # Residential country code
-    res_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Residential phone number
-    res_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 1
-    res_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Residential address line 2
-    res_city = models.CharField(max_length=50, blank=True, null=True)  # Residential city
-    res_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
+    res_country_code = models.CharField(max_length=100, blank=True, null=True)  # Residential country code
+    res_phone_no = models.CharField(max_length=100, blank=True, null=True)  # Residential phone number
+    res_addr_line1 = models.CharField(max_length=800, blank=True, null=True)  # Residential address line 1
+    res_addr_line2 = models.CharField(max_length=800, blank=True, null=True)  # Residential address line 2
+    res_city = models.CharField(max_length=500, blank=True, null=True)  # Residential city
+    res_state = models.CharField(max_length=500, blank=True, null=True)  # Residential state
 
     # Local Residence
-    local_country_code = models.CharField(max_length=20, blank=True, null=True)  # Local country code
-    local_phone_no = models.CharField(max_length=20, blank=True, null=True)  # Local phone number
-    local_addr_line1 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 1
-    local_addr_line2 = models.CharField(max_length=100, blank=True, null=True)  # Local address line 2
-    local_city = models.CharField(max_length=50, blank=True, null=True)  # Residential city
-    local_state = models.CharField(max_length=50, blank=True, null=True)  # Residential state
+    local_country_code = models.CharField(max_length=100, blank=True, null=True)  # Local country code
+    local_phone_no = models.CharField(max_length=100, blank=True, null=True)  # Local phone number
+    local_addr_line1 = models.CharField(max_length=800, blank=True, null=True)  # Local address line 1
+    local_addr_line2 = models.CharField(max_length=800, blank=True, null=True)  # Local address line 2
+    local_city = models.CharField(max_length=500, blank=True, null=True)  # Residential city
+    local_state = models.CharField(max_length=500, blank=True, null=True)  # Residential state
 
     # Payment Details
-    labour_id = models.CharField(max_length=50, blank=True, null=True)  # Labour ID
-    process_cycle = models.CharField(max_length=50, blank=True, null=True)  # Payment process cycle
+    labour_id = models.CharField(max_length=100, blank=True, null=True)  # Labour ID
+    process_cycle = models.CharField(max_length=100, blank=True, null=True)  # Payment process cycle
     basic_pay = models.DecimalField(max_digits=10, decimal_places=2)  # Basic pay
     allowance = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)  # Allowance
     grade_code = models.CharField(max_length=150, blank=True, null=True)  # Grade code
-    prj_code = models.CharField(max_length=50, blank=True, null=True)
-    sub_location = models.CharField(max_length=50, blank=True, null=True)  # Sub-location
-    designation = models.CharField(max_length=50, blank=True, null=True)  # Designation
-    department = models.CharField(max_length=50, blank=True, null=True)  # Department
+    prj_code = models.CharField(max_length=100, blank=True, null=True)
+    sub_location = models.CharField(max_length=100, blank=True, null=True)  # Sub-location
+    designation = models.CharField(max_length=100, blank=True, null=True)  # Designation
+    department = models.CharField(max_length=100, blank=True, null=True)  # Department
     date_of_join = models.DateField(blank=True, null=True)  # Date of joining
     date_of_rejoin = models.DateField(blank=True, null=True)  # Date of rejoining
-    staff_category = models.CharField(max_length=50, blank=True, null=True)  # Staff category
+    staff_category = models.CharField(max_length=100, blank=True, null=True)  # Staff category
     depend_count = models.IntegerField(blank=True, null=True)  # Dependent count
     child_count = models.IntegerField(blank=True, null=True)  # Child count
 
     # Account Details
     employee_bank = models.CharField(max_length=100, blank=True, null=True)  # Employee bank
     bank_branch = models.CharField(max_length=100, blank=True, null=True)  # Bank branch
-    account_no = models.CharField(max_length=20, blank=True, null=True)  # Account number
-    iban_number = models.CharField(max_length=20, blank=True, null=True)  # Bank loan
+    account_no = models.CharField(max_length=100, blank=True, null=True)  # Account number
+    iban_number = models.CharField(max_length=100, blank=True, null=True)  # Bank loan
 
     # Travel Document Details
     passport_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Passport document upload
     passport_details = models.CharField(max_length=100, blank=True, null=True)  # Passport details
-    passport_place_of_issue = models.CharField(max_length=50, blank=True, null=True)  # Passport place of issue
-    passport_issued_country = models.CharField(max_length=50, blank=True, null=True)  # Passport issued country
+    passport_place_of_issue = models.CharField(max_length=100, blank=True, null=True)  # Passport place of issue
+    passport_issued_country = models.CharField(max_length=100, blank=True, null=True)  # Passport issued country
     issued_date = models.DateField(blank=True, null=True)  # Issued date
     expiry_date = models.DateField(blank=True, null=True)  # Expiry date
 
     # New fields for Visa Details
-    visa_location = models.CharField(max_length=50, blank=True, null=True)  # Visa location
+    visa_location = models.CharField(max_length=100, blank=True, null=True)  # Visa location
     change_status = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Change status
-    visa_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
+    visa_no = models.CharField(max_length=100, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
-    visa_designation = models.CharField(max_length=50, blank=True, null=True)  # Visa designation
-    visa_issued_emirate = models.CharField(max_length=50, blank=True, null=True)  # Visa issued emirate
-    iloe_no = models.CharField(max_length=50, blank=True, null=True)  # ILOE number
+    visa_designation = models.CharField(max_length=100, blank=True, null=True)  # Visa designation
+    visa_issued_emirate = models.CharField(max_length=100, blank=True, null=True)  # Visa issued emirate
+    iloe_no = models.CharField(max_length=100, blank=True, null=True)  # ILOE number
     iloe_expiry = models.DateField(blank=True, null=True)  # ILOE expiry date
     iloe_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # ILOE document upload
-    emirates_no = models.CharField(max_length=50, blank=True, null=True)  # Visa number
+    emirates_no = models.CharField(max_length=100, blank=True, null=True)  # Visa number
     emirate_issued = models.DateField(blank=True, null=True)  # Emirate issued
     emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
-    uid_number = models.CharField(max_length=50, blank=True, null=True)  # UID number
-    mohra_number = models.CharField(max_length=50, blank=True, null=True)  # Mohra number
-    mohra_name = models.CharField(max_length=50, blank=True, null=True)  # Mohra name
-    mohra_designation = models.CharField(max_length=50, blank=True, null=True)  # Mohra designation
-    work_permit_number = models.CharField(max_length=50, blank=True, null=True)  # Work permit number
+    uid_number = models.CharField(max_length=100, blank=True, null=True)  # UID number
+    mohra_number = models.CharField(max_length=100, blank=True, null=True)  # Mohra number
+    mohra_name = models.CharField(max_length=100, blank=True, null=True)  # Mohra name
+    mohra_designation = models.CharField(max_length=100, blank=True, null=True)  # Mohra designation
+    work_permit_number = models.CharField(max_length=100, blank=True, null=True)  # Work permit number
     work_permit_expiry = models.DateField(blank=True, null=True)  # Work permit expiry date
     visa_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Visa document upload
     emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
@@ -290,7 +290,7 @@ class Employee(models.Model):
     labor_contract_issued_date = models.DateField(blank=True, null=True)
     labor_contract_expiry_date = models.DateField(blank=True, null=True)
 
-    category = models.CharField(max_length=50, blank=True, null=True)
+    category = models.CharField(max_length=100, blank=True, null=True)
 
     # Camp Details
     camp_type = models.CharField(
@@ -311,8 +311,8 @@ class Employee(models.Model):
     client_location = models.CharField(max_length=150, null=True,blank=True)
 
     # Audit Fields
-    created_by = models.CharField(max_length=50, null=True, blank=True)  # Created by
-    modified_by = models.CharField(max_length=50, null=True, blank=True)  # Modified by
+    created_by = models.CharField(max_length=100, null=True, blank=True)  # Created by
+    modified_by = models.CharField(max_length=100, null=True, blank=True)  # Modified by
     created_on = models.DateTimeField(auto_now_add=True, null=True)  # Created on
     modified_on = models.DateTimeField(auto_now=True, null=True)  # Modified on
 
