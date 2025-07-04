@@ -3,25 +3,26 @@ from django.utils.timezone import now
 from django.utils import timezone
 import uuid
 import os
+from django.conf import settings
 
 def employee_document_path(instance, filename):
     # Construct the path using the employee's code
-    return os.path.join('employee_documents', instance.emp_code, filename)
+    return os.path.join(settings.MEDIA_ROOT, 'employee_documents', instance.emp_code, filename)
 
 def camp_document_path(instance, filename):
     # Construct the path using the camp's code
-    return os.path.join('camp_documents', instance.camp_code, filename)
+    return os.path.join(settings.MEDIA_ROOT, 'camp_documents', instance.camp_code, filename)
 
 def company_logo_upload_path(instance, filename):
-    return os.path.join('company_logos', instance.company_code, filename)
+    return os.path.join(settings.MEDIA_ROOT, 'company_logos', instance.company_code, filename)
 
 def party_documents_path(instance, filename):
     # Construct the path using the party's customer code
-    return os.path.join('party_documents', instance.customer_code, filename)
+    return os.path.join(settings.MEDIA_ROOT, 'party_documents', instance.customer_code, filename)
 
 def gratuity_document_path(instance, filename):
     # Store documents under a folder named by employee ID
-    return os.path.join('gratuity_docs', instance.employee_code, filename)
+    return os.path.join(settings.MEDIA_ROOT, 'gratuity_docs', instance.employee_code, filename)
 
 # -------------------------------------------------------------------------------
 # Party Master
