@@ -187,7 +187,7 @@ def get_employee_details(request):
             'staff_category': employee.category,
             'depend_count': employee.depend_count,
             'child_count': employee.child_count,
-            'profile_picture': employee.profile_picture.url if employee.profile_picture else None,
+            'profile_picture': f"{settings.MEDIA_URL}{employee.profile_picture}" if employee.profile_picture else None,
             'department': employee.department,
 
             'local_addr_line1': employee.local_addr_line1,
@@ -225,7 +225,7 @@ def get_employee_details(request):
 
             'issued_date': format_date(employee.issued_date),
             'expiry_date': format_date(employee.expiry_date),
-            'passport_document': employee.passport_document.url if employee.passport_document else None,
+            'passport_document': f"{settings.MEDIA_URL}{employee.passport_document}" if employee.passport_document else None,
             'passport_details': employee.passport_details,
             'passport_issued_country': employee.passport_issued_country,
             'passport_place_of_issue': employee.passport_place_of_issue,
@@ -246,12 +246,12 @@ def get_employee_details(request):
             'work_permit_expiry': format_date(employee.work_permit_expiry),
             'iloe_no': employee.iloe_no,
             'iloe_expiry': format_date(employee.iloe_expiry),
-            'iloe_document': employee.iloe_document.url if employee.iloe_document else None,
+            'iloe_document': f"{settings.MEDIA_URL}{employee.iloe_document}" if employee.iloe_document else None,
             'visa_location': employee.visa_location,
-            'change_status': employee.change_status.url if employee.change_status else None,
-            'visa_document': employee.visa_document.url if employee.visa_document else None,
-            'emirate_document': employee.emirate_document.url if employee.emirate_document else None,
-            'work_permit_document': employee.work_permit_document.url if employee.work_permit_document else None,
+            'change_status': f"{settings.MEDIA_URL}{employee.change_status}" if employee.change_status else None,
+            'visa_document': f"{settings.MEDIA_URL}{employee.visa_document}" if employee.visa_document else None,
+            'emirate_document': f"{settings.MEDIA_URL}{employee.emirate_document}" if employee.emirate_document else None,
+            'work_permit_document': f"{settings.MEDIA_URL}{employee.work_permit_document}" if employee.work_permit_document else None,
         }
 
         # Fetch and serialize related data with error handling
@@ -273,9 +273,15 @@ def get_employee_details(request):
                 emp_code=employee.emp_code, 
                 relationship__isnull=True, 
                 document_number__isnull=True
-            ).values(
-                'document_id', 'document_type', 'document_file'
             ))
+            documents_data = []
+            for doc in documents:
+                documents_data.append({
+                    'document_id': doc.document_id,
+                    'document_type': doc.document_type,
+                    'document_file': f"{settings.MEDIA_URL}{doc.document_file}" if doc.document_file else None
+                })
+            documents = documents_data
         except Exception as e:
             documents = []
 
@@ -283,14 +289,19 @@ def get_employee_details(request):
             dependents = list(EmployeeDocument.objects.filter(
                 emp_code=employee.emp_code, 
                 relationship__isnull=False
-            ).values(
-                'document_id', 'relationship', 'document_type', 'document_number', 
-                'issued_date', 'expiry_date', 'document_file'
             ))
-            # Format dates for dependents
+            dependents_data = []
             for dep in dependents:
-                dep['issued_date'] = format_date(dep['issued_date'])
-                dep['expiry_date'] = format_date(dep['expiry_date'])
+                dependents_data.append({
+                    'document_id': dep.document_id,
+                    'relationship': dep.relationship,
+                    'document_type': dep.document_type,
+                    'document_number': dep.document_number,
+                    'issued_date': format_date(dep.issued_date),
+                    'expiry_date': format_date(dep.expiry_date),
+                    'document_file': f"{settings.MEDIA_URL}{dep.document_file}" if dep.document_file else None
+                })
+            dependents = dependents_data
         except Exception as e:
             dependents = []
 
@@ -300,14 +311,21 @@ def get_employee_details(request):
                 relationship__isnull=True, 
                 issued_date__isnull=True,
                 document_number__isnull=False
-            ).values(
-                'document_id', 'document_type', 'document_number', 'expiry_date', 
-                'document_file', 'staff_work_location', 'emirates_issued_by', 
-                'category', 'comments'
             ))
-            # Format dates for licenses
+            license_data = []
             for lic in license_and_passes:
-                lic['expiry_date'] = format_date(lic['expiry_date'])
+                license_data.append({
+                    'document_id': lic.document_id,
+                    'document_type': lic.document_type,
+                    'document_number': lic.document_number,
+                    'expiry_date': format_date(lic.expiry_date),
+                    'document_file': f"{settings.MEDIA_URL}{lic.document_file}" if lic.document_file else None,
+                    'staff_work_location': lic.staff_work_location,
+                    'emirates_issued_by': lic.emirates_issued_by,
+                    'category': lic.category,
+                    'comments': lic.comments
+                })
+            license_and_passes = license_data
         except Exception as e:
             license_and_passes = []
 
@@ -714,8 +732,8 @@ def deactivate_employee(request, employee_id):
         # Get the Employee object
         employee = get_object_or_404(Employee, employee_id=employee_id)
         # Update is_active to False
-        employee.emp_status = 'inactive'
-        employee.save()
+        # employee.emp_status = 'inactive'
+        employee.delete()
         messages.success(request, 'Employee deactivated successfully!')
     return redirect('/employee')  # Redirect to the employee list page
 
