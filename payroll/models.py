@@ -1,31 +1,12 @@
 from django.db import models
 from django.utils.timezone import now
 from django.utils import timezone
-from django.core.files.storage import FileSystemStorage
 import uuid
 import os
 
-# Custom storage class to handle permission issues
-class SafeFileSystemStorage(FileSystemStorage):
-    def _save(self, name, content):
-        # Ensure the directory exists before saving
-        dirname = os.path.dirname(name)
-        if dirname:
-            full_dir_path = os.path.join(self.location, dirname)
-            try:
-                if not os.path.exists(full_dir_path):
-                    os.makedirs(full_dir_path, mode=0o755, exist_ok=True)
-            except (OSError, PermissionError) as e:
-                # Log the error but continue
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.warning(f"Could not create directory {full_dir_path}: {e}")
-        
-        return super()._save(name, content)
-
 def employee_document_path(instance, filename):
     # Construct the path using the employee's code
-    return os.path.join('employee_documents', str(instance.emp_code), filename)
+    return os.path.join('employee_documents', instance.emp_code, filename)
 
 def camp_document_path(instance, filename):
     # Construct the path using the camp's code
@@ -266,7 +247,7 @@ class Employee(models.Model):
     iban_number = models.CharField(max_length=100, blank=True, null=True)  # Bank loan
 
     # Travel Document Details
-    passport_document = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Passport document upload
+    passport_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Passport document upload
     passport_details = models.CharField(max_length=100, blank=True, null=True)  # Passport details
     passport_place_of_issue = models.CharField(max_length=100, blank=True, null=True)  # Passport place of issue
     passport_issued_country = models.CharField(max_length=100, blank=True, null=True)  # Passport issued country
@@ -275,7 +256,7 @@ class Employee(models.Model):
 
     # New fields for Visa Details
     visa_location = models.CharField(max_length=100, blank=True, null=True)  # Visa location
-    change_status = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Change status
+    change_status = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Change status
     visa_no = models.CharField(max_length=100, blank=True, null=True)  # Visa number
     visa_issued = models.DateField(blank=True, null=True)  # Visa issued date
     visa_expiry = models.DateField(blank=True, null=True)  # Visa expiry date
@@ -283,7 +264,7 @@ class Employee(models.Model):
     visa_issued_emirate = models.CharField(max_length=100, blank=True, null=True)  # Visa issued emirate
     iloe_no = models.CharField(max_length=100, blank=True, null=True)  # ILOE number
     iloe_expiry = models.DateField(blank=True, null=True)  # ILOE expiry date
-    iloe_document = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # ILOE document upload
+    iloe_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # ILOE document upload
     emirates_no = models.CharField(max_length=100, blank=True, null=True)  # Visa number
     emirate_issued = models.DateField(blank=True, null=True)  # Emirate issued
     emirate_expiry = models.DateField(blank=True, null=True)  # Emirate expiry date
@@ -293,10 +274,10 @@ class Employee(models.Model):
     mohra_designation = models.CharField(max_length=100, blank=True, null=True)  # Mohra designation
     work_permit_number = models.CharField(max_length=100, blank=True, null=True)  # Work permit number
     work_permit_expiry = models.DateField(blank=True, null=True)  # Work permit expiry date
-    visa_document = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Visa document upload
-    emirate_document = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Emirate document upload
-    work_permit_document = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Work permit document upload
-    profile_picture = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage(), blank=True, null=True)  # Profile picture
+    visa_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Visa document upload
+    emirate_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Emirate document upload
+    work_permit_document = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Work permit document upload
+    profile_picture = models.FileField(upload_to=employee_document_path, blank=True, null=True)  # Profile pictur
     date_of_landing = models.DateField(blank=True, null=True)  # Date of landing
 
     # Fields with additional date inputs
@@ -346,7 +327,7 @@ class EmployeeDocument(models.Model):
     document_id = models.AutoField(primary_key=True)  # Primary key for the document
     emp_code = models.CharField(max_length=50)  # Employee code
     document_type = models.CharField(max_length=250)  # Document type
-    document_file = models.FileField(upload_to=employee_document_path, storage=SafeFileSystemStorage())  # Document file
+    document_file = models.FileField(upload_to=employee_document_path)  # Document file
     created_by = models.BigIntegerField(null=True, blank=True)  # Created by
     created_on = models.DateTimeField(auto_now_add=True)  # Created on
     modified_by = models.BigIntegerField(null=True, blank=True)  # Modified by
