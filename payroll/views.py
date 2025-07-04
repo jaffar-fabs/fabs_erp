@@ -1409,10 +1409,10 @@ def project(request):
                                 project_value=row_data['Project Value*'],
                                 timeline_from=pd.to_datetime(row_data['Start Date* (YYYY-MM-DD)']).date(),
                                 timeline_to=pd.to_datetime(row_data['End Date* (YYYY-MM-DD)']).date(),
-                                prj_city=row_data.get('Project City', ''),
-                                service_type=row_data.get('Service Type', ''),
-                                service_category=row_data.get('Service Category', ''),
-                                pro_sub_location=row_data.get('Project Sub Location', ''),
+                                prj_city=row_data.get('Project City', '').upper(),
+                                service_type=row_data.get('Service Type', '').upper(),
+                                service_category=row_data.get('Service Category', '').upper(),
+                                pro_sub_location=row_data.get('Project Sub Location', '').upper(),
                                 customer=row_data.get('Customer Code', ''),
                                 agreement_ref=row_data.get('Agreement Ref', ''),
                                 op_head=row_data.get('OP Head Code', ''),
@@ -1423,7 +1423,7 @@ def project(request):
                                 procurement_user=row_data.get('Procurement User Code', ''),
                                 indent_user=row_data.get('Indent User Code', ''),
                                 final_contract_value=row_data.get('Final Contract Value', 0),
-                                project_status=row_data.get('Project Status', ''),
+                                project_status=row_data.get('Project Status', '').upper(),
                                 created_by=1
                             )
                             
