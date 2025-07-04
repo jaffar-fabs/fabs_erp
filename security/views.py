@@ -6,13 +6,21 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+import urllib.request
 
 PAGINATION_SIZE = 6
+COMP_CODE = None
+
+def set_comp_code(request):
+    global COMP_CODE
+
+    COMP_CODE = request.session.get("comp_code")
 
 class RoleMasterList(View):
     template_name = 'pages/security/role/role_master.html'
 
     def get(self, request):
+        set_comp_code(request)
         keyword = request.GET.get('keyword', '').strip()
         page_number = request.GET.get('page', 1)
         get_url = request.get_full_path()
@@ -26,7 +34,7 @@ class RoleMasterList(View):
             current_url = f"{get_url}?"
 
         # Initialize the query
-        query = RoleMaster.objects.all()
+        query = RoleMaster.objects.filter(comp_code=COMP_CODE)
 
         # Apply search filter if a keyword is provided
         if keyword:
@@ -62,13 +70,14 @@ class RoleMasterList(View):
 class RoleMasterCreate(View):
     def post(self, request):
         try:
+            set_comp_code(request)
             role_name = request.POST.get('role_name')
-            if RoleMaster.objects.filter(role_name=role_name).exists():
+            if RoleMaster.objects.filter(role_name=role_name, comp_code=COMP_CODE).exists():
                 return JsonResponse({'status': 'error', 'message': 'Role name already exists.', 'field': 'role_name'})
             created_by = request.POST.get('created_by')
             modified_by = request.POST.get('modified_by')
             role = RoleMaster(
-                comp_code=request.POST.get('comp_code'),
+                comp_code=COMP_CODE,
                 role_name=role_name,
                 role_description=request.POST.get('role_description'),
                 is_active=request.POST.get('is_active') == 'on',
@@ -84,8 +93,9 @@ class RoleMasterCreate(View):
 class RoleMasterUpdate(View):
     def post(self, request, role_id):
         try:
+            set_comp_code(request)
             role = get_object_or_404(RoleMaster, id=role_id)
-            role.comp_code = request.POST.get('comp_code')
+            role.comp_code = COMP_CODE
             role.role_description = request.POST.get('role_description')
             role.modified_by = request.POST.get('modified_by')
             role.is_active = request.POST.get('is_active') == 'on'
@@ -98,7 +108,8 @@ class RoleMasterUpdate(View):
 class RoleMasterDelete(View):
     def post(self, request, role_id):
         try:
-            role = get_object_or_404(RoleMaster, id=role_id)
+            set_comp_code(request)
+            role = get_object_or_404(RoleMaster, id=role_id, comp_code=COMP_CODE)
             role.is_active = False
             role.save()
             return redirect('role_list')
@@ -116,8 +127,9 @@ from django.db.models import Q
 
 class UserRoleMappingCreate(View):
     def get(self, request):
-        users = UserMaster.objects.filter(is_active=True)
-        roles = RoleMaster.objects.filter(is_active=True)
+        set_comp_code(request)
+        users = UserMaster.objects.filter(is_active=True, comp_code=COMP_CODE)
+        roles = RoleMaster.objects.filter(is_active=True, comp_code=COMP_CODE)
         return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
             'users': users,
             'roles': roles,
@@ -126,17 +138,18 @@ class UserRoleMappingCreate(View):
 
     def post(self, request):
         try:
+            set_comp_code(request)
             user_master_id = request.POST.get('user_master_id')
-            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
+            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
             roleid = request.POST.get('roleid')
-            role = get_object_or_404(RoleMaster, id=roleid)
+            role = get_object_or_404(RoleMaster, id=roleid, comp_code=COMP_CODE)
 
             # Check if the user already has a role assigned
             if UserRoleMapping.objects.filter(userid=user_master.user_master_id).exists():
                 return JsonResponse({'error': 'User has already been assigned a role.'}, status=400)
 
             mapping = UserRoleMapping(
-                comp_code=1000,
+                comp_code=COMP_CODE,
                 userid=user_master.user_master_id,
                 roleid=role.id,
                 role_start_date=request.POST.get('role_start_date') or None,
@@ -153,11 +166,12 @@ class UserRoleMappingCreate(View):
 class UserRoleMappingUpdate(View):
     def post(self, request, mappingid):
         try:
-            mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid)
+            set_comp_code(request)
+            mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid, comp_code=COMP_CODE)
             user_master_id = request.POST.get('user_master_id')
-            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id)
+            user_master = get_object_or_404(UserMaster, user_master_id=user_master_id, comp_code=COMP_CODE)
             roleid = request.POST.get('roleid')
-            role = get_object_or_404(RoleMaster, id=roleid)
+            role = get_object_or_404(RoleMaster, id=roleid, comp_code=COMP_CODE)
 
             # Check if the user already has a role assigned (excluding the current mapping)
             if UserRoleMapping.objects.filter(userid=user_master.user_master_id).exclude(mappingid=mappingid).exists():
@@ -184,12 +198,13 @@ class UserRoleMappingUpdate(View):
 class UserRoleMappingDelete(View):
     def post(self, request, mappingid):
         try:
-            mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid)
+            set_comp_code(request)
+            mapping = get_object_or_404(UserRoleMapping, mappingid=mappingid, comp_code=COMP_CODE)
             mapping.is_active = False
             mapping.save()
             return redirect('user_role_mapping_list')
         except Exception as e:
-            users = UserMaster.objects.filter(is_active=True)
+            users = UserMaster.objects.filter(is_active=True, comp_code=COMP_CODE)
             return render(request, 'pages/security/user_role_mapping/user_role_mapping.html', {
                 'error': str(e),
                 'mappings': UserRoleMapping.objects.all(),
@@ -199,6 +214,7 @@ class UserRoleMappingDelete(View):
 
 
 def user_role_mapping_list(request):
+    set_comp_code(request)
     keyword = request.GET.get('keyword', '').strip()
     page_number = request.GET.get('page', 1)
     get_url = request.get_full_path()
@@ -212,7 +228,7 @@ def user_role_mapping_list(request):
         current_url = f"{get_url}?"
 
     # Initialize the query
-    query = UserRoleMapping.objects.all()
+    query = UserRoleMapping.objects.filter(comp_code=COMP_CODE)
 
     # Apply search filter if a keyword is provided
     if keyword:
@@ -236,8 +252,8 @@ def user_role_mapping_list(request):
         mappings_page = paginator.page(paginator.num_pages)
 
     # Prepare the context for the template
-    users = UserMaster.objects.filter(is_active=True)
-    roles = RoleMaster.objects.filter(is_active=True)
+    users = UserMaster.objects.filter(is_active=True, comp_code=COMP_CODE)
+    roles = RoleMaster.objects.filter(is_active=True, comp_code=COMP_CODE)
     context = {
         'mappings': mappings_page,
         'users': users,
