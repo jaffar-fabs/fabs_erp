@@ -234,18 +234,218 @@
     $(".add-btn").on("click", function (event) {
         event.preventDefault();
         
-        // Reset the form
-        // Reset all fields
+        // Reset the entire form
         $("#addEmployeeForm")[0].reset();
+        
+        // Clear all preview areas
         $("#profile_picture_preview").empty();
-        $("#emp_code").val('');
-        $("#emp_name_passport").val('');
+        $("#passport_document_preview").empty();
+        $("#visa_document_preview").empty();
+        $("#emirate_document_preview").empty();
+        $("#work_permit_document_preview").empty();
+        $("#iloe_document_preview").empty();
+        $("#changeStatusFile_preview").empty();
+        
+        // Clear all dynamic tables
+        $("#multiEntryTable_add tbody").html(`
+            <tr>
+                <td>
+                    <select name="entry_type[]" class="form-control entry-type">
+                        <option value="">Select Type</option>
+                        <option value="EARNINGS">Earnings</option>
+                        <option value="DEDUCTION">Deduction</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="entry_code[]" class="form-control code-dropdown">
+                        <option value="">Select Code</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="entry_amount[]" class="form-control" min="0" step="0.01">
+                </td>
+                <td>
+                    <select name="entry_proated_flag[]" class="form-control">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger remove-entry">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        $("#documentUploadTable_add tbody").html(`
+            <tr>
+                <td>
+                    <select class="form-select" name="document_type[]">
+                        {% for document in doc_data %}
+                            <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        $("#dependentsTable_add tbody").html(`
+            <tr>
+                <td>
+                    <input type="hidden" name="dependent_id[]" value="">
+                    <select class="form-select" name="dependent_relationship[]">
+                        {% for relative in relatives_data %}
+                            <option value="{{ relative.base_value }}">{{ relative.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="dependent_doc_type[]">
+                        {% for document in other_documents_data %}
+                            <option value="{{ document.base_value }}">{{ document.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td><input type="text" name="dependent_doc_number[]" class="form-control"></td>
+                <td><input type="date" name="dependent_issued_date[]" class="form-control"></td>
+                <td><input type="date" name="dependent_expiry_date[]" class="form-control"></td>
+                <td>
+                    <input type="file" name="dependent_doc_file[]" class="form-control" accept="application/pdf,image/*">
+                    <div class="dependent-file-preview"></div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addDependentRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        $("#licensePassesTable_add tbody").html(`
+            <tr>
+                <td>
+                    <input type="hidden" name="license_id[]" value="">
+                    <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
+                        <option value="">-- Select --</option>
+                        <option value="license">License</option>
+                        <option value="site_medical">Site Medical</option>
+                        <option value="site_pass">Site Pass</option>
+                    </select>
+                </td>
+                <td><input type="text" name="license_doc_number[]" class="form-control"></td>
+                <td><input type="date" name="license_issued_date[]" class="form-control"></td>
+                <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
+                <td>
+                    <select class="form-select" name="work_location[]">
+                        {% for location in work_location_data %}
+                            <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="emirate_issued[]">
+                        {% for emirate in emirates_list %}
+                            <option value="{{ emirate.base_value }}">{{ emirate.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select category-column" name="license_category[]" style="display:none;">
+                        <option value="">-- Select Category --</option>
+                        <option value="light">Light</option>
+                        <option value="heavy">Heavy</option>
+                        <option value="high">High</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*">
+                    <div class="license-file-preview"></div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addLicenseRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        $("#recruitmentInfoTable_add tbody").html(`
+            <tr>
+                <td>
+                    <input type="hidden" name="recruitment_id[]" value="">
+                    <select class="form-select" name="agent_name[]">
+                        <option value="">Select Agent</option>
+                        {% for agent in agent_data %}
+                        <option value="{{ agent.base_value }}">{{ agent.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="location[]">
+                        <option value="">Select Location</option>
+                        {% for location in location_data %}
+                        <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" name="change_status[]">
+                        <option value="">Select</option>
+                        <option value="inside">Inside</option>
+                        <option value="outside">Outside</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="recruitment_from[]" class="form-control" placeholder="Enter Recruitment From">
+                </td>
+                <td>
+                    <input type="date" name="recruitment_date[]" class="form-control">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+        
+        // Reset accommodation fields
+        $("#campType_add").val('').change();
+        $("#campDetails_add").hide();
+        $("#inCampDetails_add").hide();
+        $("#clientAccommodationDetails_add").hide();
+        $("#outsideDetails_add").hide();
         
         // Reset salary totals
         if (typeof calculateSalaryTotals === 'function') {
             calculateSalaryTotals();
         }
-
+        
+        // Clear any validation errors
+        if (typeof clearFieldErrors === 'function') {
+            clearFieldErrors();
+        }
     });
 
     $(document).on("click",".edit-employee-btn", function (event) {
