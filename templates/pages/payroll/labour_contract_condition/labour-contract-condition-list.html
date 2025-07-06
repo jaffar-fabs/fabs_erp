@@ -60,6 +60,7 @@
                     <table class="table datatable">
                         <thead class="thead-light">
                             <tr>
+                                <th>LCC Code</th>
                                 <th>Attendance UOM</th>
                                 <th>Default Project</th>
                                 <th>Start Time</th>
@@ -75,6 +76,7 @@
                         <tbody>
                             {% for record in labour_contract_list %}
                             <tr>
+                                <td>{{record.lcc_code|default:"Auto"}}</td>
                                 <td>{{record.attendance_uom}}</td>
                                 <td>{{record.default_project}}</td>
                                 <td>{{record.start_time}}</td>
@@ -108,6 +110,7 @@
                                             <a class="dropdown-item edit-labour-contract" href="javascript:void(0);"
                                                 data-bs-toggle="offcanvas" data-bs-target="#offcanvas_edit_labour_contract"
                                                 data-labour-contract-id="{{ record.process_cycle_id }}"
+                                                data-lcc-code="{{ record.lcc_code|default:'' }}"
                                                 data-attendance="{{ record.attendance_uom }}"
                                                 data-process-date="{{ record.process_date }}"
                                                 data-default-project="{{ record.default_project }}"

@@ -108,7 +108,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Default Project</label>
-                            <select class="form-select" aria-label="select example" name="default_project">
+                            <select class="form-control select2" multiple="multiple" aria-label="select example" name="default_project" required>
                                 <option value="">Select</option>
                                     {% for pro_data in project_data %}
                                         <option value="{{ pro_data.prj_code }}">{{ pro_data.prj_name }}</option>
@@ -546,10 +546,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Default Project</label>
-                            <select class="select" name="default_project" id="edit_default_project">
+                            <select class="form-control select2" multiple="multiple" name="default_project" id="edit_default_project">
                                 <option value="">Select</option>
                                         {% for pro_data in project_data %}
-                                            <option value="{{ pro_data.prj_code }}" {% if pro_data.prj_code == user.project_code %}selected{% endif %}>
+                                            <option value="{{ pro_data.prj_code }}">
                                                 {{ pro_data.prj_name }}
                                             </option>
                                         {% endfor %}
@@ -818,7 +818,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('edit_attendance_uom').value = attendance;
                 document.getElementById('edit_process_comp_flag').value = processCompFlag;
                 document.getElementById('edit_process_date').value = formatDate(processDate);
-                document.getElementById('edit_default_project').value = defaultProject;
+                // Handle default project - split by colon and set multiple values
+                if (defaultProject) {
+                    var projectArray = defaultProject.split(':');
+                    $('#edit_default_project').val(projectArray).trigger('change');
+                } else {
+                    $('#edit_default_project').val([]).trigger('change');
+                }
                 document.getElementById('edit_start_time').value = startTime;
                 document.getElementById('edit_end_time').value = endTime;
                 document.getElementById('edit_hours_per_day').value = hoursPerDay;
@@ -835,7 +841,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('edit_ot2_amt').value = ot2Amt;
                 document.getElementById('edit_checkebox_md').checked = (isActive === 'Y');
                 $('#edit_process_cycle').val(processCycle).trigger('change');
-                $('#edit_default_project').val(defaultProject).trigger('change');
                 $('#edit_ot_eligible').val(otEligible).trigger('change');
                 $('#edit_ot2_eligible').val(ot2Eligible).trigger('change');
 

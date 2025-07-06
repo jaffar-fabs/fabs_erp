@@ -1194,6 +1194,9 @@ class Paycycle(View):
 
     def post(self, request):
         set_comp_code(request)
+        default_project_raw = request.POST.getlist('default_project')
+        default_project_str = ':'.join(default_project_raw) if default_project_raw else ''
+
         process_cycle_id = request.POST.get('process_cycle_id')
         process_description = request.POST.get('process_description')
         process_cycle = request.POST.get('process_cycle')
@@ -1202,7 +1205,7 @@ class Paycycle(View):
         date_to = request.POST.get('date_to')
         process_date = request.POST.get('process_date') or None
         attendance_uom = request.POST.get('attendance_uom')
-        default_project = request.POST.get('default_project')
+        default_project = default_project_str
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
         hours_per_day = request.POST.get('hours_per_day') or 0
@@ -1295,7 +1298,7 @@ class Paycycle(View):
             return datetime.strptime(date_str, '%d-%m-%Y').strftime('%Y-%m-%d')
         except (ValueError, TypeError):
             return None
-
+        
     # def get_next_process_cycle_id(request,self):
     #     set_comp_code(request)
     #     auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
@@ -7410,6 +7413,7 @@ class LabourContractCondition(View):
     def post(self, request):
         set_comp_code(request)
         labour_contract_id = request.POST.get('labour_contract_id')
+        lcc_code = request.POST.get('lcc_code')
         attendance_uom = request.POST.get('attendance_uom')
         process_date = request.POST.get('process_date') or None
         default_project = request.POST.get('default_project')
@@ -7431,6 +7435,7 @@ class LabourContractCondition(View):
         
         if labour_contract_id:
             labour_contract = get_object_or_404(PaycycleMaster, process_cycle_id=labour_contract_id, comp_code=COMP_CODE)
+            labour_contract.lcc_code = lcc_code
             labour_contract.attendance_uom = attendance_uom
             labour_contract.process_date = process_date
             labour_contract.default_project = default_project
@@ -7453,8 +7458,19 @@ class LabourContractCondition(View):
             labour_contract.modified_on = now()
             labour_contract.save()
         else:
+            # Generate LCC code for new records
+            if not lcc_code:
+                try:
+                    with connection.cursor() as cursor:
+                        cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'LCC'])
+                        result = cursor.fetchone()
+                        lcc_code = result[0] if result else None
+                except Exception as e:
+                    return JsonResponse({"error": str(e)}, status=500)
+            
             PaycycleMaster.objects.create(
                 comp_code=COMP_CODE,
+                lcc_code=lcc_code,
                 attendance_uom=attendance_uom,
                 process_date=process_date,
                 default_project=default_project,
