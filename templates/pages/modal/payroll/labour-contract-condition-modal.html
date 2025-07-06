@@ -17,6 +17,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <label class="col-form-label">LCC Code<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="lcc_code" id="lcc_code" readonly>
+                            <div class="invalid-feedback">LCC Code will be auto-generated.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
                             <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
                             <select class="form-select" required aria-label="select example" name="attendance_uom">
                                 <option value="">Select</option>
@@ -41,7 +48,7 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Default Project</label>
-                            <select class="form-select" aria-label="select example" name="default_project">
+                            <select class="form-control select2" multiple="multiple" aria-label="select example" name="default_project">
                                 <option value="">Select</option>
                                     {% for pro_data in project_data %}
                                         <option value="{{ pro_data.prj_code }}">{{ pro_data.prj_name }}</option>
@@ -228,6 +235,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <label class="col-form-label">LCC Code<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="lcc_code" id="edit_lcc_code" readonly>
+                            <div class="invalid-feedback">LCC Code is auto-generated and cannot be modified.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
                             <label class="col-form-label">Attendance UOM<span class="text-danger">*</span></label>
                             <select class="form-select" required aria-label="select example" name="attendance_uom" id="edit_attendance_uom">
                                 <option value="">Select</option>
@@ -254,10 +268,10 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="col-form-label">Default Project</label>
-                            <select class="select" name="default_project" id="edit_default_project">
+                            <select class="form-control select2" multiple="multiple" name="default_project" id="edit_default_project">
                                 <option value="">Select</option>
                                         {% for pro_data in project_data %}
-                                            <option value="{{ pro_data.prj_code }}" {% if pro_data.prj_code == user.project_code %}selected{% endif %}>
+                                            <option value="{{ pro_data.prj_code }}">
                                                 {{ pro_data.prj_name }}
                                             </option>
                                         {% endfor %}
@@ -450,6 +464,7 @@
             }
             button.addEventListener('click', function () {
                 var labourContractId = button.getAttribute('data-labour-contract-id');
+                var lccCode = button.getAttribute('data-lcc-code');
                 var attendance = button.getAttribute('data-attendance');
                 var processDate = button.getAttribute('data-process-date');
                 var defaultProject = button.getAttribute('data-default-project');
@@ -470,9 +485,16 @@
                 var isActive = button.getAttribute('data-is-active');
 
                 document.getElementById('labour_contract_id').value = labourContractId;
+                document.getElementById('edit_lcc_code').value = lccCode;
                 document.getElementById('edit_attendance_uom').value = attendance;
                 document.getElementById('edit_process_date').value = formatDate(processDate);
-                document.getElementById('edit_default_project').value = defaultProject;
+                // Handle default project - split by colon and set multiple values
+                if (defaultProject) {
+                    var projectArray = defaultProject.split(':');
+                    $('#edit_default_project').val(projectArray).trigger('change');
+                } else {
+                    $('#edit_default_project').val([]).trigger('change');
+                }
                 document.getElementById('edit_start_time').value = startTime;
                 document.getElementById('edit_end_time').value = endTime;
                 document.getElementById('edit_hours_per_day').value = hoursPerDay;

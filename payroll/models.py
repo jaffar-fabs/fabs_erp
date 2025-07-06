@@ -405,6 +405,7 @@ class PaycycleMaster(models.Model):
 
     comp_code = models.CharField(max_length=20)  # Removed default value
     process_cycle_id = models.AutoField(primary_key=True)
+    lcc_code = models.CharField(max_length=50, null=True, blank=True)  # LCC Code field
     process_cycle = models.CharField(max_length=50, null=False, blank=False)
     process_description = models.CharField(max_length=500, null=False, blank=False)
     pay_process_month = models.CharField(max_length=20, null=False, blank=False)
