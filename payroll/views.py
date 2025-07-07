@@ -2618,6 +2618,7 @@ def permission_view(request):
 
 @csrf_exempt
 def update_role_menu(request):
+    set_comp_code(request)
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -2633,7 +2634,7 @@ def update_role_menu(request):
                 is_checked = change.get('is_checked')
 
                 if role_id and menu_id and permission is not None:
-                    role_menu, created = RoleMenu.objects.get_or_create(role_id=role_id, menu_id=menu_id)
+                    role_menu, created = RoleMenu.objects.get_or_create(comp_code = COMP_CODE, role_id=role_id, menu_id=menu_id)
                     setattr(role_menu, permission, is_checked)
                     role_menu.save()
 
