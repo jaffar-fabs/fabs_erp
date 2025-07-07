@@ -2637,7 +2637,6 @@ def update_role_menu(request):
                     role_menu, created = RoleMenu.objects.get_or_create(comp_code= COMP_CODE, role_id=role_id, menu_id=menu_id)
                     setattr(role_menu, permission, is_checked)
                     role_menu.comp_code = COMP_CODE
-                    print(role_menu)
                     role_menu.save()
 
             return JsonResponse({'success': True})
