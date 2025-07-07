@@ -2634,8 +2634,9 @@ def update_role_menu(request):
                 is_checked = change.get('is_checked')
 
                 if role_id and menu_id and permission is not None:
-                    role_menu, created = RoleMenu.objects.get_or_create(comp_code = COMP_CODE, role_id=role_id, menu_id=menu_id)
+                    role_menu, created = RoleMenu.objects.get_or_create(comp_code= COMP_CODE, role_id=role_id, menu_id=menu_id)
                     setattr(role_menu, permission, is_checked)
+                    role_menu.comp_code = COMP_CODE
                     role_menu.save()
 
             return JsonResponse({'success': True})
