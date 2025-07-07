@@ -302,6 +302,13 @@ urlpatterns = [
     path('procurement/get_mr_items/', procurement.get_mr_items, name='get_mr_items'),
     path('procurement/get_warehouse_stock/', procurement.get_warehouse_stock, name='get_warehouse_stock'),
 
+    # Notification Master URLs
+    path('notification/list/', views.notification_list, name='notification_list'),
+    path('notification/create/', views.notification_create, name='notification_create'),
+    path('notification/edit/', views.notification_edit, name='notification_edit'),
+    path('notification/update/', views.notification_update, name='notification_update'),
+    path('notification/delete/<int:notification_id>/', views.notification_delete, name='notification_delete'),
+
 ]
 
 
