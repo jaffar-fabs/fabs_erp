@@ -83,7 +83,7 @@ def employee_master(request):
         Q(category__in=PAY_CYCLES) | Q(prj_code__in=PROJECTS),
         comp_code=COMP_CODE
     )
-
+        
     salary = request.session.get("user_salary")
 
     # Search filter
