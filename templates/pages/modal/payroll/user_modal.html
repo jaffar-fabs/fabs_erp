@@ -17,7 +17,7 @@
                 <div class="col-md-6">
                     <div class="form-group mb-3">
                         <label class="col-form-label">Employee Code</label>
-                        <select name="emp_code" id="emp_code" class="form-control" required onchange="fetchEmployeeData(this.value)">
+                        <select name="emp_code" id="emp_code" class="form-control" onchange="fetchEmployeeData(this.value)">
                             <option value="">Select</option>
                             {% for employee in employee_data %}
                                 <option value="{{ employee.emp_code }}"

@@ -933,11 +933,31 @@ def check_user_companies(request):
             data = json.loads(request.body)
             username = data.get('username')
             
-            user = UserMaster.objects.get(user_id=username, is_active=True)
-            companies = user.company.split(':')
-
-            # get all companies from user with both code and name
-            companies_data = CompanyMaster.objects.filter(company_code__in=companies).values('company_code','company_name')
+            # Get all UserMaster records for this user_id across all companies
+            users = UserMaster.objects.filter(user_id=username, is_active=True)
+            
+            if not users.exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'User not found'
+                })
+            
+            # Collect all company codes from all user records
+            all_company_codes = []
+            for user in users:
+                if user.company:
+                    # Split the company field and add each company code
+                    user_companies = user.company.split(':')
+                    all_company_codes.extend(user_companies)
+                
+                # Also add the comp_code from the user record itself
+                all_company_codes.append(user.comp_code)
+            
+            # Remove duplicates and filter out empty values
+            unique_company_codes = list(set([code for code in all_company_codes if code]))
+            
+            # Get all companies from CompanyMaster with both code and name
+            companies_data = CompanyMaster.objects.filter(company_code__in=unique_company_codes).values('company_code','company_name')
 
             # Format data for dropdown: name for display, code for value
             dropdown_options = []
@@ -949,13 +969,8 @@ def check_user_companies(request):
 
             return JsonResponse({
                 'success': True,
-                'companies': companies,
+                'companies': unique_company_codes,
                 'dropdown_options': dropdown_options
-            })
-        except UserMaster.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'message': 'User not found'
             })
         except Exception as e:
             return JsonResponse({
