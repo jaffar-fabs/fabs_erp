@@ -7368,11 +7368,14 @@ def generate_report(request):
         return response
     
     except Exception as e:
-        print(e)
+        import traceback
+        print(f"Error generating report: {str(e)}")
+        print(traceback.format_exc())  # This will print the stack trace for better debugging
         return JsonResponse({
             'status': 'error',
             'message': f'Error generating report: {str(e)}'
         }, status=500)
+
 
 class LabourContractCondition(View):
     template_name = "pages/payroll/labour_contract_condition/labour-contract-condition-list.html"
@@ -7520,3 +7523,145 @@ class LabourContractCondition(View):
         return JsonResponse({"status": "success", "message": "Labour Contract Condition deactivated successfully."})
 
 
+# ------------------------------------------------------------------------------------------------------------
+# Notification Master Views
+
+def notification_list(request):
+    set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    get_url = request.get_full_path()
+
+    # Adjust URL for pagination
+    if '?keyword' in get_url:
+        get_url = get_url.split('&page=')[0]
+        current_url = f"{get_url}&"
+    else:
+        get_url = get_url.split('?')[0]
+        current_url = f"{get_url}?"
+
+    # Initialize the query
+    query = NotificationMaster.objects.filter(comp_code=COMP_CODE)
+
+    # Apply search filter if a keyword is provided
+    if keyword:
+        try:
+            query = query.filter(
+                Q(doc_type__icontains=keyword) |
+                Q(before_or_after_flag__icontains=keyword)
+            )
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
+
+    # Apply pagination
+    paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
+
+    try:
+        notifications_page = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        notifications_page = paginator.page(1)
+    except EmptyPage:
+        notifications_page = paginator.page(paginator.num_pages)
+
+    # Prepare the context for the template
+    context = {
+        'notifications': notifications_page,
+        'current_url': current_url,
+        'keyword': keyword,
+        'result_cnt': query.count()
+    }
+
+    return render(request, 'pages/payroll/notification/notification_list.html', context)
+
+@csrf_exempt
+def notification_create(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            notification = NotificationMaster(
+                comp_code=COMP_CODE,
+                doc_type=request.POST.get('doc_type'),
+                before_or_after_flag=request.POST.get('before_or_after_flag'),
+                no_of_days=request.POST.get('no_of_days'),
+                email_body=request.POST.get('email_body'),
+                to_emails=request.POST.get('to_emails'),
+                cc_emails=request.POST.get('cc_emails'),
+                is_active=request.POST.get('is_active') == 'on',
+                created_by=1
+            )
+            notification.full_clean()
+            notification.save()
+            return redirect('notification_list')
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def notification_update(request, notification_id=None):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            # Get notification_id from form data if not in URL
+            if not notification_id:
+                notification_id = request.POST.get('notification_id')
+            
+            notification = get_object_or_404(NotificationMaster, notification_id=notification_id, comp_code=COMP_CODE)
+            notification.doc_type = request.POST.get('doc_type')
+            notification.before_or_after_flag = request.POST.get('before_or_after_flag')
+            notification.no_of_days = request.POST.get('no_of_days')
+            notification.email_body = request.POST.get('email_body')
+            notification.to_emails = request.POST.get('to_emails')
+            notification.cc_emails = request.POST.get('cc_emails')
+            
+            # Handle is_active checkbox
+            is_active_value = request.POST.get('is_active') is not None  # This will be True if checked, False if not
+            notification.is_active = is_active_value
+            
+            notification.modified_by = 1
+            notification.full_clean()
+            notification.save()
+            return redirect('notification_list')
+        except Exception as e:
+            print("Error in notification_update:", str(e))
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def notification_delete(request, notification_id):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            notification = get_object_or_404(NotificationMaster, notification_id=notification_id, comp_code=COMP_CODE)
+            notification.is_active = False
+            notification.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+def notification_edit(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        try:
+            notification_id = request.GET.get('notification_id')
+            notification = NotificationMaster.objects.get(notification_id=notification_id, comp_code=COMP_CODE)
+            
+            return JsonResponse({
+                'notification_id': notification.notification_id,
+                'doc_type': notification.doc_type,
+                'before_or_after_flag': notification.before_or_after_flag,
+                'no_of_days': notification.no_of_days,
+                'to_emails': notification.to_emails,
+                'cc_emails': notification.cc_emails or '',
+                'email_body': notification.email_body,
+                'is_active': bool(notification.is_active),
+            })
+        except NotificationMaster.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Notification not found.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

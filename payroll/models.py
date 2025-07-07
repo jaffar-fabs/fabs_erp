@@ -1053,3 +1053,27 @@ class MRFMaster(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_by = models.CharField(max_length=50)
     updated_at = models.DateTimeField(auto_now=True)
+
+class NotificationMaster(models.Model):
+    comp_code = models.CharField(max_length=15)
+    notification_id = models.BigAutoField(primary_key=True)
+    doc_type = models.CharField(max_length=100)  # Document type
+    before_or_after_flag = models.CharField(max_length=10, choices=[
+        ('Before', 'Before'),
+        ('After', 'After')
+    ])  # Before or after flag
+    no_of_days = models.IntegerField()  # Number of days
+    email_body = models.TextField()  # Email body
+    to_emails = models.TextField()  # To emails (comma-separated)
+    cc_emails = models.TextField(blank=True, null=True)  # CC emails (comma-separated)
+    is_active = models.BooleanField(default=True)
+    created_by = models.BigIntegerField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(blank=True, null=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['comp_code', 'doc_type', 'before_or_after_flag']
+    
+    def __str__(self):
+        return f"{self.doc_type} - {self.before_or_after_flag} ({self.no_of_days} days)"
