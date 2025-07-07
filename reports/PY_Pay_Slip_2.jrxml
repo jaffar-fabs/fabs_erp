@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-03T04:18:00 -->
+<!-- 2025-07-07T10:40:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Pay_Slip" pageWidth="595" pageHeight="500" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f75e0eb2-4f76-450f-a538-a081b05a7d61">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -262,8 +262,7 @@ GROUP BY
     a.account_no,
     a.iban_number,
     a.date_of_join
-ORDER BY a.emp_code;
-]]>
+ORDER BY a.emp_code;]]>
 	</queryString>
 	<field name="EMP_CODE" class="java.lang.String"/>
 	<field name="EMP_NAME" class="java.lang.String"/>
@@ -288,9 +287,9 @@ ORDER BY a.emp_code;
 		<band splitType="Stretch"/>
 	</background>
 	<pageHeader>
-		<band height="50" splitType="Stretch">
+		<band height="60" splitType="Stretch">
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="30" width="555" height="20" forecolor="#FFFFFF" backcolor="#04A3B5" uuid="88ea1535-63b1-436c-a79e-cac1a43c3196">
+				<reportElement mode="Opaque" x="0" y="40" width="555" height="20" forecolor="#FFFFFF" backcolor="#04A3B5" uuid="88ea1535-63b1-436c-a79e-cac1a43c3196">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -299,12 +298,14 @@ ORDER BY a.emp_code;
 				<text><![CDATA[Pay Slip]]></text>
 			</staticText>
 			<subreport>
-				<reportElement x="0" y="0" width="554" height="40" uuid="8616be60-952c-4ec4-9d47-41add02207ff"/>
+				<reportElement x="0" y="0" width="554" height="40" uuid="8616be60-952c-4ec4-9d47-41add02207ff">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
 				<subreportParameter name="P0">
 					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["reports/PY_company_name(portrait).jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name(portrait)2.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</pageHeader>
@@ -890,16 +891,4 @@ ORDER BY a.emp_code;
 			</textField>
 		</band>
 	</columnHeader>
-	<columnFooter>
-		<band height="42">
-			<subreport>
-				<reportElement x="0" y="0" width="554" height="42" uuid="2fecb421-b12c-4eec-bceb-295d32c7e1c3"/>
-				<subreportParameter name="P0">
-					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["reports/PY_Company_Details(portrait).jasper"]]></subreportExpression>
-			</subreport>
-		</band>
-	</columnFooter>
 </jasperReport>
