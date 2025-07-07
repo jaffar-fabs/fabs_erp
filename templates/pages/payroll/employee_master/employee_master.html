@@ -342,9 +342,9 @@
                     <input type="hidden" name="license_id[]" value="">
                     <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
                         <option value="">-- Select --</option>
-                        <option value="license">License</option>
-                        <option value="site_medical">Site Medical</option>
-                        <option value="site_pass">Site Pass</option>
+                        {% for lp in lp_data %}
+                            <option value="{{ lp.base_value }}">{{ lp.base_description }}</option>
+                        {% endfor %}
                     </select>
                 </td>
                 <td><input type="text" name="license_doc_number[]" class="form-control"></td>
@@ -1027,14 +1027,32 @@
             if (licenses && licenses.length > 0) {
                 licenses.forEach(license => {
                     const newRow = document.createElement('tr');
+                    
+                    // Get the first row to extract the L&P options
+                    const firstRow = tableBody.querySelector('tr');
+                    let lpOptions = '';
+                    if (firstRow) {
+                        const firstSelect = firstRow.querySelector('select[name="license_doc_type[]"]');
+                        lpOptions = Array.from(firstSelect.options).map(option => 
+                            `<option value="${option.value}" ${license.document_type === option.value ? 'selected' : ''}>${option.textContent}</option>`
+                        ).join('');
+                    } else {
+                        // Fallback if no first row exists
+                        lpOptions = `
+                            <option value="">-- Select --</option>
+                            {% for lp in lp_data %}
+                                <option value="{{ lp.base_value }}" ${license.document_type === '{{ lp.base_value }}' ? 'selected' : ''}>
+                                    {{ lp.base_description }}
+                                </option>
+                            {% endfor %}
+                        `;
+                    }
+                    
                     newRow.innerHTML = `
                         <td>
                             <input type="hidden" value="${license.license_id}">
                             <select class="form-select doc-type-select" onchange="toggleCategoryColumn(this)">
-                                <option value="">-- Select --</option>
-                                <option value="license" ${license.document_type === 'license' ? 'selected' : ''}>License</option>
-                                <option value="site_medical" ${license.document_type === 'site_medical' ? 'selected' : ''}>Site Medical</option>
-                                <option value="site_pass" ${license.document_type === 'site_pass' ? 'selected' : ''}>Site Pass</option>
+                                ${lpOptions}
                             </select>
                         </td>
                         <td><input type="text" class="form-control" value="${license.document_number || ''}"></td>
@@ -1059,7 +1077,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-select category-column" style="${license.document_type === 'license' ? '' : 'display:none;'}">
+                            <select class="form-select category-column" style="${license.document_type && license.document_type.toLowerCase().includes('license') ? '' : 'display:none;'}">
                                 <option value="">-- Select Category --</option>
                                 <option value="light" ${license.category === 'light' ? 'selected' : ''}>Light</option>
                                 <option value="heavy" ${license.category === 'heavy' ? 'selected' : ''}>Heavy</option>

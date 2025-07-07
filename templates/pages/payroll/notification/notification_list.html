@@ -126,9 +126,8 @@
                 type: "GET",
                 data: { 'notification_id': notificationId },
                 success: function (response) {
-                    console.log('Response:', response); // Debug log
                     $("#notification_id").val(response.notification_id);
-                    $("#doc_type").val(response.doc_type);
+                    $("#edit_doc_type").val(response.doc_type);
                     $("#before_or_after_flag").val(response.before_or_after_flag).change();
                     $("#no_of_days").val(response.no_of_days);
                     $("#to_emails").val(response.to_emails);

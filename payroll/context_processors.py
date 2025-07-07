@@ -409,3 +409,17 @@ def get_grade_code(request):
     return {
         'grade_code_data': grade_code_data
     }
+
+def get_l_and_p(request):
+    comp_code = get_comp_code(request)
+    lp_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'L&P')
+    return {
+        'lp_data': lp_data
+    }
+
+def get_doc_expiry(request):
+    comp_code = get_comp_code(request)
+    de_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'DOCUMENT EXPIRY')
+    return {
+        'de_data': de_data
+    }

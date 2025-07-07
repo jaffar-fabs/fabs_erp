@@ -1448,9 +1448,9 @@ function removeDependentRow_add(button, dependentId = null) {
                             <input type="hidden" name="license_id[]" value="">
                             <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
                                 <option value="">-- Select --</option>
-                                <option value="license">License</option>
-                                <option value="site_medical">Site Medical</option>
-                                <option value="site_pass">Site Pass</option>
+                                {% for lp in lp_data %}
+                                    <option value="{{ lp.base_value }}">{{ lp.base_description }}</option>
+                                {% endfor %}
                             </select>
                         </td>
                         <td><input type="text" name="license_doc_number[]" class="form-control"></td>
@@ -1501,7 +1501,8 @@ function removeDependentRow_add(button, dependentId = null) {
 function toggleCategoryColumn(selectEl) {
     const row = selectEl.closest('tr');
     const categoryCol = row.querySelector('.category-column');
-    if (selectEl.value === 'license') {
+    // Show category column for any license-related option (you may need to adjust this based on your L&P data)
+    if (selectEl.value && selectEl.value.toLowerCase().includes('license')) {
         categoryCol.style.display = '';
     } else {
         categoryCol.style.display = 'none';
@@ -1512,14 +1513,19 @@ function toggleCategoryColumn(selectEl) {
 function addLicenseRow_add() {
     const tableBody = document.querySelector('#licensePassesTable_add tbody');
     const newRow = document.createElement('tr');
+    
+    // Get the first row to extract the L&P options
+    const firstRow = tableBody.querySelector('tr');
+    const firstSelect = firstRow.querySelector('select[name="license_doc_type[]"]');
+    const lpOptions = Array.from(firstSelect.options).map(option => 
+        `<option value="${option.value}">${option.textContent}</option>`
+    ).join('');
+    
     newRow.innerHTML = `
         <td>
             <input type="hidden" name="license_id[]" value="">
             <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
-                <option value="">-- Select --</option>
-                <option value="license">License</option>
-                <option value="site_medical">Site Medical</option>
-                <option value="site_pass">Site Pass</option>
+                ${lpOptions}
             </select>
         </td>
         <td><input type="text" name="license_doc_number[]" class="form-control"></td>

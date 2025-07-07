@@ -117,6 +117,8 @@ TEMPLATES = [
                 'payroll.context_processors.get_grade_code',
                 'payroll.context_processors.get_project_status',
                 'payroll.context_processors.pro_type',
+                'payroll.context_processors.get_l_and_p',
+                'payroll.context_processors.get_doc_expiry'
 
             ],
         },
