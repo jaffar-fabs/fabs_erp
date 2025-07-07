@@ -877,52 +877,82 @@ def my_login_view(request):
         selected_company = request.POST.get("selected_company")
 
         try:
-            user = UserMaster.objects.get(user_id=username, is_active=True)
-
-            if password == user.password:
-                request.session["username"] = user.user_id
-
-                get_companies = user.company.split(':') if user.company else []
-                if len(get_companies) > 1:
-                    if not selected_company:
-                        messages.error(request, "Please select a company.")
-                        return render(request, "auth/login.html")
-                    request.session["comp_code"] = selected_company
-                else:
-                    request.session["comp_code"] = user.comp_code
-
-                request.session["user_paycycles"] = user.user_paycycles
-
-                request.session["user_project"] = user.project
-
-                request.session["user_salary"] = user.view_emp_salary
-
-                company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
-                request.session["image_url"] = str(company.image_url) if company.image_url else None
-
-                # Get the current company code from session for role mapping
-                current_comp_code = request.session["comp_code"]
-                
-                # Fetch role ID from UserRoleMapping using the current company code
-                user_role_mapping = UserRoleMapping.objects.get(comp_code=current_comp_code, userid=user.user_master_id, is_active=True)
-                role_id = user_role_mapping.roleid
-
-                # Fetch role name from RoleMaster using the current company code
-                role = RoleMaster.objects.get(id=role_id, comp_code=current_comp_code)
-                request.session["role"] = role.role_name
-                request.session["role_id"] = role_id
-
-                set_comp_code(request)
-                
-                return redirect("/index")
-            else:
+            # First, get all UserMaster records for this user_id
+            users = UserMaster.objects.filter(user_id=username, is_active=True)
+            
+            if not users.exists():
                 messages.error(request, "Invalid username or password.")
-        except UserMaster.DoesNotExist:
-            messages.error(request, "Invalid username or password.")
+                return render(request, "auth/login.html")
+            
+            # If there are multiple users, we need to determine which one to use
+            user = None
+            
+            if users.count() == 1:
+                # Only one user record exists, use it
+                user = users.first()
+                # Set the company code from the user record
+                request.session["comp_code"] = user.comp_code
+            else:
+                # Multiple user records exist, need to use selected_company
+                if not selected_company:
+                    messages.error(request, "Please select a company.")
+                    return render(request, "auth/login.html")
+                
+                # Find the user record that matches the selected company
+                user = users.filter(comp_code=selected_company).first()
+                
+                if not user:
+                    # Check if the selected company is in the user's company field
+                    for u in users:
+                        if u.company:
+                            user_companies = u.company.split(':')
+                            if selected_company in user_companies:
+                                user = u
+                                break
+                
+                if not user:
+                    messages.error(request, "Invalid company selection.")
+                    return render(request, "auth/login.html")
+                
+                request.session["comp_code"] = selected_company
+
+            # Verify password
+            if password != user.password:
+                messages.error(request, "Invalid username or password.")
+                return render(request, "auth/login.html")
+
+            # Set session data
+            request.session["username"] = user.user_id
+            request.session["user_paycycles"] = user.user_paycycles
+            request.session["user_project"] = user.project
+            request.session["user_salary"] = user.view_emp_salary
+
+            # Get company image
+            company = CompanyMaster.objects.get(company_code=request.session["comp_code"])
+            request.session["image_url"] = str(company.image_url) if company.image_url else None
+
+            # Get the current company code from session for role mapping
+            current_comp_code = request.session["comp_code"]
+            
+            # Fetch role ID from UserRoleMapping using the current company code
+            user_role_mapping = UserRoleMapping.objects.get(comp_code=current_comp_code, userid=user.user_master_id, is_active=True)
+            role_id = user_role_mapping.roleid
+
+            # Fetch role name from RoleMaster using the current company code
+            role = RoleMaster.objects.get(id=role_id, comp_code=current_comp_code)
+            request.session["role"] = role.role_name
+            request.session["role_id"] = role_id
+
+            set_comp_code(request)
+            
+            return redirect("/index")
+            
         except UserRoleMapping.DoesNotExist:
             messages.error(request, "User role mapping not found.")
         except RoleMaster.DoesNotExist:
             messages.error(request, "Role not found.")
+        except Exception as e:
+            messages.error(request, f"Login error: {str(e)}")
 
     return render(request, "auth/login.html")
 
