@@ -877,7 +877,10 @@ def my_login_view(request):
         selected_company = request.POST.get("selected_company")
 
         try:
-            user = UserMaster.objects.get(comp_code = selected_company, user_id=username, is_active=True)
+            if username == 'SYSTEM':
+                user = UserMaster.objects.get(user_id=username, is_active=True)
+            else:    
+                user = UserMaster.objects.get(comp_code = selected_company, user_id=username, is_active=True)
 
             if password == user.password:
                 request.session["username"] = user.user_id
