@@ -119,7 +119,7 @@ document.getElementById('username').addEventListener('blur', function() {
             const companySelect = document.querySelector('select[name="selected_company"]');
             const companyContainer = document.getElementById('company-select-container');
             
-            if (data.success && data.dropdown_options && data.dropdown_options.length > 1) {
+            if (data.success && data.dropdown_options && data.dropdown_options.length >= 1) {
                 companySelect.innerHTML = '<option value="">Select a company</option>';
                 data.dropdown_options.forEach(option => {
                     companySelect.innerHTML += `<option value="${option.value}">${option.text}</option>`;
