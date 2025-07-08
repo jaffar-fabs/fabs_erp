@@ -93,7 +93,8 @@ def employee_master(request):
                 Q(emp_code__icontains=keyword) |
                 Q(emp_name__icontains=keyword) |
                 Q(surname__icontains=keyword) |
-                Q(department__icontains=keyword)
+                Q(department__icontains=keyword) |
+                Q(emp_status__icontains=keyword) 
             )
         except Exception:
             return JsonResponse({'status': 'error', 'message': 'Invalid search keyword'}, status=400)
