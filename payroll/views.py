@@ -7278,7 +7278,11 @@ def project_wise_report(request):
 import os
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
-from pyreportjasper import PyReportJasper
+try:
+    from pyreportjasper import PyReportJasper
+except ImportError as e:
+    print(f"Error importing PyReportJasper: {e}")
+    PyReportJasper = None
 import tempfile
 
 def generate_report(request):
@@ -7288,6 +7292,11 @@ def generate_report(request):
     p1 = request.POST.get('P1')  
     p2 = request.POST.get('P2')
     p3 = request.POST.get('P3')
+    
+    # Debug logging
+    print(f"Generating report: {rname}")
+    print(f"Parameters: P1={p1}, P2={p2}, P3={p3}")
+    print(f"Company code: {COMP_CODE}")
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
@@ -7299,8 +7308,19 @@ def generate_report(request):
         # Get company code from request or use default
         company_code = COMP_CODE
         
+        if not company_code:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Company code not found. Please ensure you are logged in with a valid company.'
+            }, status=400)
+        
         # Report parameters - these are required by the Jasper report
         if rname == 'PY_Salary_Register(Single)for_ZB.jasper' or rname == 'PY_Salary_Register(Multi).jasper' or rname == 'PY_Control_Statement.jasper':
+            if not p1 or ',' not in p1:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid parameters for Salary Register report. P1 should contain comma-separated values.'
+                }, status=400)
             split_p1 = p1.split(',')
             parameters = {
                 'P0': company_code,  
@@ -7308,6 +7328,11 @@ def generate_report(request):
                 'P2': split_p1[1],  
             }
         elif rname == 'PY_Pay_Slip_2.jasper':
+            if not p2 or ',' not in p2:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid parameters for Pay Slip report. P2 should contain comma-separated values.'
+                }, status=400)
             split_p2 = p2.split(',')
             parameters = {
                 'P0': company_code,  
@@ -7315,6 +7340,11 @@ def generate_report(request):
                 'P1': p1 if p1 else None,  # Use None if p2 is empty or None
             }
         elif rname == 'PY_Paymentwise_Report.jasper':
+            if not p1 or ',' not in p1:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Invalid parameters for Paymentwise Report. P1 should contain comma-separated values.'
+                }, status=400)
             split_p1 = p1.split(',')
             parameters = {
                 'P0': company_code,  
@@ -7327,6 +7357,11 @@ def generate_report(request):
                 'P0': company_code,  
                 'P1':p1 if p1 else None,
             }
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Unsupported report type: {rname}'
+            }, status=400)
 
         
         # Check if Jasper file exists
@@ -7335,6 +7370,13 @@ def generate_report(request):
                 'status': 'error',
                 'message': f'Report file not found: {jasper_file}'
             }, status=404)
+        
+        # Check if reports directory is writable
+        if not os.access(reports_dir, os.W_OK):
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Reports directory is not writable: {reports_dir}'
+            }, status=500)
         
         # Database connection parameters
         db_config = {
@@ -7348,32 +7390,88 @@ def generate_report(request):
             'jdbc_dir': reports_dir  # Set to reports directory so subreports can be found
         }
         
+        # Validate database connection parameters
+        required_db_params = ['host', 'port', 'database', 'username', 'password']
+        for param in required_db_params:
+            if not db_config.get(param):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Missing database parameter: {param}'
+                }, status=500)
+        
+        # Check if PyReportJasper is available
+        if PyReportJasper is None:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'PyReportJasper library is not available. Please ensure it is properly installed.'
+            }, status=500)
+        
         # Use a temporary file
-        with tempfile.NamedTemporaryFile(suffix='.pdf') as temp_output:
+        temp_output = None
+        try:
+            temp_output = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
+            temp_output.close()  # Close the file so PyReportJasper can write to it
+        except Exception as temp_error:
+            return JsonResponse({
+                'status': 'error',
+                'message': f'Failed to create temporary file: {str(temp_error)}'
+            }, status=500)
+            
+        try:
             prj = PyReportJasper()
-            prj.config(
-                input_file=jasper_file,
-                output_file=temp_output.name,
-                output_formats=['pdf'],
-                parameters=parameters,
-                db_connection=db_config,
-                locale='en_US'
-            )
-            prj.process_report()        
+            try:
+                prj.config(
+                    input_file=jasper_file,
+                    output_file=temp_output.name,
+                    output_formats=['pdf'],
+                    parameters=parameters,
+                    db_connection=db_config,
+                    locale='en_US'
+                )
+                prj.process_report()
+            except Exception as config_error:
+                print(f"PyReportJasper configuration/processing error: {str(config_error)}")
+                raise config_error        
             
             # Read the generated PDF data
-            temp_output.seek(0)
-            pdf_data = temp_output.read()
-        
-        # Prepare the response
-        response = HttpResponse(pdf_data, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{output_filename}"'
-        return response
+            if not os.path.exists(temp_output.name):
+                raise Exception(f"Generated PDF file not found: {temp_output.name}")
+                
+            with open(temp_output.name, 'rb') as f:
+                pdf_data = f.read()
+            
+            if not pdf_data:
+                raise Exception("Generated PDF file is empty")
+            
+            # Prepare the response
+            response = HttpResponse(pdf_data, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{output_filename}"'
+            return response
+            
+        finally:
+            # Clean up the temporary file
+            if temp_output and os.path.exists(temp_output.name):
+                try:
+                    os.unlink(temp_output.name)
+                except OSError:
+                    pass  # File might already be deleted
     
     except Exception as e:
         import traceback
         print(f"Error generating report: {str(e)}")
         print(traceback.format_exc())  # This will print the stack trace for better debugging
+        
+        # Additional debugging information
+        print(f"Report file: {jasper_file}")
+        print(f"Report file exists: {os.path.exists(jasper_file)}")
+        print(f"Reports directory: {reports_dir}")
+        print(f"Reports directory exists: {os.path.exists(reports_dir)}")
+        if os.path.exists(reports_dir):
+            print(f"Reports directory permissions: {oct(os.stat(reports_dir).st_mode)[-3:]}")
+        print(f"Company code: {COMP_CODE}")
+        print(f"Parameters: {parameters if 'parameters' in locals() else 'Not set'}")
+        print(f"Database config: {db_config if 'db_config' in locals() else 'Not set'}")
+        
         return JsonResponse({
             'status': 'error',
             'message': f'Error generating report: {str(e)}'
