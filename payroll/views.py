@@ -7767,3 +7767,16 @@ def notification_edit(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+# Scheduler for notification to email every day at 10:00 AM
+
+def send_notification():
+    notification = NotificationMaster.objects.filter(is_active=True, before_or_after_flag='BEFORE', no_of_days=date)
+    for noti in notification:
+        to_emails = noti.to_emails.split(',')
+        cc_emails = noti.cc_emails.split(',')
+        email_subject = noti.email_subject
+        email_body = noti.email_body
+        send_mail(email_subject, email_body, from_email, to_emails, cc_emails)
+    return True
