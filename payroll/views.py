@@ -397,7 +397,7 @@ def save_employee(request):
         employee.surname = request.POST.get("surname")
         employee.dob = request.POST.get("dob") or None
         employee.emp_sex = request.POST.get("emp_sex")
-        employee.emp_status = request.POST.get("emp_status") if request.POST.get("emp_status") else 'ACTIVE'
+        employee.emp_status = 'ACTIVE' if employee.emp_status == 'ACTIVE' else 'INACTIVE'
         employee.emp_sub_status = request.POST.get("emp_sub_status")
         employee.passport_release = request.POST.get("passport_release")
         employee.release_reason = request.POST.get("release_reason")
@@ -7772,11 +7772,63 @@ def notification_edit(request):
 # Scheduler for notification to email every day at 10:00 AM
 
 def send_notification():
-    notification = NotificationMaster.objects.filter(is_active=True, before_or_after_flag='BEFORE', no_of_days=date)
-    for noti in notification:
-        to_emails = noti.to_emails.split(',')
-        cc_emails = noti.cc_emails.split(',')
-        email_subject = noti.email_subject
-        email_body = noti.email_body
-        send_mail(email_subject, email_body, from_email, to_emails, cc_emails)
-    return True
+    try:
+        # Get today's date
+        today = datetime.now().date()
+
+        # Get all active notifications
+        notifications = NotificationMaster.objects.filter(is_active=True)
+
+        for notification in notifications:
+            # Get documents expiring in notification.no_of_days
+            if notification.doc_type == 'PASSPORT':
+                documents = Employee.objects.filter(
+                    comp_code=COMP_CODE,
+                    expiry_date__isnull=False
+                )
+            elif notification.doc_type == 'VISA': 
+                documents = Employee.objects.filter(
+                    comp_code=COMP_CODE,
+                    visa_expiry_date__isnull=False
+                )
+            else:
+                continue
+
+            # Calculate target date based on before/after flag
+            if notification.before_or_after_flag == 'BEFORE':
+                target_date = today + timedelta(days=notification.no_of_days)
+                documents = documents.filter(expiry_date=target_date)
+            else:  # AFTER
+                target_date = today - timedelta(days=notification.no_of_days) 
+                documents = documents.filter(expiry_date=target_date)
+
+            # Send email for each document
+            for doc in documents:
+                # Split email lists and clean
+                to_emails = [email.strip() for email in notification.to_emails.split(',') if email.strip()]
+                cc_emails = []
+                if notification.cc_emails:
+                    cc_emails = [email.strip() for email in notification.cc_emails.split(',') if email.strip()]
+
+                # Format email body with document details
+                email_body = notification.email_body.format(
+                    employee_name=doc.emp_name,
+                    document_type=notification.doc_type,
+                    expiry_date=doc.expiry_date
+                )
+
+                # Send email
+                send_mail(
+                    subject=f"{notification.doc_type} Expiry Notification",
+                    message=email_body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=to_emails,
+                    fail_silently=False,
+                    cc=cc_emails
+                )
+
+        return True
+
+    except Exception as e:
+        print(f"Error sending notifications: {str(e)}")
+        return False
