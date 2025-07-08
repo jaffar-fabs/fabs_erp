@@ -1110,7 +1110,56 @@
                 });
             } else {
                 // Add one empty row if no data
-                addLicenseRow_add();
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>
+                        <input type="hidden" name="license_id[]" value="">
+                        <select class="form-select doc-type-select" name="license_doc_type[]" onchange="toggleCategoryColumn(this)">
+                            <option value="">-- Select --</option>
+                            {% for lp in lp_data %}
+                                <option value="{{ lp.base_value }}">{{ lp.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" name="license_doc_number[]" class="form-control"></td>
+                    <td><input type="date" name="license_issued_date[]" class="form-control"></td>
+                    <td><input type="date" name="license_expiry_date[]" class="form-control"></td>
+                    <td>
+                        <select class="form-select" name="work_location[]">
+                            {% for location in work_location_data %}
+                                <option value="{{ location.base_value }}">{{ location.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select" name="emirate_issued[]">
+                            {% for emirate in emirates_list %}
+                                <option value="{{ emirate.base_value }}">{{ emirate.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-select category-column" name="license_category[]" style="display:none;">
+                            <option value="">-- Select Category --</option>
+                            <option value="light">Light</option>
+                            <option value="heavy">Heavy</option>
+                            <option value="high">High</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="file" name="license_doc_file[]" class="form-control" accept="application/pdf,image/*">
+                        <div class="license-file-preview"></div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="addLicenseRow_add()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
             }
         }
 
