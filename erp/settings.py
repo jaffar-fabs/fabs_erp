@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('*/1 * * * *', 'payroll.cron.send_notification >> /home/prime/logfile.log 2>&1')
+    ('*/1 * * * *', 'payroll.cron.send_notification')
 ]
 
 MIDDLEWARE = [
