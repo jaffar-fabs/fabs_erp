@@ -2,9 +2,9 @@ from datetime import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
 from payroll.models import NotificationMaster, Employee, EmployeeDocument
+import urllib.request
 
-
-def send_notification(request):
+def send_notification():
     try:
         today = datetime.now().date()
         notifications = NotificationMaster.objects.filter(is_active=True)
