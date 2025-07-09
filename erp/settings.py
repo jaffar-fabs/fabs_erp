@@ -45,8 +45,8 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    # ('*/5 * * * *', 'payroll.cron.send_notification'),  # Every 5 minutes
-    ('20 22 * * *', 'payroll.cron.send_notification')        # Every day at 22:20
+    ('*/1 * * * *', 'payroll.cron.send_notification'),  # Every 5 minutes
+    # ('20 22 * * *', 'payroll.cron.send_notification')        # Every day at 22:20
 ]
 
 MIDDLEWARE = [
