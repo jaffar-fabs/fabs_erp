@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('*/1 * * * *', 'payroll.cron.send_notification')
+    # ('*/1 * * * *', 'payroll.cron.send_notification'),
+    ('0 0 * * *', 'payroll.cron.send_notification')
 ]
 
 MIDDLEWARE = [
