@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = [
-    ('*/1 * * * *', 'payroll.cron.send_notification'),  # Every 5 minutes
+    ('*/1 * * * *', '/home/prime/fabs_erp/venv/bin/python /home/prime/fabs_erp/manage.py crontab run e18051021fd475a08b93dbab90430410 >> /home/prime/logfile.log 2>&1')
+    # ('*/1 * * * *', 'payroll.cron.send_notification'),  # Every 5 minutes
     # ('20 22 * * *', 'payroll.cron.send_notification')        # Every day at 22:20
 ]
 
