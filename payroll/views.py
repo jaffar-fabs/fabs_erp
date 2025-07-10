@@ -7186,6 +7186,10 @@ def employee_details_report(request):
     }
     return render(request, 'pages/modal/reports/employee_details_report.html', context)
 
+def employee_advance_report(request):
+    set_comp_code(request)
+    return render(request, 'pages/modal/reports/employee_advance_report.html')
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7358,7 +7362,7 @@ def generate_report(request):
                 'P2':split_p1[1],
                 'P3':p3 if p3 else None,
             }
-        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper':
+        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper' or rname == 'PY_Employee_Advance_Details.jasper':
             parameters = {
                 'P0': company_code,  
                 'P1':p1 if p1 else None,

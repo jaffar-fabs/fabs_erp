@@ -1,0 +1,58 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Employee Advance Report" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Generate Employee Advance Report</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="employee-advance-form" method="POST" action="{% url 'generate_report' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="hidden" name="rname" id="rname" value="PY_Employee_Advance_Details.jasper">
+                                        <label for="employee">Select Employee</label>
+                                        <select name="P1" id="employee" class="form-control select2">
+                                            <option value="">Select Employee</option>
+                                            {% for employee in employee_data %}
+                                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary" id="generate-report-btn">
+                                    <i class="ti ti-file-text me-2"></i>Generate Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <script>
+    $(document).ready(function () {
+        // Add any JavaScript logic if needed
+        $('#salary-register-form').on('submit', function (e) {
+            e.preventDefault();
+            // Perform validation or AJAX submission if required
+            alert('Form submitted successfully!');
+        });
+    });
+</script> -->
+
+{% endblock content %}
