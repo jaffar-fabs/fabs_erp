@@ -7278,6 +7278,7 @@ def project_wise_report(request):
 
 
 import os
+import tempfile
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 try:
@@ -7285,7 +7286,6 @@ try:
 except ImportError as e:
     print(f"Error importing PyReportJasper: {e}")
     PyReportJasper = None
-import tempfile
 
 def generate_report(request):
     set_comp_code(request)
@@ -7405,7 +7405,7 @@ def generate_report(request):
         if PyReportJasper is None:
             return JsonResponse({
                 'status': 'error',
-                'message': 'PyReportJasper library is not available. Please ensure it is properly installed.'
+                'message': 'PyReportJasper library is not available. Please install it using: pip install pyreportjasper'
             }, status=500)
         
         # Use a temporary file
@@ -7431,6 +7431,12 @@ def generate_report(request):
                     locale='en_US'
                 )
                 prj.process_report()
+            except OSError as os_error:
+                print(f"OS Error during report processing: {str(os_error)}")
+                if "Input/output error" in str(os_error):
+                    raise Exception("Report processing failed due to I/O error. This may be due to missing Java/JasperReports dependencies or insufficient permissions.")
+                else:
+                    raise os_error
             except Exception as config_error:
                 print(f"PyReportJasper configuration/processing error: {str(config_error)}")
                 raise config_error        
@@ -7474,9 +7480,23 @@ def generate_report(request):
         print(f"Parameters: {parameters if 'parameters' in locals() else 'Not set'}")
         print(f"Database config: {db_config if 'db_config' in locals() else 'Not set'}")
         
+        # Provide more specific error messages based on the error type
+        error_message = str(e)
+        if "Input/output error" in error_message:
+            error_message = "Report generation failed due to I/O error. This typically indicates:\n" \
+                          "1. PyReportJasper library is not properly installed\n" \
+                          "2. Java/JasperReports server is not configured\n" \
+                          "3. Insufficient file system permissions\n" \
+                          "Please ensure pyreportjasper is installed and Java/JasperReports is properly configured."
+        elif "PyReportJasper" in error_message:
+            error_message = "PyReportJasper configuration error. Please check:\n" \
+                          "1. Database connection parameters\n" \
+                          "2. Report file paths\n" \
+                          "3. Java/JasperReports server configuration"
+        
         return JsonResponse({
             'status': 'error',
-            'message': f'Error generating report: {str(e)}'
+            'message': error_message
         }, status=500)
 
 
