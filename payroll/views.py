@@ -7461,11 +7461,6 @@ def generate_report(request):
                     pass  # File might already be deleted
     
     except Exception as e:
-        import traceback
-        
-        if os.path.exists(reports_dir):
-            print(f"Reports directory permissions: {oct(os.stat(reports_dir).st_mode)[-3:]}")
-        
         
         # Provide more specific error messages based on the error type
         error_message = str(e)
