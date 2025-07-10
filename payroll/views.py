@@ -7295,10 +7295,7 @@ def generate_report(request):
     p2 = request.POST.get('P2')
     p3 = request.POST.get('P3')
     
-    # Debug logging
-    print(f"Generating report: {rname}")
-    print(f"Parameters: P1={p1}, P2={p2}, P3={p3}")
-    print(f"Company code: {COMP_CODE}")
+    
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
@@ -7432,13 +7429,11 @@ def generate_report(request):
                 )
                 prj.process_report()
             except OSError as os_error:
-                print(f"OS Error during report processing: {str(os_error)}")
                 if "Input/output error" in str(os_error):
                     raise Exception("Report processing failed due to I/O error. This may be due to missing Java/JasperReports dependencies or insufficient permissions.")
                 else:
                     raise os_error
             except Exception as config_error:
-                print(f"PyReportJasper configuration/processing error: {str(config_error)}")
                 raise config_error        
             
             # Read the generated PDF data
