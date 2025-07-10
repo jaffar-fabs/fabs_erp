@@ -7295,10 +7295,6 @@ def generate_report(request):
     p2 = request.POST.get('P2')
     p3 = request.POST.get('P3')
     
-    # Debug logging
-    print(f"Generating report: {rname}")
-    print(f"Parameters: P1={p1}, P2={p2}, P3={p3}")
-    print(f"Company code: {COMP_CODE}")
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
