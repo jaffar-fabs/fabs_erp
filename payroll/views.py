@@ -7295,7 +7295,10 @@ def generate_report(request):
     p2 = request.POST.get('P2')
     p3 = request.POST.get('P3')
     
-    
+    # Debug logging
+    print(f"Generating report: {rname}")
+    print(f"Parameters: P1={p1}, P2={p2}, P3={p3}")
+    print(f"Company code: {COMP_CODE}")
     try:
         # Define report file path
         reports_dir = os.path.join(settings.BASE_DIR, 'reports')
@@ -7429,11 +7432,13 @@ def generate_report(request):
                 )
                 prj.process_report()
             except OSError as os_error:
+                print(f"OS Error during report processing: {str(os_error)}")
                 if "Input/output error" in str(os_error):
                     raise Exception("Report processing failed due to I/O error. This may be due to missing Java/JasperReports dependencies or insufficient permissions.")
                 else:
                     raise os_error
             except Exception as config_error:
+                print(f"PyReportJasper configuration/processing error: {str(config_error)}")
                 raise config_error        
             
             # Read the generated PDF data
@@ -7460,6 +7465,22 @@ def generate_report(request):
                     pass  # File might already be deleted
     
     except Exception as e:
+        import traceback
+        print(f"Error generating report: {str(e)}")
+        print(traceback.format_exc())  # This will print the stack trace for better debugging
+        
+        # Additional debugging information
+        print(f"Report file: {jasper_file}")
+        print(f"Report file exists: {os.path.exists(jasper_file)}")
+        print(f"Reports directory: {reports_dir}")
+        print(f"Reports directory exists: {os.path.exists(reports_dir)}")
+        if os.path.exists(reports_dir):
+            print(f"Reports directory permissions: {oct(os.stat(reports_dir).st_mode)[-3:]}")
+        print(f"Company code: {COMP_CODE}")
+        print(f"Parameters: {parameters if 'parameters' in locals() else 'Not set'}")
+        print(f"Database config: {db_config if 'db_config' in locals() else 'Not set'}")
+        
+        # Provide more specific error messages based on the error type
         error_message = str(e)
         if "Input/output error" in error_message:
             error_message = "Report generation failed due to I/O error. This typically indicates:\n" \
