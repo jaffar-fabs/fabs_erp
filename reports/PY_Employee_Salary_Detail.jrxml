@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-10T18:27:54 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Employee_Salary_Detail" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="81f9c8f8-0d7c-4647-950a-ca94c1e5fd68">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    a.emp_code AS "EMP_CODE",
+    a.emp_name AS "EMP_NAME",
+    a.grade_code AS "GRADE_CODE",
+    a.designation AS "DESIGNATION",
+    a.department AS "DEPARTMENT",
+    a.emp_status AS "EMP_STATUS",
+    a.basic_pay AS "BASIC_PAY",
+    a.allowance AS "ALLOWANCE",
+    a.process_cycle AS "PROCESS_CYCLE"
+FROM
+    payroll_employee a
+WHERE
+    a.comp_code = COALESCE($P{P0}, a.comp_code)
+    AND a.emp_code = COALESCE($P{P1}, a.emp_code)
+    AND a.process_cycle = COALESCE($P{P2}, a.process_cycle)
+ORDER BY
+    a.emp_code,
+    a.grade_code,
+    a.designation]]>
+	</queryString>
+	<field name="EMP_CODE" class="java.lang.String"/>
+	<field name="EMP_NAME" class="java.lang.String"/>
+	<field name="GRADE_CODE" class="java.lang.String"/>
+	<field name="DESIGNATION" class="java.lang.String"/>
+	<field name="DEPARTMENT" class="java.lang.String"/>
+	<field name="EMP_STATUS" class="java.lang.String"/>
+	<field name="BASIC_PAY" class="java.math.BigDecimal"/>
+	<field name="ALLOWANCE" class="java.math.BigDecimal"/>
+	<field name="PROCESS_CYCLE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="30" width="250" height="30" uuid="d5b5938f-99e4-4d66-ac89-1c78779d070b"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Employee Salary Details]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="60" width="555" height="1" backcolor="#000000" uuid="54e36e3c-8822-4ecc-a344-98c947296e1a">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<subreport>
+				<reportElement x="0" y="0" width="554" height="40" uuid="206484bd-b947-453d-9daa-4833f6cd8ad3"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name(portrait).jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle radius="0">
+				<reportElement mode="Transparent" x="0" y="4" width="555" height="22" uuid="b8d03290-31d9-40a8-82fa-668e9eb014c6">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="4" width="40" height="22" uuid="a3a4d4ab-4688-4c0a-b3e9-f05fd93b2503"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emp Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="4" width="90" height="22" uuid="8bc2300b-4bc5-4c85-be72-738825df8c95">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emp Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="4" width="62" height="22" uuid="97e3ba40-922c-486b-9ef5-8d997cd36877">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="4" width="69" height="22" uuid="d279b647-53a9-4880-8ffa-2d3302b323b8">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dept]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="4" width="59" height="22" uuid="af07c781-065f-401f-8d28-ba2691d22095">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Designation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="4" width="115" height="22" uuid="0379a290-fd49-492e-93f8-d74c873b7fa6">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ER/DD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="4" width="40" height="22" uuid="b0422fb0-fbd1-4a25-8c5d-c3034747fd3f">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="4" width="40" height="22" uuid="a6371fca-fe50-44b6-8544-242ad7b003fb">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Basic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="400" y="4" width="40" height="22" uuid="f89b0cbe-b0c0-47a5-b552-1d15711fff1e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Allow.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="45" splitType="Stretch">
+			<rectangle radius="0">
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="40" uuid="ffdca173-17dc-4ae6-89c4-0cf60fedeb72">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="8" width="40" height="20" uuid="632b1e1f-7959-400a-9979-57d08ccfd061"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMP_CODE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="8" width="90" height="20" uuid="6eeb8990-61f5-4ca7-abdc-e97853118294"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMP_NAME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="8" width="62" height="20" uuid="b7ee7eff-7ffa-4666-9602-934fd058f637"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRADE_CODE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="8" width="59" height="20" uuid="b21aaae3-f6fa-4c36-a08c-9358d19a2f4f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESIGNATION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="251" y="8" width="69" height="20" uuid="cb5eb71b-52f2-4587-ad54-d8d9d083090a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEPARTMENT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="8" width="40" height="20" uuid="c6e11b95-2292-4734-b3dd-9cda387470cf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMP_STATUS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="360" y="8" width="40" height="20" uuid="097cb94b-bbb3-4bca-a5f7-facc4a9952dd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BASIC_PAY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="400" y="8" width="40" height="20" uuid="949adcf5-004f-4575-a0e7-650ead4303c0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALLOWANCE}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="443" y="0" width="113" height="40" uuid="243cc599-1bc0-4b60-bb3b-d92f28955517"/>
+				<subreportParameter name="P1">
+					<subreportParameterExpression><![CDATA[$F{EMP_CODE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["PY_Employee_Salary_Detail(Sub_Report).jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="441" y="0" width="1" height="40" uuid="6fc60b9a-654e-4ce6-bc56-b5f6c1bcf4ee">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="400" y="0" width="1" height="40" uuid="37b24e7f-f7a1-44d4-afe6-c26afd8c87c0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="360" y="0" width="1" height="40" uuid="ffd0206d-978a-4833-9810-34600016cc16">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="320" y="0" width="1" height="40" uuid="5dd244ef-b54d-4a12-9f0e-873e617a0130">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="250" y="0" width="1" height="40" uuid="36e50588-947a-4749-b789-0be7400cc0df">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="192" y="0" width="1" height="40" uuid="01240f98-ea05-4e53-a2ca-6fb27f1efce9">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="130" y="0" width="1" height="40" uuid="b0cebf8c-b70a-475e-a0ed-41827a990bc0">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="40" y="0" width="1" height="40" uuid="c8830dd6-328f-46b0-a88f-7134a0331a35">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="58" splitType="Stretch">
+			<textField>
+				<reportElement x="230" y="0" width="100" height="14" uuid="743dc4df-a57d-4b00-ab9e-0ec0bb977af5">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="16" width="554" height="42" uuid="5291952e-65dc-40b2-b7ea-368eea9dbf89"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Company_Details(portrait).jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</columnFooter>
+</jasperReport>

@@ -253,6 +253,7 @@ urlpatterns = [
     path('payment_wise_report/', views.payment_wise_report, name='payment_wise_report'),
     path('project_wise_job_summary/', views.project_wise_job_summary, name='project_wise_job_summary'),
     path('project_wise_report/', views.project_wise_report, name='project_wise_report'),
+    path('employee_details_report/', views.employee_details_report, name='employee_details_report'),
     # path('salary_register_multi_line_report/', views.salary_register_multi_line_report, name='salary_register_multi_line_report'),
 
 

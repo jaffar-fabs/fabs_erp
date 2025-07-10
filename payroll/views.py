@@ -7178,6 +7178,14 @@ def project_wise_report(request):
     set_comp_code(request)  # Ensure the company code is set
     return render(request, 'pages/modal/reports/project_wise.html')
 
+def employee_details_report(request):
+    set_comp_code(request)
+    query = CodeMaster.objects.filter(comp_code=COMP_CODE, is_active='Y', base_type = 'STAFF_CATEGORY').values('base_value', 'base_description')
+    context = {
+        'code': query
+    }
+    return render(request, 'pages/modal/reports/employee_details_report.html', context)
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7350,7 +7358,7 @@ def generate_report(request):
                 'P2':split_p1[1],
                 'P3':p3 if p3 else None,
             }
-        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper':
+        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper':
             parameters = {
                 'P0': company_code,  
                 'P1':p1 if p1 else None,

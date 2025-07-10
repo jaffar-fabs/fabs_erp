@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-10T18:20:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Employee_Salary_Detail(Sub_Report)" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="50e71da7-3528-4182-b134-0fe2be5dd2ef">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    a.employee_code AS "EMPLOYEE_CODE",
+    a.earn_deduct_code AS "EARN_DEDUCT_CODE",
+    b.base_description AS "BASE_DESCRIPTION",
+    a.earn_deduct_amt AS "EARN_DEDUCT_AMT"
+FROM
+    payroll_earndeductmaster a,
+    payroll_codemaster b
+WHERE
+    a.comp_code = COALESCE($P{P0}, a.comp_code)
+    AND a.comp_code = b.comp_code
+    AND a.employee_code = COALESCE($P{P1}, a.employee_code)
+    AND a.earn_deduct_code = b.base_value;]]>
+	</queryString>
+	<field name="EMPLOYEE_CODE" class="java.lang.String"/>
+	<field name="EARN_DEDUCT_CODE" class="java.lang.String"/>
+	<field name="BASE_DESCRIPTION" class="java.lang.String"/>
+	<field name="EARN_DEDUCT_AMT" class="java.math.BigDecimal"/>
+	<variable name="Variable_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{EARN_DEDUCT_AMT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="20" height="10" uuid="52c4ec05-9258-45b5-a0d7-7b7d30b4ff68">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_DEDUCT_CODE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="20" y="0" width="67" height="10" uuid="1f3a4fa2-e0cc-463f-87ad-208d9be40193">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BASE_DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#">
+				<reportElement x="87" y="0" width="23" height="10" uuid="8a61d688-d56a-4c56-a979-751f4650696a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_DEDUCT_AMT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="10">
+			<line>
+				<reportElement x="0" y="0" width="110" height="1" uuid="016008d5-bcca-4567-8076-f9462e03048e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="17" y="1" width="70" height="9" uuid="cc871553-efe1-49f2-a72a-bf97f0947440"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<textField pattern="#,##0.00#">
+				<reportElement x="87" y="0" width="23" height="10" uuid="da39ec0c-71fe-4d46-902c-d91670c45e47"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
