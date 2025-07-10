@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-10T18:27:54 -->
+<!-- 2025-07-10T22:22:40 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Employee_Salary_Detail" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="81f9c8f8-0d7c-4647-950a-ca94c1e5fd68">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
@@ -230,7 +230,7 @@ ORDER BY
 					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["PY_Employee_Salary_Detail(Sub_Report).jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["reports/PY_Employee_Salary_Detail(Sub_Report).jasper"]]></subreportExpression>
 			</subreport>
 			<line>
 				<reportElement x="441" y="0" width="1" height="40" uuid="6fc60b9a-654e-4ce6-bc56-b5f6c1bcf4ee">
