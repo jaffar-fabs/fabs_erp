@@ -7462,19 +7462,10 @@ def generate_report(request):
     
     except Exception as e:
         import traceback
-        print(f"Error generating report: {str(e)}")
-        print(traceback.format_exc())  # This will print the stack trace for better debugging
         
-        # Additional debugging information
-        print(f"Report file: {jasper_file}")
-        print(f"Report file exists: {os.path.exists(jasper_file)}")
-        print(f"Reports directory: {reports_dir}")
-        print(f"Reports directory exists: {os.path.exists(reports_dir)}")
         if os.path.exists(reports_dir):
             print(f"Reports directory permissions: {oct(os.stat(reports_dir).st_mode)[-3:]}")
-        print(f"Company code: {COMP_CODE}")
-        print(f"Parameters: {parameters if 'parameters' in locals() else 'Not set'}")
-        print(f"Database config: {db_config if 'db_config' in locals() else 'Not set'}")
+        
         
         # Provide more specific error messages based on the error type
         error_message = str(e)
