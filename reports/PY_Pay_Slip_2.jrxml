@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-07T10:40:12 -->
+<!-- 2025-07-11T17:00:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Pay_Slip" pageWidth="595" pageHeight="500" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f75e0eb2-4f76-450f-a538-a081b05a7d61">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -12,6 +12,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -204,7 +205,7 @@ ORDER BY
     a.emp_name AS "EMP_NAME",
     a.designation AS "DESIG_CODE",
     a.department AS "DEPARTMENT",
-    a.basic_pay AS "BASIC_PAY",
+    ROUND(a.basic_pay, 2) AS "BASIC_PAY",
     b.process_description AS "PROCESS_DESCRIPTION",
     b.pay_process_month AS "PAY_PROCESS_MONTH",
     a.employee_bank,
@@ -215,26 +216,26 @@ ORDER BY
     TO_CHAR(TO_DATE(b.pay_process_month, 'MMYYYY'), 'MON/YYYY') AS "FORMATTED_PAY_PROCESS_MONTH",
     
     -- Sum of additional earnings as allowances excluding specific earn_reports
-    SUM(CASE 
+    ROUND(SUM(CASE 
         WHEN UPPER(c.earn_type) = 'EARNINGS' 
              AND c.earn_reports NOT IN ('EARN OT1', 'EARN OT2', 'EARN BASIC', 'NET PAY') 
         THEN c.amount 
         ELSE 0 
-    END) AS "ALLOWANCES",
+    END), 2) AS "ALLOWANCES",
 
-	 SUM(CASE 
+    ROUND(SUM(CASE 
         WHEN UPPER(c.earn_type) = 'EARNINGS' 
              AND c.earn_reports IN ('EARN OT1', 'EARN OT2') 
         THEN c.amount 
         ELSE 0 
-    END) AS "OT",
-	
+    END), 2) AS "OT",
+    
     -- Sum of deductions
-    SUM(CASE 
+    ROUND(SUM(CASE 
         WHEN UPPER(c.earn_type) IN ('DEDUCTIONS', 'DEDUCTIONS1') 
         THEN c.amount 
         ELSE 0 
-    END) AS "DEDUCTIONS"
+    END), 2) AS "DEDUCTIONS"
 
 FROM
     payroll_employee a
@@ -262,7 +263,7 @@ GROUP BY
     a.account_no,
     a.iban_number,
     a.date_of_join
-ORDER BY a.emp_code;]]>
+ORDER BY a.emp_code]]>
 	</queryString>
 	<field name="EMP_CODE" class="java.lang.String"/>
 	<field name="EMP_NAME" class="java.lang.String"/>
@@ -305,7 +306,7 @@ ORDER BY a.emp_code;]]>
 					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA["reports/PY_company_name(portrait)2.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["PY_company_name(portrait)2.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</pageHeader>
@@ -327,7 +328,7 @@ ORDER BY a.emp_code;]]>
 				</textElement>
 				<text><![CDATA[Net Earning Salary]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="280" y="199" width="274" height="20" forecolor="#FFFFFF" uuid="d9ba5cd5-9aaf-4250-a706-5d97c4718781">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -521,7 +522,7 @@ ORDER BY a.emp_code;]]>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[ Basic]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="140" y="120" width="140" height="20" uuid="c6d26780-24f8-47e1-af5b-498e4aefb690"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -551,7 +552,7 @@ ORDER BY a.emp_code;]]>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[ Allowances]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="140" y="140" width="140" height="20" uuid="54cc563f-e17d-4b35-ae2e-8ec946f9ac22">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -583,7 +584,7 @@ ORDER BY a.emp_code;]]>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[ OT]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="140" y="160" width="140" height="20" uuid="999d9908-42b0-4706-b564-6e3b8417e905">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -615,7 +616,7 @@ ORDER BY a.emp_code;]]>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[ Total Earnings]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="140" y="180" width="140" height="20" uuid="2115858e-fff1-4dcd-9ce5-9c80b0e68e60">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -647,7 +648,7 @@ ORDER BY a.emp_code;]]>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[ Total Deductions]]></text>
 			</staticText>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="420" y="180" width="134" height="20" uuid="3bbcfde5-0749-4996-8177-0f4296626e57">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -721,7 +722,7 @@ ORDER BY a.emp_code;]]>
 					<pen lineStyle="Solid" lineColor="#000000"/>
 				</graphicElement>
 			</rectangle>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="0" y="259" width="140" height="20" uuid="a4e9c45d-2e58-4456-820b-b5801a8078aa">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -734,7 +735,7 @@ ORDER BY a.emp_code;]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{OT}.add($F{BASIC_PAY}).add($F{ALLOWANCES})]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="140" y="258" width="140" height="20" uuid="b635334c-d323-4fba-b743-30fa4c75563c">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -747,7 +748,7 @@ ORDER BY a.emp_code;]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{DEDUCTIONS}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.##" isBlankWhenNull="true">
+			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="280" y="258" width="274" height="20" forecolor="#000000" uuid="cf972edd-142d-4e80-9b41-9551a9387bba">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
