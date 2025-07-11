@@ -1842,10 +1842,10 @@ function setupSingleDateValidation(issueId, expiryId, label) {
     const issueInput = document.getElementById(issueId);
     const expiryInput = document.getElementById(expiryId);
     if (issueInput && expiryInput) {
-        issueInput.addEventListener('change', function() {
+        issueInput.addEventListener('blur', function() {
             validateIssueExpiry(issueInput, expiryInput, label);
         });
-        expiryInput.addEventListener('change', function() {
+        expiryInput.addEventListener('blur', function() {
             validateIssueExpiry(issueInput, expiryInput, label);
         });
     }
@@ -1853,7 +1853,7 @@ function setupSingleDateValidation(issueId, expiryId, label) {
 
 // For table rows (multiple fields)
 function setupTableDateValidation(issueSelector, expirySelector, label) {
-    document.addEventListener('change', function(e) {
+    document.addEventListener('blur', function(e) {
         if (e.target.matches(issueSelector) || e.target.matches(expirySelector)) {
             // Find the row
             const row = e.target.closest('tr');
