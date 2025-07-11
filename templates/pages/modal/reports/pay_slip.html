@@ -77,7 +77,7 @@
                         // Add new options based on response
                         data.forEach(employee => {
                             const option = document.createElement('option');
-                            option.value = employee.employee_id;
+                            option.value = employee.employee_number;
                             option.textContent = `${employee.employee_number} - ${employee.employee_name}`;
                             employeeSelect.appendChild(option);
                         });
