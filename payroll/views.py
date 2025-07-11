@@ -4965,7 +4965,7 @@ def documents_enquiries(request):
     category = request.GET.get('category', 'employee_document')
     keyword = request.GET.get('keyword', '').strip()
 
-    employee_documents = dependent_documents = camp_documents = party_documents = license_and_passes = []
+    employee_documents = dependent_documents = camp_documents = party_documents = license_and_passes = employee_personal_documents = []
 
     if category == 'employee_document':
         employee_documents = EmployeeDocument.objects.filter(comp_code=COMP_CODE)
@@ -4992,6 +4992,28 @@ def documents_enquiries(request):
                     Q(document_type__icontains=keyword)
                 )
 
+    elif category == 'employee_personal_documents':
+        # Get employees with personal documents (passport, Emirates ID, visa, ILOE, work permit)
+        # Only include employees who have at least one document with actual data
+        employee_personal_documents = Employee.objects.filter(comp_code=COMP_CODE).filter(
+            Q(passport_details__isnull=False, passport_details__gt='') |
+            Q(emirates_no__isnull=False, emirates_no__gt='') |
+            Q(visa_no__isnull=False, visa_no__gt='') |
+            Q(iloe_no__isnull=False, iloe_no__gt='') |
+            Q(work_permit_number__isnull=False, work_permit_number__gt='')
+        )
+        
+        if keyword:
+            employee_personal_documents = employee_personal_documents.filter(
+                Q(emp_code__icontains=keyword) |
+                Q(emp_name__icontains=keyword) |
+                Q(passport_details__icontains=keyword) |
+                Q(emirates_no__icontains=keyword) |
+                Q(visa_no__icontains=keyword) |
+                Q(iloe_no__icontains=keyword) |
+                Q(work_permit_number__icontains=keyword)
+            )
+
     elif category == 'camp_document':
         camp_documents = CampDocuments.objects.filter(comp_code=COMP_CODE)
         if keyword:
@@ -5015,7 +5037,8 @@ def documents_enquiries(request):
         'dependent_documents': dependent_documents,
         'camp_documents': camp_documents,
         'party_documents': party_documents,
-        'license_and_passes': license_and_passes
+        'license_and_passes': license_and_passes,
+        'employee_personal_documents': employee_personal_documents
     }
 
     return render(request, 'pages/modal/enquiries/documents_enquiries.html', context)

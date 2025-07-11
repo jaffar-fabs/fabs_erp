@@ -22,7 +22,8 @@
                     <select name="category" id="category" class="form-control">
                         <option value="employee_document" {% if category == "employee_document" %}selected{% endif %}>Employee Documents</option>
                         <option value="dependent_document" {% if category == "dependent_document" %}selected{% endif %}>Dependent Documents</option>
-                         <option value="license_and_passes" {% if category == "license_and_passes" %}selected{% endif %}>License and Passes</option>
+                        <option value="license_and_passes" {% if category == "license_and_passes" %}selected{% endif %}>License and Passes</option>
+                        <option value="employee_personal_documents" {% if category == "employee_personal_documents" %}selected{% endif %}>Employee Personal Documents</option>
                         <option value="camp_document" {% if category == "camp_document" %}selected{% endif %}>Camp Documents</option>
                         <option value="party_document" {% if category == "party_document" %}selected{% endif %}>Party Documents</option>
                     </select>
@@ -188,7 +189,7 @@
         {% endif %}
         <!-- license_and_passes -->
         {% if category == "license_and_passes" %}
-        <h3>Employee Documents</h3>
+        <h3>License and Passes</h3>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
@@ -221,7 +222,135 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center">No Employee Documents Found</td>
+                        <td colspan="6" class="text-center">No License and Passes Found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Employee Personal Documents -->
+        {% if category == "employee_personal_documents" %}
+        <h3>Employee Personal Documents</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Employee Code</th>
+                        <th>Employee Name</th>
+                        <th>Document Type</th>
+                        <th>Document Number</th>
+                        <th>Document File</th>
+                        <th>Issued Date</th>
+                        <th>Expiry Date</th>
+                        <th>Days to Expiry</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for emp in employee_personal_documents %}
+                        <!-- Passport -->
+                        {% if emp.passport_details and emp.passport_details.strip %}
+                        <tr>
+                            <td>{{ emp.emp_code }}</td>
+                            <td>{{ emp.emp_name }}</td>
+                            <td>Passport</td>
+                            <td>{{ emp.passport_details }}</td>
+                            <td>
+                                {% if emp.passport_document %}
+                                <a href="{{ emp.passport_document.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                {% else %}
+                                No File
+                                {% endif %}
+                            </td>
+                            <td>{{ emp.passport_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.passport_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="days-to-expiry"></td>
+                        </tr>
+                        {% endif %}
+                        
+                        <!-- Emirates ID -->
+                        {% if emp.emirates_no and emp.emirates_no.strip %}
+                        <tr>
+                            <td>{{ emp.emp_code }}</td>
+                            <td>{{ emp.emp_name }}</td>
+                            <td>Emirates ID</td>
+                            <td>{{ emp.emirates_no }}</td>
+                            <td>
+                                {% if emp.emirate_document %}
+                                <a href="{{ emp.emirate_document.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                {% else %}
+                                No File
+                                {% endif %}
+                            </td>
+                            <td>{{ emp.emirates_id_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.emirates_id_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="days-to-expiry"></td>
+                        </tr>
+                        {% endif %}
+                        
+                        <!-- Visa -->
+                        {% if emp.visa_no and emp.visa_no.strip %}
+                        <tr>
+                            <td>{{ emp.emp_code }}</td>
+                            <td>{{ emp.emp_name }}</td>
+                            <td>Visa</td>
+                            <td>{{ emp.visa_no }}</td>
+                            <td>
+                                {% if emp.visa_document %}
+                                <a href="{{ emp.visa_document.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                {% else %}
+                                No File
+                                {% endif %}
+                            </td>
+                            <td>{{ emp.visa_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.visa_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="days-to-expiry"></td>
+                        </tr>
+                        {% endif %}
+                        
+                        <!-- ILOE -->
+                        {% if emp.iloe_no and emp.iloe_no.strip %}
+                        <tr>
+                            <td>{{ emp.emp_code }}</td>
+                            <td>{{ emp.emp_name }}</td>
+                            <td>ILOE</td>
+                            <td>{{ emp.iloe_no }}</td>
+                            <td>
+                                {% if emp.iloe_document %}
+                                <a href="{{ emp.iloe_document.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                {% else %}
+                                No File
+                                {% endif %}
+                            </td>
+                            <td>{{ emp.iloe_issued|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.iloe_expiry|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="days-to-expiry"></td>
+                        </tr>
+                        {% endif %}
+                        
+                        <!-- Work Permit -->
+                        {% if emp.work_permit_number and emp.work_permit_number.strip %}
+                        <tr>
+                            <td>{{ emp.emp_code }}</td>
+                            <td>{{ emp.emp_name }}</td>
+                            <td>Work Permit</td>
+                            <td>{{ emp.work_permit_number }}</td>
+                            <td>
+                                {% if emp.work_permit_document %}
+                                <a href="{{ emp.work_permit_document.url }}" target="_blank" class="btn btn-sm btn-info">View</a>
+                                {% else %}
+                                No File
+                                {% endif %}
+                            </td>
+                            <td>{{ emp.labor_contract_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.work_permit_expiry|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="days-to-expiry"></td>
+                        </tr>
+                        {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No Employee Personal Documents Found</td>
                     </tr>
                     {% endfor %}
                 </tbody>
