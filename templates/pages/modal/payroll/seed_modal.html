@@ -300,7 +300,7 @@
 // For Add: Use name selectors
 ['seed_timeline_from', 'seed_timeline_to'].forEach(function(name) {
     document.querySelectorAll('input[name="' + name + '"]').forEach(function(input) {
-        input.addEventListener('change', function() {
+        input.addEventListener('blur', function() {
             var form = input.closest('form') || document;
             var from = form.querySelector('input[name="seed_timeline_from"]');
             var to = form.querySelector('input[name="seed_timeline_to"]');
@@ -340,8 +340,8 @@ function setupEditTimelineValidation(fromId, toId) {
                 }
             }
         }
-        fromInput.addEventListener('change', validate);
-        toInput.addEventListener('change', validate);
+        fromInput.addEventListener('blur', validate);
+        toInput.addEventListener('blur', validate);
     }
 }
 setupEditTimelineValidation('edit_seed_timeline_from', 'edit_seed_timeline_to');
