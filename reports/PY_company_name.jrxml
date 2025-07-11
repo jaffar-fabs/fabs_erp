@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-11T16:44:39 -->
+<!-- 2025-07-11T16:52:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_company_name" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1ddadfd2-b6f5-4883-95ee-3ca01286941e">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.jasperserver.url" value="http://103.91.187.48:8080/jasperserver-pro/"/>
@@ -19,7 +19,7 @@ WHERE company_code = COALESCE($P{P0}, company_code)]]>
 		<band splitType="Stretch"/>
 	</background>
 	<detail>
-		<band height="66" splitType="Stretch">
+		<band height="50" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<textField>
 				<reportElement x="0" y="0" width="440" height="30" uuid="b7a23e5f-9b43-444a-abe5-9cf28692dc3d"/>
@@ -29,7 +29,7 @@ WHERE company_code = COALESCE($P{P0}, company_code)]]>
 				<textFieldExpression><![CDATA[$F{company_name}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Right">
-				<reportElement x="620" y="0" width="170" height="66" uuid="bb4a7ae3-562a-4e44-afd0-2c809d4d35f3"/>
+				<reportElement x="620" y="0" width="170" height="50" uuid="bb4a7ae3-562a-4e44-afd0-2c809d4d35f3"/>
 				<imageExpression><![CDATA["http://103.14.120.216/media/"+$F{image_url}]]></imageExpression>
 			</image>
 		</band>
