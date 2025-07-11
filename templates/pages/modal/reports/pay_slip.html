@@ -30,6 +30,14 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="employee">Select Employee</label>
+                                        <select name="P1" id="employee" class="form-control select2">
+                                            <option value="">Select Employee</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
@@ -44,15 +52,46 @@
     </div>
 </div>
 
-<!-- <script>
-    $(document).ready(function () {
-        // Add any JavaScript logic if needed
-        $('#salary-register-form').on('submit', function (e) {
-            e.preventDefault();
-            // Perform validation or AJAX submission if required
-            alert('Form submitted successfully!');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paycycleSelect = document.getElementById('paycycle');
+        const employeeSelect = document.getElementById('employee');
+
+        paycycleSelect.addEventListener('change', function() {
+            const selectedPaycycle = this.value;
+            if (selectedPaycycle) {
+                // Split the paycycle value to get process_cycle
+                const processCycle = selectedPaycycle.split(',')[0];
+                
+                // Make AJAX call to get employees for selected paycycle
+                $.ajax({
+                    url: "{% url 'get_employees_by_paycycle' %}",
+                    type: "GET", 
+                    data: {
+                        process_cycle: processCycle
+                    },
+                    success: function(data) {
+                        // Clear existing options
+                        employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+                        
+                        // Add new options based on response
+                        data.forEach(employee => {
+                            const option = document.createElement('option');
+                            option.value = employee.employee_id;
+                            option.textContent = `${employee.employee_number} - ${employee.employee_name}`;
+                            employeeSelect.appendChild(option);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            } else {
+                // Reset employee dropdown if no paycycle selected
+                employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+            }
         });
     });
-</script> -->
+</script>
 
 {% endblock content %}

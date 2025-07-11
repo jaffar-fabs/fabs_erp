@@ -7162,6 +7162,21 @@ def pay_slip(request):
     }
     return render(request, 'pages/modal/reports/pay_slip.html', context)
 
+def get_employees_by_paycycle(request):
+    set_comp_code(request)
+    process_cycle = request.GET.get('process_cycle')
+    employees = Employee.objects.filter(comp_code=COMP_CODE, process_cycle=process_cycle).values('employee_id', 'emp_code', 'emp_name')
+    employee_list = [
+        {
+            'employee_id': emp['employee_id'],
+            'employee_number': emp['emp_code'], 
+            'employee_name': emp['emp_name']
+        }
+        for emp in employees
+    ]
+    return JsonResponse(employee_list, safe=False)
+
+
 def payment_wise_report(request):
     set_comp_code(request)  # Ensure the company code is set
     query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
