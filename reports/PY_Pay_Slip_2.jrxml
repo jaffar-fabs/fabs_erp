@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-11T17:14:37 -->
+<!-- 2025-07-11T17:16:57 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Pay_Slip" pageWidth="595" pageHeight="500" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f75e0eb2-4f76-450f-a538-a081b05a7d61">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -383,7 +383,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{EMP_CODE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{EMP_CODE}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="1" width="120" height="20" uuid="c70e233a-b2cc-4f61-bf3f-aa81fb75bf4f"/>
@@ -407,7 +407,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{EMP_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{EMP_NAME}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="21" width="120" height="20" uuid="e7e77646-5195-4fed-a9fe-37184662009f"/>
@@ -431,7 +431,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{DESIG_CODE}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{DESIG_CODE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement x="120" y="61" width="160" height="20" uuid="c5b533a1-0dfc-4c11-b0f3-832bb8058513">
@@ -444,7 +444,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{FORMATTED_PAY_PROCESS_MONTH}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{FORMATTED_PAY_PROCESS_MONTH}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="41" width="120" height="20" uuid="63a76e24-dc0c-4b61-9047-d29d9e0068bc"/>
@@ -490,7 +490,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{DEPARTMENT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{DEPARTMENT}]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement mode="Opaque" x="0" y="120" width="280" height="20" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="a375ce24-0a50-43c4-aa37-43c85d091c14">
@@ -883,7 +883,7 @@ ORDER BY a.emp_code]]>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{date_of_join}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[" "+$F{date_of_join}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
