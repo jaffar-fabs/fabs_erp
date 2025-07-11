@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <div class="page-wrapper">
-    <div class="content">
+    <div class="content" style="height: 95vh; overflow-y: auto;">
         <div class="row">
             <div class="col-md-12">
                 <!-- Page Header -->
@@ -26,19 +26,97 @@
                 <!-- /Page Header -->
 
                 <div class="card">
-                    <div class="card-header">
-                        <!-- Search -->
-                        <div class="row align-items-center">
-                            <div class="col-sm-4">
-                                <form method="get">
-                                    <div class="icon-form mb-3 mb-sm-0">
-                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                    <div class="card-header filter-section">
+                        <!-- Search and Filters -->
+                                                <form method="get" id="filterForm">
+                            <div class="row align-items-end">
+                                <div class="col-sm-3">
+                                    <label class="form-label small mb-1">Search</label>
+                                    <div class="input-group mb-3 mb-sm-0">
+                                        <span class="input-group-text"><i class="ti ti-search"></i></span>
                                         <input type="text" name="keyword" class="form-control" placeholder="Search by Employee Code, Name, or Department" value="{{ keyword }}">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ti ti-search"></i>
+                                        </button>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="form-label small mb-1">Department</label>
+                                    <select name="department" class="form-control select2" multiple="multiple" onchange="this.form.submit()">
+                                        <option value="">All Departments</option>
+                                        {% for dept in departments %}
+                                            <option value="{{ dept }}" {% if dept in department %}selected{% endif %}>{{ dept }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="form-label small mb-1">Designation</label>
+                                    <select name="designation" class="form-control select2" multiple="multiple" onchange="this.form.submit()">
+                                        <option value="">All Designations</option>
+                                        {% for desig in designations %}
+                                            <option value="{{ desig }}" {% if desig in designation %}selected{% endif %}>{{ desig }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="form-label small mb-1">Paycycle</label>
+                                    <select name="paycycle" class="form-control select2" multiple="multiple" onchange="this.form.submit()">
+                                        <option value="">All Paycycles</option>
+                                        {% for cycle in paycycles %}
+                                            <option value="{{ cycle }}" {% if cycle in paycycle %}selected{% endif %}>{{ cycle }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-2">
+                                    <label class="form-label small mb-1">Country</label>
+                                    <select name="country" class="form-control select2" multiple="multiple" onchange="this.form.submit()">
+                                        <option value="">All Countries</option>
+                                        {% for cntry in countries %}
+                                            <option value="{{ cntry }}" {% if cntry in country %}selected{% endif %}>{{ cntry }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-sm-1">
+                                    <label class="form-label small mb-1">&nbsp;</label>
+                                    <button type="button" class="btn btn-secondary" onclick="clearFilters()" title="Clear all filters">
+                                        <i class="ti ti-refresh"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- /Search and Filters -->
+                        
+                        <!-- Active Filters Summary -->
+                        <!-- {% if keyword or department or designation or paycycle or country %}
+                        <div class="mt-3">
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="text-muted small">Active filters:</span>
+                                {% if keyword %}
+                                <span class="badge bg-primary">Search: "{{ keyword }}"</span>
+                                {% endif %}
+                                {% if department %}
+                                    {% for dept in department %}
+                                    <span class="badge bg-info">Department: {{ dept }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if designation %}
+                                    {% for desig in designation %}
+                                    <span class="badge bg-success">Designation: {{ desig }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if paycycle %}
+                                    {% for cycle in paycycle %}
+                                    <span class="badge bg-warning">Paycycle: {{ cycle }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if country %}
+                                    {% for cntry in country %}
+                                    <span class="badge bg-secondary">Country: {{ cntry }}</span>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         </div>
-                        <!-- /Search -->
+                        {% endif %} -->
                     </div>
 
                     <div class="card-body">
@@ -94,12 +172,15 @@
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div class="showing-entries">
                                 <span>Showing {{ employees.start_index }} to {{ employees.end_index }} of {{ employees.paginator.count }} entries</span>
+                                {% if keyword or department or designation or paycycle or country %}
+                                <br><small class="text-muted">Filtered from {{ result_cnt }} total employees</small>
+                                {% endif %}
                             </div>
                             <ul class="pagination">
                                 <!-- Previous button -->
                                 {% if employees.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.previous_page_number }}">Previous</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}{% for dept in department %}&department={{ dept }}{% endfor %}{% for desig in designation %}&designation={{ desig }}{% endfor %}{% for cycle in paycycle %}&paycycle={{ cycle }}{% endfor %}{% for cntry in country %}&country={{ cntry }}{% endfor %}&page={{ employees.previous_page_number }}">Previous</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
@@ -110,7 +191,7 @@
                                 <!-- First page and ellipsis -->
                                 {% if employees.number > 4 %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?keyword={{ keyword }}&page=1">1</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}{% for dept in department %}&department={{ dept }}{% endfor %}{% for desig in designation %}&designation={{ desig }}{% endfor %}{% for cycle in paycycle %}&paycycle={{ cycle }}{% endfor %}{% for cntry in country %}&country={{ cntry }}{% endfor %}&page=1">1</a>
                                 </li>
                                 {% if employees.number > 5 %}
                                 <li class="page-item disabled">
@@ -123,7 +204,7 @@
                                 {% for page in employees.paginator.page_range %}
                                     {% if page >= employees.number|add:-3 and page <= employees.number|add:3 %}
                                     <li class="page-item {% if page == employees.number %} active {% endif %}">
-                                        <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                        <a class="page-link" href="?keyword={{ keyword }}{% for dept in department %}&department={{ dept }}{% endfor %}{% for desig in designation %}&designation={{ desig }}{% endfor %}{% for cycle in paycycle %}&paycycle={{ cycle }}{% endfor %}{% for cntry in country %}&country={{ cntry }}{% endfor %}&page={{ page }}">{{ page }}</a>
                                     </li>
                                     {% endif %}
                                 {% endfor %}
@@ -136,14 +217,14 @@
                                     </li>
                                     {% endif %}
                                     <li class="page-item">
-                                        <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.paginator.num_pages }}">{{ employees.paginator.num_pages }}</a>
+                                        <a class="page-link" href="?keyword={{ keyword }}{% for dept in department %}&department={{ dept }}{% endfor %}{% for desig in designation %}&designation={{ desig }}{% endfor %}{% for cycle in paycycle %}&paycycle={{ cycle }}{% endfor %}{% for cntry in country %}&country={{ cntry }}{% endfor %}&page={{ employees.paginator.num_pages }}">{{ employees.paginator.num_pages }}</a>
                                     </li>
                                 {% endif %}
 
                                 <!-- Next button -->
                                 {% if employees.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ employees.next_page_number }}">Next</a>
+                                    <a class="page-link" href="?keyword={{ keyword }}{% for dept in department %}&department={{ dept }}{% endfor %}{% for desig in designation %}&designation={{ desig }}{% endfor %}{% for cycle in paycycle %}&paycycle={{ cycle }}{% endfor %}{% for cntry in country %}&country={{ cntry }}{% endfor %}&page={{ employees.next_page_number }}">Next</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
@@ -160,4 +241,98 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .form-label.small {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #495057;
+    }
+    
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+    }
+    
+    .filter-section .btn {
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-color: #ced4da;
+    }
+    
+    .form-control:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .select2-container--default .select2-selection--single:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Function to clear all filters
+    function clearFilters() {
+        // Clear all form inputs
+        document.querySelector('input[name="keyword"]').value = '';
+        document.querySelector('select[name="department"]').value = '';
+        document.querySelector('select[name="designation"]').value = '';
+        document.querySelector('select[name="paycycle"]').value = '';
+        document.querySelector('select[name="country"]').value = '';
+        
+        // Submit the form to refresh the page
+        document.getElementById('filterForm').submit();
+    }
+
+    // Add search functionality on Enter key press
+    document.querySelector('input[name="keyword"]').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('filterForm').submit();
+        }
+    });
+
+    // Initialize select2 for better dropdown experience
+    $(document).ready(function() {
+        $('.select').select2({
+            placeholder: 'Select an option',
+            allowClear: true,
+            width: '100%'
+        });
+        
+        // Add loading indicator when form is submitted
+        $('#filterForm').on('submit', function() {
+            // Show loading spinner
+            $('body').append('<div id="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 9999; display: flex; align-items: center; justify-content: center;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+        });
+    });
+    
+    // Remove loading overlay when page loads
+    $(window).on('load', function() {
+        $('#loading-overlay').remove();
+    });
+</script>
 {% endblock %}

@@ -4842,8 +4842,12 @@ def delete_party(request, party_id):
 def employee_enquiries(request):
     set_comp_code(request)  # Ensure the company code is set in the session
 
-    # Fetch employees based on search keyword
+    # Fetch filter parameters
     keyword = request.GET.get('keyword', '').strip()
+    department = request.GET.getlist('department')  # Get multiple departments
+    designation = request.GET.getlist('designation')  # Get multiple designations
+    paycycle = request.GET.getlist('paycycle')  # Get multiple paycycles
+    country = request.GET.getlist('country')  # Get multiple countries
     page_number = request.GET.get('page', 1)
 
     # Initialize the query
@@ -4857,6 +4861,22 @@ def employee_enquiries(request):
             Q(department__icontains=keyword)
         )
 
+    # Apply department filter
+    if department:
+        query = query.filter(department__in=department)
+
+    # Apply designation filter
+    if designation:
+        query = query.filter(designation__in=designation)
+
+    # Apply paycycle filter
+    if paycycle:
+        query = query.filter(process_cycle__in=paycycle)
+
+    # Apply country filter (using nationality field)
+    if country:
+        query = query.filter(nationality__in=country)
+
     # Apply pagination
     paginator = Paginator(query.order_by('emp_code'), PAGINATION_SIZE)
     try:
@@ -4866,10 +4886,37 @@ def employee_enquiries(request):
     except EmptyPage:
         employees_page = paginator.page(paginator.num_pages)
 
+    # Get unique values for filter dropdowns
+    try:
+        departments = Employee.objects.filter(comp_code=COMP_CODE).exclude(
+            department__isnull=True).exclude(department='').values_list('department', flat=True).distinct().order_by('department')
+        
+        designations = Employee.objects.filter(comp_code=COMP_CODE).exclude(
+            designation__isnull=True).exclude(designation='').values_list('designation', flat=True).distinct().order_by('designation')
+        
+        paycycles = PaycycleMaster.objects.filter(comp_code=COMP_CODE).values_list('process_cycle', flat=True).distinct().order_by('process_cycle')
+        
+        countries = Employee.objects.filter(comp_code=COMP_CODE).exclude(
+            nationality__isnull=True).exclude(nationality='').values_list('nationality', flat=True).distinct().order_by('nationality')
+    except Exception as e:
+        # Fallback to empty lists if there's an error
+        departments = []
+        designations = []
+        paycycles = []
+        countries = []
+
     # Prepare the context for the template
     context = {
         'employees': employees_page,
         'keyword': keyword,
+        'department': department,
+        'designation': designation,
+        'paycycle': paycycle,
+        'country': country,
+        'departments': departments,
+        'designations': designations,
+        'paycycles': paycycles,
+        'countries': countries,
         'result_cnt': query.count(),
     }
 
