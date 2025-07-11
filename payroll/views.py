@@ -4995,7 +4995,7 @@ def documents_enquiries(request):
     elif category == 'employee_personal_documents':
         # Get employees with personal documents (passport, Emirates ID, visa, ILOE, work permit)
         # Only include employees who have at least one document with actual data
-        employee_personal_documents = Employee.objects.filter(comp_code=COMP_CODE).filter(
+        employee_personal_documents = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').filter(
             Q(passport_details__isnull=False, passport_details__gt='') |
             Q(emirates_no__isnull=False, emirates_no__gt='') |
             Q(visa_no__isnull=False, visa_no__gt='') |
