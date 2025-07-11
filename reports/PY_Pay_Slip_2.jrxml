@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-11T17:11:37 -->
+<!-- 2025-07-11T17:14:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Pay_Slip" pageWidth="595" pageHeight="500" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f75e0eb2-4f76-450f-a538-a081b05a7d61">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -328,9 +328,7 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[Net Earning Salary]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="280" y="199" width="274" height="20" forecolor="#FFFFFF" uuid="d9ba5cd5-9aaf-4250-a706-5d97c4718781">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
+				<reportElement x="280" y="199" width="269" height="20" forecolor="#FFFFFF" uuid="d9ba5cd5-9aaf-4250-a706-5d97c4718781"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -522,7 +520,9 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[ Basic]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="140" y="120" width="140" height="20" uuid="c6d26780-24f8-47e1-af5b-498e4aefb690"/>
+				<reportElement x="140" y="120" width="135" height="20" uuid="c6d26780-24f8-47e1-af5b-498e4aefb690">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -552,7 +552,7 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[ Allowances]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="140" y="140" width="140" height="20" uuid="54cc563f-e17d-4b35-ae2e-8ec946f9ac22">
+				<reportElement x="140" y="140" width="135" height="20" uuid="54cc563f-e17d-4b35-ae2e-8ec946f9ac22">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -584,7 +584,7 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[ OT]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="140" y="160" width="140" height="20" uuid="999d9908-42b0-4706-b564-6e3b8417e905">
+				<reportElement x="140" y="160" width="135" height="20" uuid="999d9908-42b0-4706-b564-6e3b8417e905">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -616,9 +616,7 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[ Total Earnings]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="140" y="180" width="140" height="20" uuid="2115858e-fff1-4dcd-9ce5-9c80b0e68e60">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
+				<reportElement x="140" y="180" width="135" height="20" uuid="2115858e-fff1-4dcd-9ce5-9c80b0e68e60"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -648,7 +646,7 @@ ORDER BY a.emp_code]]>
 				<text><![CDATA[ Total Deductions]]></text>
 			</staticText>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="420" y="180" width="134" height="20" uuid="3bbcfde5-0749-4996-8177-0f4296626e57">
+				<reportElement x="420" y="180" width="129" height="20" uuid="3bbcfde5-0749-4996-8177-0f4296626e57">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
 				<box>
@@ -748,9 +746,7 @@ ORDER BY a.emp_code]]>
 				<textFieldExpression><![CDATA[$F{DEDUCTIONS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement x="280" y="258" width="274" height="20" forecolor="#000000" uuid="cf972edd-142d-4e80-9b41-9551a9387bba">
-					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
-				</reportElement>
+				<reportElement x="280" y="258" width="269" height="20" forecolor="#000000" uuid="cf972edd-142d-4e80-9b41-9551a9387bba"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
