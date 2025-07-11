@@ -7176,6 +7176,20 @@ def get_employees_by_paycycle(request):
     ]
     return JsonResponse(employee_list, safe=False)
 
+def get_employees_by_category(request):
+    set_comp_code(request)
+    category = request.GET.get('category')
+    employees = Employee.objects.filter(comp_code=COMP_CODE, category=category).values('employee_id', 'emp_code', 'emp_name')
+    employee_list = [
+        {
+            'employee_id': emp['employee_id'],
+            'employee_number': emp['emp_code'], 
+            'employee_name': emp['emp_name']
+        }
+        for emp in employees
+    ]
+    return JsonResponse(employee_list, safe=False)
+
 
 def payment_wise_report(request):
     set_comp_code(request)  # Ensure the company code is set
@@ -7385,6 +7399,7 @@ def generate_report(request):
             parameters = {
                 'P0': company_code,  
                 'P1':p1 if p1 else None,
+                'P2':p2 if p2 else None,
             }
         else:
             return JsonResponse({

@@ -251,6 +251,7 @@ urlpatterns = [
     path('control_statement/', views.control_statement, name='control_statement'),
     path('pay_slip/', views.pay_slip, name='pay_slip'),
     path('get_employees_by_paycycle/', views.get_employees_by_paycycle, name='get_employees_by_paycycle'),
+    path('get_employees_by_category/', views.get_employees_by_category, name='get_employees_by_category'),
     path('payment_wise_report/', views.payment_wise_report, name='payment_wise_report'),
     path('project_wise_job_summary/', views.project_wise_job_summary, name='project_wise_job_summary'),
     path('project_wise_report/', views.project_wise_report, name='project_wise_report'),

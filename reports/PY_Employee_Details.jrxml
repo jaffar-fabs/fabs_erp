@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-10T19:00:47 -->
+<!-- 2025-07-11T19:08:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Employee_Details" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="746e5d44-2e5b-4eb6-8ba0-e2cda5ef1614">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
 	<parameter name="P0" class="java.lang.String"/>
 	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
     a.emp_code AS "EMP_CODE",
@@ -24,6 +24,7 @@ FROM
 WHERE
     a.comp_code = COALESCE($P{P0}, a.comp_code)
     AND a.category = COALESCE($P{P1}, a.category)
+    AND a.emp_code = COALESCE($P{P2}, a.emp_code)
 ORDER BY
     a.emp_code,
     a.grade_code,
