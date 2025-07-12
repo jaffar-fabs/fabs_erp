@@ -1470,8 +1470,6 @@ def project(request):
                         'status': 'success',
                         'message': f'Successfully imported {success_count} projects'
                     })
-                    
-
             # Handle regular form submission
             else:
                 # Your existing form handling code here
@@ -3148,7 +3146,7 @@ def payroll_processing(request):
             from decimal import Decimal
             # Fetch paycycle data
             paycycle_data = PaycycleMaster.objects.filter(
-                comp_code=COMP_CODE, process_cycle=paycycle, pay_process_month=paymonth, process_comp_flag=status
+                comp_code=COMP_CODE, process_cycle=paycycle, pay_process_month=paymonth
             ).first()
 
             if not paycycle_data:
@@ -3305,132 +3303,256 @@ def payroll_processing(request):
 
                 # Prepare new records for bulk insertion
                 new_records = []
+                if status == 'INITIAL' or status == 'PROCESSING':
+                    # Insert net pay record
+                    new_records.append(PayProcess(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.department,
+                        earn_type='NET',
+                        earn_code='ER999',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(net_pay),
+                        earn_reports='NET PAY'
+                    ))
 
-                # Insert net pay record
-                new_records.append(PayProcess(
-                    comp_code=COMP_CODE,
-                    pay_cycle=paycycle,
-                    pay_month=paymonth,
-                    employee_code=employee.emp_code,
-                    project_code=employee.department,
-                    earn_type='NET',
-                    earn_code='ER999',
-                    morning=float(total_morning),
-                    afternoon=float(total_afternoon),
-                    ot1=float(ot1_hrs),
-                    ot2=float(ot2_hrs),
-                    amount=float(net_pay),
-                    earn_reports='NET PAY'
-                ))
-
-                new_records.append(PayProcess(
-                    comp_code=COMP_CODE,
-                    pay_cycle=paycycle,
-                    pay_month=paymonth,
-                    employee_code=employee.emp_code,
-                    project_code=employee.prj_code,
-                    earn_type='EARNINGS',
-                    earn_code='ER001',
-                    morning=float(total_morning),
-                    afternoon=float(total_afternoon),
-                    ot1=float(ot1_hrs),
-                    ot2=float(ot2_hrs),
-                    amount=float(total_basic),
-                    earn_reports='EARN BASIC'
-                ))
-
-                new_records.append(PayProcess(
-                    comp_code=COMP_CODE,
-                    pay_cycle=paycycle,
-                    pay_month=paymonth,
-                    employee_code=employee.emp_code,
-                    project_code=employee.prj_code,
-                    earn_type='EARNINGS',
-                    earn_code='ER002',
-                    morning=float(total_morning),
-                    afternoon=float(total_afternoon),
-                    ot1=float(ot1_hrs),
-                    ot2=float(ot2_hrs),
-                    amount=float(total_allowance),
-                    earn_reports='EARN ALLOWANCE'
-                ))
-
-                new_records.append(PayProcess(
-                    comp_code=COMP_CODE,
-                    pay_cycle=paycycle,
-                    pay_month=paymonth,
-                    employee_code=employee.emp_code,
-                    project_code=employee.prj_code,
-                    earn_type='EARNINGS',
-                    earn_code='ER003',
-                    # morning=float(total_morning),
-                    # afternoon=float(total_afternoon),
-                    ot1=float(ot1_hrs),
-                    # ot2=float(ot2_hrs),
-                    amount=float(ot1_amt),
-                    earn_reports='EARN OT1'
-                ))
-
-                new_records.append(PayProcess(
-                    comp_code=COMP_CODE,
-                    pay_cycle=paycycle,
-                    pay_month=paymonth,
-                    employee_code=employee.emp_code,
-                    project_code=employee.prj_code,
-                    earn_type='EARNINGS',
-                    earn_code='ER004',
-                    # morning=float(total_morning),
-                    # afternoon=float(total_afternoon),
-                    # ot1=float(ot1_hrs),
-                    ot2=float(ot2_hrs),
-                    amount=float(ot2_amt),
-                    earn_reports='EARN OT2'
-                ))
-
-                # Insert additional earnings and deductions
-                for record in earn_deduct_data:
                     new_records.append(PayProcess(
                         comp_code=COMP_CODE,
                         pay_cycle=paycycle,
                         pay_month=paymonth,
                         employee_code=employee.emp_code,
                         project_code=employee.prj_code,
-                        earn_type=record.earn_type,
-                        earn_code=record.earn_deduct_code,
-                        amount=float(Decimal(str(record.earn_deduct_amt or 0))),
-                        earn_reports=record.earn_deduct_code
+                        earn_type='EARNINGS',
+                        earn_code='ER001',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(total_basic),
+                        earn_reports='EARN BASIC'
                     ))
 
-                # Insert adhoc earnings and deductions
-                for adhoc_record in adhoc_earn_deduct_data:
                     new_records.append(PayProcess(
                         comp_code=COMP_CODE,
                         pay_cycle=paycycle,
                         pay_month=paymonth,
                         employee_code=employee.emp_code,
                         project_code=employee.prj_code,
-                        earn_type=adhoc_record.earn_deduct_type,
-                        earn_code=adhoc_record.earn_deduct_code,
-                        amount=float(Decimal(str(adhoc_record.pay_amount or 0))),
-                        earn_reports=adhoc_record.earn_deduct_code
+                        earn_type='EARNINGS',
+                        earn_code='ER002',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(total_allowance),
+                        earn_reports='EARN ALLOWANCE'
                     ))
 
-                for advance_record in advance_data:
                     new_records.append(PayProcess(
                         comp_code=COMP_CODE,
                         pay_cycle=paycycle,
                         pay_month=paymonth,
                         employee_code=employee.emp_code,
                         project_code=employee.prj_code,
-                        earn_type='DEDUCTIONS',
-                        earn_code=advance_record.advance_code,
-                        amount=float(Decimal(str(advance_record.instalment_amt or 0))),
-                        earn_reports='Advance Loan'
+                        earn_type='EARNINGS',
+                        earn_code='ER003',
+                        # morning=float(total_morning),
+                        # afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        # ot2=float(ot2_hrs),
+                        amount=float(ot1_amt),
+                        earn_reports='EARN OT1'
                     ))
 
-                # Bulk insert new records
-                PayProcess.objects.bulk_create(new_records)
+                    new_records.append(PayProcess(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.prj_code,
+                        earn_type='EARNINGS',
+                        earn_code='ER004',
+                        # morning=float(total_morning),
+                        # afternoon=float(total_afternoon),
+                        # ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(ot2_amt),
+                        earn_reports='EARN OT2'
+                    ))
 
+                    # Insert additional earnings and deductions
+                    for record in earn_deduct_data:
+                        new_records.append(PayProcess(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type=record.earn_type,
+                            earn_code=record.earn_deduct_code,
+                            amount=float(Decimal(str(record.earn_deduct_amt or 0))),
+                            earn_reports=record.earn_deduct_code
+                        ))
+
+                    # Insert adhoc earnings and deductions
+                    for adhoc_record in adhoc_earn_deduct_data:
+                        new_records.append(PayProcess(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type=adhoc_record.earn_deduct_type,
+                            earn_code=adhoc_record.earn_deduct_code,
+                            amount=float(Decimal(str(adhoc_record.pay_amount or 0))),
+                            earn_reports=adhoc_record.earn_deduct_code
+                        ))
+
+                    for advance_record in advance_data:
+                        new_records.append(PayProcess(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type='DEDUCTIONS',
+                            earn_code=advance_record.advance_code,
+                            amount=float(Decimal(str(advance_record.instalment_amt or 0))),
+                            earn_reports='Advance Loan'
+                        ))
+
+                    # Bulk insert new records
+                    PayProcess.objects.bulk_create(new_records)
+                elif status == 'COMPLETE':                    
+                    # Insert net pay record
+                    new_records.append(PayProcessArchieve(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.department,
+                        earn_type='NET',
+                        earn_code='ER999',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(net_pay),
+                        earn_reports='NET PAY'
+                    ))
+
+                    new_records.append(PayProcessArchieve(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.prj_code,
+                        earn_type='EARNINGS',
+                        earn_code='ER001',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(total_basic),
+                        earn_reports='EARN BASIC'
+                    ))
+
+                    new_records.append(PayProcessArchieve(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.prj_code,
+                        earn_type='EARNINGS',
+                        earn_code='ER002',
+                        morning=float(total_morning),
+                        afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(total_allowance),
+                        earn_reports='EARN ALLOWANCE'
+                    ))
+
+                    new_records.append(PayProcessArchieve(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.prj_code,
+                        earn_type='EARNINGS',
+                        earn_code='ER003',
+                        # morning=float(total_morning),
+                        # afternoon=float(total_afternoon),
+                        ot1=float(ot1_hrs),
+                        # ot2=float(ot2_hrs),
+                        amount=float(ot1_amt),
+                        earn_reports='EARN OT1'
+                    ))
+
+                    new_records.append(PayProcessArchieve(
+                        comp_code=COMP_CODE,
+                        pay_cycle=paycycle,
+                        pay_month=paymonth,
+                        employee_code=employee.emp_code,
+                        project_code=employee.prj_code,
+                        earn_type='EARNINGS',
+                        earn_code='ER004',
+                        # morning=float(total_morning),
+                        # afternoon=float(total_afternoon),
+                        # ot1=float(ot1_hrs),
+                        ot2=float(ot2_hrs),
+                        amount=float(ot2_amt),
+                        earn_reports='EARN OT2'
+                    ))
+
+                    # Insert additional earnings and deductions
+                    for record in earn_deduct_data:
+                        new_records.append(PayProcessArchieve(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type=record.earn_type,
+                            earn_code=record.earn_deduct_code,
+                            amount=float(Decimal(str(record.earn_deduct_amt or 0))),
+                            earn_reports=record.earn_deduct_code
+                        ))
+
+                    # Insert adhoc earnings and deductions
+                    for adhoc_record in adhoc_earn_deduct_data:
+                        new_records.append(PayProcessArchieve(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type=adhoc_record.earn_deduct_type,
+                            earn_code=adhoc_record.earn_deduct_code,
+                            amount=float(Decimal(str(adhoc_record.pay_amount or 0))),
+                            earn_reports=adhoc_record.earn_deduct_code
+                        ))
+
+                    for advance_record in advance_data:
+                        new_records.append(PayProcessArchieve(
+                            comp_code=COMP_CODE,
+                            pay_cycle=paycycle,
+                            pay_month=paymonth,
+                            employee_code=employee.emp_code,
+                            project_code=employee.prj_code,
+                            earn_type='DEDUCTIONS',
+                            earn_code=advance_record.advance_code,
+                            amount=float(Decimal(str(advance_record.instalment_amt or 0))),
+                            earn_reports='Advance Loan'
+                        ))
+
+                    # Bulk insert new records
+                    PayProcessArchieve.objects.bulk_create(new_records)
 
             messages.success(request, "Payroll processed successfully.")
             return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})

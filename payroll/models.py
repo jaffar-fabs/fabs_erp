@@ -6,7 +6,8 @@ import os
 
 def employee_document_path(instance, filename):
     # Construct the path using the employee's code
-    return os.path.join('employee_documents', str(instance.emp_code), filename)
+    emp_code = instance.comp_code + '_' + str(instance.emp_code)
+    return os.path.join('employee_documents', str(emp_code), filename)
 
 def camp_document_path(instance, filename):
     # Construct the path using the camp's code
@@ -162,6 +163,28 @@ class CampAllocation(models.Model):
 #Payprocess
 
 class PayProcess(models.Model):
+    comp_code = models.CharField(max_length=15)  # Company Code
+    pay_cycle = models.CharField(max_length=10)  # Payroll Cycle (e.g., Monthly, Biweekly)
+    pay_month = models.CharField(max_length=50)  # Payroll Month (MMYYYY format)
+    employee_code = models.CharField(max_length=50)  # Employee Identifier
+    project_code = models.CharField(max_length=50, blank=True, null=True)  # Project Code (optional)
+    earn_type = models.CharField(max_length=50)  # Earnings Type (Basic Pay, Overtime, etc.)
+    earn_code = models.CharField(max_length=50)  # Earnings Code
+    morning = models.DecimalField(max_digits=18, decimal_places=2, default=0.00)  # Morning Shift Earnings
+    afternoon = models.DecimalField(max_digits=18, decimal_places=2, default=0.00)  # Afternoon Shift Earnings
+    ot1 = models.DecimalField(max_digits=18, decimal_places=2, default=0.00)  # Overtime 1
+    ot2 = models.DecimalField(max_digits=18, decimal_places=2, default=0.00)  # Overtime 2
+    amount = models.DecimalField(max_digits=18, decimal_places=5, default=0.00000)  # Total Earnings
+    earn_reports = models.CharField(max_length=50, blank=True, null=True)  # Earnings Report Classification
+
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when record is created
+    updated_at = models.DateTimeField(auto_now=True)  # Timestamp when record is updated
+
+    def __str__(self):
+            return f"{self.employee_code} - {self.pay_month} - {self.earn_type}"
+    
+
+class PayProcessArchieve(models.Model):
     comp_code = models.CharField(max_length=15)  # Company Code
     pay_cycle = models.CharField(max_length=10)  # Payroll Cycle (e.g., Monthly, Biweekly)
     pay_month = models.CharField(max_length=50)  # Payroll Month (MMYYYY format)

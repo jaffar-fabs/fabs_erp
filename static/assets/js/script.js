@@ -4,6 +4,17 @@ Template Name: Mio
 */
 
 // static/js/scripts.js
+
+
+$(document).ready(function() {
+    const alertMessage = document.getElementById('alert-message');
+    if (alertMessage) {
+        setTimeout(function() {
+            $('#alert-message').slideUp('slow');
+        }, 5000);
+    }
+});
+
 function openEditModal(projectId) {
     $.ajax({
         url: '/projects/get-project-data/',
