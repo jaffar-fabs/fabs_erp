@@ -28,6 +28,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# CSRF Trusted Origins - Add your domain/port combinations here
+CSRF_TRUSTED_ORIGINS = [
+    'http://103.14.120.216:30000',
+    'http://103.14.120.216:80',
+    'http://103.14.120.216',
+    'https://103.14.120.216:30000',
+    'https://103.14.120.216:80',
+    'https://103.14.120.216',
+]
 
 # Application definition
 
