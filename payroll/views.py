@@ -872,7 +872,6 @@ def payroll_dashboard(request):
 
     return render(request, 'pages/dashboard/payroll_dashboard.html', context)
 
-@csrf_exempt
 def my_login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
