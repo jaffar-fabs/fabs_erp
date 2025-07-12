@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [
+    'http://103.14.120.216:30000',
+]
+
 
 # Application definition
 
