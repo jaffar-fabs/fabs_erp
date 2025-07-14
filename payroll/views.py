@@ -3303,7 +3303,7 @@ def payroll_processing(request):
 
                 # Prepare new records for bulk insertion
                 new_records = []
-                if status == 'INITIAL' or status == 'PROCESSING':
+                if status == 'INITIAL':
                     # Insert net pay record
                     new_records.append(PayProcess(
                         comp_code=COMP_CODE,

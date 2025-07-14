@@ -113,6 +113,10 @@
                                                 <a href="#" class="action-icon" data-bs-toggle="dropdown"
                                                     aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item view-employee-btn" href="javascript:void(0);"
+                                                       data-id="{{ employee.employee_id }}">
+                                                        <i class="ti ti-eye text-info"></i> View
+                                                    </a>
                                                     <a class="dropdown-item edit-employee-btn" href="javascript:void(0);"
                                                        data-id="{{ employee.employee_id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
@@ -239,6 +243,9 @@
 
     $(".add-btn").on("click", function (event) {
         event.preventDefault();
+        
+        // Reset form to editable state first
+        resetFormToEditable();
         
         // Reset the entire form
         $("#addEmployeeForm")[0].reset();
@@ -519,9 +526,14 @@
                         $("#profile_picture").attr("src", response.data.profile_picture);
                         if (response.data.profile_picture) {
                             $("#profile_picture_preview").html(`
-                                <a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
-                                    <i class="fas fa-eye"></i> Preview
-                                </a>
+                                <label>${response.data.profile_picture.split('/').pop()}</label>
+                                <br>
+                                ${response.data.profile_picture.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/) ?
+                                    `<img src="${response.data.profile_picture}" class="img-thumbnail" style="max-width: 150px;" alt="Passport Size Photo">` :
+                                    `<a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>`
+                                }
                                 <a href="${response.data.profile_picture}" download class="btn btn-sm btn-secondary" title="Download Document">
                                     <i class="fas fa-download"></i> Download
                                 </a>
@@ -600,6 +612,8 @@
                         if (response.data.passport_document) {
                             $("#passport_document_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.passport_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.passport_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -639,6 +653,8 @@
                         if (response.data.change_status) {
                             $("#changeStatusFile_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.change_status.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.change_status}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -662,6 +678,8 @@
                         if (response.data.emirate_document) {
                             $("#emirate_document_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.emirate_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.emirate_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -682,6 +700,8 @@
                         if (response.data.visa_document) {
                             $("#visa_document_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.visa_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.visa_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -702,6 +722,8 @@
                         if (response.data.work_permit_document) {
                             $("#work_permit_document_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.work_permit_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.work_permit_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -721,6 +743,8 @@
                         if (response.data.iloe_document) {
                             $("#iloe_document_preview").html(`
                                 <div class="mt-2">
+                                    <label>${response.data.iloe_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.iloe_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -889,6 +913,8 @@
                             <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
                             ${doc.document_file ? `
                                 <div class="mt-2">
+                                    <label>${doc.document_file.split('/').pop()}</label>
+                                    <br>
                                     <a href="${doc.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -899,7 +925,7 @@
                             ` : ''}
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" onclick="removeRow_add(this, ${doc.document_id})">
+                            <button type="button" class="btn btn-danger" onclick="removeRow_add(this, '${doc.document_id}')">
                                 <i class="fas fa-times"></i>
                             </button>
                             <button type="button" class="btn btn-primary" onclick="addRow_add()">
@@ -953,7 +979,7 @@
                     <input type="file" name="document_file[]" id="document_file" class="form-control" accept="application/pdf,image/*">
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger" onclick="removeRow_add(this, ${doc.document_id})">
+                    <button type="button" class="btn btn-danger" onclick="removeRow_add(this, '${doc.document_id}')">
                         <i class="fas fa-times"></i>
                     </button>
                     <button type="button" class="btn btn-primary" onclick="addRow_add()">
@@ -999,6 +1025,8 @@
                             <div class="dependent-file-preview">
                                 ${dependent.document_file ? `
                                     <div class="mt-2">
+                                        <label>${dependent.document_file.split('/').pop()}</label>
+                                        <br>
                                         <a href="${dependent.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                             <i class="fas fa-eye"></i> Preview
                                         </a>
@@ -1010,7 +1038,7 @@
                             </div>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this, ${dependent.document_id || ''})">
+                            <button type="button" class="btn btn-danger" onclick="removeDependentRow_add(this, '${dependent.document_id || ''}')">
                                 <i class="fas fa-times"></i>
                             </button>
                             <button type="button" class="btn btn-primary" onclick="addDependentRow_add()">
@@ -1094,6 +1122,8 @@
                             <input type="file" class="form-control" accept="application/pdf,image/*">
                             ${license.document_file ? `
                                 <div class="mt-2">
+                                    <label>${license.document_file.split('/').pop()}</label>
+                                    <br>
                                     <a href="${license.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1104,7 +1134,7 @@
                             ` : ''}
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this, ${license.document_id})">
+                            <button type="button" class="btn btn-danger" onclick="removeLicenseRow_add(this, '${license.document_id}')">
                                 <i class="fas fa-times"></i>
                             </button>
                             <button type="button" class="btn btn-primary" onclick="addLicenseRow_add()">
@@ -1212,7 +1242,7 @@
                             <input type="date" name="recruitment_date[]" class="form-control" value="${detail.date || ''}">
                         </td>
                         <td>
-                            <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this, ${detail.recruitment_id || ''})">
+                            <button type="button" class="btn btn-danger" onclick="removeRecruitmentRow_add(this, '${detail.recruitment_id || ''}')">
                                 <i class="fas fa-times"></i>
                             </button>
                             <button type="button" class="btn btn-primary" onclick="addRecruitmentRow_add()">
@@ -1385,6 +1415,380 @@
             setTimeout(() => {
                 calculateSalaryTotals();
             }, 100);
+        });
+
+        // View Employee Functionality
+        $(".view-employee-btn").on("click", function (event) {
+            event.preventDefault();
+            var employeeId = $(this).data("id");
+            console.log("Viewing employee ID:", employeeId);
+            
+            // Show the offcanvas
+            let firstOffcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvas_add'));
+            firstOffcanvas.show();
+
+            // Make all form elements read-only
+            function makeFormReadOnly() {
+                // Disable all inputs, selects, and textareas
+                $("#offcanvas_add input, #offcanvas_add select, #offcanvas_add textarea").prop('disabled', true);
+                
+                // Disable all dynamic table inputs and selects
+                $("#multiEntryTable_add input, #multiEntryTable_add select").prop('disabled', true);
+                $("#documentUploadTable_add input, #documentUploadTable_add select").prop('disabled', true);
+                $("#dependentsTable_add input, #dependentsTable_add select").prop('disabled', true);
+                $("#licensePassesTable_add input, #licensePassesTable_add select").prop('disabled', true);
+                $("#recruitmentInfoTable_add input, #recruitmentInfoTable_add select").prop('disabled', true);
+                
+                // Hide all buttons except close and document preview buttons
+                $("#offcanvas_add .btn:not(.btn-close):not(.btn-sm)").hide();
+                
+                // Change the header title to indicate view mode
+                $("#offcanvas_add .offcanvas-header h4").text("View Employee Details");
+                
+                // Add a close button if not present
+                if ($("#offcanvas_add .btn-close").length === 0) {
+                    $("#offcanvas_add .offcanvas-header").append(`
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    `);
+                }
+            }
+
+            // Reset all fields first
+            $("#offcanvas_add input, #offcanvas_add select").val("");
+            $("#entriesContainer").empty();
+            $("#documentList").empty();
+            $("#existingDependents").empty();
+            $("#existingLicenses").empty();
+            $("#existingRecruitmentEntries").empty();
+
+            $.ajax({
+                url: "/get_employee_details/",
+                type: "GET",
+                data: { 'employee_id': employeeId },
+                success: function (response) {
+                    if (response.success) {
+                        // Populate basic employee information (same as edit)
+                        $("#emp_id").val(response.data.employee_id);
+                        $("#emp_code").val(response.data.emp_code);
+                        $("#emp_name_passport").val(response.data.emp_name);
+                        $("#surname").val(response.data.surname);
+                        $("#dob").val(response.data.dob);
+                        $("#emp_sex").val(response.data.emp_sex);
+                        $("#nationality").val(response.data.nationality);
+                        $("#designation").val(response.data.designation).change();
+                        $("#date_of_join").val(response.data.date_of_join);
+                        $("#date_of_rejoin").val(response.data.date_of_rejoin);
+                        $("#qualification").val(response.data.qualification);
+                        $("#emp_status").val(response.data.emp_status);
+                        $("#emp_sub_status").val(response.data.emp_sub_status);
+                        $("#spouse_name").val(response.data.spouse_name);
+                        $("#father_name").val(response.data.father_name);
+                        $("#mother_name").val(response.data.mother_name);
+                        $("#religion").val(response.data.religion);
+                        $("#passport_release").val(response.data.passport_release);
+                        $("#release_reason").val(response.data.release_reason);
+                        
+                        $("#depend_count").val(response.data.depend_count);
+                        $("#child_count").val(response.data.child_count);
+                        $("#emp_marital_status").val(response.data.emp_marital_status);
+                        $("#staff_category").val(response.data.staff_category).change();
+                        $("#profile_picture").attr("src", response.data.profile_picture);
+                        if (response.data.profile_picture) {
+                            $("#profile_picture_preview").html(`
+                                <label>${response.data.profile_picture.split('/').pop()}</label>
+                                <br>
+                                ${response.data.profile_picture.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/) ?
+                                    `<img src="${response.data.profile_picture}" class="img-thumbnail" style="max-width: 150px;" alt="Passport Size Photo">` :
+                                    `<a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>`
+                                }
+                                <a href="${response.data.profile_picture}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            `);
+                        } else {
+                           $("#profile_picture_preview").html(`
+                                <span class="text-muted">No document uploaded.</span>
+                           `);
+                        }
+
+                        // Populate contact information
+                        $("#res_addr_line1").val(response.data.res_addr_line1);
+                        $("#res_addr_line2").val(response.data.res_addr_line2);
+                        $("#res_city").val(response.data.res_city);
+                        $("#res_state").val(response.data.res_state);
+                        $("#res_country_code").val(response.data.res_country_code);
+                        $("#res_phone_no").val(response.data.res_phone_no);
+                        $("#local_addr_line1").val(response.data.local_addr_line1);
+                        $("#local_addr_line2").val(response.data.local_addr_line2);
+                        $("#local_city").val(response.data.local_city);
+                        $("#local_state").val(response.data.local_state);
+                        $("#local_country_code").val(response.data.local_country_code);
+                        $("#local_phone_no").val(response.data.local_phone_no);
+                        $("#department").val(response.data.department).change();
+
+                        //Populate Salary Details 
+                        $('#process_cycle').val(response.data.process_cycle).change();
+                        $('#basic_pay').val(response.data.basic_pay);
+                        $('#prj_code').val(response.data.prj_code).change();
+                        $('#sub_location').val(response.data.sub_location).change();
+                        $('#grade_code').val(response.data.grade_code).change();
+
+                        //Account Details
+                        $('#employee_bank').val(response.data.employee_bank).change();
+                        $('#bank_branch').val(response.data.bank_branch).change();
+                        $('#account_no').val(response.data.account_no);
+                        $('#iban_number').val(response.data.iban_number);
+
+                        // Accomodation Details
+                        $('#select_camp').val(response.data.camp_code).change();
+                        $('#room_no').val(response.data.room_no);
+                        $('#client_name').val(response.data.client_name);
+                        $('#client_location').val(response.data.client_location);
+                        $('#outside_location').val(response.data.outside_location);
+                        $('#room_rent').val(response.data.room_rent);
+
+                        // Accommodation Details
+                        $("#campType_add").val(response.data.camp_type).change();
+                        if (response.data.camp_type === 'by_company') {
+                            $("#campDetails_add").show();
+                            $("#campInsideOutside_add").val(response.data.camp_inside_outside).change();
+                            
+                            if (response.data.camp_inside_outside === 'camp') {
+                                $("#inCampDetails_add").show();
+                                $("#select_camp").val(response.data.select_camp);
+                                $("#room_no").val(response.data.room_no);
+                            } else if (response.data.camp_inside_outside === 'client_accommodation') {
+                                $("#clientAccommodationDetails_add").show();
+                                $("#client_name").val(response.data.client_name);
+                                $("#client_location").val(response.data.client_location);
+                            } else if (response.data.camp_inside_outside === 'outside') {
+                                $("#outsideDetails_add").show();
+                                $("#outside_location").val(response.data.outside_location);
+                                $("#room_rent").val(response.data.room_rent);
+                            }
+                        }
+
+                        //Travel Document Details
+                        $("#issued_date").val(response.data.issued_date);
+                        $("#expiry_date").val(response.data.expiry_date);
+                        $("#passport_details").val(response.data.passport_details);
+                        $("#passport_issued_country").val(response.data.passport_issued_country);
+                        $("#passport_place_of_issue").val(response.data.passport_place_of_issue);
+                        
+                        // Handle passport document preview
+                        if (response.data.passport_document) {
+                            $("#passport_document_preview").html(`
+                                <div class="mt-2">
+                                    <label>${response.data.passport_document.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.passport_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.passport_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#passport_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+                        
+                        // Populate visa details
+                        $("#visa_no").val(response.data.visa_no);
+                        $("#visa_expiry").val(response.data.visa_expiry);
+                        $("#emirates_no").val(response.data.emirates_no);
+                        $("#emirate_expiry").val(response.data.emirate_expiry);
+                        $("#emirate_issued").val(response.data.emirate_issued);
+                        $("#visa_issued").val(response.data.visa_issued);
+                        $("#visa_issued_emirate").val(response.data.visa_issued_emirate);
+                        $("#visa_designation").val(response.data.visa_designation);
+                        $("#uid_number").val(response.data.uid_number);
+                        $("#mohra_number").val(response.data.mohra_number);
+                        $("#mohra_name").val(response.data.mohra_name);
+                        $("#mohra_designation").val(response.data.mohra_designation);
+                        $("#work_permit_number").val(response.data.work_permit_number);
+                        $("#work_permit_expiry").val(response.data.work_permit_expiry);
+                        $("#iloe_no").val(response.data.iloe_no);
+                        $("#iloe_expiry").val(response.data.iloe_expiry);
+                        $("#locationSelect_add").val(response.data.visa_location);
+                        
+                        // Handle change status file preview
+                        if (response.data.change_status) {
+                            $("#changeStatusFile_preview").html(`
+                                <div class="mt-2">
+                                    <label>${response.data.change_status.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.change_status}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.change_status}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#changeStatusFile_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        if (response.data.emirate_document) {
+                            $("#emirate_document_preview").html(`
+                                <label>${response.data.emirate_document.split('/').pop()}</label>
+                                <div class="mt-2">
+                                    <label>${response.data.emirate_document.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.emirate_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.emirate_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#emirate_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        // Handle visa document preview
+                        if (response.data.visa_document) {
+                            $("#visa_document_preview").html(`
+                                <div class="mt-2">
+                                    <label>${response.data.visa_document.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.visa_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.visa_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {    
+                            $("#visa_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }   
+
+                        // Handle work permit document preview
+                        if (response.data.work_permit_document) {
+                            $("#work_permit_document_preview").html(`
+                                <div class="mt-2">
+                                    <label>${response.data.work_permit_document.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.work_permit_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.work_permit_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#work_permit_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        if (response.data.iloe_document) {
+                            $("#iloe_document_preview").html(`
+                                <div class="mt-2">
+                                    <label>${response.data.iloe_document.split('/').pop()}</label>
+                                    <br>
+                                    <a href="${response.data.iloe_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </a>
+                                    <a href="${response.data.iloe_document}" download class="btn btn-sm btn-secondary" title="Download Document">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $("#iloe_document_preview").html(`
+                                <div class="mt-2">
+                                    <span class="text-muted">No document uploaded.</span>
+                                </div>
+                            `);
+                        }
+
+                        // Populate dynamic sections
+                        populateEarnDeducts(response.data.earn_deducts);
+                        populateDocuments(response.data.documents);
+                        populateDependents(response.data.dependents);
+                        populateLicenses(response.data.license_and_passes);
+                        populateRecruitment(response.data.recruitment_details);
+                        
+                        // Calculate salary totals after populating all data
+                        setTimeout(() => {
+                            if (typeof calculateSalaryTotals === 'function') {
+                                calculateSalaryTotals();
+                            }
+                        }, 200);
+                        
+                        // Make form read-only after populating data
+                        setTimeout(() => {
+                            makeFormReadOnly();
+                        }, 300);
+                        
+                    } else {
+                        alert(response.error || "Failed to fetch employee details.");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading employee details. Please try again.");
+                }
+            });
+        });
+
+        // Function to reset form to editable state (for when switching from view to edit)
+        function resetFormToEditable() {
+            // Enable all inputs, selects, and textareas
+            $("#offcanvas_add input, #offcanvas_add select, #offcanvas_add textarea").prop('disabled', false);
+            
+            // Enable all dynamic table inputs and selects
+            $("#multiEntryTable_add input, #multiEntryTable_add select").prop('disabled', false);
+            $("#documentUploadTable_add input, #documentUploadTable_add select").prop('disabled', false);
+            $("#dependentsTable_add input, #dependentsTable_add select").prop('disabled', false);
+            $("#licensePassesTable_add input, #licensePassesTable_add select").prop('disabled', false);
+            $("#recruitmentInfoTable_add input, #recruitmentInfoTable_add select").prop('disabled', false);
+            
+            // Show all buttons
+            $("#offcanvas_add .btn").show();
+            
+            // Reset the header title
+            $("#offcanvas_add .offcanvas-header h4").text("Employee Form");
+        }
+
+        // Reset form when add button is clicked
+        $(".add-btn").on("click", function() {
+            resetFormToEditable();
+        });
+
+        // Reset form when edit button is clicked
+        $(".edit-employee-btn").on("click", function() {
+            resetFormToEditable();
+        });
+
+        // Reset form when offcanvas is closed
+        $('#offcanvas_add').on('hidden.bs.offcanvas', function () {
+            resetFormToEditable();
         });
 
     });

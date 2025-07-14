@@ -38,6 +38,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://103.14.120.216',
 ]
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -157,7 +159,7 @@ WSGI_APPLICATION = 'erp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'erp',
+        'NAME': 'erp_uat',
         'USER': 'postgres',
         'PASSWORD': 'Windows*1',
         'HOST': '103.14.120.216',
