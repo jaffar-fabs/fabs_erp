@@ -527,6 +527,7 @@
                         if (response.data.profile_picture) {
                             $("#profile_picture_preview").html(`
                                 <label>${response.data.profile_picture.split('/').pop()}</label>
+                                <br>
                                 ${response.data.profile_picture.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/) ?
                                     `<img src="${response.data.profile_picture}" class="img-thumbnail" style="max-width: 150px;" alt="Passport Size Photo">` :
                                     `<a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
@@ -612,6 +613,7 @@
                             $("#passport_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.passport_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.passport_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -652,6 +654,7 @@
                             $("#changeStatusFile_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.change_status.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.change_status}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -676,6 +679,7 @@
                             $("#emirate_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.emirate_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.emirate_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -697,6 +701,7 @@
                             $("#visa_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.visa_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.visa_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -718,6 +723,7 @@
                             $("#work_permit_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.work_permit_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.work_permit_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -738,6 +744,7 @@
                             $("#iloe_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.iloe_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.iloe_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -907,6 +914,7 @@
                             ${doc.document_file ? `
                                 <div class="mt-2">
                                     <label>${doc.document_file.split('/').pop()}</label>
+                                    <br>
                                     <a href="${doc.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1018,6 +1026,7 @@
                                 ${dependent.document_file ? `
                                     <div class="mt-2">
                                         <label>${dependent.document_file.split('/').pop()}</label>
+                                        <br>
                                         <a href="${dependent.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                             <i class="fas fa-eye"></i> Preview
                                         </a>
@@ -1114,6 +1123,7 @@
                             ${license.document_file ? `
                                 <div class="mt-2">
                                     <label>${license.document_file.split('/').pop()}</label>
+                                    <br>
                                     <a href="${license.document_file}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1486,6 +1496,7 @@
                         if (response.data.profile_picture) {
                             $("#profile_picture_preview").html(`
                                 <label>${response.data.profile_picture.split('/').pop()}</label>
+                                <br>
                                 ${response.data.profile_picture.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/) ?
                                     `<img src="${response.data.profile_picture}" class="img-thumbnail" style="max-width: 150px;" alt="Passport Size Photo">` :
                                     `<a href="${response.data.profile_picture}" target="_blank" class="btn btn-sm btn-primary" title="View Document">
@@ -1571,6 +1582,7 @@
                             $("#passport_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.passport_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.passport_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1611,6 +1623,7 @@
                             $("#changeStatusFile_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.change_status.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.change_status}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1632,6 +1645,7 @@
                                 <label>${response.data.emirate_document.split('/').pop()}</label>
                                 <div class="mt-2">
                                     <label>${response.data.emirate_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.emirate_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1653,6 +1667,7 @@
                             $("#visa_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.visa_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.visa_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1674,6 +1689,7 @@
                             $("#work_permit_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.work_permit_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.work_permit_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
@@ -1694,6 +1710,7 @@
                             $("#iloe_document_preview").html(`
                                 <div class="mt-2">
                                     <label>${response.data.iloe_document.split('/').pop()}</label>
+                                    <br>
                                     <a href="${response.data.iloe_document}" target="_blank" class="btn btn-sm btn-primary me-2" title="View Document">
                                         <i class="fas fa-eye"></i> Preview
                                     </a>
