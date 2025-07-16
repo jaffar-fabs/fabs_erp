@@ -6,9 +6,8 @@ import os
 
 def employee_document_path(instance, filename):
     # Construct the path using the employee's code
-    # emp_code = instance.comp_code + '_' + str(instance.emp_code)
-    # return os.path.join('employee_documents', str(emp_code), filename)
-    return os.path.join('employee_documents', str(instance.emp_code), filename)
+    emp_code = instance.comp_code + '_' + str(instance.emp_code)
+    return os.path.join('employee_documents', str(emp_code), filename)
 
 def camp_document_path(instance, filename):
     # Construct the path using the camp's code
