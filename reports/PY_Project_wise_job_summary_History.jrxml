@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-16T18:56:52 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Project_wise_job_summary" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="337c0d4c-e93b-4f41-a5ff-c5e30fa78936">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P999" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT 
+    a.prj_code AS "PRJ_CODE", 
+    a.project_description AS "PROJECT_DESCRIPTION", 
+    c.pay_month AS "PAY_MONTH",
+    a.prj_name AS "PRJ_NAME",
+    (b.total_morning + b.total_afternoon) / 8 AS "TOTAL_DAYS", 
+    d.othrs AS "OTHRS",
+    d.total_amount AS "OT_AMOUNT", 
+    (b.total_amount + c.total_amount) AS "TOTAL_AMOUNT",
+    (b.total_amount + c.total_amount + d.total_amount) AS "GT"
+FROM payroll_projectmaster a
+LEFT JOIN (
+    SELECT 
+        project_code, 
+        SUM(morning) AS total_morning, 
+        SUM(afternoon) AS total_afternoon, 
+        SUM(amount) AS total_amount
+    FROM payroll_payprocess
+    WHERE earn_code = 'ER001'
+    GROUP BY project_code
+) b ON a.prj_code = b.project_code
+LEFT JOIN (
+    SELECT 
+        project_code, 
+        pay_month,
+        SUM(amount) AS total_amount
+    FROM payroll_payprocessarchieve
+    WHERE earn_code = 'ER004'
+    GROUP BY project_code, pay_month
+) c ON a.prj_code = c.project_code
+LEFT JOIN (
+    SELECT 
+        project_code, 
+        SUM(ot1) AS othrs,
+        SUM(amount) AS total_amount
+    FROM payroll_payprocessarchieve
+    WHERE earn_code = 'ER002'
+    GROUP BY project_code
+) d ON a.prj_code = d.project_code
+WHERE a.comp_code = COALESCE($P{P0}, a.comp_code)
+  AND a.prj_code = COALESCE($P{P1}, a.prj_code)
+ORDER BY a.prj_code;]]>
+	</queryString>
+	<field name="PRJ_CODE" class="java.lang.String"/>
+	<field name="PROJECT_DESCRIPTION" class="java.lang.String"/>
+	<field name="PAY_MONTH" class="java.lang.String"/>
+	<field name="PRJ_NAME" class="java.lang.String"/>
+	<field name="TOTAL_DAYS" class="java.math.BigDecimal"/>
+	<field name="OTHRS" class="java.math.BigDecimal"/>
+	<field name="OT_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="TOTAL_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="GT" class="java.math.BigDecimal"/>
+	<variable name="Variable_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_DAYS}]]></variableExpression>
+	</variable>
+	<variable name="Variable_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OTHRS}]]></variableExpression>
+	</variable>
+	<variable name="Variable_3" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="Variable_4" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OT_AMOUNT}]]></variableExpression>
+	</variable>
+	<variable name="Variable_5" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{GT}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="61" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="799" height="40" uuid="231254cf-b039-4209-a44a-1e941a1b2b02"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name.jasper"]]></subreportExpression>
+			</subreport>
+			<rectangle>
+				<reportElement x="0" y="60" width="802" height="1" backcolor="#000000" uuid="db53bba1-18f9-402d-a4e9-58c45f7a9889">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="346" y="30" width="123" height="30" uuid="7e536589-c4b7-4ed9-a55a-1a2d5e7f9a21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAY_MONTH}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="418" height="30" uuid="cf86ee19-c001-49b9-ae41-38b6a89d5a76"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project Wise Job Summary History]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<rectangle radius="0">
+				<reportElement mode="Transparent" x="0" y="7" width="801" height="30" uuid="43dd30b5-e9a1-4a78-8037-046006aec404">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="7" width="70" height="30" uuid="6eced8ad-4894-427f-9d92-de378f575826"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRJ_CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="7" width="220" height="30" uuid="e5094a18-1157-4c2f-9ee2-e2c9918acdcf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRJ_NAME]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="7" width="100" height="30" uuid="6d0f0e49-e32e-4963-a81c-ab8b6493a768"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_DAYS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="7" width="100" height="30" uuid="ae7c622e-803e-4fde-93dc-f258f38a7c26"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OTHRS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="7" width="100" height="30" uuid="2f41d865-edd6-416d-85ba-42a9631c2b72"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL_AMOUNT(basic+allo)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="7" width="100" height="30" uuid="11ab5cac-f1b7-4b10-90b0-827584721e78"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OT_AMOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="690" y="7" width="111" height="30" uuid="5fc1e9f4-0e4a-4b9b-913e-f63aaabe2117"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GT]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="70" height="20" uuid="af0be85d-9b37-4d3c-9f74-be7a36190b82"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRJ_CODE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="70" y="0" width="220" height="20" uuid="b23600da-9b32-4c6c-9681-fb58292250a7"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRJ_NAME}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="290" y="0" width="100" height="20" uuid="c386c69e-1180-4237-867f-64ea258ce46f"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_DAYS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="390" y="0" width="100" height="20" uuid="b42350ec-0357-494d-8edd-7b82120e4ee4"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OTHRS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#" isBlankWhenNull="true">
+				<reportElement x="490" y="0" width="100" height="20" uuid="40399d5b-9702-49f9-9a81-e64b99b461ed"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#" isBlankWhenNull="true">
+				<reportElement x="590" y="0" width="100" height="20" uuid="dcbc4288-eea9-4659-bd8d-4c45c7e02b29"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OT_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#" isBlankWhenNull="true">
+				<reportElement x="690" y="0" width="111" height="20" uuid="55d012f8-ab15-4fc1-89a1-a3c41ac53feb"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="54" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="346" y="3" width="110" height="15" uuid="5b2e13be-d2c5-44fd-8342-6111d159ea75">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="39" width="800" height="15" uuid="5e006fec-b44a-4b56-9dbc-aea463faec7e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Company_Details.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="3" y="3" width="48" height="14" uuid="3d089d3a-981b-40eb-a4f0-66762f555828"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[User:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="3" width="98" height="14" uuid="ee547add-3650-483c-8b03-f61fef91c12e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P999}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="22" width="98" height="14" uuid="e89e13d1-c110-46cb-84e1-ece763e6e446">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="3" y="22" width="48" height="14" uuid="a0c2c253-967c-4a98-9535-c859eba8c912"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<summary>
+		<band height="21">
+			<textField pattern="#,##0.">
+				<reportElement x="290" y="0" width="100" height="20" uuid="833fc9b8-5ac5-4a42-b025-136703aa2a62"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="0" width="100" height="20" uuid="ba2dfff5-1ec9-485d-99bc-55b2ac8defc0"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#">
+				<reportElement x="490" y="0" width="100" height="20" uuid="743cee42-5921-4658-a9c9-f3e59ede1629"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#">
+				<reportElement x="590" y="0" width="100" height="20" uuid="6f4e57ff-34c5-4b13-9ad4-256435ad3879"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_4}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0#">
+				<reportElement x="690" y="0" width="111" height="20" uuid="cbc86c74-4c63-4da3-8b83-85118e2a76ff"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{Variable_5}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" uuid="9741b53a-3d22-4e2b-9837-fad7341eb569">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="20" width="802" height="1" uuid="77044324-a22b-4aa6-b578-91eaed1f118b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="0" width="290" height="20" uuid="a602ba98-9d31-4b02-b90c-398149a2e866"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

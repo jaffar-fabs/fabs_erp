@@ -3429,7 +3429,7 @@ def payroll_processing(request):
 
                     # Bulk insert new records
                     PayProcess.objects.bulk_create(new_records)
-                elif status == 'COMPLETE':                    
+                elif status == 'COMPLETE':                   
                     # Insert net pay record
                     new_records.append(PayProcessArchieve(
                         comp_code=COMP_CODE,
@@ -3555,31 +3555,32 @@ def payroll_processing(request):
                     # Bulk insert new records
                     PayProcessArchieve.objects.bulk_create(new_records)
 
-                    # paycycle master update
-                    paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
-                    
-                    # Get current month and add 1 month
-                    current_month = datetime.strptime(paycycle_master.pay_process_month, '%m%Y')
-                    next_month = current_month + relativedelta(months=1)
-                    
-                    print(next_month.strftime('%m%Y'))
-                    # Update pay process month in format MMYYYY
-                    paycycle_master.pay_process_month = next_month.strftime('%m%Y')
-                    
-                    print(next_month.replace(day=1))
-                    print(next_month + relativedelta(months=1) - timedelta(days=1))
-                    # Calculate first and last day of next month
-                    first_day = next_month.replace(day=1)
-                    last_day = (first_day + relativedelta(months=1) - timedelta(days=1))
-                    
-                    # Update date range
-                    paycycle_master.date_from = first_day.strftime('%Y-%m-%d')
-                    paycycle_master.date_to = last_day.strftime('%Y-%m-%d')
-                    
-                    # Update days per month based on actual days in month
-                    paycycle_master.days_per_month = last_day.day
-                    
-                    paycycle_master.save()
+            # paycycle master update - only once when payroll processing is complete
+            if status == 'COMPLETE':
+                paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
+                
+                # Get current month and add 1 month
+                current_month = datetime.strptime(paycycle_master.pay_process_month, '%m%Y')
+                next_month = current_month + relativedelta(months=1)
+                
+                print(next_month.strftime('%m%Y'))
+                # Update pay process month in format MMYYYY
+                paycycle_master.pay_process_month = next_month.strftime('%m%Y')
+                
+                print(next_month.replace(day=1))
+                print(next_month + relativedelta(months=1) - timedelta(days=1))
+                # Calculate first and last day of next month
+                first_day = next_month.replace(day=1)
+                last_day = (first_day + relativedelta(months=1) - timedelta(days=1))
+                
+                # Update date range
+                paycycle_master.date_from = first_day.strftime('%Y-%m-%d')
+                paycycle_master.date_to = last_day.strftime('%Y-%m-%d')
+                
+                # Update days per month based on actual days in month
+                paycycle_master.days_per_month = last_day.day
+                
+                paycycle_master.save()
 
             messages.success(request, "Payroll processed successfully.")
             return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})
@@ -5113,6 +5114,7 @@ def documents_enquiries(request):
 
     category = request.GET.get('category', 'employee_document')
     keyword = request.GET.get('keyword', '').strip()
+    within_days = request.GET.get('within_days', '').strip()
 
     employee_documents = dependent_documents = camp_documents = party_documents = license_and_passes = employee_personal_documents = []
 
@@ -5182,6 +5184,7 @@ def documents_enquiries(request):
     context = {
         'category': category,
         'keyword': keyword,
+        'within_days': within_days,
         'employee_documents': employee_documents,
         'dependent_documents': dependent_documents,
         'camp_documents': camp_documents,
@@ -7357,6 +7360,14 @@ def salary_register_single_line(request):
     }
     return render(request, 'pages/modal/reports/salary_register_single.html', context)
 
+def salary_register_single_line_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PayProcessArchieve.objects.filter(comp_code=COMP_CODE).values('pay_cycle', 'pay_month').distinct()
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/salary_register_single_history.html', context)
+
 def salary_register_multi_line(request):
     set_comp_code(request)  # Ensure the company code is set
     query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
@@ -7364,6 +7375,14 @@ def salary_register_multi_line(request):
         'paycycles': query
     }
     return render(request, 'pages/modal/reports/salary_register_multi.html', context)
+
+def salary_register_multi_line_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PayProcessArchieve.objects.filter(comp_code=COMP_CODE).values('pay_cycle', 'pay_month').distinct()
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/salary_register_multi_history.html', context)
 
 def control_statement(request):
     set_comp_code(request)  # Ensure the company code is set
@@ -7373,6 +7392,14 @@ def control_statement(request):
     }
     return render(request, 'pages/modal/reports/control_statement.html', context)
 
+def control_statement_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PayProcessArchieve.objects.filter(comp_code=COMP_CODE).values('pay_cycle', 'pay_month').distinct()
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/control_statement_history.html', context)
+
 def pay_slip(request):
     set_comp_code(request)  # Ensure the company code is set
     query = PaycycleMaster.objects.filter(comp_code=COMP_CODE, is_active='Y').values('process_cycle', 'pay_process_month')
@@ -7380,6 +7407,14 @@ def pay_slip(request):
         'paycycles': query
     }
     return render(request, 'pages/modal/reports/pay_slip.html', context)
+
+def pay_slip_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PayProcessArchieve.objects.filter(comp_code=COMP_CODE).values('pay_cycle', 'pay_month').distinct()
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/pay_slip_history.html', context)
 
 def get_employees_by_paycycle(request):
     set_comp_code(request)
@@ -7418,6 +7453,14 @@ def payment_wise_report(request):
     }
     return render(request, 'pages/modal/reports/payment_wise.html', context)
 
+def payment_wise_report_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    query = PayProcessArchieve.objects.filter(comp_code=COMP_CODE).values('pay_cycle', 'pay_month').distinct()
+    context = {
+        'paycycles': query
+    }
+    return render(request, 'pages/modal/reports/payment_wise_history.html', context)
+
 def project_wise_job_summary(request):
     set_comp_code(request)  # Ensure the company code is set
     return render(request, 'pages/modal/reports/project_wise_job_summary.html')
@@ -7425,6 +7468,14 @@ def project_wise_job_summary(request):
 def project_wise_report(request):
     set_comp_code(request)  # Ensure the company code is set
     return render(request, 'pages/modal/reports/project_wise.html')
+
+def project_wise_report_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/project_wise_history.html')
+
+def project_wise_job_summary_history(request):
+    set_comp_code(request)  # Ensure the company code is set
+    return render(request, 'pages/modal/reports/project_wise_job_summary_history.html')
 
 def employee_details_report(request):
     set_comp_code(request)
@@ -7577,7 +7628,7 @@ def generate_report(request):
             }, status=400)
         
         # Report parameters - these are required by the Jasper report
-        if rname == 'PY_Salary_Register(Single)for_ZB.jasper' or rname == 'PY_Salary_Register(Multi).jasper' or rname == 'PY_Control_Statement.jasper':
+        if rname == 'PY_Salary_Register(Single)for_ZB.jasper' or rname == 'PY_Salary_Register(Multi)_History.jasper' or rname == 'PY_Salary_Register(Multi).jasper' or rname == 'PY_Control_Statement.jasper' or rname == 'PY_Control_Statement_History.jasper' or rname == 'PY_Salary_Register(Single)for_ZB_History.jasper':
             if not p1 or ',' not in p1:
                 return JsonResponse({
                     'status': 'error',
@@ -7589,7 +7640,7 @@ def generate_report(request):
                 'P1': split_p1[0],  
                 'P2': split_p1[1],  
             }
-        elif rname == 'PY_Pay_Slip_2.jasper':
+        elif rname == 'PY_Pay_Slip_2.jasper' or rname == 'PY_Pay_Slip_2_History.jasper':
             if not p2 or ',' not in p2:
                 return JsonResponse({
                     'status': 'error',
@@ -7601,7 +7652,7 @@ def generate_report(request):
                 'P2': split_p2[0],  
                 'P1': p1 if p1 else None,  # Use None if p2 is empty or None
             }
-        elif rname == 'PY_Paymentwise_Report.jasper':
+        elif rname == 'PY_Paymentwise_Report.jasper' or rname == 'PY_Paymentwise_Report_History.jasper':
             if not p1 or ',' not in p1:
                 return JsonResponse({
                     'status': 'error',
@@ -7614,7 +7665,7 @@ def generate_report(request):
                 'P2':split_p1[1],
                 'P3':p3 if p3 else None,
             }
-        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper' or rname == 'PY_Employee_Advance_Details.jasper' or rname == 'PY_Employee_Salary_Detail.jasper':
+        elif rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper' or rname == 'PY_Employee_Advance_Details.jasper' or rname == 'PY_Employee_Salary_Detail.jasper' or rname == 'PY_Project_wise_job_summary_History.jasper' or rname == 'PY_Project_Wise_Report_History.jasper':
             parameters = {
                 'P0': company_code,  
                 'P1':p1 if p1 else None,

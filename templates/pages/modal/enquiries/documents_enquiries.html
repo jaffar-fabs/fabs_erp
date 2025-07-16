@@ -18,7 +18,7 @@
         <!-- Search Form -->
         <form method="get" action="{% url 'documents_enquiries' %}" class="mb-4">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <select name="category" id="category" class="form-control">
                         <option value="employee_document" {% if category == "employee_document" %}selected{% endif %}>Employee Documents</option>
                         <option value="dependent_document" {% if category == "dependent_document" %}selected{% endif %}>Dependent Documents</option>
@@ -28,8 +28,19 @@
                         <option value="party_document" {% if category == "party_document" %}selected{% endif %}>Party Documents</option>
                     </select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <input type="text" name="keyword" class="form-control" placeholder="Search by Code or Document Type" value="{{ keyword }}">
+                </div>
+                <div class="col-md-3" id="within_days_container" style="display: none;">
+                    <select name="within_days" id="within_days" class="form-control">
+                        <option value="">All Documents</option>
+                        <option value="7" {% if within_days == "7" %}selected{% endif %}>Expiring within 7 days</option>
+                        <option value="15" {% if within_days == "15" %}selected{% endif %}>Expiring within 15 days</option>
+                        <option value="30" {% if within_days == "30" %}selected{% endif %}>Expiring within 30 days</option>
+                        <option value="60" {% if within_days == "60" %}selected{% endif %}>Expiring within 60 days</option>
+                        <option value="90" {% if within_days == "90" %}selected{% endif %}>Expiring within 90 days</option>
+                        <option value="expired" {% if within_days == "expired" %}selected{% endif %}>Already Expired</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -363,13 +374,52 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
       const rows = document.querySelectorAll("tbody tr");
+      const withinDaysSelect = document.getElementById("within_days");
+      const withinDaysContainer = document.getElementById("within_days_container");
+      const categorySelect = document.getElementById("category");
+      const withinDaysValue = withinDaysSelect ? withinDaysSelect.value : "";
+      
+      // Categories that have expiry dates
+      const categoriesWithExpiry = [
+        'dependent_document',
+        'license_and_passes', 
+        'employee_personal_documents'
+      ];
+      
+      // Function to show/hide the within days filter
+      function toggleWithinDaysFilter() {
+        const selectedCategory = categorySelect.value;
+        if (categoriesWithExpiry.includes(selectedCategory)) {
+          withinDaysContainer.style.display = "block";
+        } else {
+          withinDaysContainer.style.display = "none";
+          // Reset the filter when hiding
+          if (withinDaysSelect) {
+            withinDaysSelect.value = "";
+          }
+        }
+      }
+      
+      // Initialize filter visibility
+      toggleWithinDaysFilter();
+      
+      // Add event listener for category changes
+      if (categorySelect) {
+        categorySelect.addEventListener("change", function() {
+          toggleWithinDaysFilter();
+          // Reset all rows to visible when changing category
+          rows.forEach((row) => {
+            row.style.display = "";
+          });
+        });
+      }
   
       rows.forEach((row) => {
         const expiryCell = row.querySelector(".expiry-date");
         const daysCell = row.querySelector(".days-to-expiry");
         const expiryDateText = expiryCell.textContent.trim();
   
-        if (expiryDateText) {
+        if (expiryDateText && expiryDateText !== "N/A") {
           const expiryDate = new Date(expiryDateText);
           const today = new Date();
           const timeDiff = expiryDate - today;
@@ -377,6 +427,7 @@
   
           daysCell.textContent = daysDiff >= 0 ? daysDiff + " days" : "Expired";
   
+          // Apply color coding
           if (daysDiff < 0) {
             daysCell.classList.add("bg-gray");
           } else if (daysDiff < 30) {
@@ -386,11 +437,67 @@
           } else {
             daysCell.classList.add("bg-green");
           }
+  
+          // Apply filtering based on within_days selection
+          if (withinDaysValue) {
+            let shouldShow = false;
+            
+            if (withinDaysValue === "expired") {
+              shouldShow = daysDiff < 0;
+            } else {
+              const daysLimit = parseInt(withinDaysValue);
+              shouldShow = daysDiff >= 0 && daysDiff <= daysLimit;
+            }
+            
+            row.style.display = shouldShow ? "" : "none";
+          } else {
+            row.style.display = ""; // Show all rows when no filter is selected
+          }
         } else {
           daysCell.textContent = "N/A";
           daysCell.classList.add("bg-gray");
+          
+          // Hide rows with N/A dates when filtering is applied
+          if (withinDaysValue) {
+            row.style.display = "none";
+          }
         }
       });
+  
+      // Add event listener for filter changes
+      if (withinDaysSelect) {
+        withinDaysSelect.addEventListener("change", function() {
+          const selectedValue = this.value;
+          
+          rows.forEach((row) => {
+            const expiryCell = row.querySelector(".expiry-date");
+            const expiryDateText = expiryCell.textContent.trim();
+            
+            if (expiryDateText && expiryDateText !== "N/A") {
+              const expiryDate = new Date(expiryDateText);
+              const today = new Date();
+              const timeDiff = expiryDate - today;
+              const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+              
+              let shouldShow = false;
+              
+              if (selectedValue === "expired") {
+                shouldShow = daysDiff < 0;
+              } else if (selectedValue) {
+                const daysLimit = parseInt(selectedValue);
+                shouldShow = daysDiff >= 0 && daysDiff <= daysLimit;
+              } else {
+                shouldShow = true; // Show all when no filter is selected
+              }
+              
+              row.style.display = shouldShow ? "" : "none";
+            } else {
+              // Hide rows with N/A dates when filtering is applied
+              row.style.display = selectedValue ? "none" : "";
+            }
+          });
+        });
+      }
     });
   </script>
 {% endblock %}

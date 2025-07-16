@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-16T18:55:13 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Control_Statement" pageWidth="595" pageHeight="650" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5b87f7f5-c964-46bd-bb39-8917ca1e034c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<topPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<leftPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<bottomPen lineWidth="0.5" lineColor="#FFFFFF"/>
+			<rightPen lineWidth="0.5" lineColor="#FFFFFF"/>
+		</box>
+	</style>
+	<style name="Table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab_CG" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.0" lineColor="#000000"/>
+			<topPen lineWidth="0.0" lineColor="#000000"/>
+			<leftPen lineWidth="0.0" lineColor="#000000"/>
+			<bottomPen lineWidth="0.0" lineColor="#000000"/>
+			<rightPen lineWidth="0.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Dataset1" uuid="1edb0eca-ab1b-4987-b9bb-8a3a49a1d630">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Apex"/>
+		<parameter name="P0" class="java.lang.String"/>
+		<parameter name="P1" class="java.lang.String"/>
+		<parameter name="P2" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[SELECT
+    SUM(a.amount) AS total_amount,
+    SUM(CASE WHEN c.emp_bank IS NULL AND a.earn_type != 'Net' THEN a.amount ELSE 0 END) AS cash_total,
+    SUM(CASE WHEN c.emp_bank IS NOT NULL AND a.earn_type != 'Net' THEN a.amount ELSE 0 END) AS bank_total
+FROM
+    tbl_erp_pay_process a, 
+    tbl_erp_gmas_common_master b, 
+    tbl_erp_pmas_employee_master c
+WHERE
+    a.comp_code = $P{P0}
+    AND a.comp_code = b.comp_code
+    AND a.comp_code = c.comp_code
+    AND a.pay_cycle = NVL($P{P1}, a.pay_cycle)
+    AND a.pay_month = NVL($P{P2}, a.pay_month)
+    AND a.pay_cycle = b.common_master_id
+    AND b.base_type = 'PROCESS CYCLE'
+    AND a.pay_cycle = c.process_cycle]]>
+		</queryString>
+		<field name="TOTAL_AMOUNT" class="java.math.BigDecimal"/>
+		<field name="CASH_TOTAL" class="java.math.BigDecimal"/>
+		<field name="BANK_TOTAL" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    CASE 
+        WHEN UPPER(a.earn_type) LIKE 'EARN%' THEN 'EARNINGS'
+        WHEN UPPER(a.earn_type) LIKE 'DEDU%' THEN 'DEDUCTIONS'
+        WHEN UPPER(a.earn_type) LIKE 'NET' THEN 'NET'
+        ELSE ''
+    END AS "EARN_TYPE",
+    a.pay_cycle AS "PAY_CYCLE",
+    a.earn_reports AS "EARN_REPORTS",
+    TO_CHAR(TO_DATE(a.pay_month, 'MMYYYY'), 'MON-YYYY') AS "PAY_MONTH",
+    a.earn_code AS "EARN_CODE",
+    SUM(a.amount) AS "TOTAL_AMOUNT"
+FROM
+    payroll_payprocessarchieve a
+WHERE
+    a.comp_code = $P{P0}
+    AND a.pay_cycle = COALESCE($P{P1}, a.pay_cycle)
+    AND a.pay_month = COALESCE($P{P2}, a.pay_month)
+    AND a.earn_code NOT IN ('ER900', 'DD900')
+GROUP BY
+    a.earn_type,
+    a.earn_code,
+    a.pay_cycle,
+    a.pay_month,
+    a.earn_reports
+ORDER BY
+    CASE 
+        WHEN UPPER(a.earn_type) LIKE 'EARN%' THEN 1
+        WHEN UPPER(a.earn_type) LIKE 'DEDU%' THEN 2
+        WHEN UPPER(a.earn_type) LIKE 'NET' THEN 3
+        ELSE 4
+    END]]>
+	</queryString>
+	<field name="EARN_TYPE" class="java.lang.String"/>
+	<field name="PAY_CYCLE" class="java.lang.String"/>
+	<field name="EARN_REPORTS" class="java.lang.String"/>
+	<field name="PAY_MONTH" class="java.lang.String"/>
+	<field name="EARN_CODE" class="java.lang.String"/>
+	<field name="TOTAL_AMOUNT" class="java.math.BigDecimal"/>
+	<variable name="Variable_1" class="java.math.BigDecimal" resetType="Group" resetGroup="Group1" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_AMOUNT}]]></variableExpression>
+	</variable>
+	<group name="Group1">
+		<groupExpression><![CDATA[$F{EARN_TYPE}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="0" y="0" width="160" height="19" uuid="c04c8aac-adb1-4dcc-889a-b06a50888cfe"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EARN_TYPE}.equals("EARNINGS") ||
+$F{EARN_TYPE}.equals("DEDUCTIONS") ? $F{EARN_TYPE} : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<textField pattern="#,##0.00#" isBlankWhenNull="true">
+					<reportElement x="380" y="0" width="87" height="19" backcolor="#FFFFFF" uuid="f2b13cea-35ca-43f5-a2ca-52c8998eb509"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{EARN_CODE}.startsWith("ER") && !$F{EARN_CODE}.equals("ER999")) ? $V{Variable_1} : ""]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="19" width="555" height="1" uuid="18878ccf-a114-4205-8974-253e396fa84b">
+						<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					</reportElement>
+				</line>
+				<textField pattern="#,##0.00#" isBlankWhenNull="true">
+					<reportElement x="468" y="0" width="76" height="19" backcolor="#FFFFFF" uuid="6e16f607-a9ee-42b0-99fe-be34fbacd7bf"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EARN_CODE}.startsWith("DD") ? $V{Variable_1} : ""]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00#" isBlankWhenNull="true">
+					<reportElement x="0" y="0" width="380" height="19" backcolor="#FFFFFF" uuid="d524d8f5-140f-4e5f-93d7-29118f00c349"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[(($F{EARN_CODE}.startsWith("ER") && !$F{EARN_CODE}.equals("ER999")) || $F{EARN_CODE}.startsWith("DD")) ? "Total :" : ""]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="60" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="554" height="40" uuid="c9fe74b6-56d5-420d-b419-17b4b748c021"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name(portrait).jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="30" width="354" height="30" uuid="64f1c8eb-e868-42a4-bcca-3530ca74b1eb"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Control Statement History"+" - "+$F{PAY_CYCLE}+" - "+$F{PAY_MONTH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="35">
+			<rectangle radius="10">
+				<reportElement mode="Transparent" x="0" y="0" width="555" height="30" uuid="897bb9e5-a770-4bf6-a104-1a8a4978137f"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="180" height="30" uuid="55b8cf09-4c8f-4656-8eaf-b25bf2c2be68"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EARN_CODE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="87" height="30" uuid="9ca52921-9b34-474b-8663-dd29bcbfa1e7">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ER_AMOUNT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="180" y="0" width="200" height="30" uuid="2b529f5d-d915-48a7-8f25-708e37c4ac3a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="467" y="0" width="87" height="30" uuid="e8f3eaa5-fb49-468a-a514-45644d5de210">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DD_AMOUNT]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="180" height="19" uuid="bcb594d9-915a-49e6-a95c-9dd006da25e4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_CODE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#" isBlankWhenNull="true">
+				<reportElement x="380" y="0" width="87" height="19" uuid="a2e0e06d-7857-427b-9a1e-4e7b58580930"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_CODE}.startsWith("ER") ? $F{TOTAL_AMOUNT} : ""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="0" width="200" height="19" uuid="ef6d6169-837e-4dc0-85ee-90ff46009c6d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_REPORTS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#" isBlankWhenNull="true">
+				<reportElement x="467" y="0" width="76" height="19" uuid="f459ae7a-f9f6-4d2e-b5c7-8dc974a0a6e8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EARN_CODE}.startsWith("DD") ? $F{TOTAL_AMOUNT} : ""]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="60">
+			<textField isBlankWhenNull="true">
+				<reportElement x="225" y="0" width="110" height="15" uuid="934f282b-8955-4009-8e50-0fdd83c72c9c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="18" width="554" height="42" uuid="fd297e34-7b39-4fc8-a528-3c7239089a9a"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Company_Details(portrait).jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</columnFooter>
+	<summary>
+		<band height="194">
+			<subreport>
+				<reportElement x="0" y="0" width="554" height="121" uuid="d7d5c08b-ae72-48b7-b9f8-837a334b0abc">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P1">
+					<subreportParameterExpression><![CDATA[$P{P1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="P2">
+					<subreportParameterExpression><![CDATA[$P{P2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Control_Statement(sub-report)_History.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="0" y="164" width="100" height="30" uuid="4eb4dcff-c901-4a3f-87ba-713fafc7a5aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[_ _ _ _ _ _ _ _ _ _ _ _ 
+Prepare By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="164" width="100" height="30" uuid="9d26d8ec-2a1a-4fcc-99d1-2ec1abb1297b"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[_ _ _ _ _ _ _ _ _ _ _ _ 
+Checked By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="164" width="100" height="30" uuid="b1db4a0e-d363-4d99-8dc6-e5d398036964"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[_ _ _ _ _ _ _ _ _ _ _ _ 
+Approved By]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-16T18:19:57 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PS_PY_Control_Statement(sub-report)" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Error" uuid="88659307-42bc-4e54-a178-6b9467c35552">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    SUM(a.amount) AS "TOTAL_AMOUNT",
+    SUM(
+        CASE
+            WHEN c.employee_bank IS NULL THEN a.amount
+            ELSE 0
+        END
+    ) AS "CASH_TOTAL_NULL",
+    SUM(
+        CASE
+            WHEN c.employee_bank IS NOT NULL THEN a.amount
+            ELSE 0
+        END
+    ) AS "CASH_TOTAL_ONE",
+    COUNT(DISTINCT c.emp_code) AS "TOTAL_EMPLOYEES",
+    COUNT(DISTINCT CASE WHEN c.employee_bank IS NOT NULL THEN c.emp_code END) AS "EMP_BANK_COUNT",
+    COUNT(DISTINCT CASE WHEN c.employee_bank IS NULL THEN c.emp_code END) AS "EMP_CASH_COUNT"
+FROM
+    payroll_employee c
+    LEFT JOIN payroll_payprocessarchieve a 
+        ON a.employee_code = c.emp_code
+        AND a.earn_code = 'ER999'
+        AND a.pay_cycle = COALESCE($P{P1}, a.pay_cycle)
+        AND a.pay_month = COALESCE($P{P2}, a.pay_month)
+WHERE
+    a.comp_code = $P{P0}
+    AND a.comp_code = c.comp_code
+    AND c.process_cycle = a.pay_cycle]]>
+	</queryString>
+	<field name="TOTAL_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="CASH_TOTAL_NULL" class="java.math.BigDecimal"/>
+	<field name="CASH_TOTAL_ONE" class="java.math.BigDecimal"/>
+	<field name="TOTAL_EMPLOYEES" class="java.lang.Long"/>
+	<field name="EMP_BANK_COUNT" class="java.lang.Long"/>
+	<field name="EMP_CASH_COUNT" class="java.lang.Long"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="121" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField pattern="#,##0.00#">
+				<reportElement x="200" y="90" width="190" height="30" uuid="e3abe71a-ccc3-4533-aa85-4a9dc1265cb8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_AMOUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#">
+				<reportElement x="200" y="60" width="190" height="30" uuid="b21151a3-0887-414e-be9c-b72a6ed1e987"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASH_TOTAL_NULL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#">
+				<reportElement x="200" y="30" width="190" height="30" uuid="a521b422-2f0d-414a-ba28-765f0e384e26"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASH_TOTAL_ONE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="390" y="90" width="164" height="30" uuid="ce2788fb-a327-45de-b0d9-da773ba2853c">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL_EMPLOYEES}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="30" uuid="a453852e-2e11-46b2-a37f-dfabd430025b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Payment Mode:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="200" height="30" uuid="5626611e-e210-46d4-b061-7c0b77e0802e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Bank:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="200" height="30" uuid="532361cc-12c5-4907-842f-c8651f48fbb4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cash:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="90" width="200" height="30" uuid="11e7aa68-1359-41a1-99f1-803a2895cf29"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="0" width="164" height="30" uuid="c1a7a5c5-fa07-4686-8998-f1db3bdc3516">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. of Employees]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="120" width="555" height="1" uuid="33737481-9e9a-49f1-b423-1e4acd370dec">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="90" width="555" height="1" uuid="a1092c85-a472-45a2-b3dd-167bd112b7bf"/>
+			</line>
+			<line>
+				<reportElement x="0" y="30" width="555" height="1" uuid="f496280e-6bd5-4de3-a5cf-dd5cd7e366f3">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField pattern="">
+				<reportElement x="390" y="30" width="164" height="30" uuid="72caef33-b7a5-448e-a270-271db1d9edf2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMP_BANK_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="390" y="60" width="164" height="30" uuid="e2f8e5bb-7db0-4ca4-abcc-d2fe0a14409b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMP_CASH_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

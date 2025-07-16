@@ -1,0 +1,97 @@
+{% extends "partials/base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Pay Slip History" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Generate Pay Slip History</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="salary-register-form" method="POST" action="{% url 'generate_report' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="hidden" name="rname" id="rname" value="PY_Pay_Slip_2_History.jasper">
+                                        <label for="paycycle">Select Paycycle <span class="text-danger">*</span></label>
+                                        <select name="P2" id="paycycle" class="form-control" required>
+                                            <option value="">Select Paycycle</option>
+                                            {% for paycycle in paycycles %}
+                                                <option value="{{ paycycle.pay_cycle }},{{ paycycle.pay_month }}">{{ paycycle.pay_cycle }} - {{ paycycle.pay_month }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="employee">Select Employee</label>
+                                        <select name="P1" id="employee" class="form-control select2">
+                                            <option value="">Select Employee</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="ti ti-file-text me-2"></i>Generate Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paycycleSelect = document.getElementById('paycycle');
+        const employeeSelect = document.getElementById('employee');
+
+        paycycleSelect.addEventListener('change', function() {
+            const selectedPaycycle = this.value;
+            if (selectedPaycycle) {
+                // Split the paycycle value to get process_cycle
+                const processCycle = selectedPaycycle.split(',')[0];
+                
+                // Make AJAX call to get employees for selected paycycle
+                $.ajax({
+                    url: "{% url 'get_employees_by_paycycle' %}",
+                    type: "GET", 
+                    data: {
+                        process_cycle: processCycle
+                    },
+                    success: function(data) {
+                        // Clear existing options
+                        employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+                        
+                        // Add new options based on response
+                        data.forEach(employee => {
+                            const option = document.createElement('option');
+                            option.value = employee.employee_number;
+                            option.textContent = `${employee.employee_number} - ${employee.employee_name}`;
+                            employeeSelect.appendChild(option);
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            } else {
+                // Reset employee dropdown if no paycycle selected
+                employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+            }
+        });
+    });
+</script>
+
+{% endblock content %}
