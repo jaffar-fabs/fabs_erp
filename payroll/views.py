@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.core.mail import EmailMessage
 import uuid
 from datetime import datetime, timedelta  # Import timedelta
+from dateutil.relativedelta import relativedelta
 import os
 from django.conf import settings
 from django.template import loader
@@ -398,7 +399,7 @@ def save_employee(request):
         employee.surname = request.POST.get("surname")
         employee.dob = request.POST.get("dob") or None
         employee.emp_sex = request.POST.get("emp_sex")
-        employee.emp_status = 'ACTIVE' if employee.emp_status == 'ACTIVE' else 'INACTIVE'
+        employee.emp_status = 'ACTIVE'
         employee.emp_sub_status = request.POST.get("emp_sub_status")
         employee.passport_release = request.POST.get("passport_release")
         employee.release_reason = request.POST.get("release_reason")
@@ -3553,6 +3554,32 @@ def payroll_processing(request):
 
                     # Bulk insert new records
                     PayProcessArchieve.objects.bulk_create(new_records)
+
+                    # paycycle master update
+                    paycycle_master = PaycycleMaster.objects.get(comp_code=COMP_CODE, process_cycle=paycycle)
+                    
+                    # Get current month and add 1 month
+                    current_month = datetime.strptime(paycycle_master.pay_process_month, '%m%Y')
+                    next_month = current_month + relativedelta(months=1)
+                    
+                    print(next_month.strftime('%m%Y'))
+                    # Update pay process month in format MMYYYY
+                    paycycle_master.pay_process_month = next_month.strftime('%m%Y')
+                    
+                    print(next_month.replace(day=1))
+                    print(next_month + relativedelta(months=1) - timedelta(days=1))
+                    # Calculate first and last day of next month
+                    first_day = next_month.replace(day=1)
+                    last_day = (first_day + relativedelta(months=1) - timedelta(days=1))
+                    
+                    # Update date range
+                    paycycle_master.date_from = first_day.strftime('%Y-%m-%d')
+                    paycycle_master.date_to = last_day.strftime('%Y-%m-%d')
+                    
+                    # Update days per month based on actual days in month
+                    paycycle_master.days_per_month = last_day.day
+                    
+                    paycycle_master.save()
 
             messages.success(request, "Payroll processed successfully.")
             return render(request, 'pages/payroll/payroll_processing/payroll_processing.html', {'payroll_data': payroll_data})

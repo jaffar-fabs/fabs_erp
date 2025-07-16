@@ -263,8 +263,8 @@
                                 No File
                                 {% endif %}
                             </td>
-                            <td>{{ emp.passport_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
-                            <td class="expiry-date">{{ emp.passport_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td>{{ emp.issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
                             <td class="days-to-expiry"></td>
                         </tr>
                         {% endif %}
@@ -283,8 +283,8 @@
                                 No File
                                 {% endif %}
                             </td>
-                            <td>{{ emp.emirates_id_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
-                            <td class="expiry-date">{{ emp.emirates_id_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td>{{ emp.emirate_issued|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.emirate_expiry|date:"Y-m-d"|default:"N/A" }}</td>
                             <td class="days-to-expiry"></td>
                         </tr>
                         {% endif %}
@@ -303,8 +303,8 @@
                                 No File
                                 {% endif %}
                             </td>
-                            <td>{{ emp.visa_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
-                            <td class="expiry-date">{{ emp.visa_expiry_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td>{{ emp.visa_issued|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td class="expiry-date">{{ emp.visa_expiry|date:"Y-m-d"|default:"N/A" }}</td>
                             <td class="days-to-expiry"></td>
                         </tr>
                         {% endif %}
@@ -343,7 +343,7 @@
                                 No File
                                 {% endif %}
                             </td>
-                            <td>{{ emp.labor_contract_issued_date|date:"Y-m-d"|default:"N/A" }}</td>
+                            <td>{{ emp.work_permit_issued|date:"Y-m-d"|default:"N/A" }}</td>
                             <td class="expiry-date">{{ emp.work_permit_expiry|date:"Y-m-d"|default:"N/A" }}</td>
                             <td class="days-to-expiry"></td>
                         </tr>
