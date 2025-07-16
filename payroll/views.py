@@ -399,7 +399,7 @@ def save_employee(request):
         employee.surname = request.POST.get("surname")
         employee.dob = request.POST.get("dob") or None
         employee.emp_sex = request.POST.get("emp_sex")
-        employee.emp_status = 'ACTIVE'
+        employee.emp_status = 'ACTIVE' if not employee_id else employee.emp_status
         employee.emp_sub_status = request.POST.get("emp_sub_status")
         employee.passport_release = request.POST.get("passport_release")
         employee.release_reason = request.POST.get("release_reason")
