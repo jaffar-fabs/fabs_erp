@@ -101,13 +101,16 @@
                     <label class="col-form-label">Medical</label>
                     <select name="medical" id="add_medical" class="form-control">
                         <option value="">Select</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for medical_status in medical_status_data %}
+                        <option value="{{ medical_status.base_value }}">{{ medical_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Not Done">Not Done</option>
                         <option value="Typed/Medical to do">Typed/Medical to do</option>
                         <option value="Medical Done, Waiting for result">Medical Done, Waiting for result</option>
                         <option value="Fit">Fit</option>
                         <option value="Remedial to do">Remedial to do</option>
                         <option value="Remedial Done, waiting for result">Remedial Done, waiting for result</option>
-                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option>
+                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -122,21 +125,27 @@
                     <label class="col-form-label">EID</label>
                     <select name="eid" id="add_eid" class="form-control">
                         <option value="">Select</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for eid_status in eid_status_data %}
+                        <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Not Done">Not Done</option>
                         <option value="Date to mention">Date to mention</option>
                         <option value="Biometric Done, Waiting for card">Biometric Done, Waiting for card</option>
                         <option value="Typed, Interchange">Typed, Interchange</option>
                         <option value="Card Recevied">Card Recevied</option>
-                        <option value="Cancelled & Exit">Cancelled & Exit</option>
+                        <option value="Cancelled & Exit">Cancelled & Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">RP Stamping</label>
                     <select name="rp_stamping" id="add_rp_stamping" class="form-control">
                         <option value="">Select</option>
-                        <option value="Stamped">Stamped</option>
+                        {% for rp_stamping in rp_stamping_data %}
+                        <option value="{{ rp_stamping.base_value }}">{{ rp_stamping.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Stamped">Stamped</option>
                         <option value="Not Done">Not Done</option>
-                        <option value="Cancelled and Exit">Cancelled and Exit</option>
+                        <option value="Cancelled and Exit">Cancelled and Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -147,25 +156,34 @@
                     <label class="col-form-label">Tawjeeh Payment</label>
                     <select name="tawjeeh_payment" id="add_tawjeeh_payment" class="form-control">
                         <option value="">Select</option>
-                        <option value="Done">Done</option>
+                        {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
+                        <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Done">Done</option>
                         <option value="Not Done">Not Done</option>
-                        <option value="To Do">To Do</option>
+                        <option value="To Do">To Do</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Tawjeeh Class</label>
                     <select name="tawjeeh_class" id="add_tawjeeh_class" class="form-control">
                         <option value="">Select</option>
-                        <option value="Class Done">Class Done</option>
-                        <option value="Class Not Done">Class Not Done</option>
+                        {% for tawjeeh_class_status in tawjeeh_class_status_data %}
+                        <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Class Done">Class Done</option>
+                        <option value="Class Not Done">Class Not Done</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">ILOE Status</label>
                     <select name="iloe_status" id="add_iloe_status" class="form-control">
                         <option value="">Select</option>
-                        <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for ioe_status in ioe_status_data %}
+                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Done">Done</option>
+                        <option value="Not Done">Not Done</option> -->
                     </select>
                 </div>
             </div>
@@ -313,13 +331,16 @@ $(function() {
                     <label class="col-form-label">Medical</label>
                     <select name="medical" id="edit_medical" class="form-control">
                         <option value="">Select</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for medical_status in medical_status_data %}
+                        <option value="{{ medical_status.base_value }}">{{ medical_status.base_value }} - {{ medical_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Not Done">Not Done</option>
                         <option value="Typed/Medical to do">Typed/Medical to do</option>
                         <option value="Medical Done, Waiting for result">Medical Done, Waiting for result</option>
                         <option value="Fit">Fit</option>
                         <option value="Remedial to do">Remedial to do</option>
                         <option value="Remedial Done, waiting for result">Remedial Done, waiting for result</option>
-                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option>
+                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -334,21 +355,27 @@ $(function() {
                     <label class="col-form-label">EID</label>
                     <select name="eid" id="edit_eid" class="form-control">
                         <option value="">Select</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for eid_status in eid_status_data %}
+                        <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Not Done">Not Done</option>
                         <option value="Date to mention">Date to mention</option>
                         <option value="Biometric Done, Waiting for card">Biometric Done, Waiting for card</option>
                         <option value="Typed, Interchange">Typed, Interchange</option>
                         <option value="Card Recevied">Card Recevied</option>
-                        <option value="Cancelled & Exit">Cancelled & Exit</option>
+                        <option value="Cancelled & Exit">Cancelled & Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">RP Stamping</label>
                     <select name="rp_stamping" id="edit_rp_stamping" class="form-control">
                         <option value="">Select</option>
-                        <option value="Stamped">Stamped</option>
+                        {% for rp_stamping in rp_stamping_data %}
+                        <option value="{{ rp_stamping.base_value }}">{{ rp_stamping.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Stamped">Stamped</option>
                         <option value="Not Done">Not Done</option>
-                        <option value="Cancelled and Exit">Cancelled and Exit</option>
+                        <option value="Cancelled and Exit">Cancelled and Exit</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -359,25 +386,34 @@ $(function() {
                     <label class="col-form-label">Tawjeeh Payment</label>
                     <select name="tawjeeh_payment" id="edit_tawjeeh_payment" class="form-control">
                         <option value="">Select</option>
-                        <option value="Done">Done</option>
+                        {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
+                        <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Done">Done</option>
                         <option value="Not Done">Not Done</option>
-                        <option value="To Do">To Do</option>
+                        <option value="To Do">To Do</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Tawjeeh Class</label>
                     <select name="tawjeeh_class" id="edit_tawjeeh_class" class="form-control">
                         <option value="">Select</option>
-                        <option value="Class Done">Class Done</option>
-                        <option value="Class Not Done">Class Not Done</option>
+                        {% for tawjeeh_class_status in tawjeeh_class_status_data %}
+                        <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Class Done">Class Done</option>
+                        <option value="Class Not Done">Class Not Done</option> -->
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">ILOE Status</label>
                     <select name="iloe_status" id="edit_iloe_status" class="form-control">
                         <option value="">Select</option>
-                        <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option>
+                        {% for ioe_status in ioe_status_data %}
+                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
+                        {% endfor %}
+                        <!-- <option value="Done">Done</option>
+                        <option value="Not Done">Not Done</option> -->
                     </select>
                 </div>
             </div>

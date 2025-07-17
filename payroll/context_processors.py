@@ -423,3 +423,52 @@ def get_doc_expiry(request):
     return {
         'de_data': de_data
     }
+
+def get_medical_status(request):
+    comp_code = get_comp_code(request)
+    medical_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'MEDICAL STATUS')
+    return {
+        'medical_status_data': medical_status_data
+    }
+
+def get_eid_status(request):
+    comp_code = get_comp_code(request)
+    eid_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'EID STATUS')
+    return {
+        'eid_status_data': eid_status_data
+    }
+
+def get_rp_stamping(request):
+    comp_code = get_comp_code(request)
+    rp_stamping_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'RP STAMPING')
+    return {
+        'rp_stamping_data': rp_stamping_data
+    }
+
+def tawjeeh_payment_status(request):
+    comp_code = get_comp_code(request)
+    tawjeeh_payment_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH PAYMENT STATUS')
+    return {
+        'tawjeeh_payment_status_data': tawjeeh_payment_status_data
+    }
+
+def get_tawjeeh_payment_status(request):
+    comp_code = get_comp_code(request)  
+    tawjeeh_payment_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH PAYMENT STATUS')
+    return {
+        'tawjeeh_payment_status_data': tawjeeh_payment_status_data
+    }
+
+def get_tawjeeh_class_status(request):
+    comp_code = get_comp_code(request)
+    tawjeeh_class_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH CLASS STATUS')
+    return {
+        'tawjeeh_class_status_data': tawjeeh_class_status_data
+    }
+
+def get_iloe_status(request):
+    comp_code = get_comp_code(request)
+    ioe_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'ILOE STATUS')
+    return {
+        'ioe_status_data': ioe_status_data
+    }
