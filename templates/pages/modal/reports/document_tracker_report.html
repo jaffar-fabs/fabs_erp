@@ -18,7 +18,7 @@
                         <form id="salary-register-form" method="POST" action="{% url 'generate_report' %}">
                             {% csrf_token %}
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <input type="hidden" name="rname" id="rname" value="PY_Documents_Tracker_Report.jasper">
                                         <label for="employee">Select Employee</label>
@@ -30,7 +30,34 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="document_type">Select Document Type</label>
+                                        <select name="P2" id="document_type" class="form-control select2">
+                                            <option value="">Select Document Type</option>
+                                            <option value="Passport">Passport</option>
+                                            <option value="Visa">Visa</option>
+                                            <option value="Work Permit">Work Permit</option>
+                                            <option value="ILOE">ILOE</option>
+                                            <option value="Emirates ID">Emirates ID</option>
+                                            {% for document_type in lp_data %}
+                                                <option value="{{ document_type.base_value }}">{{ document_type.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select name="P3" id="status" class="form-control select2">
+                                        <option value="">All</option>
+                                        <option value="Missing">Missing</option>
+                                        <option value="Expired">Expired</option>
+                                        <option value="Available">Available</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
                             <div class="text-end">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="ti ti-file-text me-2"></i>Generate Report

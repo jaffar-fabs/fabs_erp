@@ -7686,6 +7686,7 @@ def generate_report(request):
                 'P0': company_code,  
                 'P1':p1 if p1 else None,
                 'P2':p2 if p2 else None,
+                'P3':p3 if p3 else None,
             }
         else:
             return JsonResponse({
