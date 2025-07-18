@@ -105,7 +105,21 @@ def employee_master(request):
     export_format = request.GET.get('export')
     if export_format:
         employees_data = list(query.values(
-            'emp_code', 'emp_name', 'surname', 'emp_sex', 'emp_status', 'dob'
+            'emp_code', 'emp_name', 'surname', 'emp_sex', 'emp_status', 'dob',
+            'passport_release', 'release_reason', 'father_name', 'mother_name', 'nationality',
+            'religion', 'qualification', 'emp_marital_status', 'spouse_name',
+            'res_country_code', 'res_phone_no', 'res_addr_line1', 'res_addr_line2', 'res_city', 'res_state',
+            'local_country_code', 'local_phone_no', 'local_addr_line1', 'local_addr_line2', 'local_city', 'local_state',
+            'labour_id', 'process_cycle', 'basic_pay', 'allowance', 'grade_code', 'prj_code', 'sub_location',
+            'designation', 'department', 'date_of_join', 'date_of_rejoin',
+            'employee_bank', 'bank_branch', 'account_no', 'iban_number',
+            'passport_details', 'passport_place_of_issue', 'passport_issued_country', 'issued_date', 'expiry_date',
+            'visa_location', 'visa_no', 'visa_issued', 'visa_expiry', 'visa_designation', 'visa_issued_emirate',
+            'iloe_no', 'iloe_expiry', 'emirates_no', 'emirate_issued', 'emirate_expiry',
+            'uid_number', 'mohra_number', 'mohra_name', 'mohra_designation',
+            'work_permit_number', 'work_permit_expiry',
+            'camp_type', 'camp_inside_outside', 'select_camp', 'room_no', 'outside_location', 'room_rent',
+            'client_name', 'client_location'
         ))
 
         for emp in employees_data:
