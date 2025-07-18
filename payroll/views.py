@@ -7501,6 +7501,14 @@ def leave_tracker_report(request):
     }
     return render(request, 'pages/modal/reports/leave_tracker_report.html', context)
 
+def document_tracker_report(request):
+    set_comp_code(request)
+    query = Employee.objects.filter(comp_code=COMP_CODE).values('employee_id', 'emp_code', 'emp_name')
+    context = {
+        'employees': query
+    }
+    return render(request, 'pages/modal/reports/document_tracker_report.html', context)
+
 # import os
 # from django.conf import settings
 # from django.http import JsonResponse, HttpResponse
@@ -7673,7 +7681,7 @@ def generate_report(request):
                 'P2':split_p1[1],
                 'P3':p3 if p3 else None,
             }
-        elif rname == 'PY_Leave_Tracker_Report.jasper' or rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper' or rname == 'PY_Employee_Advance_Details.jasper' or rname == 'PY_Employee_Salary_Detail.jasper' or rname == 'PY_Project_wise_job_summary_History.jasper' or rname == 'PY_Project_Wise_Report_History.jasper':
+        elif rname == 'PY_Documents_Tracker_Report.jasper' or rname == 'PY_Leave_Tracker_Report.jasper' or rname == 'PY_Project_wise_job_summary.jasper' or rname == 'PY_Project_Wise_Report.jasper' or rname == 'PY_Employee_Details.jasper' or rname == 'PY_Employee_Advance_Details.jasper' or rname == 'PY_Employee_Salary_Detail.jasper' or rname == 'PY_Project_wise_job_summary_History.jasper' or rname == 'PY_Project_Wise_Report_History.jasper':
             parameters = {
                 'P0': company_code,  
                 'P1':p1 if p1 else None,

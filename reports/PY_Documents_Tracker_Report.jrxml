@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2025-07-18T19:06:25 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Salary_Register(Single)for_ZB" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5a2e14dc-a762-4da1-a981-b70b74af88f9">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
+	<parameter name="P0" class="java.lang.String"/>
+	<parameter name="P1" class="java.lang.String"/>
+	<parameter name="P999" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[WITH emp_list AS (
+    SELECT DISTINCT emp_code 
+    FROM payroll_employee
+    WHERE comp_code = COALESCE($P{P0},comp_code)
+    and emp_code = COALESCE($P{P1},emp_code)
+)
+SELECT * FROM (
+    -- Passport for all employees
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        'Passport' AS document_type,
+        e.passport_details AS doc_number,
+        CASE WHEN e.passport_document IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN e.passport_document IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE e.passport_details IS NOT NULL
+    
+    UNION ALL
+    
+    -- Visa for all employees
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        'VISA' AS document_type,
+        e.visa_no AS doc_number,
+        CASE WHEN e.visa_document IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN e.visa_document IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE e.visa_no IS NOT NULL
+    
+    UNION ALL
+    
+    -- Emirates ID for all employees
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        'Emirates ID' AS document_type,
+        e.emirates_no AS doc_number,
+        CASE WHEN e.emirate_document IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN e.emirate_document IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE e.emirates_no IS NOT NULL
+    
+    UNION ALL
+    
+    -- Work Permit for all employees
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        'Work Permit' AS document_type,
+        e.work_permit_number AS doc_number,
+        CASE WHEN e.work_permit_document IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN e.work_permit_document IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE e.work_permit_number IS NOT NULL
+    
+    UNION ALL
+    
+    -- ILOE for all employees
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        'ILOE' AS document_type,
+        e.iloe_no AS doc_number,
+        CASE WHEN e.iloe_document IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN e.iloe_document IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE e.iloe_no IS NOT NULL
+    
+    UNION ALL
+    
+    -- Additional documents
+    SELECT 
+        e.emp_code,
+        e.emp_name,
+        e.prj_code,
+        e.date_of_join,
+        e.category,
+        e.department,
+        d.document_type,
+        d.document_number,
+        CASE WHEN d.document_file IS NOT NULL THEN 'Available' ELSE 'Missing' END AS doc_status,
+        CASE WHEN d.document_file IS NULL THEN 'Not submitted' ELSE NULL END AS remarks
+    FROM payroll_employee e
+    JOIN payroll_employeedocument d ON e.emp_code = d.emp_code AND e.comp_code = d.comp_code
+    JOIN emp_list l ON e.emp_code = l.emp_code
+    WHERE d.document_number IS NOT NULL
+) final_result
+ORDER BY emp_code;]]>
+	</queryString>
+	<field name="emp_code" class="java.lang.String"/>
+	<field name="emp_name" class="java.lang.String"/>
+	<field name="prj_code" class="java.lang.String"/>
+	<field name="date_of_join" class="java.sql.Date"/>
+	<field name="category" class="java.lang.String"/>
+	<field name="department" class="java.lang.String"/>
+	<field name="document_type" class="java.lang.String"/>
+	<field name="doc_number" class="java.lang.String"/>
+	<field name="doc_status" class="java.lang.String"/>
+	<field name="remarks" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="65" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="60" width="802" height="1" backcolor="#000000" uuid="d62a580c-719a-442d-be67-70f69dbae7ac">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="30" width="319" height="24" uuid="e885c086-c299-4610-8d45-5bf007631196">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Documents Tracker Report"]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="799" height="40" uuid="3e6ecbc5-9155-4510-8058-6a0a09ca2845"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<rectangle radius="0">
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="7" width="801" height="30" uuid="cb333bd5-c72b-402f-a631-ca6511d3824a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="7" width="40" height="30" uuid="20cda6c4-9c62-49ab-bc74-a6b13ddb2977"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="40" y="7" width="100" height="30" uuid="ef79b752-241e-46b9-b95b-9c1fbcb56fb9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Employee Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="7" width="60" height="30" uuid="9f71bef2-c2cc-4ae7-9af8-63b709b15a73"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOJ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="260" y="7" width="78" height="30" uuid="6b0eb2f0-ea76-4190-8e15-f8c837a5ce2e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Category]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="338" y="7" width="142" height="30" uuid="ef2062e6-9455-4264-a266-d552801e9bd5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Department]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="669" y="7" width="60" height="30" uuid="50fbe2cb-3e5c-4395-a4b6-ba285250c4a7"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Doc No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="7" width="100" height="30" uuid="480cc5e3-9711-4c0c-845c-5fdb91bda9da"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="580" y="7" width="89" height="30" uuid="5900885c-fcc9-42d2-b3fc-9ae3223e7838"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[End Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="6" width="60" height="30" uuid="3f3899ad-fd8f-45a8-89db-031e6eb42336"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Project]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="729" y="7" width="73" height="30" uuid="dfec8e4a-7ee2-49ab-b9a8-f6de51077bd9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remarks]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="18" width="802" height="1" uuid="a6af8069-67b9-45be-81c8-e403e5d43add">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" uuid="c6656dcc-cd19-44c1-95d4-a36dd9d232c1">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="40" height="19" uuid="7b40dc47-fe86-4804-9faa-a5509a9ddcbd"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emp_code}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="40" y="0" width="100" height="19" uuid="0625c280-9761-4b02-b00e-657c99e96044">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emp_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
+				<reportElement x="200" y="0" width="60" height="19" uuid="cd9cfd2c-3f62-46d2-bddf-33e59045a201">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_of_join}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="260" y="0" width="78" height="19" uuid="0a96d200-6f73-4480-9d1c-6fa22b0dbaab"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{category}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="338" y="0" width="142" height="19" uuid="bfcb1f9a-1bae-4d56-9a28-deada46116bf"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{department}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="480" y="0" width="100" height="19" uuid="40f2f234-31cf-4ea9-b8a8-e9bdb98e8a49"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{document_type}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
+				<reportElement x="580" y="0" width="89" height="19" uuid="e91fc635-8964-4bac-a777-e5a0cb037906"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_number}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="140" y="0" width="60" height="19" uuid="840ee3f1-2f5b-4d9e-ad4a-7d255e540a13">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prj_code}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="729" y="0" width="73" height="19" uuid="3d291e99-9d98-4c0a-a1ad-e26035b2ee0e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remarks}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
+				<reportElement x="669" y="0" width="60" height="19" uuid="201b5ec4-ce23-476d-b392-e5bb1573bc37"/>
+				<box>
+					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_status}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="34" splitType="Stretch">
+			<staticText>
+				<reportElement x="3" y="3" width="48" height="14" uuid="fb88874b-571f-4ccf-8e78-5e601742efbd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[User:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="3" width="98" height="14" uuid="223c744d-064b-4bf4-9448-0381f6fb4ab4">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P999}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="346" y="3" width="110" height="15" uuid="38a29203-103c-4565-8fee-0f4adadbfade">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="160" y="4" width="48" height="14" uuid="af365451-9c79-492d-a2a5-0680067504b6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="208" y="4" width="98" height="14" uuid="a57b0f6b-4757-481c-80b1-2e07797f2b42">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="0" y="19" width="800" height="15" uuid="4514f3bf-0c92-451d-ac05-98eab9a4d471">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Company_Details.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</columnFooter>
+</jasperReport>
