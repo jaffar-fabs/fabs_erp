@@ -25,7 +25,7 @@
                                         <select name="P1" id="employee" class="form-control select2">
                                             <option value="">Select Employee</option>
                                             {% for employee in employees %}
-                                                <option value="{{ employee.employee_id }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                                                <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
