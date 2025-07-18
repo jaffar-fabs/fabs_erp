@@ -265,6 +265,7 @@ urlpatterns = [
     path('employee_details_report/', views.employee_details_report, name='employee_details_report'),
     path('employee_advance_report/', views.employee_advance_report, name='employee_advance_report'),
     path('employee_salary_detail/', views.employee_salary_detail, name='employee_salary_detail'),
+    path('leave_tracker_report/', views.leave_tracker_report, name='leave_tracker_report'),
     # path('salary_register_multi_line_report/', views.salary_register_multi_line_report, name='salary_register_multi_line_report'),
 
 
