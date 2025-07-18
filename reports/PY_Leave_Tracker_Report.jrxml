@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-18T10:29:03 -->
+<!-- 2025-07-18T10:46:10 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Salary_Register(Single)for_ZB" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5a2e14dc-a762-4da1-a981-b70b74af88f9">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="POSTGRES"/>
 	<parameter name="P0" class="java.lang.String"/>
 	<parameter name="P1" class="java.lang.String"/>
 	<parameter name="P999" class="java.lang.String"/>
@@ -194,12 +193,12 @@ WHERE
 					<bottomPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="7"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{employee_name}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
 				<reportElement x="200" y="0" width="60" height="19" uuid="cd9cfd2c-3f62-46d2-bddf-33e59045a201">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
@@ -253,7 +252,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
 				<reportElement x="547" y="0" width="62" height="19" uuid="27a9efc7-fd63-4142-8782-e77f47585ae9"/>
 				<box>
 					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
@@ -266,7 +265,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{start_date}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
 				<reportElement x="609" y="0" width="60" height="19" uuid="e91fc635-8964-4bac-a777-e5a0cb037906"/>
 				<box>
 					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
@@ -309,7 +308,7 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total_leave_days}]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="true">
+			<textField pattern="dd/MM/YYYY" isBlankWhenNull="true">
 				<reportElement x="669" y="0" width="60" height="19" uuid="201b5ec4-ce23-476d-b392-e5bb1573bc37"/>
 				<box>
 					<topPen lineWidth="0.4" lineStyle="Solid" lineColor="#000000"/>
