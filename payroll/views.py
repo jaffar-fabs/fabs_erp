@@ -7646,7 +7646,10 @@ def generate_report(request):
         
         # Use Salary Register report which requires subreports
         jasper_file = os.path.join(reports_dir, rname)
-        output_filename = rname.replace('.jasper', '.pdf')
+        if rname == 'PY_Documents_Tracker_Report.jasper' or rname == 'PY_Leave_Tracker_Report.jasper':
+            output_filename = rname.replace('.jasper', '.xlsx')
+        else:
+            output_filename = rname.replace('.jasper', '.pdf')
         
         # Get company code from request or use default
         company_code = COMP_CODE
