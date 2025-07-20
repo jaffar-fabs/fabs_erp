@@ -7753,22 +7753,11 @@ def generate_report(request):
                 'status': 'error',
                 'message': 'PyReportJasper library is not available. Please install it using: pip install pyreportjasper'
             }, status=500)
-
         
         # Use a temporary file
         temp_output = None
         try:
-            # Determine output format based on report type
-            if rname == 'PY_Documents_Tracker_Report.jasper' or rname == 'PY_Leave_Tracker_Report.jasper':
-                output_format = 'xlsx'
-                temp_suffix = '.xlsx'
-                content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            else:
-                output_format = 'pdf'
-                temp_suffix = '.pdf'
-                content_type = 'application/pdf'
-            
-            temp_output = tempfile.NamedTemporaryFile(suffix=temp_suffix, delete=False)
+            temp_output = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False)
             temp_output.close()  # Close the file so PyReportJasper can write to it
         except Exception as temp_error:
             return JsonResponse({
@@ -7782,7 +7771,7 @@ def generate_report(request):
                 prj.config(
                     input_file=jasper_file,
                     output_file=temp_output.name,
-                    output_formats=[output_format],
+                    output_formats=['pdf'],
                     parameters=parameters,
                     db_connection=db_config,
                     locale='en_US'
@@ -7798,22 +7787,18 @@ def generate_report(request):
                 print(f"PyReportJasper configuration/processing error: {str(config_error)}")
                 raise config_error        
             
-            # Read the generated file data
+            # Read the generated PDF data
             if not os.path.exists(temp_output.name):
-                raise Exception(f"Generated file not found: {temp_output.name}")
+                raise Exception(f"Generated PDF file not found: {temp_output.name}")
                 
             with open(temp_output.name, 'rb') as f:
-                file_data = f.read()
+                pdf_data = f.read()
             
-            if not file_data:
-                raise Exception("Generated file is empty")
-            
-            # Log successful generation
-            print(f"Successfully generated {output_format.upper()} file: {output_filename}")
-            print(f"File size: {len(file_data)} bytes")
+            if not pdf_data:
+                raise Exception("Generated PDF file is empty")
             
             # Prepare the response
-            response = HttpResponse(file_data, content_type=content_type)
+            response = HttpResponse(pdf_data, content_type='application/pdf')
             response['Content-Disposition'] = f'attachment; filename="{output_filename}"'
             return response
             
@@ -7840,11 +7825,6 @@ def generate_report(request):
                           "1. Database connection parameters\n" \
                           "2. Report file paths\n" \
                           "3. Java/JasperReports server configuration"
-        elif "xlsx" in error_message.lower() or "excel" in error_message.lower():
-            error_message = "Excel generation failed. Please check:\n" \
-                          "1. JasperReports server supports Excel output\n" \
-                          "2. Report template is configured for Excel export\n" \
-                          "3. Required Excel export libraries are installed"
         
         return JsonResponse({
             'status': 'error',
