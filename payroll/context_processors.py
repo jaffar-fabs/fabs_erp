@@ -472,3 +472,10 @@ def get_iloe_status(request):
     return {
         'ioe_status_data': ioe_status_data
     }
+
+def get_ecnr(request):
+    comp_code = get_comp_code(request)
+    ecnr_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'ECNR')
+    return{
+        'ecnr_data': ecnr_data
+    }   

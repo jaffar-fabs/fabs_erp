@@ -947,6 +947,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">ECNR</label>
+                        <select name="ecnr" id="ecnr" class="form-control">
+                            <option value="">Select</option>
+                            {% for ecnr in ecnr_data %}
+                            <option value="{{ ecnr.base_value }}">{{ ecnr.base_description }}</option>
+                            {% endfor %}  
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1051,12 +1062,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Mohre Designation</label>
                         <input type="text" name="mohra_designation" id="mohra_designation" class="form-control" placeholder="Enter Mohra Designation">
                     </div>
-                </div>                
+                </div>                 -->
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label class="col-form-label">Work Permit Number</label>

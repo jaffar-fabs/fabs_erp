@@ -140,7 +140,8 @@ TEMPLATES = [
                 'payroll.context_processors.get_rp_stamping',
                 'payroll.context_processors.tawjeeh_payment_status',
                 'payroll.context_processors.get_tawjeeh_class_status',
-                'payroll.context_processors.get_iloe_status'
+                'payroll.context_processors.get_iloe_status',
+                'payroll.context_processors.get_ecnr'
 
             ],
         },
@@ -165,7 +166,7 @@ WSGI_APPLICATION = 'erp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'erp',
+        'NAME': 'erp_uat',
         'USER': 'postgres',
         'PASSWORD': 'Windows*1',
         'HOST': '103.14.120.216',

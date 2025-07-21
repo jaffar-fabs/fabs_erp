@@ -276,6 +276,7 @@ class Employee(models.Model):
     passport_issued_country = models.CharField(max_length=100, blank=True, null=True)  # Passport issued country
     issued_date = models.DateField(blank=True, null=True)  # Issued date
     expiry_date = models.DateField(blank=True, null=True)  # Expiry date
+    ecnr = models.CharField(max_length=100, blank=True, null=True)
 
     # New fields for Visa Details
     visa_location = models.CharField(max_length=100, blank=True, null=True)  # Visa location
