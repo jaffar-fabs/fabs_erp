@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2025-07-18T20:39:07 -->
+<!-- 2025-07-21T23:59:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PY_Salary_Register(Single)for_ZB" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5a2e14dc-a762-4da1-a981-b70b74af88f9">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="P0" class="java.lang.String"/>
@@ -251,6 +251,14 @@ ORDER BY emp_code, document_type;]]>
 				</textElement>
 				<textFieldExpression><![CDATA["Documents Tracker Report"]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="0" y="0" width="799" height="40" uuid="c578ce09-2c12-4cd7-8618-520ad23ca865"/>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_company_name.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -528,6 +536,16 @@ ORDER BY emp_code, document_type;]]>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new java.util.Date())]]></textFieldExpression>
 			</textField>
+			<subreport>
+				<reportElement x="0" y="19" width="800" height="15" uuid="9c610416-1f7d-4245-befc-25e43538a51e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<subreportParameter name="P0">
+					<subreportParameterExpression><![CDATA[$P{P0}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["reports/PY_Company_Details.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</columnFooter>
 </jasperReport>
