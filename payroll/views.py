@@ -9410,7 +9410,179 @@ def generate_report(request):
                             'status': 'error',
                             'message': f'Error executing salary register multi line history query: {str(e)}'
                         }, status=500)
-                
+                    
+            elif rname == 'PY_Control_Statement.jasper':
+                # Handle control statement report with direct SQL execution and Excel export
+                try:
+                    # Execute the control statement query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT
+                            CASE 
+                                WHEN UPPER(a.earn_type) LIKE 'EARN%%' THEN 'EARNINGS'
+                                WHEN UPPER(a.earn_type) LIKE 'DEDU%%' THEN 'DEDUCTIONS'
+                                WHEN UPPER(a.earn_type) LIKE 'NET' THEN 'NET'
+                                ELSE ''
+                            END AS "EARN_TYPE",
+                            a.pay_cycle AS "PAY_CYCLE",
+                            a.earn_reports AS "EARN_REPORTS",
+                            TO_CHAR(TO_DATE(a.pay_month, 'MMYYYY'), 'MON-YYYY') AS "PAY_MONTH",
+                            a.earn_code AS "EARN_CODE",
+                            SUM(a.amount) AS "TOTAL_AMOUNT"
+                        FROM
+                            payroll_payprocess a
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.pay_cycle = COALESCE(%s, a.pay_cycle)
+                            AND a.pay_month = COALESCE(%s, a.pay_month)
+                            AND a.earn_code NOT IN ('ER900', 'DD900')
+                        GROUP BY
+                            a.earn_type,
+                            a.earn_code,
+                            a.pay_cycle,
+                            a.pay_month,
+                            a.earn_reports
+                        ORDER BY
+                            CASE 
+                                WHEN UPPER(a.earn_type) LIKE 'EARN%%' THEN 1
+                                WHEN UPPER(a.earn_type) LIKE 'DEDU%%' THEN 2
+                                WHEN UPPER(a.earn_type) LIKE 'NET' THEN 3
+                                ELSE 4
+                            END;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Control_Statement_Report'
+                        return export_to_excel(data, filename, 'Control Statement')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing control statement query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Control_Statement_History.jasper':
+                # Handle control statement history report with direct SQL execution and Excel export
+                try:
+                    # Execute the control statement history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT
+                            CASE 
+                                WHEN UPPER(a.earn_type) LIKE 'EARN%%' THEN 'EARNINGS'
+                                WHEN UPPER(a.earn_type) LIKE 'DEDU%%' THEN 'DEDUCTIONS'
+                                WHEN UPPER(a.earn_type) LIKE 'NET' THEN 'NET'
+                                ELSE ''
+                            END AS "EARN_TYPE",
+                            a.pay_cycle AS "PAY_CYCLE",
+                            a.earn_reports AS "EARN_REPORTS",
+                            TO_CHAR(TO_DATE(a.pay_month, 'MMYYYY'), 'MON-YYYY') AS "PAY_MONTH",
+                            a.earn_code AS "EARN_CODE",
+                            SUM(a.amount) AS "TOTAL_AMOUNT"
+                        FROM
+                            payroll_payprocessarchieve a
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.pay_cycle = COALESCE(%s, a.pay_cycle)
+                            AND a.pay_month = COALESCE(%s, a.pay_month)
+                            AND a.earn_code NOT IN ('ER900', 'DD900')
+                        GROUP BY
+                            a.earn_type,
+                            a.earn_code,
+                            a.pay_cycle,
+                            a.pay_month,
+                            a.earn_reports
+                        ORDER BY
+                            CASE 
+                                WHEN UPPER(a.earn_type) LIKE 'EARN%%' THEN 1
+                                WHEN UPPER(a.earn_type) LIKE 'DEDU%%' THEN 2
+                                WHEN UPPER(a.earn_type) LIKE 'NET' THEN 3
+                                ELSE 4
+                            END;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Control_Statement_History_Report'
+                        return export_to_excel(data, filename, 'Control Statement History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing control statement history query: {str(e)}'
+                    }, status=500)
+                    
             elif rname == 'PY_Documents_Tracker_Report.jasper':
                 # Handle document tracker report with direct SQL execution and Excel export
                 try:
