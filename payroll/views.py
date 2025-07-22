@@ -7713,7 +7713,1705 @@ def generate_report(request):
 
         elif format == 'excel':
             
-            if rname == 'PY_Documents_Tracker_Report.jasper':
+            if rname == 'PY_Salary_Register(Single)for_ZB.jasper':
+                # Handle salary register single report with direct SQL execution and Excel export
+                try:
+                    # Execute the salary register single query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        # Parse paycycle and pay_month from P1 parameter
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:  # Check if we have both values
+                                pay_cycle_param = split_p1[0]
+                                pay_month_param = split_p1[1]
+                            else:
+                                return JsonResponse({
+                                    'status': 'error',
+                                    'message': 'Invalid P1 parameter format. Expected format: paycycle,paymonth'
+                                }, status=400)
+                        else:
+                            return JsonResponse({
+                                'status': 'error', 
+                                'message': 'P1 parameter is required and must contain paycycle,paymonth'
+                            }, status=400)
+                        
+                        query = """
+                        SELECT         
+                            B.DESIGNATION AS "DESIGNATION",
+                            B.PROCESS_CYCLE AS "PROCESS_CYCLE",         
+                            A.EMPLOYEE_CODE AS "EMPLOYEE_CODE",         
+                            B.EMP_NAME AS "EMP_NAME",         
+                            B.BASIC_PAY AS "A_BASIC",         
+                            B.ALLOWANCE AS "A_ALLOW",         
+                            C.PROCESS_COMP_FLAG AS "PROCESS_COMP_FLAG",
+
+                            -- ATTENDANCE COUNTS
+                            COALESCE(PRES.PRESENT, 0) AS "PRESENT",
+                            COALESCE(ABS.ABSENT, 0) AS "ABSENT",
+
+                            -- WORKING DAYS CALCULATION
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.MORNING, 0) + COALESCE(A.AFTERNOON, 0) ELSE 0 END) / 8 AS "WDAYS",
+
+                            -- OT1 HOURS
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT1, 0) ELSE 0 END) AS "OT1_HOURS",
+
+                            -- OT2 HOURS
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT2, 0) ELSE 0 END) AS "OT2_HOURS",
+
+                            -- SALARY COMPONENTS
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN A.AMOUNT ELSE 0 END), 2) AS "BASIC",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER004' THEN A.AMOUNT ELSE 0 END), 2) AS "ALLOWANCE",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER002' THEN A.AMOUNT ELSE 0 END), 2) AS "OT1",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER003' THEN A.AMOUNT ELSE 0 END), 2) AS "OT2",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_PAY",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'DD900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_DED",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER999' THEN A.AMOUNT ELSE 0 END), 2) AS "NET"
+
+                        FROM 
+                            PAYROLL_PAYPROCESS A
+
+                        -- JOIN EMPLOYEE INFO
+                        LEFT JOIN PAYROLL_EMPLOYEE B 
+                            ON A.COMP_CODE = B.COMP_CODE 
+                           AND A.EMPLOYEE_CODE = B.EMP_CODE
+                           AND A.PAY_CYCLE = B.PROCESS_CYCLE
+
+                        -- JOIN PAYCYCLE MASTER
+                        LEFT JOIN PAYROLL_PAYCYCLEMASTER C 
+                            ON A.PAY_CYCLE = C.PROCESS_CYCLE
+
+                        -- JOIN FOR PRESENT DAYS
+                        LEFT JOIN (
+                            SELECT 
+                                EMPLOYEE_CODE, 
+                                PAY_PROCESS_MONTH, 
+                                PAY_CYCLE, 
+                                COUNT(*) AS PRESENT
+                            FROM PAYROLL_WORKERATTENDANCEREGISTER
+                            WHERE COMP_CODE = %s AND ATTENDANCE_TYPE = 26
+                            GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                        ) PRES 
+                            ON PRES.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                           AND PRES.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                           AND PRES.PAY_CYCLE = A.PAY_CYCLE
+
+                        -- JOIN FOR ABSENT DAYS
+                        LEFT JOIN (
+                            SELECT 
+                                EMPLOYEE_CODE, 
+                                PAY_PROCESS_MONTH, 
+                                PAY_CYCLE, 
+                                COUNT(*) AS ABSENT
+                            FROM PAYROLL_WORKERATTENDANCEREGISTER
+                            WHERE ATTENDANCE_TYPE = 27
+                            GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                        ) ABS 
+                            ON ABS.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                           AND ABS.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                           AND ABS.PAY_CYCLE = A.PAY_CYCLE
+                           
+                        WHERE 
+                            A.COMP_CODE = COALESCE(%s, A.COMP_CODE)
+                            AND A.PAY_CYCLE = COALESCE(%s, A.PAY_CYCLE)
+                            AND A.PAY_MONTH = COALESCE(%s, A.PAY_MONTH)
+
+                        GROUP BY  
+                            A.COMP_CODE,
+                            B.DESIGNATION,
+                            A.EMPLOYEE_CODE,
+                            B.EMP_NAME,
+                            B.BASIC_PAY,
+                            B.ALLOWANCE,
+                            B.PROCESS_CYCLE,
+                            A.PAY_CYCLE,
+                            C.PROCESS_COMP_FLAG,
+                            PRES.PRESENT,
+                            ABS.ABSENT
+
+                        ORDER BY 
+                            A.EMPLOYEE_CODE;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Salary_Register_Single_Report'
+                        return export_to_excel(data, filename, 'Salary Register Single')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing salary register single query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Salary_Register(Single)for_ZB_History.jasper':
+                # Handle salary register single history report with direct SQL execution and Excel export
+                try:
+                    # Execute the salary register single history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        # Parse paycycle and pay_month from P1 parameter
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:  # Check if we have both values
+                                pay_cycle_param = split_p1[0]
+                                pay_month_param = split_p1[1]
+                            else:
+                                return JsonResponse({
+                                    'status': 'error',
+                                    'message': 'Invalid P1 parameter format. Expected format: paycycle,paymonth'
+                                }, status=400)
+                        else:
+                            return JsonResponse({
+                                'status': 'error', 
+                                'message': 'P1 parameter is required and must contain paycycle,paymonth'
+                            }, status=400)
+                        
+                        query = """
+                        SELECT         
+                            B.DESIGNATION AS "DESIGNATION",
+                            B.PROCESS_CYCLE AS "PROCESS_CYCLE",         
+                            A.EMPLOYEE_CODE AS "EMPLOYEE_CODE",         
+                            B.EMP_NAME AS "EMP_NAME",         
+                            B.BASIC_PAY AS "A_BASIC",         
+                            B.ALLOWANCE AS "A_ALLOW",         
+                            C.PROCESS_COMP_FLAG AS "PROCESS_COMP_FLAG",
+
+                            -- ATTENDANCE COUNTS
+                            COALESCE(PRES.PRESENT, 0) AS "PRESENT",
+                            COALESCE(ABS.ABSENT, 0) AS "ABSENT",
+
+                            -- WORKING DAYS CALCULATION
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.MORNING, 0) + COALESCE(A.AFTERNOON, 0) ELSE 0 END) / 8 AS "WDAYS",
+
+                            -- OT1 HOURS
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT1, 0) ELSE 0 END) AS "OT1_HOURS",
+
+                            -- OT2 HOURS
+                            SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN COALESCE(A.OT2, 0) ELSE 0 END) AS "OT2_HOURS",
+
+                            -- SALARY COMPONENTS
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER001' THEN A.AMOUNT ELSE 0 END), 2) AS "BASIC",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER004' THEN A.AMOUNT ELSE 0 END), 2) AS "ALLOWANCE",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER002' THEN A.AMOUNT ELSE 0 END), 2) AS "OT1",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER003' THEN A.AMOUNT ELSE 0 END), 2) AS "OT2",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_PAY",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'DD900' THEN A.AMOUNT ELSE 0 END), 2) AS "G_DED",
+                            ROUND(SUM(CASE WHEN A.EARN_CODE = 'ER999' THEN A.AMOUNT ELSE 0 END), 2) AS "NET"
+
+                        FROM 
+                            PAYROLL_PAYPROCESSARCHIEVE A
+
+                        -- JOIN EMPLOYEE INFO
+                        LEFT JOIN PAYROLL_EMPLOYEE B 
+                            ON A.COMP_CODE = B.COMP_CODE 
+                           AND A.EMPLOYEE_CODE = B.EMP_CODE
+                           AND A.PAY_CYCLE = B.PROCESS_CYCLE
+
+                        -- JOIN PAYCYCLE MASTER
+                        LEFT JOIN PAYROLL_PAYCYCLEMASTER C 
+                            ON A.PAY_CYCLE = C.PROCESS_CYCLE
+
+                        -- JOIN FOR PRESENT DAYS
+                        LEFT JOIN (
+                            SELECT 
+                                EMPLOYEE_CODE, 
+                                PAY_PROCESS_MONTH, 
+                                PAY_CYCLE, 
+                                COUNT(*) AS PRESENT
+                            FROM PAYROLL_WORKERATTENDANCEREGISTER
+                            WHERE COMP_CODE = %s AND ATTENDANCE_TYPE = 26
+                            GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                        ) PRES 
+                            ON PRES.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                           AND PRES.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                           AND PRES.PAY_CYCLE = A.PAY_CYCLE
+
+                        -- JOIN FOR ABSENT DAYS
+                        LEFT JOIN (
+                            SELECT 
+                                EMPLOYEE_CODE, 
+                                PAY_PROCESS_MONTH, 
+                                PAY_CYCLE, 
+                                COUNT(*) AS ABSENT
+                            FROM PAYROLL_WORKERATTENDANCEREGISTER
+                            WHERE ATTENDANCE_TYPE = 27
+                            GROUP BY EMPLOYEE_CODE, PAY_PROCESS_MONTH, PAY_CYCLE
+                        ) ABS 
+                            ON ABS.EMPLOYEE_CODE = A.EMPLOYEE_CODE 
+                           AND ABS.PAY_PROCESS_MONTH = A.PAY_MONTH 
+                           AND ABS.PAY_CYCLE = A.PAY_CYCLE
+                           
+                        WHERE 
+                            A.COMP_CODE = COALESCE(%s, A.COMP_CODE)
+                            AND A.PAY_CYCLE = COALESCE(%s, A.PAY_CYCLE)
+                            AND A.PAY_MONTH = COALESCE(%s, A.PAY_MONTH)
+
+                        GROUP BY  
+                            A.COMP_CODE,
+                            B.DESIGNATION,
+                            A.EMPLOYEE_CODE,
+                            B.EMP_NAME,
+                            B.BASIC_PAY,
+                            B.ALLOWANCE,
+                            B.PROCESS_CYCLE,
+                            A.PAY_CYCLE,
+                            C.PROCESS_COMP_FLAG,
+                            PRES.PRESENT,
+                            ABS.ABSENT
+
+                        ORDER BY 
+                            A.EMPLOYEE_CODE;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Salary_Register_Single_History_Report'
+                        return export_to_excel(data, filename, 'Salary Register Single History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing salary register single history query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Project_Wise_Report.jasper':
+                # Handle project wise report with direct SQL execution and Excel export
+                try:
+                    # Execute the project wise report query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        query = """
+                        WITH CTE_ATT_TYPE AS (
+                          SELECT attendance_uom 
+                          FROM payroll_paycyclemaster 
+                          WHERE process_cycle = COALESCE(%s, process_cycle)
+                        ),
+                        CTE_EARNINGS AS (
+                          SELECT 
+                            prs.employee_code,
+                            prs.project_code,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN amount ELSE 0 END), 0) AS earn001,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER002' THEN amount ELSE 0 END), 0) AS earn002,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER003' THEN amount ELSE 0 END), 0) AS earn003,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER004' THEN amount ELSE 0 END), 0) AS earn004,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(ot1, 0) ELSE 0 END), 0) AS ot1,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(ot2, 0) ELSE 0 END), 0) AS ot2,
+                            ROUND(SUM(CASE 
+                              WHEN UPPER(earn_code) NOT IN ('ER001', 'ER002', 'ER003', 'ER004', 'ER005', 'ER900') 
+                                   AND UPPER(earn_type) IN ('EARNINGS', 'EARN') THEN COALESCE(amount, 0) 
+                              ELSE 0 END), 0) AS others,
+                            CASE 
+                              WHEN (SELECT attendance_uom FROM CTE_ATT_TYPE) = '52' THEN
+                                ROUND(((SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(morning, 0) ELSE 0 END) + 
+                                        SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(afternoon, 0) ELSE 0 END)) / 8.0), 0)
+                              ELSE
+                                ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(morning, 0) + COALESCE(afternoon, 0) ELSE 0 END), 0)
+                            END AS workdays
+                          FROM payroll_payprocess prs
+                          JOIN payroll_employee empmas
+                            ON empmas.emp_code = prs.employee_code
+                           AND empmas.comp_code = prs.comp_code
+                          WHERE prs.comp_code = COALESCE(%s, prs.comp_code)
+                            AND prs.project_code = COALESCE(%s, prs.project_code)
+                          GROUP BY prs.employee_code, prs.project_code
+                        ),
+                        CTE_TOTALS AS (
+                          SELECT 
+                            project_code,
+                            SUM(earn001) AS earn1,
+                            SUM(earn002) AS earn2,
+                            SUM(earn003) AS earn3,
+                            SUM(earn004) AS earn4,
+                            SUM(ot1) AS ot1hrs,
+                            SUM(ot2) AS ot2hrs,
+                            SUM(others) AS others,
+                            SUM(workdays) AS wd
+                          FROM CTE_EARNINGS
+                          GROUP BY project_code
+                        ),
+                        CTE_PROJECT AS (
+                          SELECT 
+                            pp.project_code,
+                            pm.prj_name,
+                            t.wd AS days,   
+                            ROUND(t.ot1hrs + t.ot2hrs, 1) AS ot_days, 
+                            t.earn1 AS er001,  
+                            COALESCE(t.earn2, 0) AS er002,  
+                            t.earn3 AS er003,
+                            t.earn4 AS er004,
+                            t.others AS others
+                          FROM payroll_payprocess pp
+                          JOIN payroll_projectmaster pm
+                            ON pm.prj_code = pp.project_code
+                           AND pp.comp_code = pm.comp_code
+                          JOIN CTE_TOTALS t
+                            ON pp.project_code = t.project_code
+                          WHERE pp.earn_code = 'ER001'
+                            AND pp.comp_code = COALESCE(%s, pp.comp_code)
+                          GROUP BY 
+                            pp.project_code, 
+                            pm.prj_name,
+                            t.wd, t.ot1hrs, t.ot2hrs, t.earn1, t.earn2, t.earn3, t.earn4, t.others
+                        )
+
+                        SELECT 
+                          p.project_code AS "PROJECT_CODE",
+                          p.prj_name AS "PRJ_NAME",
+                          p.days AS "DAYS",
+                          p.ot_days AS "OT_DAYS",
+                          p.er001 AS "ER001",
+                          p.er002 AS "ER002",
+                          p.er003 AS "ER003",
+                          p.er004 AS "ER004",
+                          p.others AS "OTHERS",
+                          ROUND((p.er001 + p.er002 + p.er003 + p.er004 + p.others), 0) AS "TOTAL_SUM"
+                        FROM CTE_PROJECT p
+                        GROUP BY 
+                          p.project_code,
+                          p.prj_name,
+                          p.days,
+                          p.ot_days,
+                          p.er001,
+                          p.er002,
+                          p.er003,
+                          p.er004,
+                          p.others
+                        ORDER BY p.project_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [p1_param, company_code_param, p1_param, company_code_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Project_Wise_Report'
+                        return export_to_excel(data, filename, 'Project Wise Report')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing project wise report query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Project_Wise_Report_History.jasper':
+                # Handle project wise report history with direct SQL execution and Excel export
+                try:
+                    # Execute the project wise report history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        query = """
+                        WITH CTE_ATT_TYPE AS (
+                          SELECT attendance_uom 
+                          FROM payroll_paycyclemaster 
+                          WHERE process_cycle = COALESCE(%s, process_cycle)
+                        ),
+                        CTE_EARNINGS AS (
+                          SELECT 
+                            prs.employee_code,
+                            prs.project_code,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN amount ELSE 0 END), 0) AS earn001,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER002' THEN amount ELSE 0 END), 0) AS earn002,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER003' THEN amount ELSE 0 END), 0) AS earn003,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER004' THEN amount ELSE 0 END), 0) AS earn004,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(ot1, 0) ELSE 0 END), 0) AS ot1,
+                            ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(ot2, 0) ELSE 0 END), 0) AS ot2,
+                            ROUND(SUM(CASE 
+                              WHEN UPPER(earn_code) NOT IN ('ER001', 'ER002', 'ER003', 'ER004', 'ER005', 'ER900') 
+                                   AND UPPER(earn_type) IN ('EARNINGS', 'EARN') THEN COALESCE(amount, 0) 
+                              ELSE 0 END), 0) AS others,
+                            CASE 
+                              WHEN (SELECT attendance_uom FROM CTE_ATT_TYPE) = '52' THEN
+                                ROUND(((SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(morning, 0) ELSE 0 END) + 
+                                        SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(afternoon, 0) ELSE 0 END)) / 8.0), 0)
+                              ELSE
+                                ROUND(SUM(CASE WHEN earn_code = 'ER001' THEN COALESCE(morning, 0) + COALESCE(afternoon, 0) ELSE 0 END), 0)
+                            END AS workdays
+                          FROM payroll_payprocessarchieve prs
+                          JOIN payroll_employee empmas
+                            ON empmas.emp_code = prs.employee_code
+                           AND empmas.comp_code = prs.comp_code
+                          WHERE prs.comp_code = COALESCE(%s, prs.comp_code)
+                            AND prs.project_code = COALESCE(%s, prs.project_code)
+                          GROUP BY prs.employee_code, prs.project_code
+                        ),
+                        CTE_TOTALS AS (
+                          SELECT 
+                            project_code,
+                            SUM(earn001) AS earn1,
+                            SUM(earn002) AS earn2,
+                            SUM(earn003) AS earn3,
+                            SUM(earn004) AS earn4,
+                            SUM(ot1) AS ot1hrs,
+                            SUM(ot2) AS ot2hrs,
+                            SUM(others) AS others,
+                            SUM(workdays) AS wd
+                          FROM CTE_EARNINGS
+                          GROUP BY project_code
+                        ),
+                        CTE_PROJECT AS (
+                          SELECT 
+                            pp.project_code,
+                            pm.prj_name,
+                            t.wd AS days,   
+                            ROUND(t.ot1hrs + t.ot2hrs, 1) AS ot_days, 
+                            t.earn1 AS er001,  
+                            COALESCE(t.earn2, 0) AS er002,  
+                            t.earn3 AS er003,
+                            t.earn4 AS er004,
+                            t.others AS others
+                          FROM payroll_payprocessarchieve pp
+                          JOIN payroll_projectmaster pm
+                            ON pm.prj_code = pp.project_code
+                           AND pp.comp_code = pm.comp_code
+                          JOIN CTE_TOTALS t
+                            ON pp.project_code = t.project_code
+                          WHERE pp.earn_code = 'ER001'
+                            AND pp.comp_code = COALESCE(%s, pp.comp_code)
+                            AND pp.pay_cycle = COALESCE(%s, pp.pay_cycle)
+                          GROUP BY 
+                            pp.project_code, 
+                            pm.prj_name,
+                            t.wd, t.ot1hrs, t.ot2hrs, t.earn1, t.earn2, t.earn3, t.earn4, t.others
+                        )
+
+                        SELECT 
+                          p.project_code AS "PROJECT_CODE",
+                          p.prj_name AS "PRJ_NAME",
+                          p.days AS "DAYS",
+                          p.ot_days AS "OT_DAYS",
+                          p.er001 AS "ER001",
+                          p.er002 AS "ER002",
+                          p.er003 AS "ER003",
+                          p.er004 AS "ER004",
+                          p.others AS "OTHERS",
+                          ROUND((p.er001 + p.er002 + p.er003 + p.er004 + p.others), 0) AS "TOTAL_SUM"
+                        FROM CTE_PROJECT p
+                        GROUP BY 
+                          p.project_code,
+                          p.prj_name,
+                          p.days,
+                          p.ot_days,
+                          p.er001,
+                          p.er002,
+                          p.er003,
+                          p.er004,
+                          p.others
+                        ORDER BY p.project_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [p1_param, company_code_param, p1_param, company_code_param, p1_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Project_Wise_Report_History'
+                        return export_to_excel(data, filename, 'Project Wise Report History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing project wise report history query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Project_wise_job_summary.jasper':
+                # Handle project wise job summary report with direct SQL execution and Excel export
+                try:
+                    # Execute the project wise job summary query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        query = """
+                        SELECT 
+                            a.prj_code AS "PRJ_CODE", 
+                            a.project_description AS "PROJECT_DESCRIPTION", 
+                            c.pay_month AS "PAY_MONTH",
+                            a.prj_name AS "PRJ_NAME",
+                            (b.total_morning + b.total_afternoon) / 8 AS "TOTAL_DAYS", 
+                            d.othrs AS "OTHRS",
+                            d.total_amount AS "OT_AMOUNT", 
+                            (b.total_amount + c.total_amount) AS "TOTAL_AMOUNT",
+                            (b.total_amount + c.total_amount + d.total_amount) AS "GT"
+                        FROM payroll_projectmaster a
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                SUM(morning) AS total_morning, 
+                                SUM(afternoon) AS total_afternoon, 
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocess
+                            WHERE earn_code = 'ER001'
+                            GROUP BY project_code
+                        ) b ON a.prj_code = b.project_code
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                pay_month,
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocess
+                            WHERE earn_code = 'ER004'
+                            GROUP BY project_code, pay_month
+                        ) c ON a.prj_code = c.project_code
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                SUM(ot1) AS othrs,
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocess
+                            WHERE earn_code = 'ER002'
+                            GROUP BY project_code
+                        ) d ON a.prj_code = d.project_code
+                        WHERE a.comp_code = COALESCE(%s, a.comp_code)
+                          AND a.prj_code = COALESCE(%s, a.prj_code)
+                        ORDER BY a.prj_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Project_Wise_Job_Summary_Report'
+                        return export_to_excel(data, filename, 'Project Wise Job Summary')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing project wise job summary query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Project_wise_job_summary_History.jasper':
+                # Handle project wise job summary history report with direct SQL execution and Excel export
+                try:
+                    # Execute the project wise job summary history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        query = """
+                        SELECT 
+                            a.prj_code AS "PRJ_CODE", 
+                            a.project_description AS "PROJECT_DESCRIPTION", 
+                            c.pay_month AS "PAY_MONTH",
+                            a.prj_name AS "PRJ_NAME",
+                            (b.total_morning + b.total_afternoon) / 8 AS "TOTAL_DAYS", 
+                            d.othrs AS "OTHRS",
+                            d.total_amount AS "OT_AMOUNT", 
+                            (b.total_amount + c.total_amount) AS "TOTAL_AMOUNT",
+                            (b.total_amount + c.total_amount + d.total_amount) AS "GT"
+                        FROM payroll_projectmaster a
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                SUM(morning) AS total_morning, 
+                                SUM(afternoon) AS total_afternoon, 
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocess
+                            WHERE earn_code = 'ER001'
+                            GROUP BY project_code
+                        ) b ON a.prj_code = b.project_code
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                pay_month,
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocessarchieve
+                            WHERE earn_code = 'ER004'
+                            GROUP BY project_code, pay_month
+                        ) c ON a.prj_code = c.project_code
+                        LEFT JOIN (
+                            SELECT 
+                                project_code, 
+                                SUM(ot1) AS othrs,
+                                SUM(amount) AS total_amount
+                            FROM payroll_payprocessarchieve
+                            WHERE earn_code = 'ER002'
+                            GROUP BY project_code
+                        ) d ON a.prj_code = d.project_code
+                        WHERE a.comp_code = COALESCE(%s, a.comp_code)
+                          AND a.prj_code = COALESCE(%s, a.prj_code)
+                        ORDER BY a.prj_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Project_Wise_Job_Summary_History_Report'
+                        return export_to_excel(data, filename, 'Project Job Summary History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': f'Error executing project wise job summary history query: {str(e)}'
+                    }, status=500)
+                    
+            elif rname == 'PY_Paymentwise_Report.jasper':
+                # Handle payment wise report with direct SQL execution and Excel export
+                try:
+                    # Execute the payment wise report query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT  
+                            b.designation AS "DESIGNATION",
+                            b.process_cycle AS "PAY_CYCLE",
+                            a.employee_code AS "EMPLOYEE_CODE",
+                            b.emp_name AS "EMP_NAME",
+                            b.basic_pay AS "A_BASIC",
+                            b.allowance AS "A_ALLOW",
+                            c.process_comp_flag AS "STATUS",
+                            MAX((
+                              SELECT COUNT(*) 
+                              FROM payroll_workerattendanceregister 
+                              WHERE comp_code = a.comp_code 
+                                AND employee_code = a.employee_code 
+                                AND pay_process_month = a.pay_month 
+                                AND pay_cycle = a.pay_cycle 
+                                AND attendance_type = 26
+                            )) AS "PRESENT",
+                            MAX((
+                              SELECT COUNT(*) 
+                              FROM payroll_workerattendanceregister 
+                              WHERE comp_code = a.comp_code 
+                                AND employee_code = a.employee_code 
+                                AND pay_process_month = a.pay_month 
+                                AND pay_cycle = a.pay_cycle 
+                                AND attendance_type = 27
+                            )) AS "ABSENT",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.morning, 0) + COALESCE(a.afternoon, 0) ELSE 0 END) / 8 AS "WDAYS",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.ot1, 0) ELSE 0 END) AS "OT1_HOURS",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.ot2, 0) ELSE 0 END) AS "OT2_HOURS",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER001' THEN a.amount ELSE 0 END), 2) AS "BASIC",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER004' THEN a.amount ELSE 0 END), 2) AS "ALLOWANCE",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER002' THEN a.amount ELSE 0 END), 2) AS "OT1",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER003' THEN a.amount ELSE 0 END), 2) AS "OT2",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER900' THEN a.amount ELSE 0 END), 2) AS "G_PAY",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'DD900' THEN a.amount ELSE 0 END), 2) AS "G_DED",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER999' THEN a.amount ELSE 0 END), 2) AS "NET",
+                            CASE  
+                              WHEN b.EMPLOYEE_BANK IS NOT NULL AND b.ACCOUNT_NO IS NOT NULL THEN b.EMPLOYEE_BANK  
+                              ELSE 'CASH'  
+                            END AS "PAYMENT"
+                        FROM payroll_payprocess a
+                        JOIN payroll_employee b 
+                          ON a.comp_code = b.comp_code AND a.employee_code = b.emp_code
+                        JOIN payroll_paycyclemaster c 
+                          ON a.pay_cycle = c.process_cycle
+                        WHERE a.comp_code = COALESCE(%s, a.comp_code)
+                         AND a.pay_cycle = COALESCE(%s, a.pay_cycle)
+                         AND a.pay_month = COALESCE(%s, a.pay_month)
+                         AND a.employee_code = COALESCE(%s, a.employee_code)
+                        GROUP BY  
+                            a.comp_code,
+                            b.designation,
+                            a.employee_code,
+                            b.emp_name,
+                            b.basic_pay,
+                            b.allowance,
+                            a.pay_cycle,
+                            b.EMPLOYEE_BANK,
+                            b.ACCOUNT_NO,
+                            b.process_cycle,
+                            c.process_comp_flag
+                        ORDER BY a.employee_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, pay_cycle_param, pay_month_param, p3_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Payment_Wise_Report'
+                        return export_to_excel(data, filename, 'Payment Wise Report')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing payment wise report query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Paymentwise_Report_History.jasper':
+                # Handle payment wise report history with direct SQL execution and Excel export
+                try:
+                    # Execute the payment wise report history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT  
+                            b.designation AS "DESIGNATION",
+                            b.process_cycle AS "PAY_CYCLE",
+                            a.employee_code AS "EMPLOYEE_CODE",
+                            b.emp_name AS "EMP_NAME",
+                            b.basic_pay AS "A_BASIC",
+                            b.allowance AS "A_ALLOW",
+                            c.process_comp_flag AS "STATUS",
+                            MAX((
+                              SELECT COUNT(*) 
+                              FROM payroll_workerattendanceregister 
+                              WHERE comp_code = a.comp_code 
+                                AND employee_code = a.employee_code 
+                                AND pay_process_month = a.pay_month 
+                                AND pay_cycle = a.pay_cycle 
+                                AND attendance_type = 26
+                            )) AS "PRESENT",
+                            MAX((
+                              SELECT COUNT(*) 
+                              FROM payroll_workerattendanceregister 
+                              WHERE comp_code = a.comp_code 
+                                AND employee_code = a.employee_code 
+                                AND pay_process_month = a.pay_month 
+                                AND pay_cycle = a.pay_cycle 
+                                AND attendance_type = 27
+                            )) AS "ABSENT",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.morning, 0) + COALESCE(a.afternoon, 0) ELSE 0 END) / 8 AS "WDAYS",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.ot1, 0) ELSE 0 END) AS "OT1_HOURS",
+                            SUM(CASE WHEN a.earn_code = 'ER001' THEN COALESCE(a.ot2, 0) ELSE 0 END) AS "OT2_HOURS",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER001' THEN a.amount ELSE 0 END), 2) AS "BASIC",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER004' THEN a.amount ELSE 0 END), 2) AS "ALLOWANCE",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER002' THEN a.amount ELSE 0 END), 2) AS "OT1",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER003' THEN a.amount ELSE 0 END), 2) AS "OT2",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER900' THEN a.amount ELSE 0 END), 2) AS "G_PAY",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'DD900' THEN a.amount ELSE 0 END), 2) AS "G_DED",
+                            ROUND(SUM(CASE WHEN a.earn_code = 'ER999' THEN a.amount ELSE 0 END), 2) AS "NET",
+                            CASE  
+                              WHEN b.EMPLOYEE_BANK IS NOT NULL AND b.ACCOUNT_NO IS NOT NULL THEN b.EMPLOYEE_BANK  
+                              ELSE 'CASH'  
+                            END AS "PAYMENT"
+                        FROM payroll_payprocessarchieve a
+                        JOIN payroll_employee b 
+                          ON a.comp_code = b.comp_code AND a.employee_code = b.emp_code
+                        JOIN payroll_paycyclemaster c 
+                          ON a.pay_cycle = c.process_cycle
+                        WHERE a.comp_code = COALESCE(%s, a.comp_code)
+                         AND a.pay_cycle = COALESCE(%s, a.pay_cycle)
+                         AND a.pay_month = COALESCE(%s, a.pay_month)
+                         AND a.employee_code = COALESCE(%s, a.employee_code)
+                        GROUP BY  
+                            a.comp_code,
+                            b.designation,
+                            a.employee_code,
+                            b.emp_name,
+                            b.basic_pay,
+                            b.allowance,
+                            a.pay_cycle,
+                            b.EMPLOYEE_BANK,
+                            b.ACCOUNT_NO,
+                            b.process_cycle,
+                            c.process_comp_flag
+                        ORDER BY a.employee_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, pay_cycle_param, pay_month_param, p3_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Payment_Wise_Report_History'
+                        return export_to_excel(data, filename, 'Payment Wise Report History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing payment wise report history query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Pay_Slip_2.jasper':
+                # Handle pay slip report with direct SQL execution and Excel export
+                try:
+                    # Execute the pay slip query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        
+                        # Parse p2 parameter to extract process_cycle
+                        process_cycle_param = None
+                        if p2_param and ',' in p2_param:
+                            split_p2 = p2_param.split(',')
+                            if len(split_p2) >= 1:
+                                process_cycle_param = split_p2[0].strip()
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.designation AS "DESIG_CODE",
+                            a.department AS "DEPARTMENT",
+                            ROUND(a.basic_pay, 2) AS "BASIC_PAY",
+                            b.process_description AS "PROCESS_DESCRIPTION",
+                            b.pay_process_month AS "PAY_PROCESS_MONTH",
+                            a.employee_bank,
+                            a.bank_branch,
+                            a.account_no,
+                            a.iban_number,
+                            a.date_of_join,
+                            TO_CHAR(TO_DATE(b.pay_process_month, 'MMYYYY'), 'MON/YYYY') AS "FORMATTED_PAY_PROCESS_MONTH",
+                            
+                            -- Sum of additional earnings as allowances excluding specific earn_reports
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) = 'EARNINGS' 
+                                     AND c.earn_reports NOT IN ('EARN OT1', 'EARN OT2', 'EARN BASIC', 'NET PAY') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "ALLOWANCES",
+
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) = 'EARNINGS' 
+                                     AND c.earn_reports IN ('EARN OT1', 'EARN OT2') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "OT",
+                            
+                            -- Sum of deductions
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) IN ('DEDUCTIONS', 'DEDUCTIONS1') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "DEDUCTIONS"
+
+                        FROM
+                            payroll_employee a
+                            INNER JOIN payroll_paycyclemaster b 
+                                ON a.process_cycle = b.process_cycle
+                                AND a.comp_code = b.comp_code
+                            RIGHT JOIN payroll_payprocess c 
+                                ON a.emp_code = c.employee_code
+                                AND c.pay_month = b.pay_process_month
+                                AND a.comp_code = c.comp_code
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code = COALESCE(%s, a.emp_code)
+                            AND a.process_cycle = COALESCE(%s, a.process_cycle)
+                        GROUP BY
+                            a.emp_code,
+                            a.emp_name,
+                            a.designation,
+                            a.basic_pay,
+                            b.process_description,
+                            b.pay_process_month,
+                            a.department,
+                            a.employee_bank,
+                            a.bank_branch,
+                            a.account_no,
+                            a.iban_number,
+                            a.date_of_join
+                        ORDER BY a.emp_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param, process_cycle_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Pay_Slip_Report'
+                        return export_to_excel(data, filename, 'Pay Slip Report')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing pay slip query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Pay_Slip_2_History.jasper':
+                # Handle pay slip history report with direct SQL execution and Excel export
+                try:
+                    # Execute the pay slip history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        
+                        # Parse p2 parameter to extract process_cycle
+                        process_cycle_param = None
+                        if p2_param and ',' in p2_param:
+                            split_p2 = p2_param.split(',')
+                            if len(split_p2) >= 1:
+                                process_cycle_param = split_p2[0].strip()
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.designation AS "DESIG_CODE",
+                            a.department AS "DEPARTMENT",
+                            ROUND(a.basic_pay, 2) AS "BASIC_PAY",
+                            b.process_description AS "PROCESS_DESCRIPTION",
+                            b.pay_process_month AS "PAY_PROCESS_MONTH",
+                            a.employee_bank,
+                            a.bank_branch,
+                            a.account_no,
+                            a.iban_number,
+                            a.date_of_join,
+                            TO_CHAR(TO_DATE(b.pay_process_month, 'MMYYYY'), 'MON/YYYY') AS "FORMATTED_PAY_PROCESS_MONTH",
+                            
+                            -- Sum of additional earnings as allowances excluding specific earn_reports
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) = 'EARNINGS' 
+                                     AND c.earn_reports NOT IN ('EARN OT1', 'EARN OT2', 'EARN BASIC', 'NET PAY') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "ALLOWANCES",
+
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) = 'EARNINGS' 
+                                     AND c.earn_reports IN ('EARN OT1', 'EARN OT2') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "OT",
+                            
+                            -- Sum of deductions
+                            ROUND(SUM(CASE 
+                                WHEN UPPER(c.earn_type) IN ('DEDUCTIONS', 'DEDUCTIONS1') 
+                                THEN c.amount 
+                                ELSE 0 
+                            END), 2) AS "DEDUCTIONS"
+
+                        FROM
+                            payroll_employee a
+                            INNER JOIN payroll_paycyclemaster b 
+                                ON a.process_cycle = b.process_cycle
+                                AND a.comp_code = b.comp_code
+                            RIGHT JOIN payroll_payprocessarchieve c 
+                                ON a.emp_code = c.employee_code
+                                AND c.pay_month = b.pay_process_month
+                                AND a.comp_code = c.comp_code
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code = COALESCE(%s, a.emp_code)
+                            AND a.process_cycle = COALESCE(%s, a.process_cycle)
+                        GROUP BY
+                            a.emp_code,
+                            a.emp_name,
+                            a.designation,
+                            a.basic_pay,
+                            b.process_description,
+                            b.pay_process_month,
+                            a.department,
+                            a.employee_bank,
+                            a.bank_branch,
+                            a.account_no,
+                            a.iban_number,
+                            a.date_of_join
+                        ORDER BY a.emp_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param, process_cycle_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Pay_Slip_History_Report'
+                        return export_to_excel(data, filename, 'Pay Slip History')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing pay slip history query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Employee_Salary_Detail.jasper':
+                # Handle employee salary detail report with direct SQL execution and Excel export
+                try:
+                    # Execute the employee salary detail query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.grade_code AS "GRADE_CODE",
+                            a.designation AS "DESIGNATION",
+                            a.department AS "DEPARTMENT",
+                            a.emp_status AS "EMP_STATUS",
+                            a.basic_pay AS "BASIC_PAY",
+                            a.allowance AS "ALLOWANCE",
+                            a.process_cycle AS "PROCESS_CYCLE",
+                            -- Aggregate all earn/deduct codes and amounts into a single row
+                            STRING_AGG(DISTINCT ed.earn_deduct_code || ': ' || COALESCE(cm.base_description, 'N/A'), '; ') AS "EARN_DEDUCT_CODES",
+                            STRING_AGG(DISTINCT ed.earn_deduct_code || ': ' || ed.earn_deduct_amt::TEXT, '; ') AS "EARN_DEDUCT_AMOUNTS",
+                            COUNT(DISTINCT ed.earn_deduct_code) AS "TOTAL_EARN_DEDUCT_ITEMS",
+                            SUM(ed.earn_deduct_amt) AS "TOTAL_EARN_DEDUCT_AMOUNT"
+                        FROM
+                            payroll_employee a
+                            LEFT JOIN payroll_earndeductmaster ed 
+                                ON a.emp_code = ed.employee_code 
+                                AND a.comp_code = ed.comp_code
+                            LEFT JOIN payroll_codemaster cm 
+                                ON ed.earn_deduct_code = cm.base_value 
+                                AND ed.comp_code = cm.comp_code
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code = COALESCE(%s, a.emp_code)
+                            AND a.process_cycle = COALESCE(%s, a.process_cycle)
+                        GROUP BY
+                            a.emp_code,
+                            a.emp_name,
+                            a.grade_code,
+                            a.designation,
+                            a.department,
+                            a.emp_status,
+                            a.basic_pay,
+                            a.allowance,
+                            a.process_cycle
+                        ORDER BY
+                            a.emp_code,
+                            a.grade_code,
+                            a.designation;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param, p2_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Employee_Salary_Detail_Report'
+                        return export_to_excel(data, filename, 'Employee Salary Detail')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing employee salary detail query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Employee_Details.jasper':
+                # Handle employee details report with direct SQL execution and Excel export
+                try:
+                    # Execute the employee details query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.emp_sex AS "EMP_SEX",
+                            a.dob AS "DOB",
+                            a.date_of_join AS "DATE_OF_JOIN",
+                            a.grade_code AS "GRADE_CODE",
+                            a.designation AS "DESIGNATION",
+                            a.department AS "DEPARTMENT",
+                            a.nationality AS "NATIONALITY",
+                            a.emp_status AS "EMP_STATUS",
+                            a.process_cycle AS "PROCESS_CYCLE"
+                        FROM
+                            payroll_employee a
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.category = COALESCE(%s, a.category)
+                            AND a.emp_code = COALESCE(%s, a.emp_code)
+                        ORDER BY
+                            a.emp_code,
+                            a.grade_code,
+                            a.designation;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param, p2_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Employee_Details_Report'
+                        return export_to_excel(data, filename, 'Employee Details')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing employee details query: {str(e)}'
+                        }, status=500)
+                        
+            elif rname == 'PY_Employee_Advance_Details.jasper':
+                # Handle employee advance report with direct SQL execution and Excel export
+                try:
+                    # Execute the employee advance query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.designation AS "DESIGNATION",
+                            a.department AS "DEPARTMENT",
+                            c.advance_code AS "ADVANCE_CODE",
+                            b.base_description AS "BASE_DESCRIPTION",
+                            c.advance_reference AS "ADVANCE_REFERENCE",
+                            c.reference_date AS "REFERENCE_DATE",
+                            c.total_amt AS "TOTAL_AMT",
+                            c.paid_amt AS "PAID_AMT",
+                            c.total_no_instalment AS "TOTAL_NO_INSTALMENT"
+                        FROM
+                            payroll_employee a
+                        JOIN
+                            payroll_codemaster b ON a.comp_code = b.comp_code
+                        JOIN
+                            payroll_advancemaster c ON a.comp_code = c.comp_code AND a.emp_code = c.emp_code
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code = COALESCE(%s, a.emp_code)
+                            AND c.advance_code = b.base_value
+                        ORDER BY
+                            a.emp_code,
+                            c.advance_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [company_code_param, p1_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Employee_Advance_Report'
+                        return export_to_excel(data, filename, 'Employee Advance Report')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing employee advance query: {str(e)}'
+                        }, status=500)
+                    
+            elif rname == 'PY_Salary_Register(Multi).jasper':
+                # Handle salary register multi line report with direct SQL execution and Excel export
+                try:
+                    # Execute the salary register multi line query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.designation AS "DESIGNATION",
+                            a.religion AS "RELIGION",
+                            a.department AS "DEPARTMENT",
+                            a.process_cycle AS "PC",
+                            a.emp_status AS "STATUS",
+                            a.basic_pay AS "BASIC_PAY",
+                            f.process_comp_flag AS "PRO_STATUS",
+                            CASE
+                                WHEN f.attendance_uom = '52' THEN
+                                    ROUND(((SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.morning, 0) ELSE 0 END) +
+                                            SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.afternoon, 0) ELSE 0 END)) / 8.0), 1)
+                                ELSE
+                                    ROUND((SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.morning, 0) ELSE 0 END) +
+                                           SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.afternoon, 0) ELSE 0 END)), 1)
+                            END AS "WORKDAYS",
+                            CASE WHEN a.employee_bank IS NULL THEN 'CASH' ELSE 'BANK' END AS "MODE",
+                            COALESCE(a.date_of_rejoin, a.date_of_join) AS "DOJ",
+                            -- Aggregate all earn/deduct codes and amounts into a single row
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || p.earn_reports, '; ') AS "EARN_DEDUCT_CODES",
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || 
+                                CASE
+                                    WHEN p.earn_reports = 'EARN OT1' THEN COALESCE(p.ot1, 0)::TEXT
+                                    WHEN p.earn_reports = 'EARN OT2' THEN COALESCE(p.ot2, 0)::TEXT
+                                    ELSE '0'
+                                END, '; ') AS "OT_HOURS",
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || 
+                                CASE
+                                    WHEN p.earn_type = 'EARNINGS' OR p.earn_type = 'EARN' THEN
+                                        ROUND(COALESCE(p.amount, 0), 0)::TEXT
+                                    ELSE
+                                        (p.amount * -1)::TEXT
+                                END, '; ') AS "EARN_DEDUCT_AMOUNTS",
+                            COUNT(DISTINCT p.earn_code) AS "TOTAL_EARN_DEDUCT_ITEMS",
+                            SUM(CASE
+                                WHEN p.earn_type = 'EARNINGS' OR p.earn_type = 'EARN' THEN
+                                    COALESCE(p.amount, 0)
+                                ELSE
+                                    (p.amount * -1)
+                            END) AS "TOTAL_EARN_DEDUCT_AMOUNT"
+                        FROM
+                            payroll_employee a
+                            INNER JOIN payroll_payprocess d 
+                                ON a.comp_code = d.comp_code AND a.emp_code = d.employee_code
+                            INNER JOIN payroll_paycyclemaster f 
+                                ON a.comp_code = f.comp_code AND d.pay_cycle = f.process_cycle
+                            LEFT JOIN payroll_payprocess p
+                                ON a.emp_code = p.employee_code 
+                                AND a.comp_code = p.comp_code
+                                AND p.earn_code NOT IN ('ER900', 'ER999', 'DD900')
+                                AND p.pay_cycle = COALESCE(%s, p.pay_cycle)
+                                AND p.pay_month = COALESCE(%s, p.pay_month)
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code IN (
+                                SELECT DISTINCT employee_code FROM payroll_payprocess
+                            )
+                            AND d.pay_cycle = COALESCE(%s, d.pay_cycle)
+                            AND d.pay_month = COALESCE(%s, d.pay_month)
+                        GROUP BY
+                            a.emp_code,
+                            a.emp_name,
+                            a.designation,
+                            a.religion,
+                            a.department,
+                            a.process_cycle,
+                            a.emp_status,
+                            a.basic_pay,
+                            f.process_comp_flag,
+                            a.employee_bank,
+                            a.date_of_rejoin,
+                            a.date_of_join,
+                            f.attendance_uom
+                        ORDER BY a.emp_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [pay_cycle_param, pay_month_param, company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Salary_Register_Multi_Line_Report'
+                        return export_to_excel(data, filename, 'Salary Register Multi Line')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing salary register multi line query: {str(e)}'
+                        }, status=500)
+                    
+            elif rname == 'PY_Salary_Register(Multi)History.jasper':
+                # Handle salary register multi line history report with direct SQL execution and Excel export
+                try:
+                    # Execute the salary register multi line history query
+                    with connection.cursor() as cursor:
+                        
+                        # Prepare parameters safely
+                        company_code_param = company_code if company_code else None
+                        p1_param = p1 if p1 else None
+                        p2_param = p2 if p2 else None
+                        p3_param = p3 if p3 else None
+                        
+                        # Parse p1 parameter to extract pay_cycle and pay_month
+                        pay_cycle_param = None
+                        pay_month_param = None
+                        if p1_param and ',' in p1_param:
+                            split_p1 = p1_param.split(',')
+                            if len(split_p1) >= 2:
+                                pay_cycle_param = split_p1[0].strip()
+                                pay_month_param = split_p1[1].strip()
+                        
+                        query = """
+                        SELECT
+                            a.emp_code AS "EMP_CODE",
+                            a.emp_name AS "EMP_NAME",
+                            a.designation AS "DESIGNATION",
+                            a.religion AS "RELIGION",
+                            a.department AS "DEPARTMENT",
+                            a.process_cycle AS "PC",
+                            a.emp_status AS "STATUS",
+                            a.basic_pay AS "BASIC_PAY",
+                            f.process_comp_flag AS "PRO_STATUS",
+                            CASE
+                                WHEN f.attendance_uom = '52' THEN
+                                    ROUND(((SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.morning, 0) ELSE 0 END) +
+                                            SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.afternoon, 0) ELSE 0 END)) / 8.0), 1)
+                                ELSE
+                                    ROUND((SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.morning, 0) ELSE 0 END) +
+                                           SUM(CASE WHEN d.earn_code = 'ER001' THEN COALESCE(d.afternoon, 0) ELSE 0 END)), 1)
+                            END AS "WORKDAYS",
+                            CASE WHEN a.employee_bank IS NULL THEN 'CASH' ELSE 'BANK' END AS "MODE",
+                            COALESCE(a.date_of_rejoin, a.date_of_join) AS "DOJ",
+                            -- Aggregate all earn/deduct codes and amounts into a single row
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || p.earn_reports, '; ') AS "EARN_DEDUCT_CODES",
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || 
+                                CASE
+                                    WHEN p.earn_reports = 'EARN OT1' THEN COALESCE(p.ot1, 0)::TEXT
+                                    WHEN p.earn_reports = 'EARN OT2' THEN COALESCE(p.ot2, 0)::TEXT
+                                    ELSE '0'
+                                END, '; ') AS "OT_HOURS",
+                            STRING_AGG(DISTINCT p.earn_code || ': ' || 
+                                CASE
+                                    WHEN p.earn_type = 'EARNINGS' OR p.earn_type = 'EARN' THEN
+                                        ROUND(COALESCE(p.amount, 0), 0)::TEXT
+                                    ELSE
+                                        (p.amount * -1)::TEXT
+                                END, '; ') AS "EARN_DEDUCT_AMOUNTS",
+                            COUNT(DISTINCT p.earn_code) AS "TOTAL_EARN_DEDUCT_ITEMS",
+                            SUM(CASE
+                                WHEN p.earn_type = 'EARNINGS' OR p.earn_type = 'EARN' THEN
+                                    COALESCE(p.amount, 0)
+                                ELSE
+                                    (p.amount * -1)
+                            END) AS "TOTAL_EARN_DEDUCT_AMOUNT"
+                        FROM
+                            payroll_employee a
+                            INNER JOIN payroll_payprocess d 
+                                ON a.comp_code = d.comp_code AND a.emp_code = d.employee_code
+                            INNER JOIN payroll_paycyclemaster f 
+                                ON a.comp_code = f.comp_code AND d.pay_cycle = f.process_cycle
+                            LEFT JOIN payroll_payprocessarchieve p
+                                ON a.emp_code = p.employee_code 
+                                AND a.comp_code = p.comp_code
+                                AND p.earn_code NOT IN ('ER900', 'ER999', 'DD900')
+                                AND p.pay_cycle = COALESCE(%s, p.pay_cycle)
+                                AND p.pay_month = COALESCE(%s, p.pay_month)
+                        WHERE
+                            a.comp_code = COALESCE(%s, a.comp_code)
+                            AND a.emp_code IN (
+                                SELECT DISTINCT employee_code FROM payroll_payprocessarchieve
+                            )
+                            AND d.pay_cycle = COALESCE(%s, d.pay_cycle)
+                            AND d.pay_month = COALESCE(%s, d.pay_month)
+                        GROUP BY
+                            a.emp_code,
+                            a.emp_name,
+                            a.designation,
+                            a.religion,
+                            a.department,
+                            a.process_cycle,
+                            a.emp_status,
+                            a.basic_pay,
+                            f.process_comp_flag,
+                            a.employee_bank,
+                            a.date_of_rejoin,
+                            a.date_of_join,
+                            f.attendance_uom
+                        ORDER BY a.emp_code;
+                        """
+                        
+                        # Execute query with proper parameters
+                        params = [pay_cycle_param, pay_month_param, company_code_param, pay_cycle_param, pay_month_param]
+                        cursor.execute(query, params)
+                        results = cursor.fetchall()
+                        
+                        if not results:
+                            return JsonResponse({
+                                'status': 'error',
+                                'message': 'No data found for the given parameters'
+                            }, status=404)
+                            
+                        # Get column names
+                        columns = [desc[0] for desc in cursor.description]
+                        
+                        # Convert results to list of dictionaries
+                        data = []
+                        for row in results:
+                            data.append(dict(zip(columns, row)))
+                        
+                        # Export to Excel
+                        filename = 'Salary Multi History Report'
+                        return export_to_excel(data, filename, 'Salary Multi History Report')
+                        
+                except Exception as e:
+                    print(f"Error details: {str(e)}")
+                    return JsonResponse({
+                            'status': 'error',
+                            'message': f'Error executing salary register multi line history query: {str(e)}'
+                        }, status=500)
+                
+            elif rname == 'PY_Documents_Tracker_Report.jasper':
                 # Handle document tracker report with direct SQL execution and Excel export
                 try:
                     # Execute the document tracker query

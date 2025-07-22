@@ -32,9 +32,14 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="button" class="btn btn-primary" id="generateReportBtn">
                                     <i class="ti ti-file-text me-2"></i>Generate Report
                                 </button>
+                                <!-- Hidden format select that will be submitted with the form -->
+                                <select name="format" id="reportFormat" style="display: none;">
+                                    <option value="excel">Excel (.xlsx)</option>
+                                    <option value="pdf">PDF (.pdf)</option>
+                                </select>
                             </div>
                         </form>
                     </div>
@@ -44,15 +49,69 @@
     </div>
 </div>
 
-<!-- <script>
+<!-- Report Format Selection Modal -->
+<div class="modal fade" id="reportFormatModal" tabindex="-1" aria-labelledby="reportFormatModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportFormatModalLabel">Select Report Format</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modalReportFormat">Choose the format for your report:</label>
+                    <select class="form-control" id="modalReportFormat">
+                        <option value="excel">Excel (.xlsx)</option>
+                        <option value="pdf">PDF (.pdf)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitReportBtn">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
     $(document).ready(function () {
-        // Add any JavaScript logic if needed
-        $('#salary-register-form').on('submit', function (e) {
+        // Show modal when Generate Report button is clicked
+        $('#generateReportBtn').on('click', function (e) {
             e.preventDefault();
-            // Perform validation or AJAX submission if required
-            alert('Form submitted successfully!');
+            
+            // Check if project is selected
+            var selectedProject = $('#project').val();
+            if (!selectedProject) {
+                alert('Please select a project before generating the report.');
+                $('#project').focus();
+                return;
+            }
+            
+            $('#reportFormatModal').modal('show');
+        });
+        
+        // Handle Submit button in modal
+        $('#submitReportBtn').on('click', function () {
+            var selectedFormat = $('#modalReportFormat').val();
+            console.log('Selected format:', selectedFormat);
+            
+            // Validate format selection
+            if (!selectedFormat) {
+                alert('Please select a report format.');
+                return;
+            }
+            
+            // Set the value in the hidden form select
+            $('#reportFormat').val(selectedFormat);
+            
+            // Close modal
+            $('#reportFormatModal').modal('hide');
+            
+            // Submit the form directly (format will be sent via the select name attribute)
+            $('#salary-register-form').submit();
         });
     });
-</script> -->
+</script>
 
 {% endblock content %}
