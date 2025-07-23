@@ -579,16 +579,20 @@ def save_employee(request):
             document_files = request.FILES.getlist("document_file[]")
             document_ids = request.POST.getlist("document_id[]")
 
-            # Save new documents to the database
-            for doc_type, doc_file, doc_id in zip(document_types, document_files, document_ids):
+            from itertools import zip_longest
+            for doc_type, doc_file, doc_id in zip_longest(document_types, document_files, document_ids, fillvalue=None):
                 try:
-                    if doc_type and doc_file: 
-                        if doc_id != '' and doc_id is not None:    
-                            document = EmployeeDocument.objects.get(document_id=doc_id)
-                            document.document_type = doc_type
+                    if not doc_type:
+                        continue
+                        
+                    if doc_id and doc_id != '':
+                        document = EmployeeDocument.objects.get(document_id=doc_id)
+                        document.document_type = doc_type
+                        if doc_file:
                             document.document_file = doc_file
-                            document.save()                            
-                        else:
+                        document.save()
+                    else:
+                        if doc_file:
                             EmployeeDocument.objects.create(
                                 comp_code=COMP_CODE,
                                 emp_code=employee.emp_code,
