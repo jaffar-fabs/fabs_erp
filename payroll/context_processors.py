@@ -23,7 +23,7 @@ def get_comp_code(request):
 
 def get_currency(request):
     comp_code = get_comp_code(request)
-    currency_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='CURRENCY')
+    currency_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='CURRENCY', is_active='Y')
     return {
         'currency_data': currency_data
     }
@@ -31,14 +31,14 @@ def get_currency(request):
 def gender_data(request):
     comp_code = get_comp_code(request)
     set_comp_code(request)
-    gender_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='SEX')
+    gender_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='SEX', is_active='Y')
     return {
         'gender_data': gender_data
     }
 
 def get_paycycle(request):
     comp_code = get_comp_code(request)
-    paycycle_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE')
+    paycycle_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS CYCLE', is_active='Y')
     paymonth = PaycycleMaster.objects.filter(comp_code=comp_code)
     return {
         'paycycle_data': paycycle_data,
@@ -47,35 +47,35 @@ def get_paycycle(request):
 
 def get_country(request):
     comp_code = get_comp_code(request)
-    country_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='COUNTRY')
+    country_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='COUNTRY', is_active='Y')
     return {
         'country_data': country_data
     }
 
 def get_place(request):
     comp_code = get_comp_code(request)
-    place_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PLACE')
+    place_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PLACE', is_active='Y')
     return {
         'place_data': place_data
     }
 
 def get_bank(request):
     comp_code = get_comp_code(request)
-    bank_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BANK')
+    bank_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BANK', is_active='Y')
     return {
         'bank_data': bank_data
     }
 
 def get_branch(request):
     comp_code = get_comp_code(request)
-    branch_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BRANCH')
+    branch_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='BRANCH', is_active='Y')
     return {
         'branch_data': branch_data
     }
 
 def get_documents(request):
     comp_code = get_comp_code(request)
-    doc_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DOC')
+    doc_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DOC', is_active='Y')
     return {
         'doc_data': doc_data
     }
@@ -89,77 +89,77 @@ def check_process_cycle(request):
 
 def get_pay_process_flag(request):
     comp_code = get_comp_code(request)
-    pay_flag_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS COMPLETION FLAG')
+    pay_flag_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS COMPLETION FLAG', is_active='Y')
     return {   
         'pay_flag_data': pay_flag_data
         }
 
 def get_status(request):
     comp_code = get_comp_code(request)
-    status_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='STATUS')
+    status_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='STATUS', is_active='Y')
     return {
         'status_data': status_data
         }
 
 def mar_status(request):
     comp_code = get_comp_code(request)
-    mar_status_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='MARITAL STATUS')
+    mar_status_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='MARITAL STATUS', is_active='Y')
     return {
          'mar_status_data': mar_status_data
          }
 
 def desig(request):
     comp_code = get_comp_code(request)
-    desig_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DESIGNATION')
+    desig_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DESIGNATION', is_active='Y')
     return {
          'desig_data': desig_data
          }
 
 def dept(request):
     comp_code = get_comp_code(request)
-    dept_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DEPT')
+    dept_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='DEPT', is_active='Y')
     return {
          'dept_data': dept_data
          }
 
 def process_flag(request):
     comp_code = get_comp_code(request)
-    pf_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS COMPLETION FLAG')
+    pf_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROCESS COMPLETION FLAG', is_active='Y')
     return {
          'pf_data': pf_data
          }
 
 def at_uom(request):
     comp_code = get_comp_code(request)
-    at_uom_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='ATTENDANCE UOM')
+    at_uom_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='ATTENDANCE UOM', is_active='Y')
     return {
          'at_uom_data': at_uom_data
          }
 
 def pro_type(request):
     comp_code = get_comp_code(request)
-    pro_type_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROJECT TYPE')
+    pro_type_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROJECT TYPE', is_active='Y')
     return {
          'pro_type_data': pro_type_data
          }
 
 def pro_city(request):
     comp_code = get_comp_code(request)
-    pro_city_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROJECT CITY')
+    pro_city_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='PROJECT CITY', is_active='Y')
     return {
          'pro_city_data': pro_city_data
          }
 
 def nationality(request):
     comp_code = get_comp_code(request)
-    nation_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='NATIONALITY')
+    nation_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='NATIONALITY', is_active='Y')
     return {
          'nation_data': nation_data
          }
 
 def hol_type(request):
     comp_code = get_comp_code(request)
-    hol_type_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='HOLIDAY')
+    hol_type_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='HOLIDAY', is_active='Y')
     return {
          'hol_type_data': hol_type_data
          }
