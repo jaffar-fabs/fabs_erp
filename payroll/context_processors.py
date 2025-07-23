@@ -31,7 +31,7 @@ def get_currency(request):
 def gender_data(request):
     comp_code = get_comp_code(request)
     set_comp_code(request)
-    gender_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='SEX', is_active='Y')
+    gender_data = CodeMaster.objects.filter(comp_code=comp_code, base_type='GENDER', is_active='Y')
     return {
         'gender_data': gender_data
     }
