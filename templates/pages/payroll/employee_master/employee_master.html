@@ -901,8 +901,8 @@
                     const newRow = document.createElement('tr');
                     newRow.innerHTML = `
                         <td>
-                            <input type="hidden" name="document_id[]" value="${doc.document_id}">
-                            <select class="form-select" name="document_type[]">
+                            <input type="hidden" value="${doc.document_id}">
+                            <select class="form-select">
                                 {% for document in doc_data %}
                                     <option value="{{ document.base_value }}" ${doc.document_type === '{{ document.base_value }}' ? 'selected' : ''}>
                                         {{ document.base_description }}
@@ -911,7 +911,7 @@
                             </select>
                         </td>
                         <td>
-                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                            <input type="file" class="form-control" accept="application/pdf,image/*">
                             ${doc.document_file ? `
                                 <div class="mt-2">
                                     <label>${doc.document_file.split('/').pop()}</label>

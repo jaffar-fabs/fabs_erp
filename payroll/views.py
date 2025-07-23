@@ -583,7 +583,12 @@ def save_employee(request):
             for doc_type, doc_file, doc_id in zip(document_types, document_files, document_ids):
                 try:
                     if doc_type and doc_file: 
-                        if doc_id == '':    
+                        if doc_id != '' and doc_id is not None:    
+                            document = EmployeeDocument.objects.get(document_id=doc_id)
+                            document.document_type = doc_type
+                            document.document_file = doc_file
+                            document.save()                            
+                        else:
                             EmployeeDocument.objects.create(
                                 comp_code=COMP_CODE,
                                 emp_code=employee.emp_code,
@@ -591,11 +596,6 @@ def save_employee(request):
                                 document_file=doc_file,
                                 created_by=1,  # Replace with actual user ID if available
                             )
-                        else:
-                            document = EmployeeDocument.objects.get(document_id=doc_id)
-                            document.document_type = doc_type
-                            document.document_file = doc_file
-                            document.save()
                 except Exception as e:
                     return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
