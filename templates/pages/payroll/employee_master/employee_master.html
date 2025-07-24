@@ -492,6 +492,9 @@
                         $("#emp_id").val(response.data.employee_id);
                         $("#emp_code").val(response.data.emp_code);
                         $("#emp_name_passport").val(response.data.emp_name);
+                        if (response.data.emp_code && response.data.emp_name) {
+                            $("#form-head").text(`Employee Form (${response.data.emp_code} - ${response.data.emp_name})`);
+                        }
                         $("#surname").val(response.data.surname);
                         $("#dob").val(response.data.dob);
                         $("#emp_sex").val(response.data.emp_sex);
@@ -1444,7 +1447,7 @@
                 $("#offcanvas_add .btn:not(.btn-close):not(.btn-sm)").hide();
                 
                 // Change the header title to indicate view mode
-                $("#offcanvas_add .offcanvas-header h4").text("View Employee Details");
+                // $("#offcanvas_add .offcanvas-header h4").text("View Employee Details");
                 
                 // Add a close button if not present
                 if ($("#offcanvas_add .btn-close").length === 0) {
@@ -1472,6 +1475,9 @@
                         $("#emp_id").val(response.data.employee_id);
                         $("#emp_code").val(response.data.emp_code);
                         $("#emp_name_passport").val(response.data.emp_name);
+                        if (response.data.emp_code && response.data.emp_name) {
+                            $("#form-head").text(`View Employee Details (${response.data.emp_code} - ${response.data.emp_name})`);
+                        }
                         $("#surname").val(response.data.surname);
                         $("#dob").val(response.data.dob);
                         $("#emp_sex").val(response.data.emp_sex);

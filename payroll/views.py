@@ -136,6 +136,39 @@ def employee_master(request):
             if emp['dob']:
                 emp['dob'] = emp['dob'].strftime('%d/%m/%Y')
 
+            # Fetch individual allowances from EarnDeductMaster
+            earn_deducts = EarnDeductMaster.objects.filter(
+                comp_code=COMP_CODE,
+                employee_code=emp['emp_code'],
+                earn_type='EARNINGS',
+                is_active=True
+            )
+
+            # Initialize allowance fields
+            emp['allowance1'] = 0.00
+            emp['allowance2'] = 0.00
+            emp['allowance3'] = 0.00
+            emp['allowance4'] = 0.00
+            emp['allowance5'] = 0.00
+            emp['allowance6'] = 0.00
+            emp['allowance7'] = 0.00
+            emp['allowance8'] = 0.00
+
+            # Populate individual allowances
+            allowance_count = 1
+            for earn_deduct in earn_deducts:
+                if allowance_count <= 8:
+                    emp[f'allowance{allowance_count}'] = float(earn_deduct.earn_deduct_amt or 0)
+                    allowance_count += 1
+
+            # Calculate total salary (basic + all allowances)
+            basic_pay = float(emp['basic_pay'] or 0)
+            total_allowances = sum([
+                emp['allowance1'], emp['allowance2'], emp['allowance3'], emp['allowance4'],
+                emp['allowance5'], emp['allowance6'], emp['allowance7'], emp['allowance8']
+            ])
+            emp['total_salary'] = basic_pay + total_allowances
+
         if export_format == 'excel':
             return export_to_excel(employees_data, 'employee_master', 'Employees')
         elif export_format == 'pdf':
@@ -6475,7 +6508,15 @@ def rejoin_approval_submit(request):
             leave.approval_by = request.session.get('username')
             leave.modified_by = request.session.get('username')
             leave.modified_on = now()
-            
+            if leave.rejoin_status == 'Confirmed':
+                print('Confirmed')
+                print(leave.employee)
+                print(COMP_CODE)
+                print(leave.actual_rejoin_date)
+                emp = Employee.objects.get(emp_code=leave.employee, comp_code=COMP_CODE)
+                emp.emp_status = 'ACTIVE'
+                emp.date_of_rejoin = leave.actual_rejoin_date
+                emp.save()
             leave.save()
             
             return JsonResponse({
@@ -6651,6 +6692,7 @@ def ao_entry_create(request):
             acceptance_date = request.POST.get('acceptance_date') or None
             document_status = request.POST.get('document_status')
             interview_date = request.POST.get('interview_date') or None
+            ecnr = request.POST.get('ecnr')
 
             try:
                 with connection.cursor() as cursor:
@@ -6694,6 +6736,7 @@ def ao_entry_create(request):
                     acceptance_date=acceptance_date,
                     document_status=document_status,
                     interview_date=interview_date,
+                    ecnr=ecnr,
                     # created_by=request.session.get('username'),
                     # created_on=now()
                 )
@@ -6747,7 +6790,8 @@ def ao_entry_edit(request):
                 'ao_acceptance': ao_entry.ao_acceptance,
                 'acceptance_date': ao_entry.acceptance_date.strftime('%Y-%m-%d') if ao_entry.acceptance_date else None,
                 'document_status': ao_entry.document_status,
-                'interview_date': ao_entry.interview_date.strftime('%Y-%m-%d') if ao_entry.interview_date else None
+                'interview_date': ao_entry.interview_date.strftime('%Y-%m-%d') if ao_entry.interview_date else None,
+                'ecnr': ao_entry.ecnr
             }
             return JsonResponse(data)
         except Recruitment.DoesNotExist:
@@ -6795,7 +6839,7 @@ def ao_entry_update(request):
             ao_entry.acceptance_date = request.POST.get('acceptance_date') or None
             ao_entry.document_status = request.POST.get('document_status')
             ao_entry.interview_date = request.POST.get('interview_date') or None
-            
+            ao_entry.ecnr = request.POST.get('ecnr')
             ao_entry.save()
             messages.success(request, 'AO Entry updated successfully!')
             return redirect('ao_entry_list')

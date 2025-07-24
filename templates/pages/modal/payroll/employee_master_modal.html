@@ -3,7 +3,7 @@
 <!-- Add Employee Offcanvas -->
 <div class="offcanvas offcanvas-end " tabindex="-1" id="offcanvas_add">
     <div class="offcanvas-header border-bottom">
-        <h4>Employee Form</h4>
+        <h4 id = 'form-head'>Employee Form</h4>
         <button type="button"
             class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
             data-bs-dismiss="offcanvas" aria-label="Close">
@@ -34,6 +34,7 @@
                                         <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*">
                                         <div id="profile_picture_preview" class="mt-2"></div>
                                         <div class="invalid-feedback">Please upload a profile picture.</div>
+                                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -917,6 +918,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">Passport Document Upload</label>
                         <input type="file" name="passport_document" id="passport_document" class="form-control" accept="application/pdf,image/*">
                         <div id="passport_document_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -984,6 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">Visa Document Upload</label>
                         <input type="file" name="visa_document" id="visa_document" class="form-control" accept="application/pdf,image/*">
                         <div id="visa_document_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -1028,6 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">Emirates Id Document Upload</label>
                         <input type="file" name="emirate_document" id="emirate_document" class="form-control" accept="application/pdf,image/*">
                         <div id="emirate_document_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -1085,6 +1089,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">Work Permit Document Upload</label>
                         <input type="file" name="work_permit_document" id="work_permit_document" class="form-control" accept="application/pdf,image/*">
                         <div id="work_permit_document_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
 
@@ -1106,6 +1111,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">Change Status</label>
                         <input type="file" id="changeStatusFile_add" name="change_status_file" class="form-control mt-2" accept="application/pdf,image/*" disabled>
                         <div id="changeStatusFile_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
 
@@ -1120,6 +1126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <label class="col-form-label">ILOE Document</label>
                         <input type="file" name="iloe_document" id="iloe_document" class="form-control" accept="application/pdf,image/*">
                         <div id="iloe_document_preview"></div>
+                        <small class="form-text text-muted">Maximum file size: 5MB</small>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -1157,6 +1164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </h2>
     <div id="collapseDocumentUploads_add" class="accordion-collapse collapse" aria-labelledby="headingDocumentUploads_add" data-bs-parent="#employeeAccordion_add">
         <div class="accordion-body">
+            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all document uploads</small>
             <table class="table" id="documentUploadTable_add">
                 <thead>
                     <tr>
@@ -1216,6 +1224,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </td>
         `;
+        
+        // Add file size validation to the new file input
+        const newFileInput = newRow.querySelector('input[type="file"]');
+        newFileInput.addEventListener('change', function() {
+            const files = this.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    if (!validateFileSize(files[i])) {
+                        this.value = ''; // Clear the input
+                        return false;
+                    }
+                }
+            }
+        });
     }
 
     function removeRow_add(button, documentId = null) {
@@ -1284,6 +1306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="collapseDependentDetails_add" class="accordion-collapse collapse" 
          aria-labelledby="headingDependentDetails_add" data-bs-parent="#employeeAccordion_add">
         <div class="accordion-body">
+            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all dependent document uploads</small>
             <table class="table" id="dependentsTable_add">
                 <thead>
                     <tr>
@@ -1372,6 +1395,20 @@ function addDependentRow_add() {
         </td>
     `;
     tableBody.appendChild(newRow);
+    
+    // Add file size validation to the new file input
+    const newFileInput = newRow.querySelector('input[type="file"]');
+    newFileInput.addEventListener('change', function() {
+        const files = this.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                if (!validateFileSize(files[i])) {
+                    this.value = ''; // Clear the input
+                    return false;
+                }
+            }
+        }
+    });
 }
 
 function removeDependentRow_add(button, dependentId = null) {
@@ -1439,6 +1476,7 @@ function removeDependentRow_add(button, dependentId = null) {
     <div id="collapseLicenseDetails_add" class="accordion-collapse collapse"
          aria-labelledby="headingLicenseDetails_add" data-bs-parent="#employeeAccordion_add">
         <div class="accordion-body">
+            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all license and passes document uploads</small>
             <table class="table" id="licensePassesTable_add">
                 <thead>
                     <tr>
@@ -1578,6 +1616,20 @@ function addLicenseRow_add() {
         </td>
     `;
     tableBody.appendChild(newRow);
+    
+    // Add file size validation to the new file input
+    const newFileInput = newRow.querySelector('input[type="file"]');
+    newFileInput.addEventListener('change', function() {
+        const files = this.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                if (!validateFileSize(files[i])) {
+                    this.value = ''; // Clear the input
+                    return false;
+                }
+            }
+        }
+    });
 }
 
 function removeLicenseRow_add(button, licenseId = null) {
@@ -1820,6 +1872,78 @@ document.querySelectorAll('input[name="depend_count"], input[name="child_count"]
     });
 });
 
+// File size validation function (5MB = 5 * 1024 * 1024 bytes)
+function validateFileSize(file, maxSizeMB = 5) {
+    console.log('validateFileSize called with file:', file.name, 'Size:', file.size, 'Max size:', maxSizeMB, 'MB');
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file && file.size > maxSizeBytes) {
+        console.log('File size validation failed. File size:', file.size, 'Max allowed:', maxSizeBytes);
+        alert(`File size must be ${maxSizeMB}MB or less. Selected file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+        return false;
+    }
+    console.log('File size validation passed');
+    return true;
+}
+
+// Add file size validation to all file inputs
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded: Setting up file size validation for all file inputs');
+    
+    // Function to apply validation to file inputs
+    function applyFileSizeValidation() {
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        console.log('Found', fileInputs.length, 'file input elements');
+        
+        fileInputs.forEach(function(input, index) {
+            // Remove existing event listeners to avoid duplicates
+            input.removeEventListener('change', input.fileSizeValidationHandler);
+            
+            // Create new event listener
+            input.fileSizeValidationHandler = function() {
+                console.log('File input change event triggered for input', index);
+                const files = this.files;
+                if (files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        console.log('Validating file:', files[i].name, 'Size:', files[i].size);
+                        if (!validateFileSize(files[i])) {
+                            this.value = ''; // Clear the input
+                            return false;
+                        }
+                    }
+                }
+            };
+            
+            // Add the event listener
+            input.addEventListener('change', input.fileSizeValidationHandler);
+        });
+    }
+    
+    // Apply validation immediately
+    applyFileSizeValidation();
+    
+    // Also apply validation after a short delay to catch any dynamically loaded content
+    setTimeout(applyFileSizeValidation, 100);
+    setTimeout(applyFileSizeValidation, 500);
+    setTimeout(applyFileSizeValidation, 1000);
+    
+    // Additional event delegation approach to catch all file input changes
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'file') {
+            console.log('Event delegation: File input change detected');
+            const files = e.target.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    console.log('Event delegation: Validating file:', files[i].name, 'Size:', files[i].size);
+                    if (!validateFileSize(files[i])) {
+                        e.target.value = ''; // Clear the input
+                        return false;
+                    }
+                }
+            }
+        }
+    });
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     var dobInput = document.getElementById('dob');
     if (dobInput) {
@@ -1975,6 +2099,26 @@ function validateForm() {
             }
         }
     });
+
+    // Validate file sizes before form submission
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    let hasFileSizeError = false;
+    
+    fileInputs.forEach(function(input) {
+        const files = input.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                if (!validateFileSize(files[i])) {
+                    hasFileSizeError = true;
+                    break;
+                }
+            }
+        }
+    });
+    
+    if (hasFileSizeError) {
+        return false;
+    }
 
     if (missingFields.length > 0) {
         const fieldNames = missingFields.join('\n• ');

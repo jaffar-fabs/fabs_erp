@@ -1009,7 +1009,7 @@ class Recruitment(models.Model):
     acceptance_date = models.DateField(null=True, blank=True)
     document_status = models.CharField(max_length=50, null=True, blank=True)
     category = models.CharField(max_length=50, null=True, blank=True)
-    
+    ecnr = models.CharField(max_length=50, null=True, blank=True)
     interview_date = models.DateField(null=True, blank=True)
     agency_name = models.TextField(null=True, blank=True)
     availability = models.CharField(max_length=50, null=True, blank=True)
