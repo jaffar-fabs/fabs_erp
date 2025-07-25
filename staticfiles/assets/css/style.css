@@ -5,7 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
 /****** Layout ******/
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 20px;
   height: 10px;
   border-radius: 50px !important;
 }
@@ -64,7 +64,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 20px;
   height: 10px;
   border-radius: 50px !important;
 }

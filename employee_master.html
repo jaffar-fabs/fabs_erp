@@ -1,347 +1,441 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview Report</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        .report-body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-        
-        .report-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-        }
-        
-        .report-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
-        }
-        
-        .report-title {
-            color: #2c3e50;
-            margin: 0 0 5px 0;
-            font-size: 22px;
-        }
-        
-        .report-subtitle {
-            color: #7f8c8d;
-            margin: 0;
-            font-size: 14px;
-            font-weight: normal;
-        }
-        
-        .report-section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-        }
-        
-        .section-title {
-            background-color: #3498db;
-            color: white;
-            padding: 8px 12px;
-            margin: 15px 0 10px 0;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: 35% 65%;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 15px;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .info-item {
-            display: contents;
-        }
-        
-        .info-label {
-            padding: 10px 12px;
-            background-color: #f8f9fa;
-            font-weight: 600;
-            border-right: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .info-value {
-            padding: 10px 12px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .info-item:last-child .info-label,
-        .info-item:last-child .info-value {
-            border-bottom: none;
-        }
-        
-        .download-btn {
-            display: block;
-            width: 200px;
-            margin: 30px auto;
-            padding: 10px;
-            background-color: #e74c3c;
-            color: white;
-            text-align: center;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-        
-        .download-btn:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .header-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: #7f8c8d;
-        }
-        
-        @media print {
-            .download-btn {
-                display: none;
-            }
-            body {
-                padding: 0;
-            }
-        }
-    </style>
-</head>
-<body class="report-body">
-    <div class="report-container">
-        <div class="header-info">
-            <div><strong>Report Date:</strong> &SYSDATE.</div>
-            <div><strong>Prepared By:</strong> &APP_USER.</div>
+{% extends "partials/base-without-nav.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.login-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8eaff 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.top-logos {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 10;
+}
+
+.logo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.logo-item img {
+    max-height: 60px;
+    width: auto;
+}
+
+.logo-text {
+    font-size: 12px;
+    color: #333;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.prime-fm {
+    color: #20c997;
+    font-weight: 600;
+}
+
+.mission-direct {
+    color: #20c997;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.mission-direct-subtitle {
+    font-size: 10px;
+    color: #333;
+    margin-top: 2px;
+}
+
+.megadon-logo {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #6c757d, #adb5bd);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    transform: perspective(100px) rotateY(-15deg);
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+}
+
+.megadon-text {
+    position: absolute;
+    right: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 8px;
+    color: #333;
+    font-weight: 600;
+}
+
+.main-content {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+}
+
+.left-section {
+    flex: 1;
+    background: linear-gradient(135deg, #e8eaff 0%, #d4d8ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 100vh;
+}
+
+.pdia-logo {
+    font-size: 120px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #6f42c1, #8e44ad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+    letter-spacing: -5px;
+}
+
+.right-section {
+    flex: 1;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 100vh;
+}
+
+.decorative-elements {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.decorative-rectangle {
+    position: absolute;
+    background: linear-gradient(45deg, #8e44ad, #e91e63);
+    border-radius: 8px;
+    transform: rotate(45deg);
+}
+
+.rect-1 {
+    width: 120px;
+    height: 80px;
+    top: 10%;
+    right: 15%;
+    opacity: 0.8;
+}
+
+.rect-2 {
+    width: 100px;
+    height: 60px;
+    top: 25%;
+    right: 25%;
+    opacity: 0.6;
+    background: linear-gradient(45deg, #9c27b0, #f06292);
+}
+
+.rect-3 {
+    width: 80px;
+    height: 40px;
+    top: 40%;
+    right: 35%;
+    opacity: 0.4;
+    background: linear-gradient(45deg, #ba68c8, #f8bbd9);
+}
+
+.login-form-container {
+    position: relative;
+    z-index: 2;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+.welcome-text {
+    color: #e91e63;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.form-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #8e44ad;
+    box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 18px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #6f42c1 0%, #e91e63 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+}
+
+.powered-by {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.alert {
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .left-section {
+        min-height: 200px;
+    }
+    
+    .pdia-logo {
+        font-size: 80px;
+    }
+    
+    .top-logos {
+        padding: 0 20px;
+    }
+    
+    .logo-item img {
+        max-height: 40px;
+    }
+    
+    .megadon-logo {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}
+</style>
+
+<div class="login-container">
+    <!-- Top Logos Section -->
+    <div class="top-logos">
+        <div class="logo-item">
+            <div class="prime-fm">Prime FM</div>
         </div>
-
-        <div class="report-header">
-            <h1 class="report-title">Interview Candidate Report</h1>
-            <p class="report-subtitle">Application Number: &P23_APPLICATION_NUMBER.</p>
+        <div class="logo-item">
+            <div class="mission-direct">MD</div>
+            <div class="mission-direct-subtitle">MISSION DIRECT</div>
+            <div class="mission-direct-subtitle">CONTRACTING & FACILITIES</div>
         </div>
-
-        <div id="report-content">
-            <!-- Personal Information Section -->
-            <div class="report-section">
-                <div class="section-title">Personal Information</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Candidate Name</div>
-                        <div class="info-value">&P23_APPLICANT_NAME.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Unique Reference Number</div>
-                        <div class="info-value">&P23_UNIQUE_NUMBER.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Date of Birth</div>
-                        <div class="info-value">&P23_APPLICANT_DOB.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Contact Number (Primary)</div>
-                        <div class="info-value">&P23_CONTACT_NO1.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Contact Number (Secondary)</div>
-                        <div class="info-value">&P23_CONTACT_NO2.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Passport Number</div>
-                        <div class="info-value">&P23_PASSPORT_NO.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Professional Information Section -->
-            <div class="report-section">
-                <div class="section-title">Professional Information</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Desired Position</div>
-                        <div class="info-value">&P23_DESIRED_JOB.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Total Experience</div>
-                        <div class="info-value">&P23_TOTAL_EXP. years</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Relevant Experience</div>
-                        <div class="info-value">&P23_RELEVANT_EXP. years</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Key Skills</div>
-                        <div class="info-value">&P23_SKILL_SET.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Languages Known</div>
-                        <div class="info-value">&P23_LANGUAGE_KNOWN.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Education Qualification</div>
-                        <div class="info-value">&P23_EDUCATION.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Employment Preferences Section -->
-            <div class="report-section">
-                <div class="section-title">Employment Preferences</div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Expected Salary</div>
-                        <div class="info-value">&P23_EXPECTED_SALARY.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Willingness to Work Hours</div>
-                        <div class="info-value">&P23_WILLING_WORK_HOURS.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Leave Policy Agreement</div>
-                        <div class="info-value">&P23_LEAVE_POLICY_AGREED.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interview Details Section -->
-            <div class="report-section">
-                <div class="section-title">Interview Details</div>
-                <div class="info-grid">
-                    <!-- <div class="info-item">
-                        <div class="info-label">Application Status</div>
-                        <div class="info-value">&P23_APPLICATION_STATUS.</div>
-                    </div> -->
-                    <div class="info-item">
-                        <div class="info-label">Profile Status</div>
-                        <div class="info-value">&P23_PROFILE_STATUS.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Physical Interview Status</div>
-                        <div class="info-value">&P23_PHYSICAL_INTERVIEW.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Final Selection Status</div>
-                        <div class="info-value">&P23_FINAL_SELECTION_STATUS.</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Interviewer Remarks</div>
-                        <div class="info-value">&P23_REMARKS.</div>
-                    </div>
-                </div>
+        <div class="logo-item">
+            <div class="megadon-logo">
+                N
+                <div class="megadon-text">MEGADON</div>
             </div>
         </div>
-
-        <button class="download-btn" onclick="generatePDF()">Download PDF Report</button>
     </div>
 
-    <script>
-        // Initialize jsPDF
-        const { jsPDF } = window.jspdf;
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Left Section with PDIA Logo -->
+        <div class="left-section">
+            <div class="pdia-logo">PDIA</div>
+        </div>
 
-        function generatePDF() {
-            const btn = document.querySelector('.download-btn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Generating PDF...';
-            btn.disabled = true;
+        <!-- Right Section with Login Form -->
+        <div class="right-section">
+            <!-- Decorative Elements -->
+            <div class="decorative-elements">
+                <div class="decorative-rectangle rect-1"></div>
+                <div class="decorative-rectangle rect-2"></div>
+                <div class="decorative-rectangle rect-3"></div>
+            </div>
 
-            const element = document.getElementById('report-content');
-            const options = {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                scrollY: 0,
-                logging: true,
-                letterRendering: true
-            };
+            <!-- Login Form -->
+            <div class="login-form-container">
+                <div class="welcome-text">WELCOME BACK</div>
+                
+                <form id="login-form-authenticate-form-id" method="post" action="{% url 'after-login' %}">
+                    {% csrf_token %}
+                    {% if messages %}
+                    <div class="alert alert-danger" id="alert-message">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
 
-            // Create a promise for PDF generation
-            const generatePDFPages = async () => {
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                
-                // Add header to first page
-                pdf.setFontSize(16);
-                pdf.setTextColor(40, 40, 40);
-                pdf.text('Interview Candidate Report', pageWidth / 2, 15, { align: 'center' });
-                
-                pdf.setFontSize(12);
-                pdf.text(`Candidate: &P23_APPLICANT_NAME.`, 15, 25);
-                pdf.text(`Report Date: ${new Date().toLocaleDateString()}`, pageWidth - 15, 25, { align: 'right' });
-                
-                // Add horizontal line
-                pdf.setDrawColor(200, 200, 200);
-                pdf.line(15, 30, pageWidth - 15, 30);
-                
-                let currentY = 40; // Starting Y position after header
-                
-                // Capture each section separately for better control
-                const sections = element.querySelectorAll('.report-section');
-                
-                for (const section of sections) {
-                    const canvas = await html2canvas(section, options);
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const imgWidth = pageWidth - 30; // 15mm margins on each side
-                    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-                    
-                    // Check if we need a new page
-                    if (currentY + imgHeight > pageHeight - 20) { // 20mm bottom margin
-                        pdf.addPage();
-                        currentY = 20; // Reset Y position for new page
-                    }
-                    
-                    pdf.addImage(imgData, 'PNG', 15, currentY, imgWidth, imgHeight);
-                    currentY += imgHeight + 10; // Add some space between sections
-                }
-                
-                // Add page numbers
-                const pageCount = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= pageCount; i++) {
-                    pdf.setPage(i);
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(150);
-                    pdf.text(`Page ${i} of ${pageCount}`, pageWidth - 15, pageHeight - 10, { align: 'right' });
-                }
-                
-                return pdf;
-            };
+                    <div class="form-title">Sign In</div>
+                    <div class="form-subtitle">Access the FABS ERP using your Username and Password.</div>
 
-            generatePDFPages().then(pdf => {
-                pdf.save(`Interview_Report_${cleanFileName('&P23_APPLICANT_NAME.')}_${new Date().toISOString().slice(0,10)}.pdf`);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }).catch(error => {
-                console.error('Error generating PDF:', error);
-                alert('Error generating PDF. Please try again.');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            });
-        }
+                    <div class="form-group">
+                        <label class="form-label">User Name</label>
+                        <div class="input-group">
+                            <input id="username" name="username" type="text" value="" class="form-control">
+                            <span class="input-icon">
+                                <i class="ti ti-user"></i>
+                            </span>
+                        </div>
+                    </div>
 
-        // Helper function to clean filename
-        function cleanFileName(name) {
-            return name.replace(/[^a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF ]/g, '');
-        }
-    </script>
-</body>
-</html>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input id="password" name="password" type="password" class="form-control">
+                            <span class="input-icon toggle-password">
+                                <i class="ti ti-eye-off"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="company-select-container" style="display: none;">
+                        <label class="form-label">Select Company</label>
+                        <select name="selected_company" class="form-control" required>
+                            <option value="">Select a company</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="login-btn" class="login-btn">Login</button>
+                </form>
+
+                <div class="powered-by">Powered by Fabs Infotech, Dubai</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('username').addEventListener('blur', function() {
+    const username = this.value;
+    if (username) {
+        fetch('{% url "check_user_companies" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({ username: username })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const companySelect = document.querySelector('select[name="selected_company"]');
+            const companyContainer = document.getElementById('company-select-container');
+            
+            if (data.success && data.dropdown_options && data.dropdown_options.length >= 1) {
+                companySelect.innerHTML = '<option value="">Select a company</option>';
+                data.dropdown_options.forEach(option => {
+                    companySelect.innerHTML += `<option value="${option.value}">${option.text}</option>`;
+                });
+                companyContainer.style.display = 'block';
+                companySelect.required = true;
+            } else {
+                companyContainer.style.display = 'none';
+                companySelect.required = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching companies:', error);
+        });
+    }
+});
+
+// Password toggle functionality
+document.querySelector('.toggle-password').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const icon = this.querySelector('i');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('ti-eye-off');
+        icon.classList.add('ti-eye');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('ti-eye');
+        icon.classList.add('ti-eye-off');
+    }
+});
+</script>
+
+{% endblock content %}
