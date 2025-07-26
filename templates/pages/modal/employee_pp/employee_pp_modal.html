@@ -7,8 +7,11 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="addEmployeePPForm" action="{% url 'employee_pp_create' %}" method="POST">
+        <form id="addEmployeePPForm" action="{% url 'employee_pp_create' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="mb-4">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Employee Code</label>
@@ -98,95 +101,179 @@
                     <input type="number" name="no_of_days" id="add_no_of_days" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Medical</label>
+                                    <label class="col-form-label">Fine Amount</label>
+                                    <input type="number" step="0.01" name="fine_amount" id="add_fine_amount" class="form-control">
+                                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Upload Documents</label>
+                    <input type="file" name="pp_documents[]" id="add_pp_documents" class="form-control" multiple>
+                </div>
+                            </div>
+            </div>
+
+            <!-- Medical Accordion -->
+            <div class="accordion mb-3" id="accordionMedical">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingMedical">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMedical" aria-expanded="false" aria-controls="collapseMedical">
+                            <i class="ti ti-stethoscope me-2"></i> Medical
+                        </button>
+                    </h2>
+                    <div id="collapseMedical" class="accordion-collapse collapse" aria-labelledby="headingMedical" data-bs-parent="#accordionMedical">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Medical Status</label>
                     <select name="medical" id="add_medical" class="form-control">
                         <option value="">Select</option>
                         {% for medical_status in medical_status_data %}
                         <option value="{{ medical_status.base_value }}">{{ medical_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Not Done">Not Done</option>
-                        <option value="Typed/Medical to do">Typed/Medical to do</option>
-                        <option value="Medical Done, Waiting for result">Medical Done, Waiting for result</option>
-                        <option value="Fit">Fit</option>
-                        <option value="Remedial to do">Remedial to do</option>
-                        <option value="Remedial Done, waiting for result">Remedial Done, waiting for result</option>
-                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Medical Result Date</label>
                     <input type="date" name="medical_result_date" id="add_medical_result_date" class="form-control">
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Remedical Result Date</label>
                     <input type="date" name="remedical_result_date" id="add_remedical_result_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">EID</label>
+            </div>
+
+            <!-- EID Accordion -->
+            <div class="accordion mb-3" id="accordionEID">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEID">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEID" aria-expanded="false" aria-controls="collapseEID">
+                            <i class="ti ti-id me-2"></i> EID
+                        </button>
+                    </h2>
+                    <div id="collapseEID" class="accordion-collapse collapse" aria-labelledby="headingEID" data-bs-parent="#accordionEID">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">EID Status</label>
                     <select name="eid" id="add_eid" class="form-control">
                         <option value="">Select</option>
                         {% for eid_status in eid_status_data %}
                         <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Not Done">Not Done</option>
-                        <option value="Date to mention">Date to mention</option>
-                        <option value="Biometric Done, Waiting for card">Biometric Done, Waiting for card</option>
-                        <option value="Typed, Interchange">Typed, Interchange</option>
-                        <option value="Card Recevied">Card Recevied</option>
-                        <option value="Cancelled & Exit">Cancelled & Exit</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">EID Date</label>
+                                    <input type="date" name="eid_date" id="add_eid_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">RP Stamping</label>
+            </div>
+
+            <!-- RP Stamping Accordion -->
+            <div class="accordion mb-3" id="accordionRPStamping">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingRPStamping">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRPStamping" aria-expanded="false" aria-controls="collapseRPStamping">
+                            <i class="ti ti-stamp me-2"></i> RP Stamping
+                        </button>
+                    </h2>
+                    <div id="collapseRPStamping" class="accordion-collapse collapse" aria-labelledby="headingRPStamping" data-bs-parent="#accordionRPStamping">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">RP Stamping Status</label>
                     <select name="rp_stamping" id="add_rp_stamping" class="form-control">
                         <option value="">Select</option>
                         {% for rp_stamping in rp_stamping_data %}
                         <option value="{{ rp_stamping.base_value }}">{{ rp_stamping.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Stamped">Stamped</option>
-                        <option value="Not Done">Not Done</option>
-                        <option value="Cancelled and Exit">Cancelled and Exit</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Fine Amount</label>
-                    <input type="number" step="0.01" name="fine_amount" id="add_fine_amount" class="form-control">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">RP Stamping Date</label>
+                                    <input type="date" name="rp_stamping_date" id="add_rp_stamping_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
+            </div>
+
+            <!-- Tawjeeh Accordion -->
+            <div class="accordion mb-3" id="accordionTawjeeh">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTawjeeh">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTawjeeh" aria-expanded="false" aria-controls="collapseTawjeeh">
+                            <i class="ti ti-book me-2"></i> Tawjeeh
+                        </button>
+                    </h2>
+                    <div id="collapseTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingTawjeeh" data-bs-parent="#accordionTawjeeh">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Tawjeeh Payment</label>
                     <select name="tawjeeh_payment" id="add_tawjeeh_payment" class="form-control">
                         <option value="">Select</option>
                         {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
                         <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option>
-                        <option value="To Do">To Do</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Tawjeeh Class</label>
                     <select name="tawjeeh_class" id="add_tawjeeh_class" class="form-control">
                         <option value="">Select</option>
                         {% for tawjeeh_class_status in tawjeeh_class_status_data %}
                         <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Class Done">Class Done</option>
-                        <option value="Class Not Done">Class Not Done</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Tawjeeh Date</label>
+                                    <input type="date" name="tawjeeh_date" id="add_tawjeeh_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
+            </div>
+
+            <!-- ILOE Accordion -->
+            <div class="accordion mb-3" id="accordionILOE">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingILOE">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseILOE" aria-expanded="false" aria-controls="collapseILOE">
+                            <i class="ti ti-file-check me-2"></i> ILOE Status
+                        </button>
+                    </h2>
+                    <div id="collapseILOE" class="accordion-collapse collapse" aria-labelledby="headingILOE" data-bs-parent="#accordionILOE">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">ILOE Status</label>
                     <select name="iloe_status" id="add_iloe_status" class="form-control">
                         <option value="">Select</option>
                         {% for ioe_status in ioe_status_data %}
                         <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Date</label>
+                                    <input type="date" name="iloe_date" id="add_iloe_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -236,9 +323,13 @@ $(function() {
         </button>
     </div>
     <div class="offcanvas-body">
-        <form id="editEmployeePPForm" action="{% url 'employee_pp_update' %}" method="POST">
+        <form id="editEmployeePPForm" action="{% url 'employee_pp_update' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="id" id="edit_id">
+            
+            <!-- Basic Information Section -->
+            <div class="mb-4">
+                <h6 class="mb-3"><i class="ti ti-user me-2"></i> Basic Information</h6>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Employee Code</label>
@@ -328,95 +419,307 @@ $(function() {
                     <input type="number" name="no_of_days" id="edit_no_of_days" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Medical</label>
+                                    <label class="col-form-label">Fine Amount</label>
+                                    <input type="number" step="0.01" name="fine_amount" id="edit_fine_amount" class="form-control">
+                                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="col-form-label">Upload Documents</label>
+                    <input type="file" name="pp_documents[]" id="edit_pp_documents" class="form-control" multiple>
+                </div>
+                            </div>
+            </div>
+
+            <!-- Medical Accordion -->
+            <div class="accordion mb-3" id="accordionEditMedical">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditMedical">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditMedical" aria-expanded="false" aria-controls="collapseEditMedical">
+                            <i class="ti ti-stethoscope me-2"></i> Medical
+                        </button>
+                    </h2>
+                    <div id="collapseEditMedical" class="accordion-collapse collapse" aria-labelledby="headingEditMedical" data-bs-parent="#accordionEditMedical">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Medical Status</label>
                     <select name="medical" id="edit_medical" class="form-control">
                         <option value="">Select</option>
                         {% for medical_status in medical_status_data %}
                         <option value="{{ medical_status.base_value }}">{{ medical_status.base_value }} - {{ medical_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Not Done">Not Done</option>
-                        <option value="Typed/Medical to do">Typed/Medical to do</option>
-                        <option value="Medical Done, Waiting for result">Medical Done, Waiting for result</option>
-                        <option value="Fit">Fit</option>
-                        <option value="Remedial to do">Remedial to do</option>
-                        <option value="Remedial Done, waiting for result">Remedial Done, waiting for result</option>
-                        <option value="Unfit, Cancelled & Exit">Unfit, Cancelled & Exit</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Medical Result Date</label>
                     <input type="date" name="medical_result_date" id="edit_medical_result_date" class="form-control">
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Remedical Result Date</label>
                     <input type="date" name="remedical_result_date" id="edit_remedical_result_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Medical Status</th>
+                                            <th>Medical Result Date</th>
+                                            <th>Remedical Result Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="medical_data_body">
+                                        <tr id="medical_data_row" style="display: none;">
+                                            <td id="medical_status_display"></td>
+                                            <td id="medical_result_date_display"></td>
+                                            <td id="remedical_result_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">EID</label>
+            </div>
+
+            <!-- EID Accordion -->
+            <div class="accordion mb-3" id="accordionEditEID">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditEID">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditEID" aria-expanded="false" aria-controls="collapseEditEID">
+                            <i class="ti ti-id me-2"></i> EID
+                        </button>
+                    </h2>
+                    <div id="collapseEditEID" class="accordion-collapse collapse" aria-labelledby="headingEditEID" data-bs-parent="#accordionEditEID">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">EID Status</label>
                     <select name="eid" id="edit_eid" class="form-control">
                         <option value="">Select</option>
                         {% for eid_status in eid_status_data %}
                         <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Not Done">Not Done</option>
-                        <option value="Date to mention">Date to mention</option>
-                        <option value="Biometric Done, Waiting for card">Biometric Done, Waiting for card</option>
-                        <option value="Typed, Interchange">Typed, Interchange</option>
-                        <option value="Card Recevied">Card Recevied</option>
-                        <option value="Cancelled & Exit">Cancelled & Exit</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">EID Date</label>
+                                    <input type="date" name="eid_date" id="edit_eid_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>EID Status</th>
+                                            <th>EID Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="eid_data_body">
+                                        <tr id="eid_data_row" style="display: none;">
+                                            <td id="eid_status_display"></td>
+                                            <td id="eid_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">RP Stamping</label>
+            </div>
+
+            <!-- RP Stamping Accordion -->
+            <div class="accordion mb-3" id="accordionEditRPStamping">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditRPStamping">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditRPStamping" aria-expanded="false" aria-controls="collapseEditRPStamping">
+                            <i class="ti ti-stamp me-2"></i> RP Stamping
+                        </button>
+                    </h2>
+                    <div id="collapseEditRPStamping" class="accordion-collapse collapse" aria-labelledby="headingEditRPStamping" data-bs-parent="#accordionEditRPStamping">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">RP Stamping Status</label>
                     <select name="rp_stamping" id="edit_rp_stamping" class="form-control">
                         <option value="">Select</option>
                         {% for rp_stamping in rp_stamping_data %}
                         <option value="{{ rp_stamping.base_value }}">{{ rp_stamping.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Stamped">Stamped</option>
-                        <option value="Not Done">Not Done</option>
-                        <option value="Cancelled and Exit">Cancelled and Exit</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">Fine Amount</label>
-                    <input type="number" step="0.01" name="fine_amount" id="edit_fine_amount" class="form-control">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">RP Stamping Date</label>
+                                    <input type="date" name="rp_stamping_date" id="edit_rp_stamping_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>RP Stamping Status</th>
+                                            <th>RP Stamping Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rp_stamping_data_body">
+                                        <tr id="rp_stamping_data_row" style="display: none;">
+                                            <td id="rp_stamping_status_display"></td>
+                                            <td id="rp_stamping_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
+            </div>
+
+            <!-- Tawjeeh Accordion -->
+            <div class="accordion mb-3" id="accordionEditTawjeeh">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditTawjeeh">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditTawjeeh" aria-expanded="false" aria-controls="collapseEditTawjeeh">
+                            <i class="ti ti-book me-2"></i> Tawjeeh
+                        </button>
+                    </h2>
+                    <div id="collapseEditTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingEditTawjeeh" data-bs-parent="#accordionEditTawjeeh">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Tawjeeh Payment</label>
                     <select name="tawjeeh_payment" id="edit_tawjeeh_payment" class="form-control">
                         <option value="">Select</option>
                         {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
                         <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option>
-                        <option value="To Do">To Do</option> -->
                     </select>
                 </div>
-                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">Tawjeeh Class</label>
                     <select name="tawjeeh_class" id="edit_tawjeeh_class" class="form-control">
                         <option value="">Select</option>
                         {% for tawjeeh_class_status in tawjeeh_class_status_data %}
                         <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Class Done">Class Done</option>
-                        <option value="Class Not Done">Class Not Done</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Tawjeeh Date</label>
+                                    <input type="date" name="tawjeeh_date" id="edit_tawjeeh_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Tawjeeh Payment</th>
+                                            <th>Tawjeeh Class</th>
+                                            <th>Tawjeeh Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tawjeeh_data_body">
+                                        <tr id="tawjeeh_data_row" style="display: none;">
+                                            <td id="tawjeeh_payment_display"></td>
+                                            <td id="tawjeeh_class_display"></td>
+                                            <td id="tawjeeh_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
+            </div>
+
+            <!-- ILOE Accordion -->
+            <div class="accordion mb-3" id="accordionEditILOE">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditILOE">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditILOE" aria-expanded="false" aria-controls="collapseEditILOE">
+                            <i class="ti ti-file-check me-2"></i> ILOE Status
+                        </button>
+                    </h2>
+                    <div id="collapseEditILOE" class="accordion-collapse collapse" aria-labelledby="headingEditILOE" data-bs-parent="#accordionEditILOE">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
                     <label class="col-form-label">ILOE Status</label>
                     <select name="iloe_status" id="edit_iloe_status" class="form-control">
                         <option value="">Select</option>
                         {% for ioe_status in ioe_status_data %}
                         <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
                         {% endfor %}
-                        <!-- <option value="Done">Done</option>
-                        <option value="Not Done">Not Done</option> -->
                     </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Date</label>
+                                    <input type="date" name="iloe_date" id="edit_iloe_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>ILOE Status</th>
+                                            <th>ILOE Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="iloe_data_body">
+                                        <tr id="iloe_data_row" style="display: none;">
+                                            <td id="iloe_status_display"></td>
+                                            <td id="iloe_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Documents Accordion -->
+            <div class="accordion mb-3" id="accordionEditDocuments">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditDocuments">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditDocuments" aria-expanded="false" aria-controls="collapseEditDocuments">
+                            <i class="ti ti-files me-2"></i> Documents
+                        </button>
+                    </h2>
+                    <div id="collapseEditDocuments" class="accordion-collapse collapse" aria-labelledby="headingEditDocuments" data-bs-parent="#accordionEditDocuments">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Document Name</th>
+                                            <th>Preview</th>
+                                            <th>Download</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pp-documents-body">
+                                        <!-- Documents will be dynamically loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
                 <button type="submit" class="btn btn-primary">Save Changes</button>

@@ -258,6 +258,7 @@ def get_employee_details(request):
             'grade_code': employee.grade_code,
             'prj_code': employee.prj_code,
             'sub_location': employee.sub_location,
+            'contract_notice_period': employee.contract_notice_period,
 
             'employee_bank': employee.employee_bank,
             'bank_branch': employee.bank_branch,
@@ -269,6 +270,7 @@ def get_employee_details(request):
             'client_name': employee.client_name,
             'client_location': employee.client_location,
             'room_no': employee.room_no,
+            'accommodation_type': employee.accommodation_type,
             'room_rent': str(employee.room_rent) if employee.room_rent else None,
             'outside_location': employee.outside_location,
             'select_camp': employee.select_camp,
@@ -480,6 +482,7 @@ def save_employee(request):
         employee.grade_code = request.POST.get("grade_code")
         employee.prj_code = request.POST.get("prj_code")
         employee.sub_location = request.POST.get("sub_location")
+        employee.contract_notice_period = request.POST.get("contract_notice_period") or None
         employee.designation = request.POST.get("designation")
         employee.department = request.POST.get("department")
         employee.date_of_join = request.POST.get("date_of_join") or None
@@ -503,9 +506,11 @@ def save_employee(request):
             employee.room_no = None
             employee.room_rent = None
             employee.outside_location = None
+            employee.accommodation_type = None
         elif employee.camp_inside_outside == "camp":
             employee.select_camp = request.POST.get("camp_code")
             employee.room_no = request.POST.get("room_no")
+            employee.accommodation_type = request.POST.get("accommodation_type")
             employee.client_name = None
             employee.client_location = None
             employee.room_rent = None
@@ -513,6 +518,7 @@ def save_employee(request):
         elif employee.camp_inside_outside == "outside":
             employee.outside_location = request.POST.get("outside_location")
             employee.room_rent = request.POST.get("room_rent")
+            employee.accommodation_type = None
             employee.client_name = None
             employee.client_location = None
             employee.select_camp = None
@@ -6501,23 +6507,45 @@ def rejoin_approval_submit(request):
             leave_id = request.POST.get('leave_id')
             leave = LeaveTransaction.objects.get(tran_id=leave_id, comp_code=COMP_CODE)
             
+            actual_rejoin_date = datetime.strptime(request.POST.get('actual_rejoin_date'), '%Y-%m-%d').date()
+            expected_rejoin_date = leave.end_date + timedelta(days=1)
+            
             # Update rejoin details
-            leave.actual_rejoin_date = request.POST.get('actual_rejoin_date')
+            leave.actual_rejoin_date = actual_rejoin_date
             leave.rejoin_status = request.POST.get('rejoin_status')
             leave.rejoin_remarks = request.POST.get('remarks')
             leave.approval_by = request.session.get('username')
             leave.modified_by = request.session.get('username')
             leave.modified_on = now()
+
             if leave.rejoin_status == 'Confirmed':
-                print('Confirmed')
-                print(leave.employee)
-                print(COMP_CODE)
-                print(leave.actual_rejoin_date)
+                if actual_rejoin_date == expected_rejoin_date:
+                    # Normal case - rejoin date is next day after leave end date
+                    emp = Employee.objects.get(emp_code=leave.employee, comp_code=COMP_CODE)
+                    emp.emp_status = 'ACTIVE'
+                    emp.date_of_rejoin = actual_rejoin_date
+                    emp.save()
+                    
+            elif leave.rejoin_status == 'Delayed':
+                # Calculate days delayed and update leave end date
+                days_delayed = (actual_rejoin_date - expected_rejoin_date).days
+                if days_delayed > 0:
+                    leave.end_date = actual_rejoin_date - timedelta(days=1)
+                    leave.total_leave_days = (leave.end_date - leave.start_date).days + 1
+                    
+            elif leave.rejoin_status == 'Before Arrival':
+                # Check if actual rejoin is before leave end date
+                if actual_rejoin_date < leave.end_date:
+                    leave.end_date = actual_rejoin_date - timedelta(days=1)
+                    leave.total_leave_days = (leave.end_date - leave.start_date).days + 1
+
+            leave.save()
+
+            if leave.rejoin_status in ['Confirmed', 'Delayed', 'Before Arrival']:
                 emp = Employee.objects.get(emp_code=leave.employee, comp_code=COMP_CODE)
                 emp.emp_status = 'ACTIVE'
-                emp.date_of_rejoin = leave.actual_rejoin_date
+                emp.date_of_rejoin = actual_rejoin_date
                 emp.save()
-            leave.save()
             
             return JsonResponse({
                 'status': 'success',
@@ -6920,6 +6948,7 @@ def recruitment_edit(request):
                 'visa_submission': rec.visa_submission,
                 'change_status': rec.change_status,
                 'visa_issued_date': rec.visa_issued_date.strftime('%Y-%m-%d') if rec.visa_issued_date else '',
+                'visa_expiry_date': rec.visa_expiry_date.strftime('%Y-%m-%d') if rec.visa_expiry_date else '',
                 'arrival_date': rec.arrival_date.strftime('%Y-%m-%d') if rec.arrival_date else '',
                 'airport': rec.airport,
                 'flight_no': rec.flight_no,
@@ -6969,8 +6998,9 @@ def recruitment_update(request):
 
 
 def employee_pp_list(request):
+    set_comp_code(request)
     keyword = request.GET.get('keyword', '')
-    entries = EmployeePPDetails.objects.all()
+    entries = EmployeePPDetails.objects.filter(comp_code=COMP_CODE)
     if keyword:
         entries = entries.filter(
             Q(name__icontains=keyword) |
@@ -7010,10 +7040,12 @@ def employee_pp_list(request):
     return render(request, 'pages/payroll/employee_pp/employee_pp_list.html', context)
 
 def employee_pp_create(request):
+    set_comp_code(request)
     if request.method == 'POST':
         # Create new record
-        EmployeePPDetails.objects.create(
+        employee_pp = EmployeePPDetails.objects.create(
             pp_number=request.POST.get('pp_number'),
+            comp_code=COMP_CODE,
             emp_code=request.POST.get('emp_code'),
             name=request.POST.get('name'),
             in_outside=request.POST.get('in_outside'),
@@ -7037,14 +7069,38 @@ def employee_pp_create(request):
             tawjeeh_class=request.POST.get('tawjeeh_class'),
             iloe_status=request.POST.get('iloe_status'),
         )
+        
+        # Handle document uploads
+        upload_documents = request.FILES.getlist('pp_documents[]')
+        if upload_documents:
+            for file in upload_documents:
+                EmployeePPDocuments.objects.create(
+                    comp_code=COMP_CODE,
+                    employee_pp_id=employee_pp.id,
+                    document_name=file.name,
+                    document_file=file
+                )
+        
         return redirect('employee_pp_list')
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 def employee_pp_edit(request):
+    set_comp_code(request)
     # Return JSON for the given id
     id = request.GET.get('id')
     try:
-        obj = EmployeePPDetails.objects.get(id=id)
+        obj = EmployeePPDetails.objects.get(id=id, comp_code=COMP_CODE)
+        
+        # Get documents for this employee PP
+        pp_documents = EmployeePPDocuments.objects.filter(comp_code=COMP_CODE, employee_pp_id=id)
+        documents_data = []
+        for document in pp_documents:
+            documents_data.append({
+                'document_id': document.document_id,
+                'document_name': document.document_name,
+                'document_url': document.document_file.url if document.document_file else None
+            })
+        
         data = {
             'id': obj.id,
             'pp_number': obj.pp_number,
@@ -7070,10 +7126,15 @@ def employee_pp_edit(request):
             'tawjeeh_payment': obj.tawjeeh_payment,
             'tawjeeh_class': obj.tawjeeh_class,
             'iloe_status': obj.iloe_status,
+            'iloe_date': obj.iloe_date,
+            'tawjeeh_date': obj.tawjeeh_date,
+            'rp_stamping_date': obj.rp_stamping_date,
+            'eid_date': obj.eid_date,
+            'pp_documents': documents_data,
         }
         # Convert dates to string if needed
-        for k in ['doj', 'medical_result_date', 'remedical_result_date']:
-            if data[k]:
+        for k in ['doj', 'medical_result_date', 'remedical_result_date', 'iloe_date', 'tawjeeh_date', 'rp_stamping_date', 'eid_date']:
+            if data[k] and hasattr(data[k], 'strftime'):
                 data[k] = data[k].strftime('%Y-%m-%d')
         return JsonResponse(data)
     except EmployeePPDetails.DoesNotExist:
@@ -7081,10 +7142,11 @@ def employee_pp_edit(request):
 
 @csrf_exempt
 def employee_pp_update(request):
+    set_comp_code(request)
     if request.method == 'POST':
         id = request.POST.get('id')
         try:
-            obj = EmployeePPDetails.objects.get(id=id)
+            obj = EmployeePPDetails.objects.get(id=id, comp_code=COMP_CODE)
             obj.pp_number = request.POST.get('pp_number')
             obj.emp_code = request.POST.get('emp_code')
             obj.name = request.POST.get('name')
@@ -7099,16 +7161,32 @@ def employee_pp_update(request):
             obj.pp_control = request.POST.get('pp_control')
             obj.date_of_landing = request.POST.get('date_of_landing') or None
             obj.no_of_days = request.POST.get('no_of_days') or None
-            obj.medical = request.POST.get('medical')
-            obj.medical_result_date = request.POST.get('medical_result_date') or None
-            obj.remedical_result_date = request.POST.get('remedical_result_date') or None
-            obj.eid = request.POST.get('eid')
-            obj.rp_stamping = request.POST.get('rp_stamping')
             obj.fine_amount = request.POST.get('fine_amount') or None
-            obj.tawjeeh_payment = request.POST.get('tawjeeh_payment') or None
-            obj.tawjeeh_class = request.POST.get('tawjeeh_class')
-            obj.iloe_status = request.POST.get('iloe_status')
+            obj.medical = (obj.medical + ": " + request.POST.get('medical') or None) 
+            obj.medical_result_date = (str(obj.medical_result_date) + ": " + request.POST.get('medical_result_date') or None)
+            obj.remedical_result_date = (str(obj.remedical_result_date) + ": " + request.POST.get('remedical_result_date') or None)
+            obj.eid = (obj.eid + ": " + request.POST.get('eid') or None)
+            obj.rp_stamping = (obj.rp_stamping + ": " + request.POST.get('rp_stamping') or None)
+            obj.tawjeeh_payment = (obj.tawjeeh_payment + ": " + request.POST.get('tawjeeh_payment') or None)
+            obj.tawjeeh_class = (obj.tawjeeh_class + ": " + request.POST.get('tawjeeh_class') or None)
+            obj.iloe_status = (obj.iloe_status + ": " + request.POST.get('iloe_status') or None)
+            obj.iloe_date = (str(obj.iloe_date) + ": " + request.POST.get('iloe_date') or None)
+            obj.tawjeeh_date = (str(obj.tawjeeh_date) + ": " + request.POST.get('tawjeeh_date') or None)
+            obj.rp_stamping_date = (str(obj.rp_stamping_date) + ": " + request.POST.get('rp_stamping_date') or None)
+            obj.eid_date = (str(obj.eid_date) + ": " + request.POST.get('eid_date') or None)
             obj.save()
+            
+            # Handle document uploads
+            upload_documents = request.FILES.getlist('pp_documents[]')
+            if upload_documents:
+                for file in upload_documents:
+                    EmployeePPDocuments.objects.create(
+                        comp_code=COMP_CODE,
+                        employee_pp_id=obj.id,
+                        document_name=file.name,
+                        document_file=file
+                    )
+            
             return redirect('employee_pp_list')
         except EmployeePPDetails.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Not found'})
@@ -7116,10 +7194,11 @@ def employee_pp_update(request):
 
 @csrf_exempt
 def employee_pp_delete(request):
+    set_comp_code(request)
     if request.method == 'POST':
         id = request.POST.get('id')
         try:
-            obj = EmployeePPDetails.objects.get(id=id)
+            obj = EmployeePPDetails.objects.get(id=id, comp_code=COMP_CODE)
             obj.delete()
             return JsonResponse({'status': 'success'})
         except EmployeePPDetails.DoesNotExist:
@@ -7214,6 +7293,7 @@ def recruitment_update(request):
             rec.visa_submission = request.POST.get('visa_submission')
             rec.change_status = request.POST.get('change_status')
             rec.visa_issued_date = request.POST.get('visa_issued_date') or None
+            rec.visa_expiry_date = request.POST.get('visa_expiry_date') or None
             rec.arrival_date = request.POST.get('arrival_date') or None
             rec.airport = request.POST.get('airport')
             rec.flight_no = request.POST.get('flight_no')

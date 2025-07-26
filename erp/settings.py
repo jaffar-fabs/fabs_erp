@@ -141,7 +141,8 @@ TEMPLATES = [
                 'payroll.context_processors.tawjeeh_payment_status',
                 'payroll.context_processors.get_tawjeeh_class_status',
                 'payroll.context_processors.get_iloe_status',
-                'payroll.context_processors.get_ecnr'
+                'payroll.context_processors.get_ecnr',
+                'payroll.context_processors.get_accommodation_type'
 
             ],
         },

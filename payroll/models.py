@@ -262,7 +262,7 @@ class Employee(models.Model):
     staff_category = models.CharField(max_length=100, blank=True, null=True)  # Staff category
     depend_count = models.IntegerField(blank=True, null=True)  # Dependent count
     child_count = models.IntegerField(blank=True, null=True)  # Child count
-
+    contract_notice_period = models.IntegerField(blank=True, null=True)  # Contract notice period
     # Account Details
     employee_bank = models.CharField(max_length=100, blank=True, null=True)  # Employee bank
     bank_branch = models.CharField(max_length=100, blank=True, null=True)  # Bank branch
@@ -328,6 +328,7 @@ class Employee(models.Model):
         null=True
     )  # Inside/Outside/In Camp
     select_camp = models.CharField(max_length=100, blank=True, null=True)  # Selected camp
+    accommodation_type = models.CharField(max_length=100, blank=True, null=True)  # Accommodation type
     room_no = models.CharField(max_length=100, blank=True, null=True)  # Room number
     outside_location = models.CharField(max_length=100, blank=True, null=True)  # Outside location
     room_rent = models.CharField(max_length=100, blank=True, null=True)  # Room rent
@@ -1024,6 +1025,7 @@ class Recruitment(models.Model):
     visa_submission = models.TextField(null=True, blank=True)
     change_status = models.TextField(null=True, blank=True)
     visa_issued_date = models.DateField(null=True, blank=True)
+    visa_expiry_date = models.DateField(null=True, blank=True)
     arrival_date = models.DateField(null=True, blank=True)
     airport = models.TextField(null=True, blank=True)
     flight_no = models.CharField(max_length=50, null=True, blank=True)
@@ -1048,17 +1050,40 @@ class EmployeePPDetails(models.Model):
     nationality = models.CharField(max_length=100, null=True, blank=True)
     pp_control = models.CharField(max_length=100, null=True, blank=True)
     no_of_days = models.CharField(max_length=100, null=True, blank=True)
-    medical = models.CharField(max_length=100, null=True, blank=True)
-    medical_result_date = models.DateField(null=True, blank=True)
-    remedical_result_date = models.DateField(null=True, blank=True)
-    eid = models.CharField(max_length=100, null=True, blank=True)
-    rp_stamping = models.CharField(max_length=100, null=True, blank=True)
     fine_amount = models.CharField(max_length=100, null=True, blank=True)
-    tawjeeh_payment = models.CharField(max_length=100, null=True, blank=True)
-    tawjeeh_class = models.CharField(max_length=100, null=True, blank=True)
-    iloe_status = models.CharField(max_length=100, null=True, blank=True)
     date_of_landing = models.DateField(null=True, blank=True)
 
+
+    medical = models.CharField(max_length=8000, null=True, blank=True)
+    medical_result_date = models.CharField(max_length=8000, null=True, blank=True)
+    remedical_result_date = models.CharField(max_length=8000, null=True, blank=True)
+    eid = models.CharField(max_length=8000, null=True, blank=True)
+    rp_stamping = models.CharField(max_length=8000, null=True, blank=True)
+    tawjeeh_payment = models.CharField(max_length=8000, null=True, blank=True)
+    tawjeeh_class = models.CharField(max_length=8000, null=True, blank=True)
+    iloe_status = models.CharField(max_length=8000, null=True, blank=True)
+    iloe_date = models.CharField(max_length=8000, null=True, blank=True)
+    tawjeeh_date = models.CharField(max_length=8000, null=True, blank=True)
+    rp_stamping_date = models.CharField(max_length=8000, null=True, blank=True)
+    eid_date = models.CharField(max_length=8000, null=True, blank=True)
+
+def employee_pp_document_path(instance, filename):
+    # Construct the path using the employee PP ID
+    return os.path.join('employee_pp_documents', str(instance.employee_pp_id), filename)
+
+class EmployeePPDocuments(models.Model):
+    comp_code = models.CharField(max_length=15)
+    document_id = models.BigAutoField(primary_key=True)
+    employee_pp_id = models.IntegerField()  # Reference to EmployeePPDetails.id
+    document_name = models.CharField(max_length=255)
+    document_file = models.FileField(upload_to=employee_pp_document_path, blank=True, null=True)
+    created_by = models.BigIntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.document_name} ({self.employee_pp_id})"
 
 
 class MRFMaster(models.Model):

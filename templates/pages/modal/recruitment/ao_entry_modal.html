@@ -290,9 +290,9 @@
                     <input type="number" name="pp_validity_days" id="edit_pp_validity_days" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">ECNR</label>
+                    <label class="col-form-label">Travel Requirement</label>
                     <select name="ecnr" id="edit_ecnr" class="form-control">
-                        <option value="">Select ECNR</option>
+                        <option value="">Select</option>
                         {% for ecnr in ecnr_data %}
                         <option value="{{ ecnr.base_value }}">{{ ecnr.base_description }}</option>
                         {% endfor %}

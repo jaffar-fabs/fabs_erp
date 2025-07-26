@@ -568,7 +568,7 @@
                         $('#prj_code').val(response.data.prj_code).change();
                         $('#sub_location').val(response.data.sub_location).change();
                         $('#grade_code').val(response.data.grade_code).change();
-
+                        $('#contract_notice_period').val(response.data.contract_notice_period);
                         //Account Details
                         $('#employee_bank').val(response.data.employee_bank).change();
                         $('#bank_branch').val(response.data.bank_branch).change();
@@ -578,6 +578,7 @@
                         // Accomodation Details
                         $('#select_camp').val(response.data.camp_code).change();
                         $('#room_no').val(response.data.room_no);
+                        $('#accommodation_type').val(response.data.accommodation_type).change();
                         $('#client_name').val(response.data.client_name);
                         $('#client_location').val(response.data.client_location);
                         $('#outside_location').val(response.data.outside_location);
@@ -593,6 +594,7 @@
                                 $("#inCampDetails_add").show();
                                 $("#select_camp").val(response.data.select_camp);
                                 $("#room_no").val(response.data.room_no);
+                                $("#accommodation_type").val(response.data.accommodation_type).change();
                             } else if (response.data.camp_inside_outside === 'client_accommodation') {
                                 $("#clientAccommodationDetails_add").show();
                                 $("#client_name").val(response.data.client_name);
@@ -1541,7 +1543,7 @@
                         $('#prj_code').val(response.data.prj_code).change();
                         $('#sub_location').val(response.data.sub_location).change();
                         $('#grade_code').val(response.data.grade_code).change();
-
+                        $('#contract_notice_period').val(response.data.contract_notice_period);
                         //Account Details
                         $('#employee_bank').val(response.data.employee_bank).change();
                         $('#bank_branch').val(response.data.bank_branch).change();
@@ -1551,10 +1553,12 @@
                         // Accomodation Details
                         $('#select_camp').val(response.data.camp_code).change();
                         $('#room_no').val(response.data.room_no);
+                        $('#accommodation_type').val(response.data.accommodation_type).change();
                         $('#client_name').val(response.data.client_name);
                         $('#client_location').val(response.data.client_location);
                         $('#outside_location').val(response.data.outside_location);
                         $('#room_rent').val(response.data.room_rent);
+                        $('#accommodation_type').val(response.data.accommodation_type).change();
 
                         // Accommodation Details
                         $("#campType_add").val(response.data.camp_type).change();
@@ -1566,6 +1570,7 @@
                                 $("#inCampDetails_add").show();
                                 $("#select_camp").val(response.data.select_camp);
                                 $("#room_no").val(response.data.room_no);
+                                $("#accommodation_type").val(response.data.accommodation_type).change();
                             } else if (response.data.camp_inside_outside === 'client_accommodation') {
                                 $("#clientAccommodationDetails_add").show();
                                 $("#client_name").val(response.data.client_name);

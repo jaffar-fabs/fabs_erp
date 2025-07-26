@@ -490,7 +490,12 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Contract Notice Period</label>
+                        <input type="number" name="contract_notice_period" id="contract_notice_period" class="form-control" min="0" step="0.01">
+                    </div>
+                </div>
             <!-- Multi Entry Section -->
             <div class="mt-4">
                 <h5>Additional Earnings/Deductions</h5>
@@ -796,6 +801,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="col-form-label">Accommodation Type</label>
+                            <select name="accommodation_type" id="accommodation_type" class="form-control">
+                                <option value="">Select Accommodation Type</option>
+                                {% for accommodation in accommodation_type_data %}
+                                <option value="{{ accommodation.base_value }}">{{ accommodation.base_description }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="col-form-label">Room No</label>
                             <input type="text" name="room_no" id="room_no" class="form-control">
                         </div>
@@ -842,7 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('client_location').value = '';
         document.getElementById('outside_location').value = '';
         document.getElementById('room_rent').value = '';
-
+        document.getElementById('accommodation_type').value = '';
         if (campType === 'by_company') {
             campDetails.style.display = 'block';
         } else {
@@ -866,7 +880,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('client_location').value = '';
         document.getElementById('outside_location').value = '';
         document.getElementById('room_rent').value = '';
-
+        document.getElementById('accommodation_type').value = '';
+        document.getElementById('accommodation_type').value = '';
         if (insideOutside === 'camp') {
             inCampDetails.style.display = 'block';
             clientAccommodationDetails.style.display = 'none';
@@ -951,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="col-form-label">ECNR</label>
+                        <label class="col-form-label">Travel Requirement</label>
                         <select name="ecnr" id="ecnr" class="form-control">
                             <option value="">Select</option>
                             {% for ecnr in ecnr_data %}

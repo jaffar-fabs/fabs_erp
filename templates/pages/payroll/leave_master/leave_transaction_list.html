@@ -53,6 +53,7 @@
                             <table class="table datatable">
                                 <thead>
                                     <tr>
+                                        <th>Emp Code</th>
                                         <th>Employee</th>
                                         <th>Department</th>
                                         <th>Leave Type</th>
@@ -68,6 +69,7 @@
                                 <tbody>
                                     {% for record in leaves %}
                                     <tr>
+                                        <td>{{ record.employee }}</td>
                                         <td>{{ record.employee_name }}</td>
                                         <td>{{ record.department }}</td>
                                         <td>{{ record.leave_type }}</td>

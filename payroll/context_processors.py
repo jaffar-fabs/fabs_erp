@@ -479,3 +479,10 @@ def get_ecnr(request):
     return{
         'ecnr_data': ecnr_data
     }   
+
+def get_accommodation_type(request):
+    comp_code = get_comp_code(request)
+    accommodation_type_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'ACCOMODATION TYPE')
+    return {
+        'accommodation_type_data': accommodation_type_data
+    }

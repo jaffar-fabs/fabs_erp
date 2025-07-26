@@ -158,16 +158,102 @@
                     $('#edit_pp_control').val(response.pp_control || '');
                     $('#edit_date_of_landing').val(response.date_of_landing || '');
                     $('#edit_no_of_days').val(response.no_of_days || '');
-                    $('#edit_medical').val(response.medical || '');
-                    $('#edit_medical_result_date').val(response.medical_result_date || '');
-                    $('#edit_remedical_result_date').val(response.remedical_result_date || '');
-                    $('#edit_eid').val(response.eid || '');
-                    $('#edit_rp_stamping').val(response.rp_stamping || '');
                     $('#edit_fine_amount').val(response.fine_amount || '');
-                    $('#edit_tawjeeh_payment').val(response.tawjeeh_payment || '');
-                    $('#edit_tawjeeh_class').val(response.tawjeeh_class || '');
-                    $('#edit_iloe_status').val(response.iloe_status || '');
-                }
+                    // Function to split data by colon and display as rows
+                    function displaySplitByColon(displayId, value) {
+                        if (value && value.includes(':')) {
+                            // Handle both formats: " : " and ":"
+                            var parts;
+                            if (value.includes(' : ')) {
+                                parts = value.split(' : ');
+                            } else {
+                                parts = value.split(':');
+                            }
+                            var displayHtml = '';
+                            parts.forEach(function(part, index) {
+                                if (part.trim()) {
+                                    displayHtml += '<div class="mb-1 p-2 bg-light border rounded">' + (index + 1) + '. ' + part.trim() + '</div>';
+                                }
+                            });
+                            $(displayId).html(displayHtml);
+                        } else {
+                            $(displayId).text(value || 'N/A');
+                        }
+                    }
+                    
+                    // Function to get the last value from colon-separated string for form fields
+                    function getLastValue(value) {
+                        if (value && value.includes(':')) {
+                            // Handle both formats: " : " and ":"
+                            var parts;
+                            if (value.includes(' : ')) {
+                                parts = value.split(' : ');
+                            } else {
+                                parts = value.split(':');
+                            }
+                            return parts[parts.length - 1].trim();
+                        }
+                        return value || '';
+                    }
+                    
+                    // Display with colon split
+                    displaySplitByColon('#medical_status_display', response.medical);
+                    displaySplitByColon('#medical_result_date_display', response.medical_result_date);
+                    displaySplitByColon('#remedical_result_date_display', response.remedical_result_date);
+                    $('#medical_data_row').show();
+                    
+                    
+                    // Display with colon split
+                    displaySplitByColon('#eid_status_display', response.eid);
+                    displaySplitByColon('#eid_date_display', response.eid_date);
+                    $('#eid_data_row').show();
+                    
+                    // Display with colon split
+                    displaySplitByColon('#rp_stamping_status_display', response.rp_stamping);
+                    displaySplitByColon('#rp_stamping_date_display', response.rp_stamping_date);
+                    $('#rp_stamping_data_row').show();
+                    
+                    // Display with colon split
+                    displaySplitByColon('#tawjeeh_payment_display', response.tawjeeh_payment);
+                    displaySplitByColon('#tawjeeh_class_display', response.tawjeeh_class);
+                    displaySplitByColon('#tawjeeh_date_display', response.tawjeeh_date);
+                    $('#tawjeeh_data_row').show();
+                    
+                                         // Display with colon split
+                     displaySplitByColon('#iloe_status_display', response.iloe_status);
+                     displaySplitByColon('#iloe_date_display', response.iloe_date);
+                     $('#iloe_data_row').show();
+                     
+                     // Handle documents display
+                     $("#pp-documents-body").empty();
+                     if (response.pp_documents && response.pp_documents.length > 0) {
+                         response.pp_documents.forEach(function (document) {
+                             const documentRow = `
+                                 <tr>
+                                     <td>${document.document_name}</td>
+                                     <td>
+                                         <a href="${document.document_url}" target="_blank" class="btn btn-sm btn-info">
+                                             <i class="fas fa-eye"></i> View
+                                         </a>
+                                     </td>
+                                     <td>
+                                         <a href="${document.document_url}" download class="btn btn-sm btn-success">
+                                             <i class="fas fa-download"></i> Download
+                                         </a>
+                                     </td>
+                                 </tr>
+                             `;
+                             $("#pp-documents-body").append(documentRow);
+                         });
+                     } else {
+                         const noDocumentsRow = `
+                             <tr>
+                                 <td colspan="3" class="text-center">No documents available.</td>
+                             </tr>
+                         `;
+                         $("#pp-documents-body").append(noDocumentsRow);
+                     }
+                 }
             });
         });
 
@@ -193,6 +279,140 @@
                 });
             }
         });
+        
+        // Function to update display with colon format and split into rows
+        function updateDisplayWithColon(fieldId, displayId) {
+            var currentValue = $(fieldId).val();
+            var originalValue = $(fieldId).data('original') || '';
+            
+            if (currentValue && currentValue !== originalValue) {
+                // Combine original and new value
+                var combinedValue = originalValue + ' : ' + currentValue;
+                displaySplitByColon(displayId, combinedValue);
+            } else {
+                // Display original value with colon splitting
+                displaySplitByColon(displayId, originalValue);
+            }
+        }
+        
+        // Function to split data by colon and display as rows
+        function displaySplitByColon(displayId, value) {
+            if (value && value.includes(':')) {
+                // Handle both formats: " : " and ":"
+                var parts;
+                if (value.includes(' : ')) {
+                    parts = value.split(' : ');
+                } else {
+                    parts = value.split(':');
+                }
+                var displayHtml = '';
+                parts.forEach(function(part, index) {
+                    if (part.trim()) {
+                        displayHtml += '<div class="mb-1 p-2 bg-light border rounded">' + (index + 1) + '. ' + part.trim() + '</div>';
+                    }
+                });
+                $(displayId).html(displayHtml);
+            } else {
+                $(displayId).text(value || 'N/A');
+            }
+        }
+        
+        // Add event listeners for accordion fields to update display
+        // $('#edit_medical, #edit_medical_result_date, #edit_remedical_result_date').on('input change', function() {
+        //     var fieldId = '#' + $(this).attr('id');
+        //     var displayId = '';
+            
+        //     switch($(this).attr('id')) {
+        //         case 'edit_medical':
+        //             displayId = '#medical_status_display';
+        //             break;
+        //         case 'edit_medical_result_date':
+        //             displayId = '#medical_result_date_display';
+        //             break;
+        //         case 'edit_remedical_result_date':
+        //             displayId = '#remedical_result_date_display';
+        //             break;
+        //     }
+            
+        //     if (displayId) {
+        //         updateDisplayWithColon(fieldId, displayId);
+        //     }
+        // });
+        
+        // $('#edit_eid, #edit_eid_date').on('input change', function() {
+        //     var fieldId = '#' + $(this).attr('id');
+        //     var displayId = '';
+            
+        //     switch($(this).attr('id')) {
+        //         case 'edit_eid':
+        //             displayId = '#eid_status_display';
+        //             break;
+        //         case 'edit_eid_date':
+        //             displayId = '#eid_date_display';
+        //             break;
+        //     }
+            
+        //     if (displayId) {
+        //         updateDisplayWithColon(fieldId, displayId);
+        //     }
+        // });
+        
+        // $('#edit_rp_stamping, #edit_rp_stamping_date').on('input change', function() {
+        //     var fieldId = '#' + $(this).attr('id');
+        //     var displayId = '';
+            
+        //     switch($(this).attr('id')) {
+        //         case 'edit_rp_stamping':
+        //             displayId = '#rp_stamping_status_display';
+        //             break;
+        //         case 'edit_rp_stamping_date':
+        //             displayId = '#rp_stamping_date_display';
+        //             break;
+        //     }
+            
+        //     if (displayId) {
+        //         updateDisplayWithColon(fieldId, displayId);
+        //     }
+        // });
+        
+        // $('#edit_tawjeeh_payment, #edit_tawjeeh_class, #edit_tawjeeh_date').on('input change', function() {
+        //     var fieldId = '#' + $(this).attr('id');
+        //     var displayId = '';
+            
+        //     switch($(this).attr('id')) {
+        //         case 'edit_tawjeeh_payment':
+        //             displayId = '#tawjeeh_payment_display';
+        //             break;
+        //         case 'edit_tawjeeh_class':
+        //             displayId = '#tawjeeh_class_display';
+        //             break;
+        //         case 'edit_tawjeeh_date':
+        //             displayId = '#tawjeeh_date_display';
+        //             break;
+        //     }
+            
+        //     if (displayId) {
+        //         updateDisplayWithColon(fieldId, displayId);
+        //     }
+        // });
+        
+        // $('#edit_iloe_status, #edit_iloe_date').on('input change', function() {
+        //     var fieldId = '#' + $(this).attr('id');
+        //     var displayId = '';
+            
+        //     switch($(this).attr('id')) {
+        //         case 'edit_iloe_status':
+        //             displayId = '#iloe_status_display';
+        //             break;
+        //         case 'edit_iloe_date':
+        //             displayId = '#iloe_date_display';
+        //             break;
+        //     }
+            
+        //     if (displayId) {
+        //         updateDisplayWithColon(fieldId, displayId);
+        //     }
+        // });
     });
 </script>
 {% include 'pages/modal/employee_pp/employee_pp_modal.html' %}
