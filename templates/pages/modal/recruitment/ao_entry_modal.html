@@ -2,19 +2,20 @@
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1000px !important;">
     <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="offcanvas_add_label">Add/Edit AO Entry</h5>
+        <h5 class="offcanvas-title" id="offcanvas_add_label">Add AO Entry</h5>
         <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="ti ti-x"></i>
         </button>
     </div>
     <div class="offcanvas-body">
-        <form action="{% url 'ao_entry_create' %}" method="POST">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="col-form-label">AO Ref No</label>
-                    <input type="text" name="ao_ref_no" class="form-control" readonly>
-                </div>
+                 <form action="{% url 'ao_entry_create' %}" method="POST">
+             {% csrf_token %}
+             <input type="hidden" name="selected_mrf_detail_id" id="selected_mrf_detail_id">
+             <div class="row">
+                 <div class="col-md-4 mb-3">
+                     <label class="col-form-label">AO Ref No</label>
+                     <input type="text" name="ao_ref_no" class="form-control" readonly>
+                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
                     <input type="date" name="ao_issued_date" class="form-control" required>
@@ -28,9 +29,30 @@
                         data-project-code="{{ mrf.project_code }}"
                         data-designation-code="{{ mrf.designation_code }}"
                         data-category="{{ mrf.category }}">
-                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }} - {{ mrf.category }}</option>
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }}</option>
                         {% endfor %}
                     </select>
+                </div>
+                <!-- MRF Details Section -->
+                <div class="col-12 mb-3" id="mrf_details_section" style="display: none;">
+                    <label class="col-form-label">MRF Requirements</label>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="mrf_details_table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">Select</th>
+                                    <th width="20%">Designation</th>
+                                    <th width="20%">Department</th>
+                                    <th width="20%">Category</th>
+                                    <th width="5%">Quantity</th>
+                                    <th width="5%">Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mrf_details_tbody">
+                                <!-- MRF details will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Department</label>
@@ -77,9 +99,9 @@
                     <input type="number" name="pp_validity_days" class="form-control" readonly>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">ECNR</label>
+                    <label class="col-form-label">Travel Requirement</label>
                     <select name="ecnr" class="form-control">
-                        <option value="">Select ECNR</option>
+                        <option value="">Select</option>
                         {% for ecnr in ecnr_data %}
                         <option value="{{ ecnr.base_value }}">{{ ecnr.base_description }}</option>
                         {% endfor %}
@@ -220,13 +242,14 @@
         </button>
     </div>
     <div class="offcanvas-body">
-        <form method="POST" action="{% url 'ao_entry_update' %}">
-            {% csrf_token %}
-            <input type="hidden" name="ao_entry_id" id="ao_entry_id">
-            <div class="col-md-4 mb-3"> 
-                <label class="col-form-label">AO Ref No</label>
-                <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control" readonly>
-            </div>
+                 <form method="POST" action="{% url 'ao_entry_update' %}">
+             {% csrf_token %}
+             <input type="hidden" name="ao_entry_id" id="ao_entry_id">
+             <input type="hidden" name="selected_mrf_detail_id" id="edit_selected_mrf_detail_id">
+             <div class="col-md-4 mb-3"> 
+                 <label class="col-form-label">AO Ref No</label>
+                 <input type="text" name="ao_ref_no" id="edit_ao_ref_no" class="form-control" readonly>
+             </div>
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">AO Issued Date</label>
@@ -241,9 +264,30 @@
                         data-project-code="{{ mrf.project_code }}"
                         data-designation-code="{{ mrf.designation_code }}"
                         data-category="{{ mrf.category }}">
-                        {{ mrf.mrf_number }} - {{ mrf.project_code }} - {{ mrf.designation_code }} - {{ mrf.category }}</option>
+                        {{ mrf.mrf_number }} - {{ mrf.project_code }}</option>
                         {% endfor %}
                     </select>
+                </div>
+                <!-- MRF Details Section for Edit -->
+                <div class="col-12 mb-3" id="edit_mrf_details_section" style="display: none;">
+                    <label class="col-form-label">MRF Requirements</label>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="edit_mrf_details_table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">Select</th>
+                                    <th width="20%">Designation</th>
+                                    <th width="20%">Department</th>
+                                    <th width="20%">Category</th>
+                                    <th width="10%">Quantity</th>
+                                    <th width="10%">Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody id="edit_mrf_details_tbody">
+                                <!-- MRF details will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Department</label>
@@ -429,23 +473,135 @@
         $('#mrf').change(function() {
             const selectedOption = $(this).find('option:selected');
             const projectCode = selectedOption.data('project-code');
-            const designationCode = selectedOption.data('designation-code');
-            const category = selectedOption.data('category');
+            const mrfId = $(this).val();
+            
             $('#project').val(projectCode);
-            $('#designation').val(designationCode);
-            $('#category').val(category);
+            
+            // Fetch and display MRF details
+            if (mrfId) {
+                $.ajax({
+                    url: "{% url 'get_mrf_details_for_ao' %}",
+                    type: "GET",
+                    data: { 'mrf_id': mrfId },
+                    success: function(response) {
+                        if (response.status === 'success' && response.mrf_details.length > 0) {
+                            const tbody = $('#mrf_details_tbody');
+                            tbody.empty();
+                            
+                            response.mrf_details.forEach(function(detail) {
+                                const row = `
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="selected_mrf_detail" 
+                                                   value="${detail.id}" class="mrf-detail-radio"
+                                                   data-designation="${detail.designation}"
+                                                   data-department="${detail.department}"
+                                                   data-category="${detail.category}">
+                                        </td>
+                                        <td>${detail.designation_desc}</td>
+                                        <td>${detail.department_desc}</td>
+                                        <td>${detail.category_desc}</td>
+                                        <td>${detail.quantity}</td>
+                                        <td>${detail.remaining_quantity || detail.quantity}</td>
+                                    </tr>
+                                `;
+                                tbody.append(row);
+                            });
+                            
+                            $('#mrf_details_section').show();
+                        } else {
+                            $('#mrf_details_section').hide();
+                        }
+                    },
+                    error: function() {
+                        $('#mrf_details_section').hide();
+                        console.error('Error fetching MRF details');
+                    }
+                });
+            } else {
+                $('#mrf_details_section').hide();
+            }
         });
 
 
         $('#edit_mrf').change(function() {
             const selectedOption = $(this).find('option:selected');
             const projectCode = selectedOption.data('project-code');
-            const designationCode = selectedOption.data('designation-code');
-            const category = selectedOption.data('category');
+            const mrfId = $(this).val();
+            
             $('#edit_project').val(projectCode);
-            $('#edit_designation').val(designationCode);
-            $('#edit_category').val(category);
+            
+            // Fetch and display MRF details for edit form
+            if (mrfId) {
+                $.ajax({
+                    url: "{% url 'get_mrf_details_for_ao' %}",
+                    type: "GET",
+                    data: { 'mrf_id': mrfId },
+                    success: function(response) {
+                        if (response.status === 'success' && response.mrf_details.length > 0) {
+                            const tbody = $('#edit_mrf_details_tbody');
+                            tbody.empty();
+                            
+                            response.mrf_details.forEach(function(detail) {
+                                const row = `
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="edit_selected_mrf_detail" 
+                                                   value="${detail.id}" class="mrf-detail-radio"
+                                                   data-designation="${detail.designation}"
+                                                   data-department="${detail.department}"
+                                                   data-category="${detail.category}">
+                                        </td>
+                                        <td>${detail.designation_desc}</td>
+                                        <td>${detail.department_desc}</td>
+                                        <td>${detail.category_desc}</td>
+                                        <td>${detail.quantity}</td>
+                                        <td>${detail.remaining_quantity || detail.quantity}</td>
+                                    </tr>
+                                `;
+                                tbody.append(row);
+                            });
+                            
+                            $('#edit_mrf_details_section').show();
+                        } else {
+                            $('#edit_mrf_details_section').hide();
+                        }
+                    },
+                    error: function() {
+                        $('#edit_mrf_details_section').hide();
+                        console.error('Error fetching MRF details');
+                    }
+                });
+            } else {
+                $('#edit_mrf_details_section').hide();
+            }
         });
+        
+                 // Handle MRF detail radio button selection for Add form
+         $(document).on('change', '#mrf_details_tbody .mrf-detail-radio', function() {
+             const designation = $(this).data('designation');
+             const department = $(this).data('department');
+             const category = $(this).data('category');
+             const detailId = $(this).val();
+             
+             $('#designation').val(designation);
+             $('#dep').val(department);
+             $('#category').val(category);
+             $('#selected_mrf_detail_id').val(detailId);
+         });
+        
+                 // Handle MRF detail radio button selection for Edit form
+         $(document).on('change', '#edit_mrf_details_tbody .mrf-detail-radio', function() {
+             const designation = $(this).data('designation');
+             const department = $(this).data('department');
+             const category = $(this).data('category');
+             const detailId = $(this).val();
+             
+             $('#edit_designation').val(designation);
+             $('#edit_dep').val(department);
+             $('#edit_category').val(category);
+             $('#edit_selected_mrf_detail_id').val(detailId);
+         });
     });
 
     // Form validation functions

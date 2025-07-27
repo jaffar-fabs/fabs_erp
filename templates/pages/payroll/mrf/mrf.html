@@ -140,13 +140,8 @@
                         // Set basic form fields
                         $('#edit_mrf_id').val(mrfId);
                         $('#edit_project_code').val(response.project_code).trigger('change');
-                        $('#edit_designation_code').val(response.designation_code).trigger('change');
-                        $('#edit_quantity').val(response.quantity);
-                        $('#edit_remaining_quantity').val(response.remaining_quantity);
                         $('#edit_status').val(response.status).trigger('change');
                         $('#edit_remarks').val(response.remarks);
-                        $('#edit_category').val(response.category).trigger('change');
-                        $('#edit_department').val(response.department).trigger('change');
 
                         // Set project details based on selected project
                         const selectedProject = $('#edit_project_code option:selected');
@@ -156,15 +151,106 @@
                             $('#edit_end_date').val(selectedProject.data('end'));
                             
                             // Set project staff if available
-                            if (selectedProject.data('engineer')) {
+                            if (selectedProject.data('engineer') && typeof selectedProject.data('engineer') === 'string') {
                                 $('#edit_project_engineer').val(selectedProject.data('engineer').split(':')).trigger('change');
                             }
-                            if (selectedProject.data('manager')) {
+                            if (selectedProject.data('manager') && typeof selectedProject.data('manager') === 'string') {
                                 $('#edit_project_manager').val(selectedProject.data('manager').split(':')).trigger('change');
                             }
-                            if (selectedProject.data('supervisor')) {
+                            if (selectedProject.data('supervisor') && typeof selectedProject.data('supervisor') === 'string') {
                                 $('#edit_project_supervisor').val(selectedProject.data('supervisor').split(':')).trigger('change');
                             }
+                        }
+
+                        // Handle multi-entry data
+                        if (response.mrf_details && response.mrf_details.length > 0) {
+                            const tableBody = $('#mrfMultiEntryTable_edit tbody');
+                            tableBody.empty(); // Clear existing rows
+                            
+                            response.mrf_details.forEach(function(detail) {
+                                const newRow = `
+                                    <tr>
+                                        <td>
+                                            <select name="mrf_designation[]" class="form-control" required>
+                                                <option value="">Select Designation</option>
+                                                {% for designation in designations %}
+                                                    <option value="{{ designation.base_value }}" ${detail.designation === '{{ designation.base_value }}' ? 'selected' : ''}>
+                                                        {{ designation.base_description }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="mrf_department[]" class="form-control" required>
+                                                <option value="">Select Department</option>
+                                                {% for department in dept_data %}
+                                                    <option value="{{ department.base_value }}" ${detail.department === '{{ department.base_value }}' ? 'selected' : ''}>
+                                                        {{ department.base_description }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name="mrf_category[]" class="form-control" required>
+                                                <option value="">Select Category</option>
+                                                {% for category in staff_category_data %}
+                                                    <option value="{{ category.base_value }}" ${detail.category === '{{ category.base_value }}' ? 'selected' : ''}>
+                                                        {{ category.base_description }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="mrf_quantity[]" class="form-control" value="${detail.quantity}" required min="1">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger remove-mrf-entry">Remove</button>
+                                        </td>
+                                    </tr>
+                                `;
+                                tableBody.append(newRow);
+                            });
+                        } else {
+                            // If no multi-entry data, add one empty row
+                            const tableBody = $('#mrfMultiEntryTable_edit tbody');
+                            tableBody.empty();
+                            const emptyRow = `
+                                <tr>
+                                    <td>
+                                        <select name="mrf_designation[]" class="form-control" required>
+                                            <option value="">Select Designation</option>
+                                            {% for designation in designations %}
+                                                <option value="{{ designation.base_value }}">
+                                                    {{ designation.base_description }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="mrf_department[]" class="form-control" required>
+                                            <option value="">Select Department</option>
+                                            {% for department in dept_data %}
+                                                <option value="{{ department.base_value }}">{{ department.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="mrf_category[]" class="form-control" required>
+                                            <option value="">Select Category</option>
+                                            {% for category in staff_category_data %}
+                                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="mrf_quantity[]" class="form-control" required min="1">
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger remove-mrf-entry">Remove</button>
+                                    </td>
+                                </tr>
+                            `;
+                            tableBody.append(emptyRow);
                         }
                     } else {
                         alert('Error fetching MRF details');
@@ -186,13 +272,13 @@
                 $('#edit_end_date').val(selectedOption.dataset.end);
                 
                 // Update project staff details
-                if (selectedOption.dataset.engineer) {
+                if (selectedOption.dataset.engineer && typeof selectedOption.dataset.engineer === 'string') {
                     $('#edit_project_engineer').val(selectedOption.dataset.engineer.split(':')).trigger('change');
                 }
-                if (selectedOption.dataset.manager) {
+                if (selectedOption.dataset.manager && typeof selectedOption.dataset.manager === 'string') {
                     $('#edit_project_manager').val(selectedOption.dataset.manager.split(':')).trigger('change');
                 }
-                if (selectedOption.dataset.supervisor) {
+                if (selectedOption.dataset.supervisor && typeof selectedOption.dataset.supervisor === 'string') {
                     $('#edit_project_supervisor').val(selectedOption.dataset.supervisor.split(':')).trigger('change');
                 }
             }

@@ -224,6 +224,7 @@ urlpatterns = [
     path('edit_mrf/', views.edit_mrf, name='edit_mrf'),
     path('delete_mrf/', views.delete_mrf, name='delete_mrf'),
     path('get_mrf_details/', views.get_mrf_details, name='get_mrf_details'),
+    path('get_mrf_details_for_ao/', views.get_mrf_details_for_ao, name='get_mrf_details_for_ao'),
 
     #Employee PP
     path('employee_pp/', views.employee_pp_list, name='employee_pp_list'),

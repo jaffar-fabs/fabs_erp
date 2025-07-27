@@ -1091,9 +1091,9 @@ class MRFMaster(models.Model):
     comp_code = models.CharField(max_length=50, null=True, blank=True)
     mrf_number = models.CharField(max_length=50)
     project_code = models.CharField(max_length=50)
-    designation_code = models.CharField(max_length=50)
+    designation_code = models.CharField(max_length=50, null=True, blank=True)
     department = models.CharField(max_length=50, null=True, blank=True)
-    quantity = models.CharField(max_length=50)
+    quantity = models.CharField(max_length=50, null=True, blank=True)
     remaining_quantity = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=50, null=True, blank=True)
     remarks = models.TextField(null=True, blank=True)
@@ -1102,6 +1102,23 @@ class MRFMaster(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_by = models.CharField(max_length=50)
     updated_at = models.DateTimeField(auto_now=True)
+
+class MRFDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    mrf_id = models.IntegerField()  # Reference to MRFMaster.id
+    comp_code = models.CharField(max_length=50, null=True, blank=True)
+    designation = models.CharField(max_length=50, null=True, blank=True)
+    department = models.CharField(max_length=50, null=True, blank=True)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    quantity = models.IntegerField(default=1)
+    remaining_quantity = models.CharField(max_length=50, null=True, blank=True)
+    created_by = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.CharField(max_length=50, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"MRF Detail {self.id} - MRF {self.mrf_id}"
 
 class NotificationMaster(models.Model):
     comp_code = models.CharField(max_length=15)

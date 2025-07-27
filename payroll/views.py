@@ -6657,7 +6657,7 @@ def ao_entry_list(request):
     set_comp_code(request)
     keyword = request.GET.get('keyword', '')
     entries = Recruitment.objects.filter(comp_code=COMP_CODE).order_by('-ao_ref_no')
-    mrf_data = MRFMaster.objects.filter(comp_code=COMP_CODE, status='Open', remaining_quantity__gt=0)
+    mrf_data = MRFMaster.objects.filter(comp_code=COMP_CODE, status='Open')
     
     if keyword:
         entries = entries.filter(
@@ -6730,6 +6730,9 @@ def ao_entry_create(request):
             except Exception as e:
                 return JsonResponse({'error': str(e)}, status=500)
             
+            # Get selected MRF detail ID and update remaining quantity
+            selected_mrf_detail_id = request.POST.get('selected_mrf_detail_id')
+            print(selected_mrf_detail_id)
             try: 
                 recruitment = Recruitment.objects.create(
                     comp_code=COMP_CODE,
@@ -6768,6 +6771,19 @@ def ao_entry_create(request):
                     # created_by=request.session.get('username'),
                     # created_on=now()
                 )
+                
+                # Update MRF detail remaining quantity if selected
+                if selected_mrf_detail_id:
+                    try:
+                        mrf_detail = MRFDetails.objects.get(id=selected_mrf_detail_id, comp_code=COMP_CODE)
+                        current_remaining = int(mrf_detail.remaining_quantity) if mrf_detail.remaining_quantity else mrf_detail.quantity
+                        new_remaining = current_remaining - 1
+                        mrf_detail.remaining_quantity = str(new_remaining)
+                        mrf_detail.save()
+                    except MRFDetails.DoesNotExist:
+                        pass  # Continue even if MRF detail not found
+                
+                # Update MRF master remaining quantity
                 mrf_data = MRFMaster.objects.get(comp_code=COMP_CODE, id=mrf)
                 remaining_quantity = int(mrf_data.remaining_quantity) - 1
                 mrf_data.remaining_quantity = remaining_quantity
@@ -6868,6 +6884,21 @@ def ao_entry_update(request):
             ao_entry.document_status = request.POST.get('document_status')
             ao_entry.interview_date = request.POST.get('interview_date') or None
             ao_entry.ecnr = request.POST.get('ecnr')
+            
+            # Get selected MRF detail ID and update remaining quantity
+            selected_mrf_detail_id = request.POST.get('selected_mrf_detail_id')
+            
+            # Update MRF detail remaining quantity if selected
+            if selected_mrf_detail_id:
+                try:
+                    mrf_detail = MRFDetails.objects.get(id=selected_mrf_detail_id, comp_code=COMP_CODE)
+                    current_remaining = int(mrf_detail.remaining_quantity) if mrf_detail.remaining_quantity else mrf_detail.quantity
+                    new_remaining = current_remaining - 1
+                    mrf_detail.remaining_quantity = str(new_remaining)
+                    mrf_detail.save()
+                except MRFDetails.DoesNotExist:
+                    pass  # Continue even if MRF detail not found
+            
             ao_entry.save()
             messages.success(request, 'AO Entry updated successfully!')
             return redirect('ao_entry_list')
@@ -7410,6 +7441,26 @@ def create_mrf(request):
                 updated_by=request.user.username
             )
             
+            # Handle multi-entry data
+            mrf_designations = request.POST.getlist('mrf_designation[]')
+            mrf_departments = request.POST.getlist('mrf_department[]')
+            mrf_categories = request.POST.getlist('mrf_category[]')
+            mrf_quantities = request.POST.getlist('mrf_quantity[]')
+            
+            # Create MRF details for each multi-entry row
+            for i in range(len(mrf_designations)):
+                if mrf_designations[i] and mrf_departments[i] and mrf_categories[i] and mrf_quantities[i]:
+                    MRFDetails.objects.create(
+                        mrf_id=mrf.id,
+                        comp_code=COMP_CODE,
+                        designation=mrf_designations[i],
+                        department=mrf_departments[i],
+                        category=mrf_categories[i],
+                        quantity=mrf_quantities[i],
+                        created_by=request.user.username,
+                        updated_by=request.user.username
+                    )
+            
             return redirect('mrf_list')
             
         except Exception as e:
@@ -7436,6 +7487,29 @@ def edit_mrf(request):
             mrf.updated_by = request.user.username
             mrf.save()
             
+            # Handle multi-entry data for edit
+            mrf_designations = request.POST.getlist('mrf_designation[]')
+            mrf_departments = request.POST.getlist('mrf_department[]')
+            mrf_categories = request.POST.getlist('mrf_category[]')
+            mrf_quantities = request.POST.getlist('mrf_quantity[]')
+            
+            # Delete existing MRF details
+            MRFDetails.objects.filter(mrf_id=mrf_id, comp_code=COMP_CODE).delete()
+            
+            # Create new MRF details for each multi-entry row
+            for i in range(len(mrf_designations)):
+                if mrf_designations[i] and mrf_departments[i] and mrf_categories[i] and mrf_quantities[i]:
+                    MRFDetails.objects.create(
+                        mrf_id=mrf_id,
+                        comp_code=COMP_CODE,
+                        designation=mrf_designations[i],
+                        department=mrf_departments[i],
+                        category=mrf_categories[i],
+                        quantity=mrf_quantities[i],
+                        created_by=request.user.username,
+                        updated_by=request.user.username
+                    )
+            
             return redirect('mrf_list')
             
         except Exception as e:
@@ -7454,6 +7528,7 @@ def delete_mrf(request):
         try:
             mrf_id = request.POST.get('mrf_id')
             mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
+            MRFDetails.objects.filter(mrf_id=mrf_id, comp_code=COMP_CODE).delete()
             mrf.delete()
             
             return JsonResponse({
@@ -7474,7 +7549,21 @@ def get_mrf_details(request):
     """View to get MRF details for editing"""
     try:
         mrf_id = request.GET.get('mrf_id')
+        
         mrf = MRFMaster.objects.get(id=mrf_id, comp_code=COMP_CODE)
+        
+        # Get MRF details (multi-entry data)
+        mrf_details = MRFDetails.objects.filter(mrf_id=mrf_id, comp_code=COMP_CODE)
+        
+        details_data = []
+        for detail in mrf_details:
+            detail_data = {
+                'designation': detail.designation,
+                'department': detail.department,
+                'category': detail.category,
+                'quantity': detail.quantity
+            }
+            details_data.append(detail_data)
         
         data = {
             'project_code': mrf.project_code,
@@ -7484,10 +7573,85 @@ def get_mrf_details(request):
             'remaining_quantity': mrf.remaining_quantity,
             'department': mrf.department,
             'status': mrf.status,
-            'remarks': mrf.remarks
+            'remarks': mrf.remarks,
+            'mrf_details': details_data
         }
         
         return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=400)
+
+def get_mrf_details_for_ao(request):
+    set_comp_code(request)
+    """View to get MRF details for AO Entry selection"""
+    try:
+        mrf_id = request.GET.get('mrf_id')
+        
+        # Get MRF details (multi-entry data)
+        mrf_details = MRFDetails.objects.filter(mrf_id=mrf_id, comp_code=COMP_CODE, remaining_quantity__gt=0)
+        
+        details_data = []
+        for detail in mrf_details:
+            # Get designation description
+            designation_desc = ""
+            try:
+                designation_obj = CodeMaster.objects.get(
+                    comp_code=COMP_CODE,
+                    base_type='DESIGNATION',
+                    base_value=detail.designation,
+                    is_active='Y'
+                )
+                designation_desc = designation_obj.base_description
+            except:
+                designation_desc = detail.designation
+            
+            # Get department description
+            department_desc = ""
+            try:
+                dept_obj = CodeMaster.objects.get(
+                    comp_code=COMP_CODE,
+                    base_type='DEPARTMENT',
+                    base_value=detail.department,
+                    is_active='Y'
+                )
+                department_desc = dept_obj.base_description
+            except:
+                department_desc = detail.department
+            
+            # Get category description
+            category_desc = ""
+            try:
+                category_obj = CodeMaster.objects.get(
+                    comp_code=COMP_CODE,
+                    base_type='STAFF_CATEGORY',
+                    base_value=detail.category,
+                    is_active='Y'
+                )
+                category_desc = category_obj.base_description
+            except:
+                category_desc = detail.category
+            
+            detail_data = {
+                'id': detail.id,
+                'designation': detail.designation,
+                'designation_desc': designation_desc,
+                'department': detail.department,
+                'department_desc': department_desc,
+                'category': detail.category,
+                'category_desc': category_desc,
+                'quantity': detail.quantity,
+                'remaining_quantity': detail.remaining_quantity
+            }
+            details_data.append(detail_data)
+        
+        return JsonResponse({
+            'status': 'success',
+            'mrf_details': details_data
+        })
         
     except Exception as e:
         return JsonResponse({
