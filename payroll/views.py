@@ -7193,18 +7193,65 @@ def employee_pp_update(request):
             obj.date_of_landing = request.POST.get('date_of_landing') or None
             obj.no_of_days = request.POST.get('no_of_days') or None
             obj.fine_amount = request.POST.get('fine_amount') or None
-            obj.medical = (obj.medical + ": " + request.POST.get('medical') or None) 
-            obj.medical_result_date = (str(obj.medical_result_date) + ": " + request.POST.get('medical_result_date') or None)
-            obj.remedical_result_date = (str(obj.remedical_result_date) + ": " + request.POST.get('remedical_result_date') or None)
-            obj.eid = (obj.eid + ": " + request.POST.get('eid') or None)
-            obj.rp_stamping = (obj.rp_stamping + ": " + request.POST.get('rp_stamping') or None)
-            obj.tawjeeh_payment = (obj.tawjeeh_payment + ": " + request.POST.get('tawjeeh_payment') or None)
-            obj.tawjeeh_class = (obj.tawjeeh_class + ": " + request.POST.get('tawjeeh_class') or None)
-            obj.iloe_status = (obj.iloe_status + ": " + request.POST.get('iloe_status') or None)
-            obj.iloe_date = (str(obj.iloe_date) + ": " + request.POST.get('iloe_date') or None)
-            obj.tawjeeh_date = (str(obj.tawjeeh_date) + ": " + request.POST.get('tawjeeh_date') or None)
-            obj.rp_stamping_date = (str(obj.rp_stamping_date) + ": " + request.POST.get('rp_stamping_date') or None)
-            obj.eid_date = (str(obj.eid_date) + ": " + request.POST.get('eid_date') or None)
+            # Handle medical field
+            medical_value = request.POST.get('medical')
+            if medical_value:
+                obj.medical = (obj.medical or "") + ": " + medical_value if obj.medical else medical_value
+            
+            # Handle medical_result_date field
+            medical_result_date_value = request.POST.get('medical_result_date')
+            if medical_result_date_value:
+                obj.medical_result_date = (str(obj.medical_result_date or "") + ": " + medical_result_date_value) if obj.medical_result_date else medical_result_date_value
+            
+            # Handle remedical_result_date field
+            remedical_result_date_value = request.POST.get('remedical_result_date')
+            if remedical_result_date_value:
+                obj.remedical_result_date = (str(obj.remedical_result_date or "") + ": " + remedical_result_date_value) if obj.remedical_result_date else remedical_result_date_value
+            
+            # Handle eid field
+            eid_value = request.POST.get('eid')
+            if eid_value:
+                obj.eid = (obj.eid or "") + ": " + eid_value if obj.eid else eid_value
+            
+            # Handle rp_stamping field
+            rp_stamping_value = request.POST.get('rp_stamping')
+            if rp_stamping_value:
+                obj.rp_stamping = (obj.rp_stamping or "") + ": " + rp_stamping_value if obj.rp_stamping else rp_stamping_value
+            
+            # Handle tawjeeh_payment field
+            tawjeeh_payment_value = request.POST.get('tawjeeh_payment')
+            if tawjeeh_payment_value:
+                obj.tawjeeh_payment = (obj.tawjeeh_payment or "") + ": " + tawjeeh_payment_value if obj.tawjeeh_payment else tawjeeh_payment_value
+            
+            # Handle tawjeeh_class field
+            tawjeeh_class_value = request.POST.get('tawjeeh_class')
+            if tawjeeh_class_value:
+                obj.tawjeeh_class = (obj.tawjeeh_class or "") + ": " + tawjeeh_class_value if obj.tawjeeh_class else tawjeeh_class_value
+            
+            # Handle iloe_status field
+            iloe_status_value = request.POST.get('iloe_status')
+            if iloe_status_value:
+                obj.iloe_status = (obj.iloe_status or "") + ": " + iloe_status_value if obj.iloe_status else iloe_status_value
+            
+            # Handle iloe_date field
+            iloe_date_value = request.POST.get('iloe_date')
+            if iloe_date_value:
+                obj.iloe_date = (str(obj.iloe_date or "") + ": " + iloe_date_value) if obj.iloe_date else iloe_date_value
+            
+            # Handle tawjeeh_date field
+            tawjeeh_date_value = request.POST.get('tawjeeh_date')
+            if tawjeeh_date_value:
+                obj.tawjeeh_date = (str(obj.tawjeeh_date or "") + ": " + tawjeeh_date_value) if obj.tawjeeh_date else tawjeeh_date_value
+            
+            # Handle rp_stamping_date field
+            rp_stamping_date_value = request.POST.get('rp_stamping_date')
+            if rp_stamping_date_value:
+                obj.rp_stamping_date = (str(obj.rp_stamping_date or "") + ": " + rp_stamping_date_value) if obj.rp_stamping_date else rp_stamping_date_value
+            
+            # Handle eid_date field
+            eid_date_value = request.POST.get('eid_date')
+            if eid_date_value:
+                obj.eid_date = (str(obj.eid_date or "") + ": " + eid_date_value) if obj.eid_date else eid_date_value
             obj.save()
             
             # Handle document uploads
