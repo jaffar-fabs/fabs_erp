@@ -6,337 +6,274 @@
 <style>
 .login-container {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f8f9ff 0%, #e8eaff 100%);
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 50%, #80098D 100%);
     position: relative;
     overflow: hidden;
 }
 
-.top-logos {
-    position: absolute;
-    top: 20px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
+.login-header {
+    background: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
     z-index: 10;
 }
 
-.logo-item {
+.logo-container {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo-item {
     text-align: center;
+    flex: 1;
 }
 
 .logo-item img {
     max-height: 60px;
     width: auto;
+    object-fit: contain;
 }
 
 .logo-text {
-    font-size: 12px;
-    color: #333;
+    font-size: 14px;
+    font-weight: 600;
     margin-top: 5px;
-    font-weight: 500;
-}
-
-.prime-fm {
-    color: #20c997;
-    font-weight: 600;
-}
-
-.mission-direct {
-    color: #20c997;
-    font-weight: 700;
-    font-size: 24px;
-}
-
-.mission-direct-subtitle {
-    font-size: 10px;
     color: #333;
-    margin-top: 2px;
 }
 
-.megadon-logo {
+.logo-text.primefm {
+    color: #20c997;
+}
+
+.logo-text.mission-direct {
+    color: #0d6efd;
+}
+
+.logo-text.megadon {
+    color: #6c757d;
+}
+
+.login-main {
+    display: flex;
+    min-height: calc(100vh - 100px);
     position: relative;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(45deg, #6c757d, #adb5bd);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: white;
-    transform: perspective(100px) rotateY(-15deg);
-    box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
 }
 
-.megadon-text {
-    position: absolute;
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    font-size: 8px;
-    color: #333;
-    font-weight: 600;
-}
-
-.main-content {
-    display: flex;
-    min-height: 100vh;
-    align-items: center;
-}
-
-.left-section {
+.login-left {
     flex: 1;
-    background: linear-gradient(135deg, #e8eaff 0%, #d4d8ff 100%);
+    background: linear-gradient(135deg, #f3e5f5 0%, #e8d5f0 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    min-height: 100vh;
 }
 
 .pdia-logo {
     font-size: 120px;
     font-weight: 900;
-    background: linear-gradient(135deg, #6f42c1, #8e44ad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
-    letter-spacing: -5px;
+    color: #80098D;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    transform: rotate(-5deg);
+    letter-spacing: 10px;
 }
 
-.right-section {
+.login-center {
     flex: 1;
     background: white;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 30px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
     position: relative;
-    min-height: 100vh;
-}
-
-.decorative-elements {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.decorative-rectangle {
-    position: absolute;
-    background: linear-gradient(45deg, #8e44ad, #e91e63);
-    border-radius: 8px;
-    transform: rotate(45deg);
-}
-
-.rect-1 {
-    width: 120px;
-    height: 80px;
-    top: 10%;
-    right: 15%;
-    opacity: 0.8;
-}
-
-.rect-2 {
-    width: 100px;
-    height: 60px;
-    top: 25%;
-    right: 25%;
-    opacity: 0.6;
-    background: linear-gradient(45deg, #9c27b0, #f06292);
-}
-
-.rect-3 {
-    width: 80px;
-    height: 40px;
-    top: 40%;
-    right: 35%;
-    opacity: 0.4;
-    background: linear-gradient(45deg, #ba68c8, #f8bbd9);
+    z-index: 5;
 }
 
 .login-form-container {
-    position: relative;
-    z-index: 2;
-    background: white;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    max-width: 400px;
+    max-width: 260px;
     width: 100%;
 }
 
 .welcome-text {
-    color: #e91e63;
-    font-size: 24px;
-    font-weight: 700;
     text-align: center;
-    margin-bottom: 30px;
-}
-
-.form-title {
-    font-size: 28px;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.form-subtitle {
-    color: #666;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-.form-group {
     margin-bottom: 20px;
 }
 
-.form-label {
+.welcome-text h1 {
+    color: #80098D;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.welcome-text h2 {
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.welcome-text p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
     font-weight: 600;
     color: #333;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.form-control {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #8e44ad;
-    box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 .input-group {
     position: relative;
 }
 
+.input-group input {
+    width: 100%;
+    padding: 8px 35px 8px 12px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: border-color 0.3s ease;
+    height: 36px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #80098D;
+    box-shadow: 0 0 0 3px rgba(128, 9, 141, 0.1);
+}
+
 .input-icon {
     position: absolute;
-    right: 12px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #666;
+    color: #6c757d;
+    cursor: pointer;
     font-size: 18px;
 }
 
 .login-btn {
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #6f42c1 0%, #e91e63 100%);
+    padding: 10px;
+    background: linear-gradient(135deg, #80098D 0%, #A53DC3 100%);
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     color: white;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 20px;
+    transition: transform 0.2s ease;
+    height: 40px;
 }
 
 .login-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+    box-shadow: 0 5px 15px rgba(128, 9, 141, 0.3);
 }
 
 .powered-by {
     text-align: center;
-    color: #666;
-    font-size: 14px;
-    margin-top: 20px;
+    margin-top: 18px;
+    color: #6c757d;
+    font-size: 10px;
+    font-weight: 500;
 }
 
-.alert {
-    border-radius: 8px;
-    margin-bottom: 20px;
+.login-right {
+    flex: 0.5;
+    background: linear-gradient(180deg, #80098D 0%, #A53DC3 25%, #AE51D0 50%, #DC00FF 75%, #e8d5f0 100%);
+    position: relative;
 }
+
+.purple-bands {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+}
+
+.purple-band {
+    flex: 1;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+    margin: 0 2px;
+}
+
+.purple-band:nth-child(1) { background: linear-gradient(180deg, #80098D 0%, #A53DC3 100%); }
+.purple-band:nth-child(2) { background: linear-gradient(180deg, #A53DC3 0%, #AE51D0 100%); }
+.purple-band:nth-child(3) { background: linear-gradient(180deg, #AE51D0 0%, #DC00FF 100%); }
+.purple-band:nth-child(4) { background: linear-gradient(180deg, #DC00FF 0%, #e8d5f0 100%); }
 
 @media (max-width: 768px) {
-    .main-content {
+    .login-main {
         flex-direction: column;
     }
     
-    .left-section {
-        min-height: 200px;
+    .login-left, .login-right {
+        display: none;
     }
     
-    .pdia-logo {
-        font-size: 80px;
+    .login-center {
+        flex: none;
+        min-height: 100vh;
     }
     
-    .top-logos {
-        padding: 0 20px;
-    }
-    
-    .logo-item img {
-        max-height: 40px;
-    }
-    
-    .megadon-logo {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
+    .logo-container {
+        flex-direction: column;
+        gap: 20px;
     }
 }
 </style>
 
 <div class="login-container">
-    <!-- Top Logos Section -->
-    <div class="top-logos">
-        <div class="logo-item">
-            <div class="prime-fm">Prime FM</div>
-        </div>
-        <div class="logo-item">
-            <div class="mission-direct">MD</div>
-            <div class="mission-direct-subtitle">MISSION DIRECT</div>
-            <div class="mission-direct-subtitle">CONTRACTING & FACILITIES</div>
-        </div>
-        <div class="logo-item">
-            <div class="megadon-logo">
-                N
-                <div class="megadon-text">MEGADON</div>
+    <!-- Header with three logos -->
+    <div class="login-header">
+        <div class="logo-container">
+            <div class="logo-item">
+                <img src="{% static 'assets/img/Prime.png' %}" alt="PrimeFM">
+                <div class="logo-text primefm">PrimeFM</div>
+            </div>
+            <div class="logo-item">
+                <img src="{% static 'assets/img/FABS.png' %}" alt="Mission Direct">
+                <div class="logo-text mission-direct">MISSION DIRECT<br>CONTRACTING & FACILITIES</div>
+            </div>
+            <div class="logo-item">
+                <img src="{% static 'assets/img/logo.svg' %}" alt="Megadon">
+                <div class="logo-text megadon">MEGADON</div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Left Section with PDIA Logo -->
-        <div class="left-section">
+    <!-- Main content area -->
+    <div class="login-main">
+        <!-- Left side with PDIA logo -->
+        <div class="login-left">
             <div class="pdia-logo">PDIA</div>
         </div>
 
-        <!-- Right Section with Login Form -->
-        <div class="right-section">
-            <!-- Decorative Elements -->
-            <div class="decorative-elements">
-                <div class="decorative-rectangle rect-1"></div>
-                <div class="decorative-rectangle rect-2"></div>
-                <div class="decorative-rectangle rect-3"></div>
-            </div>
-
-            <!-- Login Form -->
+        <!-- Center login form -->
+        <div class="login-center">
             <div class="login-form-container">
-                <div class="welcome-text">WELCOME BACK</div>
-                
+                <div class="welcome-text">
+                    <h1>WELCOME BACK</h1>
+                    <h2>Sign In</h2>
+                    <p>Access the FABS ERP using your Username and Password.</p>
+                </div>
+
                 <form id="login-form-authenticate-form-id" method="post" action="{% url 'after-login' %}">
                     {% csrf_token %}
                     {% if messages %}
@@ -347,32 +284,25 @@
                     </div>
                     {% endif %}
 
-                    <div class="form-title">Sign In</div>
-                    <div class="form-subtitle">Access the FABS ERP using your Username and Password.</div>
-
                     <div class="form-group">
-                        <label class="form-label">User Name</label>
+                        <label for="username">User Name</label>
                         <div class="input-group">
-                            <input id="username" name="username" type="text" value="" class="form-control">
-                            <span class="input-icon">
-                                <i class="ti ti-user"></i>
-                            </span>
+                            <input id="username" name="username" type="text" value="" required>
+                            <span class="input-icon">👁️</span>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Password</label>
+                        <label for="password">Password</label>
                         <div class="input-group">
-                            <input id="password" name="password" type="password" class="form-control">
-                            <span class="input-icon toggle-password">
-                                <i class="ti ti-eye-off"></i>
-                            </span>
+                            <input id="password" name="password" type="password" required>
+                            <span class="input-icon toggle-password">👁️‍🗨️</span>
                         </div>
                     </div>
 
                     <div class="form-group" id="company-select-container" style="display: none;">
-                        <label class="form-label">Select Company</label>
-                        <select name="selected_company" class="form-control" required>
+                        <label for="selected_company">Select Company</label>
+                        <select name="selected_company" class="form-select" required>
                             <option value="">Select a company</option>
                         </select>
                     </div>
@@ -380,13 +310,40 @@
                     <button type="submit" id="login-btn" class="login-btn">Login</button>
                 </form>
 
-                <div class="powered-by">Powered by Fabs Infotech, Dubai</div>
+                <div class="powered-by">
+                    Powered by Fabs Infotech, Dubai
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side with purple bands -->
+        <div class="login-right">
+            <div class="purple-bands">
+                <div class="purple-band"></div>
+                <div class="purple-band"></div>
+                <div class="purple-band"></div>
+                <div class="purple-band"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+// Password toggle functionality
+document.querySelector('.toggle-password').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const icon = this;
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.textContent = '👁️';
+    } else {
+        passwordInput.type = 'password';
+        icon.textContent = '👁️‍🗨️';
+    }
+});
+
+// Username blur event for company selection
 document.getElementById('username').addEventListener('blur', function() {
     const username = this.value;
     if (username) {
@@ -418,22 +375,6 @@ document.getElementById('username').addEventListener('blur', function() {
         .catch(error => {
             console.error('Error fetching companies:', error);
         });
-    }
-});
-
-// Password toggle functionality
-document.querySelector('.toggle-password').addEventListener('click', function() {
-    const passwordInput = document.getElementById('password');
-    const icon = this.querySelector('i');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('ti-eye-off');
-        icon.classList.add('ti-eye');
-    } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('ti-eye');
-        icon.classList.add('ti-eye-off');
     }
 });
 </script>
