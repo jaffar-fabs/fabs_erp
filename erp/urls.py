@@ -324,6 +324,13 @@ urlpatterns = [
     path('notification/update/', views.notification_update, name='notification_update'),
     path('notification/delete/<int:notification_id>/', views.notification_delete, name='notification_delete'),
 
+    # Offboarding URLs
+    path('offboarding/', views.offboarding_list, name='offboarding_list'),
+    path('offboarding/create/', views.offboarding_create, name='offboarding_create'),
+    path('offboarding/edit/', views.offboarding_edit, name='offboarding_edit'),
+    path('offboarding/delete/', views.offboarding_delete, name='offboarding_delete'),
+    path('get_employee_offboarding_details/', views.get_employee_offboarding_details, name='get_employee_offboarding_details'),
+
 ]
 
 

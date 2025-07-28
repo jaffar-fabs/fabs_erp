@@ -7504,6 +7504,7 @@ def create_mrf(request):
                         department=mrf_departments[i],
                         category=mrf_categories[i],
                         quantity=mrf_quantities[i],
+                        remaining_quantity=mrf_quantities[i],
                         created_by=request.user.username,
                         updated_by=request.user.username
                     )
@@ -7553,6 +7554,7 @@ def edit_mrf(request):
                         department=mrf_departments[i],
                         category=mrf_categories[i],
                         quantity=mrf_quantities[i],
+                        remaining_quantity=mrf_quantities[i],
                         created_by=request.user.username,
                         updated_by=request.user.username
                     )
@@ -10804,3 +10806,294 @@ def notification_edit(request):
 #     except Exception as e:
 #         print("Error in send_notification:", str(e))
 #         return False
+
+def offboarding_list(request):
+    set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    
+    # Base query
+    query = Offboarding.objects.filter(comp_code=COMP_CODE)
+    
+    # Search filter
+    if keyword:
+        query = query.filter(
+            Q(emp_code__icontains=keyword) |
+            Q(emp_name__icontains=keyword) |
+            Q(offboarding_type__icontains=keyword)
+        )
+    
+    # Pagination
+    paginator = Paginator(query.order_by('-created_on'), 10)
+    try:
+        entries = paginator.page(page_number)
+    except (PageNotAnInteger, EmptyPage):
+        entries = paginator.page(1)
+    
+    result_cnt = query.count()
+    
+    context = {
+        'entries': entries,
+        'result_cnt': result_cnt,
+        'keyword': keyword,
+    }
+    
+    return render(request, 'pages/payroll/offboarding/offboarding_list.html', context)
+
+def offboarding_create(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            emp_code = request.POST.get('emp_code')
+            offboarding_type = request.POST.get('offboarding_type')
+            offboarding_date = request.POST.get('offboarding_date')
+            reason = request.POST.get('reason')
+            notice_period = request.POST.get('notice_period')
+            last_working_date = request.POST.get('last_working_date')
+            
+            # Get employee details
+            employee = Employee.objects.filter(emp_code=emp_code, comp_code=COMP_CODE).first()
+            
+            if not employee:
+                return JsonResponse({'status': 'error', 'message': 'Employee not found'})
+            
+            # Create offboarding record
+            offboarding = Offboarding.objects.create(
+                comp_code=COMP_CODE,
+                emp_code=emp_code,
+                emp_name=employee.emp_name,
+                designation=employee.designation,
+                department=employee.department,
+                date_of_join=employee.date_of_join,
+                offboarding_type=offboarding_type,
+                offboarding_date=offboarding_date,
+                reason=reason,
+                notice_period=notice_period if notice_period else None,
+                last_working_date=last_working_date if last_working_date else None,
+                # Passport details
+                passport_number=employee.passport_details,
+                passport_expiry=employee.expiry_date,
+                # Visa details
+                visa_number=employee.visa_no,
+                visa_expiry=employee.visa_expiry,
+                emirates_id=employee.emirates_no,
+                emirates_expiry=employee.emirate_expiry,
+                # Accommodation details
+                accommodation_type=employee.accommodation_type,
+                camp_location=employee.select_camp,
+                room_number=employee.room_no,
+                created_by=request.user.id if request.user.is_authenticated else 1
+            )
+            
+            # Handle document uploads
+            upload_documents = request.FILES.getlist('document_file[]')
+            document_dates = request.POST.getlist('document_date[]')
+            
+            for doc_file, doc_date in zip_longest(upload_documents, document_dates):
+                if doc_file and doc_date:
+                    OffboardingDocuments.objects.create(
+                        offboarding_id=offboarding.offboarding_id,
+                        document_date=doc_date,
+                        document_file=doc_file,
+                        created_by=request.user.id if request.user.is_authenticated else 1
+                    )
+            
+            return JsonResponse({'status': 'success', 'message': 'Offboarding record created successfully'})
+            
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    # GET request - show form
+    employee_data = Employee.objects.filter(comp_code=COMP_CODE).values('emp_code', 'emp_name', 'designation', 'department')
+    
+    context = {
+        'employee_data': employee_data,
+    }
+    
+    return render(request, 'pages/payroll/offboarding/offboarding_create.html', context)
+
+def offboarding_edit(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        offboarding_id = request.GET.get('id')
+        try:
+            offboarding = Offboarding.objects.get(offboarding_id=offboarding_id, comp_code=COMP_CODE)
+            documents = OffboardingDocuments.objects.filter(offboarding_id=offboarding_id)
+            
+            # Get employee details for project info
+            employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
+            
+            # Get the first value from semicolon-separated fields
+            def get_first_value(value):
+                if value and ';' in str(value):
+                    return str(value).split(';')[0].strip()
+                return value
+            
+            # Helper function to format date for HTML date input
+            def format_date_for_input(date_value):
+                if not date_value:
+                    return None
+                if isinstance(date_value, str):
+                    # If it's already a string, try to parse and format it
+                    try:
+                        from datetime import datetime
+                        parsed_date = datetime.strptime(date_value.strip(), '%Y-%m-%d')
+                        return parsed_date.strftime('%Y-%m-%d')
+                    except:
+                        return date_value.strip()
+                elif hasattr(date_value, 'strftime'):
+                    # If it's a date object
+                    return date_value.strftime('%Y-%m-%d')
+                return str(date_value)
+            
+            data = {
+                'offboarding_id': offboarding.offboarding_id,
+                'emp_code': offboarding.emp_code,
+                'emp_name': offboarding.emp_name,
+                'designation': offboarding.designation,
+                'department': offboarding.department,
+                'project': employee.prj_code if employee else None,
+                'date_of_join': offboarding.date_of_join.strftime('%Y-%m-%d') if offboarding.date_of_join else None,
+                'offboarding_type': get_first_value(offboarding.offboarding_type),
+                'offboarding_date': format_date_for_input(get_first_value(offboarding.offboarding_date)),
+                'reason': get_first_value(offboarding.reason),
+                'last_working_date': format_date_for_input(get_first_value(offboarding.last_working_date)),
+                'passport_number': offboarding.passport_number,
+                'passport_expiry': offboarding.passport_expiry.strftime('%Y-%m-%d') if offboarding.passport_expiry else None,
+                'visa_number': offboarding.visa_number,
+                'visa_expiry': offboarding.visa_expiry.strftime('%Y-%m-%d') if offboarding.visa_expiry else None,
+                'emirates_id': offboarding.emirates_id,
+                'emirates_expiry': offboarding.emirates_expiry.strftime('%Y-%m-%d') if offboarding.emirates_expiry else None,
+                'accommodation_type': offboarding.accommodation_type,
+                'camp_location': offboarding.camp_location,
+                'room_number': offboarding.room_number,
+                'offboarding_documents': []
+            }
+            
+            for doc in documents:
+                data['offboarding_documents'].append({
+                    'document_id': doc.document_id,
+                    'document_date': doc.document_date.strftime('%Y-%m-%d') if doc.document_date else None,
+                    'document_url': doc.document_file.url if doc.document_file else None
+                })
+            
+            return JsonResponse(data)
+            
+        except Offboarding.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Offboarding record not found'})
+    
+    elif request.method == 'POST':
+        try:
+            offboarding_id = request.POST.get('offboarding_id')
+            offboarding = Offboarding.objects.get(offboarding_id=offboarding_id, comp_code=COMP_CODE)
+            
+            # Update fields - replace values instead of appending
+            offboarding.offboarding_type = request.POST.get('offboarding_type') or ''
+            offboarding.offboarding_date = request.POST.get('offboarding_date') or ''
+            offboarding.reason = request.POST.get('reason') or ''
+            offboarding.last_working_date = request.POST.get('last_working_date') or ''
+            offboarding.modified_by = request.user.id if request.user.is_authenticated else 1
+            offboarding.save()
+            
+            # Handle document deletions
+            documents_to_remove = request.POST.get('documents_to_remove')
+            if documents_to_remove:
+                document_ids = [int(id.strip()) for id in documents_to_remove.split(',') if id.strip()]
+                for doc_id in document_ids:
+                    try:
+                        document = OffboardingDocuments.objects.get(
+                            document_id=doc_id, 
+                            offboarding_id=offboarding_id
+                        )
+                        # Delete the file from the file system
+                        if document.document_file:
+                            try:
+                                if os.path.exists(document.document_file.path):
+                                    os.remove(document.document_file.path)
+                            except Exception as file_error:
+                                # Log the file deletion error but continue with database deletion
+                                print(f"Error deleting file {document.document_file.path}: {str(file_error)}")
+                        # Delete the database record
+                        document.delete()
+                    except OffboardingDocuments.DoesNotExist:
+                        # Document might have already been deleted, continue
+                        pass
+                    except Exception as e:
+                        # Log the error but continue with other deletions
+                        print(f"Error deleting document {doc_id}: {str(e)}")
+            
+            # Handle new document uploads
+            upload_documents = request.FILES.getlist('document_file[]')
+            document_dates = request.POST.getlist('document_date[]')
+            
+            for doc_file, doc_date in zip_longest(upload_documents, document_dates):
+                if doc_file and doc_date:
+                    OffboardingDocuments.objects.create(
+                        offboarding_id=offboarding.offboarding_id,
+                        document_date=doc_date,
+                        document_file=doc_file,
+                        created_by=request.user.id if request.user.is_authenticated else 1
+                    )
+            
+            return JsonResponse({'status': 'success', 'message': 'Offboarding record updated successfully'})
+            
+        except Offboarding.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Offboarding record not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+@csrf_exempt
+def offboarding_delete(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            offboarding_id = request.POST.get('id')
+            offboarding = Offboarding.objects.get(offboarding_id=offboarding_id, comp_code=COMP_CODE)
+            
+            # Delete associated documents
+            OffboardingDocuments.objects.filter(offboarding_id=offboarding_id).delete()
+            
+            # Delete offboarding record
+            offboarding.delete()
+            
+            return JsonResponse({'status': 'success', 'message': 'Offboarding record deleted successfully'})
+            
+        except Offboarding.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Offboarding record not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+def get_employee_offboarding_details(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        emp_code = request.GET.get('emp_code')
+        
+        try:
+            employee = Employee.objects.get(emp_code=emp_code, comp_code=COMP_CODE)
+            
+            data = {
+                'success': True,
+                'data': {
+                    'emp_name': employee.emp_name,
+                    'designation': employee.designation,
+                    'department': employee.department,
+                    'project': employee.prj_code,
+                    'date_of_join': employee.date_of_join.strftime('%Y-%m-%d') if employee.date_of_join else None,
+                    'passport_number': employee.passport_details,
+                    'passport_expiry': employee.expiry_date.strftime('%Y-%m-%d') if employee.expiry_date else None,
+                    'visa_number': employee.visa_no,
+                    'visa_expiry': employee.visa_expiry.strftime('%Y-%m-%d') if employee.visa_expiry else None,
+                    'emirates_id': employee.emirates_no,
+                    'emirates_expiry': employee.emirate_expiry.strftime('%Y-%m-%d') if employee.emirate_expiry else None,
+                    'accommodation_type': employee.accommodation_type,
+                    'camp_location': employee.select_camp,
+                    'room_number': employee.room_no,
+                }
+            }
+            
+            return JsonResponse(data)
+            
+        except Employee.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Employee not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}) 

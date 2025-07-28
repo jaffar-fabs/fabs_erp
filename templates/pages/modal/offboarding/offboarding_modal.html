@@ -1,0 +1,893 @@
+<!-- Add Offboarding Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1200px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title">Add Employee Offboarding</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addOffboardingForm" action="{% url 'offboarding_create' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Employee Selection -->
+            <div class="mb-4">
+                <h6>Employee Selection</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Employee Code <span class="text-danger">*</span></label>
+                        <select name="emp_code" id="add_emp_code" class="form-control select2" required>
+                            <option value="">Select Employee Code</option>
+                            {% for employee in employee_data %}
+                            <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Employee Name</label>
+                        <input type="text" id="add_emp_name" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Details Display -->
+            <div class="mb-4">
+                <h6>Employee Details</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <div class="form-control-plaintext" id="add_designation_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Department</label>
+                        <div class="form-control-plaintext" id="add_department_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Project</label>
+                        <div class="form-control-plaintext" id="add_project_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Date of Joining</label>
+                        <div class="form-control-plaintext" id="add_date_of_join_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Passport Number</label>
+                        <div class="form-control-plaintext" id="add_passport_number_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Passport Expiry</label>
+                        <div class="form-control-plaintext" id="add_passport_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Visa Number</label>
+                        <div class="form-control-plaintext" id="add_visa_number_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Visa Expiry</label>
+                        <div class="form-control-plaintext" id="add_visa_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Emirates ID</label>
+                        <div class="form-control-plaintext" id="add_emirates_id_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Emirates ID Expiry</label>
+                        <div class="form-control-plaintext" id="add_emirates_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Accommodation Type</label>
+                        <div class="form-control-plaintext" id="add_accommodation_type_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Camp Location</label>
+                        <div class="form-control-plaintext" id="add_camp_location_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Room Number</label>
+                        <div class="form-control-plaintext" id="add_room_number_display"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offboarding Details Accordion -->
+            <div class="accordion mb-3" id="accordionOffboardingDetails">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOffboardingDetails">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOffboardingDetails" aria-expanded="true" aria-controls="collapseOffboardingDetails">
+                            <i class="ti ti-user-off me-2"></i> Offboarding Details
+                        </button>
+                    </h2>
+                    <div id="collapseOffboardingDetails" class="accordion-collapse collapse show" aria-labelledby="headingOffboardingDetails" data-bs-parent="#accordionOffboardingDetails">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Offboarding Type <span class="text-danger">*</span></label>
+                                    <select name="offboarding_type" id="add_offboarding_type" class="form-control" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Resignation">Resignation</option>
+                                        <option value="Termination">Termination</option>
+                                        <option value="Contract End">Contract End</option>
+                                        <option value="Retirement">Retirement</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Offboarding Date <span class="text-danger">*</span></label>
+                                    <input type="date" name="offboarding_date" id="add_offboarding_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Last Working Date</label>
+                                    <input type="date" name="last_working_date" id="add_last_working_date" class="form-control">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Reason <span class="text-danger">*</span></label>
+                                    <select name="reason" id="add_reason" class="form-control" required>
+                                        <option value="">Select Reason</option>
+                                        <option value="Personal Reasons">Personal Reasons</option>
+                                        <option value="Better Opportunity">Better Opportunity</option>
+                                        <option value="Career Change">Career Change</option>
+                                        <option value="Health Issues">Health Issues</option>
+                                        <option value="Family Reasons">Family Reasons</option>
+                                        <option value="Performance Issues">Performance Issues</option>
+                                        <option value="Contract Expiry">Contract Expiry</option>
+                                        <option value="Company Restructuring">Company Restructuring</option>
+                                        <option value="Retirement">Retirement</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Accordion -->
+            <div class="accordion mb-3" id="accordionDocuments">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingDocuments">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDocuments" aria-expanded="false" aria-controls="collapseDocuments">
+                            <i class="ti ti-files me-2"></i> Documents
+                        </button>
+                    </h2>
+                    <div id="collapseDocuments" class="accordion-collapse collapse" aria-labelledby="headingDocuments" data-bs-parent="#accordionDocuments">
+                        <div class="accordion-body">
+                            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all document uploads</small>
+                            <table class="table" id="documentUploadTable_add">
+                                <thead>
+                                    <tr>
+                                        <th>Document Date</th>
+                                        <th>File Upload</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="date" name="document_date[]" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" onclick="removeDocumentRow_add(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" onclick="addDocumentRow_add()">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+$(function() {
+    $('#add_emp_code').change(function() {
+        var emp_code = $(this).val();
+        if (emp_code) {
+            $.ajax({
+                url: "{% url 'get_employee_offboarding_details' %}",
+                type: "GET",
+                data: { emp_code: emp_code },
+                success: function(response) {
+                    if (response.success) {
+                        var d = response.data;
+                        $('#add_emp_name').val(d.emp_name || '');
+                        $('#add_designation_display').text(d.designation || 'N/A');
+                        $('#add_department_display').text(d.department || 'N/A');
+                        $('#add_project_display').text(d.project || 'N/A');
+                        $('#add_date_of_join_display').text(d.date_of_join || 'N/A');
+                        $('#add_passport_number_display').text(d.passport_number || 'N/A');
+                        $('#add_passport_expiry_display').text(d.passport_expiry || 'N/A');
+                        $('#add_visa_number_display').text(d.visa_number || 'N/A');
+                        $('#add_visa_expiry_display').text(d.visa_expiry || 'N/A');
+                        $('#add_emirates_id_display').text(d.emirates_id || 'N/A');
+                        $('#add_emirates_expiry_display').text(d.emirates_expiry || 'N/A');
+                        $('#add_accommodation_type_display').text(d.accommodation_type || 'N/A');
+                        $('#add_camp_location_display').text(d.camp_location || 'N/A');
+                        $('#add_room_number_display').text(d.room_number || 'N/A');
+                    }
+                }
+            });
+        }
+    });
+
+    // Clear form fields when opening add modal
+    $('#offcanvas_add').on('show.bs.offcanvas', function() {
+        $('#addOffboardingForm')[0].reset();
+        $('#add_emp_name').val('');
+        $('#add_designation_display').text('');
+        $('#add_department_display').text('');
+        $('#add_project_display').text('');
+        $('#add_date_of_join_display').text('');
+        $('#add_passport_number_display').text('');
+        $('#add_passport_expiry_display').text('');
+        $('#add_visa_number_display').text('');
+        $('#add_visa_expiry_display').text('');
+        $('#add_emirates_id_display').text('');
+        $('#add_emirates_expiry_display').text('');
+        $('#add_accommodation_type_display').text('');
+        $('#add_camp_location_display').text('');
+        $('#add_room_number_display').text('');
+        
+        // Clear document table
+        $("#documentUploadTable_add tbody").empty();
+        const emptyRow = `
+            <tr>
+                <td>
+                    <input type="date" name="document_date[]" class="form-control">
+                </td>
+                <td>
+                    <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeDocumentRow_add(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addDocumentRow_add()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $("#documentUploadTable_add tbody").append(emptyRow);
+        
+        // Clear the data display table
+        $('#offboarding_data_body').empty();
+    });
+
+
+});
+
+// File size validation function (5MB = 5 * 1024 * 1024 bytes)
+function validateFileSize(file, maxSizeMB = 5) {
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file && file.size > maxSizeBytes) {
+        alert(`File size must be ${maxSizeMB}MB or less. Selected file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
+        return false;
+    }
+    return true;
+}
+
+// Document handling functions
+function addDocumentRow_add() {
+    const table = document.getElementById('documentUploadTable_add').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+        <td>
+            <input type="date" name="document_date[]" class="form-control">
+        </td>
+        <td>
+            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="removeDocumentRow_add(this)">
+                <i class="fas fa-times"></i>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="addDocumentRow_add()">
+                <i class="fas fa-plus"></i>
+            </button>
+        </td>
+    `;
+    
+    // Add file size validation to the new file input
+    const newFileInput = newRow.querySelector('input[type="file"]');
+    newFileInput.addEventListener('change', function() {
+        const files = this.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                if (!validateFileSize(files[i])) {
+                    this.value = ''; // Clear the input
+                    return false;
+                }
+            }
+        }
+    });
+}
+
+function removeDocumentRow_add(button, documentId = null) {
+    const row = button.closest('tr');
+    const tableBody = document.querySelector('#documentUploadTable_add tbody');
+    
+    if (!tableBody) {
+        console.error('Table body not found');
+        return;
+    }
+    
+    // If this is an existing document (has documentId), add it to documents_to_remove
+    if (documentId) {
+        let documentsToRemove = document.getElementById('documents_to_remove');
+        
+        if (!documentsToRemove) {
+            documentsToRemove = document.createElement('input');
+            documentsToRemove.type = 'hidden';
+            documentsToRemove.id = 'documents_to_remove';
+            documentsToRemove.name = 'documents_to_remove';
+            const table = document.getElementById('documentUploadTable_add');
+            if (table && table.parentNode) {
+                table.parentNode.appendChild(documentsToRemove);
+            }
+        }
+        
+        // Get current values and add new documentId
+        const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+        if (!currentValues.includes(documentId.toString())) {
+            currentValues.push(documentId.toString());
+            documentsToRemove.value = currentValues.join(',');
+        }
+    }
+    
+    // Ensure at least one row remains
+    if (tableBody.rows.length > 1) {
+        row.remove();
+    } else {
+        // Show warning message
+        const message = document.createElement('div');
+        message.className = 'alert alert-warning mt-3';
+        message.innerText = "At least one row must remain.";
+        
+        // Insert after table
+        const table = document.getElementById('documentUploadTable_add');
+        if (table && table.parentNode) {
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
+    }
+}
+
+// Add file size validation to all file inputs
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to apply validation to file inputs
+    function applyFileSizeValidation() {
+        const fileInputs = document.querySelectorAll('input[type="file"]');
+        
+        fileInputs.forEach(function(input) {
+            // Remove existing event listeners to avoid duplicates
+            input.removeEventListener('change', input.fileSizeValidationHandler);
+            
+            // Create new event listener
+            input.fileSizeValidationHandler = function() {
+                const files = this.files;
+                if (files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        if (!validateFileSize(files[i])) {
+                            this.value = ''; // Clear the input
+                            return false;
+                        }
+                    }
+                }
+            };
+            
+            // Add the event listener
+            input.addEventListener('change', input.fileSizeValidationHandler);
+        });
+    }
+    
+    // Apply validation immediately
+    applyFileSizeValidation();
+    
+    // Also apply validation after a short delay to catch any dynamically loaded content
+    setTimeout(applyFileSizeValidation, 100);
+    setTimeout(applyFileSizeValidation, 500);
+    setTimeout(applyFileSizeValidation, 1000);
+    
+    // Additional event delegation approach to catch all file input changes
+    document.addEventListener('change', function(e) {
+        if (e.target.type === 'file') {
+            const files = e.target.files;
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    if (!validateFileSize(files[i])) {
+                        e.target.value = ''; // Clear the input
+                        return false;
+                    }
+                }
+            }
+        }
+    });
+});
+
+
+</script>
+
+<!-- Edit Offboarding Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1200px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title">Edit Employee Offboarding</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="editOffboardingForm" action="{% url 'offboarding_edit' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="offboarding_id" id="edit_offboarding_id">
+            
+            <!-- Employee Details Display -->
+            <div class="mb-4">
+                <h6>Employee Details</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Employee Code</label>
+                        <div class="form-control-plaintext" id="edit_emp_code_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Employee Name</label>
+                        <div class="form-control-plaintext" id="edit_emp_name_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Designation</label>
+                        <div class="form-control-plaintext" id="edit_designation_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Department</label>
+                        <div class="form-control-plaintext" id="edit_department_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Project</label>
+                        <div class="form-control-plaintext" id="edit_project_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Date of Joining</label>
+                        <div class="form-control-plaintext" id="edit_date_of_join_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Passport Number</label>
+                        <div class="form-control-plaintext" id="edit_passport_number_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Passport Expiry</label>
+                        <div class="form-control-plaintext" id="edit_passport_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Visa Number</label>
+                        <div class="form-control-plaintext" id="edit_visa_number_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Visa Expiry</label>
+                        <div class="form-control-plaintext" id="edit_visa_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Emirates ID</label>
+                        <div class="form-control-plaintext" id="edit_emirates_id_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Emirates ID Expiry</label>
+                        <div class="form-control-plaintext" id="edit_emirates_expiry_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Accommodation Type</label>
+                        <div class="form-control-plaintext" id="edit_accommodation_type_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Camp Location</label>
+                        <div class="form-control-plaintext" id="edit_camp_location_display"></div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Room Number</label>
+                        <div class="form-control-plaintext" id="edit_room_number_display"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Offboarding Details Accordion -->
+            <div class="accordion mb-3" id="accordionEditOffboardingDetails">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditOffboardingDetails">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditOffboardingDetails" aria-expanded="true" aria-controls="collapseEditOffboardingDetails">
+                            <i class="ti ti-user-off me-2"></i> Offboarding Details
+                        </button>
+                    </h2>
+                    <div id="collapseEditOffboardingDetails" class="accordion-collapse collapse show" aria-labelledby="headingEditOffboardingDetails" data-bs-parent="#accordionEditOffboardingDetails">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Offboarding Type</label>
+                                    <select name="offboarding_type" id="edit_offboarding_type" class="form-control">
+                                        <option value="">Select Type</option>
+                                        <option value="Resignation">Resignation</option>
+                                        <option value="Termination">Termination</option>
+                                        <option value="Contract End">Contract End</option>
+                                        <option value="Retirement">Retirement</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Offboarding Date</label>
+                                    <input type="date" name="offboarding_date" id="edit_offboarding_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Last Working Date</label>
+                                    <input type="date" name="last_working_date" id="edit_last_working_date" class="form-control">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Reason</label>
+                                    <select name="reason" id="edit_reason" class="form-control">
+                                        <option value="">Select Reason</option>
+                                        <option value="Personal Reasons">Personal Reasons</option>
+                                        <option value="Better Opportunity">Better Opportunity</option>
+                                        <option value="Career Change">Career Change</option>
+                                        <option value="Health Issues">Health Issues</option>
+                                        <option value="Family Reasons">Family Reasons</option>
+                                        <option value="Performance Issues">Performance Issues</option>
+                                        <option value="Contract Expiry">Contract Expiry</option>
+                                        <option value="Company Restructuring">Company Restructuring</option>
+                                        <option value="Retirement">Retirement</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Accordion -->
+            <div class="accordion mb-3" id="accordionEditDocuments">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditDocuments">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditDocuments" aria-expanded="false" aria-controls="collapseEditDocuments">
+                            <i class="ti ti-files me-2"></i> Documents
+                        </button>
+                    </h2>
+                    <div id="collapseEditDocuments" class="accordion-collapse collapse" aria-labelledby="headingEditDocuments" data-bs-parent="#accordionEditDocuments">
+                        <div class="accordion-body">
+                            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all document uploads</small>
+                            
+                            <!-- Existing Documents Display -->
+                            <div class="mb-4">
+                                <h6>Existing Documents</h6>
+                                <div id="existing_documents_container">
+                                    <!-- Existing documents will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- New Document Upload -->
+                            <div class="mb-4">
+                                <h6>Add New Documents</h6>
+                                <table class="table" id="documentUploadTable_edit">
+                                    <thead>
+                                        <tr>
+                                            <th>Document Date</th>
+                                            <th>File Upload</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <input type="date" name="document_date[]" class="form-control">
+                                            </td>
+                                            <td>
+                                                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.offboarding-table {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.offboarding-table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.offboarding-table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.reason-cell {
+    white-space: pre-line;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+</style>
+
+<script>
+// Document handling functions for edit
+function addDocumentRow_edit() {
+    const table = document.getElementById('documentUploadTable_edit').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+        <td>
+            <input type="date" name="document_date[]" class="form-control">
+        </td>
+        <td>
+            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                <i class="fas fa-times"></i>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                <i class="fas fa-plus"></i>
+            </button>
+        </td>
+    `;
+    
+    // Add file size validation to the new file input
+    const newFileInput = newRow.querySelector('input[type="file"]');
+    newFileInput.addEventListener('change', function() {
+        const files = this.files;
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                if (!validateFileSize(files[i])) {
+                    this.value = ''; // Clear the input
+                    return false;
+                }
+            }
+        }
+    });
+}
+
+function removeDocumentRow_edit(button, documentId = null) {
+    const row = button.closest('tr');
+    const tableBody = document.querySelector('#documentUploadTable_edit tbody');
+    
+    if (!tableBody) {
+        console.error('Table body not found');
+        return;
+    }
+    
+    // If this is an existing document (has documentId), add it to documents_to_remove
+    if (documentId) {
+        let documentsToRemove = document.getElementById('documents_to_remove');
+        
+        if (!documentsToRemove) {
+            documentsToRemove = document.createElement('input');
+            documentsToRemove.type = 'hidden';
+            documentsToRemove.id = 'documents_to_remove';
+            documentsToRemove.name = 'documents_to_remove';
+            const table = document.getElementById('documentUploadTable_edit');
+            if (table && table.parentNode) {
+                table.parentNode.appendChild(documentsToRemove);
+            }
+        }
+        
+        // Get current values and add new documentId
+        const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+        if (!currentValues.includes(documentId.toString())) {
+            currentValues.push(documentId.toString());
+            documentsToRemove.value = currentValues.join(',');
+        }
+    }
+    
+    // Ensure at least one row remains
+    if (tableBody.rows.length > 1) {
+        row.remove();
+    } else {
+        // Show warning message
+        const message = document.createElement('div');
+        message.className = 'alert alert-warning mt-3';
+        message.innerText = "At least one row must remain.";
+        
+        // Insert after table
+        const table = document.getElementById('documentUploadTable_edit');
+        if (table && table.parentNode) {
+            table.parentNode.insertBefore(message, table.nextSibling);
+            
+            // Remove after 3 seconds
+            setTimeout(() => message.remove(), 3000);
+        }
+    }
+}
+
+// Function to display existing documents with preview/download options
+function displayExistingDocuments(documents) {
+    const container = document.getElementById('existing_documents_container');
+    container.innerHTML = '';
+    
+    if (documents && documents.length > 0) {
+        const table = document.createElement('table');
+        table.className = 'table table-bordered table-hover';
+        table.innerHTML = `
+            <thead class="table-light">
+                <tr>
+                    <th>Document Date</th>
+                    <th>File Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="existing_documents_tbody">
+            </tbody>
+        `;
+        
+        const tbody = table.querySelector('#existing_documents_tbody');
+        
+        documents.forEach(function(doc) {
+            const fileName = doc.document_url ? doc.document_url.split('/').pop() : 'No file';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${doc.document_date || 'N/A'}</td>
+                <td>${fileName}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm btn-info" onclick="previewDocument('${doc.document_url}')" title="Preview">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <a href="${doc.document_url}" class="btn btn-sm btn-success" download title="Download">
+                            <i class="fas fa-download"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" onclick="removeExistingDocument(${doc.document_id}, event)" title="Remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        
+        container.appendChild(table);
+    } else {
+        container.innerHTML = '<div class="alert alert-info">No existing documents found.</div>';
+    }
+}
+
+// Function to preview document
+function previewDocument(documentUrl) {
+    if (!documentUrl) {
+        alert('No document URL available');
+        return;
+    }
+    
+    // Open document in new window/tab
+    window.open(documentUrl, '_blank');
+}
+
+// Function to remove existing document
+function removeExistingDocument(documentId, event) {
+    if (confirm('Are you sure you want to remove this document?')) {
+        // Add to documents to remove list
+        let documentsToRemove = document.getElementById('documents_to_remove');
+        
+        if (!documentsToRemove) {
+            documentsToRemove = document.createElement('input');
+            documentsToRemove.type = 'hidden';
+            documentsToRemove.id = 'documents_to_remove';
+            documentsToRemove.name = 'documents_to_remove';
+            const form = document.getElementById('editOffboardingForm');
+            if (form) {
+                form.appendChild(documentsToRemove);
+            }
+        }
+        
+        // Get current values and add new documentId
+        const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+        if (!currentValues.includes(documentId.toString())) {
+            currentValues.push(documentId.toString());
+            documentsToRemove.value = currentValues.join(',');
+            console.log(`Added document ${documentId} to removal list. Current list: ${documentsToRemove.value}`); // Debug log
+        }
+        
+        // Remove the row from the table
+        const row = event.target.closest('tr');
+        if (row) {
+            row.remove();
+        }
+    }
+}
+
+// Handle form submission for edit modal
+$(document).ready(function() {
+    $('#editOffboardingForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        
+        // Debug: Log the documents_to_remove value
+        const documentsToRemove = document.getElementById('documents_to_remove');
+        if (documentsToRemove) {
+            console.log('Documents to remove:', documentsToRemove.value);
+        }
+        
+        // Submit form via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert('Offboarding record updated successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the record.');
+            }
+        });
+    });
+    
+    // Handle form submission for add modal
+    $('#addOffboardingForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        
+        // Submit form via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert('Offboarding record created successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('An error occurred while creating the record.');
+            }
+        });
+    });
+});
+
+
+</script> 

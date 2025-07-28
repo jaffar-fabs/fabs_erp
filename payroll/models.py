@@ -1143,3 +1143,71 @@ class NotificationMaster(models.Model):
     
     def __str__(self):
         return f"{self.doc_type} - {self.before_or_after_flag} ({self.no_of_days} days)"
+
+def offboarding_document_path(instance, filename):
+    # Construct the path using the offboarding ID
+    return os.path.join('offboarding_documents', str(instance.offboarding_id), filename)
+
+class Offboarding(models.Model):
+    offboarding_id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15)
+    
+    # Employee Details
+    emp_code = models.CharField(max_length=50)
+    emp_name = models.CharField(max_length=500, blank=True, null=True)
+    designation = models.CharField(max_length=100, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
+    date_of_join = models.DateField(blank=True, null=True)
+    
+    # Offboarding Details
+    offboarding_type = models.CharField(max_length=8000, blank=True, null=True)
+    offboarding_date = models.CharField(max_length=8000, blank=True, null=True)
+    reason = models.CharField(max_length=8000, blank=True, null=True)
+    notice_period = models.IntegerField(blank=True, null=True)  # in days
+    last_working_date = models.CharField(max_length=8000, blank=True, null=True)
+    
+    # Passport Details (from Employee model)
+    passport_number = models.CharField(max_length=100, blank=True, null=True)
+    passport_expiry = models.DateField(blank=True, null=True)
+    passport_status = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Visa Details (from Employee model)
+    visa_number = models.CharField(max_length=100, blank=True, null=True)
+    visa_expiry = models.DateField(blank=True, null=True)
+    visa_status = models.CharField(max_length=100, blank=True, null=True)
+    emirates_id = models.CharField(max_length=100, blank=True, null=True)
+    emirates_expiry = models.DateField(blank=True, null=True)
+    
+    # Accommodation Details (from Employee model)
+    accommodation_type = models.CharField(max_length=100, blank=True, null=True)
+    camp_location = models.CharField(max_length=100, blank=True, null=True)
+    room_number = models.CharField(max_length=100, blank=True, null=True)
+    accommodation_status = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Settlement Details
+    final_settlement_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    gratuity_amount = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    leave_encashment = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    pending_advances = models.DecimalField(max_digits=18, decimal_places=2, blank=True, null=True)
+    
+    # Status
+    status = models.CharField(max_length=50, blank=True, null=True)
+    
+    # Audit Fields
+    created_by = models.CharField(max_length=100, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.CharField(max_length=100, null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True)
+    
+
+class OffboardingDocuments(models.Model):
+    document_id = models.AutoField(primary_key=True)
+    offboarding_id = models.IntegerField()  # Reference to Offboarding.offboarding_id
+    document_date = models.DateField(blank=True, null=True)  # Document date
+    document_file = models.FileField(upload_to=offboarding_document_path, blank=True, null=True)
+    document_type = models.CharField(max_length=100, blank=True, null=True)
+    created_by = models.BigIntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.BigIntegerField(null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+    

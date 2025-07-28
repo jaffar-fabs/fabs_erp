@@ -1,0 +1,233 @@
+{% extends "partials/base.html" %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Employee Offboarding" count=result_cnt %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control"
+                                            placeholder="Search Offboarding Records" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8 d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" 
+                                        data-bs-target="#offcanvas_add">
+                                    <i class="ti ti-plus"></i> Add New Offboarding
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Code</th>
+                                        <th>Name</th>
+                                        <th>Designation</th>
+                                        <th>Department</th>
+                                        <th>Offboarding Type</th>
+                                        <th>Offboarding Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in entries %}
+                                    <tr>
+                                        <td>{{ entry.emp_code }}</td>
+                                        <td>{{ entry.emp_name }}</td>
+                                        <td>{{ entry.designation }}</td>
+                                        <td>{{ entry.department }}</td>
+                                        <td>{{ entry.offboarding_type }}</td>
+                                        <td>{{ entry.offboarding_date|date:"d-m-Y" }}</td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-offboarding" href="#"
+                                                        data-id="{{ entry.offboarding_id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-offboarding" href="#"
+                                                        data-id="{{ entry.offboarding_id }}">
+                                                        <i class="ti ti-trash text-red"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% if entries.has_other_pages %}
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="showing-entries">
+                                <span>Showing {{ entries.start_index }} to {{ entries.end_index }} of {{ result_cnt }} entries</span>
+                            </div>
+                            <ul class="pagination">
+                                {% if entries.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.previous_page_number }}">Previous</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Previous</a>
+                                </li>
+                                {% endif %}
+                                {% for page in entries.paginator.page_range %}
+                                {% if entries.number == page %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ page }}">{{ page }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+                                {% if entries.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?keyword={{ keyword }}&page={{ entries.next_page_number }}">Next</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function() {
+        // Edit functionality
+        $('.edit-offboarding').click(function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();    
+            
+            $.ajax({
+                url: "{% url 'offboarding_edit' %}",
+                type: "GET",
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    'id': id
+                },
+                success: function(response){
+                    console.log('AJAX Response:', response); // Debug log
+                    
+                    $('#edit_offboarding_id').val(response.offboarding_id || '');
+                    
+                    // Display employee details as read-only text
+                    $('#edit_emp_code_display').text(response.emp_code || 'N/A');
+                    $('#edit_emp_name_display').text(response.emp_name || 'N/A');
+                    $('#edit_designation_display').text(response.designation || 'N/A');
+                    $('#edit_department_display').text(response.department || 'N/A');
+                    $('#edit_project_display').text(response.project || 'N/A');
+                    $('#edit_date_of_join_display').text(response.date_of_join || 'N/A');
+                    $('#edit_passport_number_display').text(response.passport_number || 'N/A');
+                    $('#edit_passport_expiry_display').text(response.passport_expiry || 'N/A');
+                    $('#edit_visa_number_display').text(response.visa_number || 'N/A');
+                    $('#edit_visa_expiry_display').text(response.visa_expiry || 'N/A');
+                    $('#edit_emirates_id_display').text(response.emirates_id || 'N/A');
+                    $('#edit_emirates_expiry_display').text(response.emirates_expiry || 'N/A');
+                    $('#edit_accommodation_type_display').text(response.accommodation_type || 'N/A');
+                    $('#edit_camp_location_display').text(response.camp_location || 'N/A');
+                    $('#edit_room_number_display').text(response.room_number || 'N/A');
+                    
+                    // Populate form fields directly with single values
+                    $('#edit_offboarding_type').val(response.offboarding_type || '');
+                    $('#edit_offboarding_date').val(response.offboarding_date || '');
+                    $('#edit_reason').val(response.reason || '');
+                    $('#edit_last_working_date').val(response.last_working_date || '');
+                    
+                    // Update the edit table display with current values
+                    $('#edit_offboarding_type_display').text(response.offboarding_type || 'N/A');
+                    $('#edit_offboarding_date_display').text(response.offboarding_date || 'N/A');
+                    $('#edit_last_working_date_display').text(response.last_working_date || 'N/A');
+                    
+                    // Handle documents - display existing documents with preview/download options
+                    displayExistingDocuments(response.offboarding_documents);
+                    
+                    // Clear the new document upload table and add one empty row
+                    $("#documentUploadTable_edit tbody").empty();
+                    const emptyRow = `
+                        <tr>
+                            <td>
+                                <input type="date" name="document_date[]" class="form-control">
+                            </td>
+                            <td>
+                                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    $("#documentUploadTable_edit tbody").append(emptyRow);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    alert('Error fetching offboarding data. Please check console for details.');
+                }
+            });
+        });
+
+        // Delete functionality
+        $('.delete-offboarding').click(function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            if (confirm('Are you sure you want to delete this offboarding record?')) {
+                $.ajax({
+                    url: "{% url 'offboarding_delete' %}",
+                    type: "POST",
+                    data: {
+                        'id': id,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert('Error deleting record');
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% include 'pages/modal/offboarding/offboarding_modal.html' %}
+{% endblock %} 
