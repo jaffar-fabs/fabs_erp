@@ -142,7 +142,9 @@ TEMPLATES = [
                 'payroll.context_processors.get_tawjeeh_class_status',
                 'payroll.context_processors.get_iloe_status',
                 'payroll.context_processors.get_ecnr',
-                'payroll.context_processors.get_accommodation_type'
+                'payroll.context_processors.get_accommodation_type',
+                'payroll.context_processors.get_offboarding_types',
+                'payroll.context_processors.get_offboarding_reason',
 
             ],
         },

@@ -486,3 +486,17 @@ def get_accommodation_type(request):
     return {
         'accommodation_type_data': accommodation_type_data
     }
+
+def get_offboarding_types(request):
+    comp_code = get_comp_code(request)
+    offboarding_types = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'OFFBOARDING TYPE')
+    return {
+        'offboarding_types': offboarding_types
+    }
+
+def get_offboarding_reason(request):
+    comp_code = get_comp_code(request)
+    offboarding_reason = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'OFFBOARDING REASON')
+    return {
+        'reasons': offboarding_reason
+    }

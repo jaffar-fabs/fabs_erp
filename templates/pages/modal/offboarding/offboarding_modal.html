@@ -103,11 +103,9 @@
                                     <label class="col-form-label">Offboarding Type <span class="text-danger">*</span></label>
                                     <select name="offboarding_type" id="add_offboarding_type" class="form-control" required>
                                         <option value="">Select Type</option>
-                                        <option value="Resignation">Resignation</option>
-                                        <option value="Termination">Termination</option>
-                                        <option value="Contract End">Contract End</option>
-                                        <option value="Retirement">Retirement</option>
-                                        <option value="Other">Other</option>
+                                        {% for offboarding_type in offboarding_types %}
+                                        <option value="{{ offboarding_type.base_value }}">{{ offboarding_type.base_description }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -122,16 +120,9 @@
                                     <label class="col-form-label">Reason <span class="text-danger">*</span></label>
                                     <select name="reason" id="add_reason" class="form-control" required>
                                         <option value="">Select Reason</option>
-                                        <option value="Personal Reasons">Personal Reasons</option>
-                                        <option value="Better Opportunity">Better Opportunity</option>
-                                        <option value="Career Change">Career Change</option>
-                                        <option value="Health Issues">Health Issues</option>
-                                        <option value="Family Reasons">Family Reasons</option>
-                                        <option value="Performance Issues">Performance Issues</option>
-                                        <option value="Contract Expiry">Contract Expiry</option>
-                                        <option value="Company Restructuring">Company Restructuring</option>
-                                        <option value="Retirement">Retirement</option>
-                                        <option value="Other">Other</option>
+                                        {% for reason in reasons %}
+                                        <option value="{{ reason.base_value }}">{{ reason.base_description }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
@@ -516,12 +507,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="col-md-6 mb-3">
                                     <label class="col-form-label">Offboarding Type</label>
                                     <select name="offboarding_type" id="edit_offboarding_type" class="form-control">
-                                        <option value="">Select Type</option>
-                                        <option value="Resignation">Resignation</option>
-                                        <option value="Termination">Termination</option>
-                                        <option value="Contract End">Contract End</option>
-                                        <option value="Retirement">Retirement</option>
-                                        <option value="Other">Other</option>
+                                        {% for offboarding_type in offboarding_types %}
+                                        <option value="{{ offboarding_type.base_value }}">{{ offboarding_type.base_description }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -535,17 +523,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="col-12 mb-3">
                                     <label class="col-form-label">Reason</label>
                                     <select name="reason" id="edit_reason" class="form-control">
-                                        <option value="">Select Reason</option>
-                                        <option value="Personal Reasons">Personal Reasons</option>
-                                        <option value="Better Opportunity">Better Opportunity</option>
-                                        <option value="Career Change">Career Change</option>
-                                        <option value="Health Issues">Health Issues</option>
-                                        <option value="Family Reasons">Family Reasons</option>
-                                        <option value="Performance Issues">Performance Issues</option>
-                                        <option value="Contract Expiry">Contract Expiry</option>
-                                        <option value="Company Restructuring">Company Restructuring</option>
-                                        <option value="Retirement">Retirement</option>
-                                        <option value="Other">Other</option>
+                                        {% for reason in reasons %}
+                                        <option value="{{ reason.base_value }}">{{ reason.base_description }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             </div>
