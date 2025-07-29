@@ -445,23 +445,9 @@ def get_rp_stamping(request):
         'rp_stamping_data': rp_stamping_data
     }
 
-def tawjeeh_payment_status(request):
-    comp_code = get_comp_code(request)
-    tawjeeh_payment_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH PAYMENT STATUS')
-    return {
-        'tawjeeh_payment_status_data': tawjeeh_payment_status_data
-    }
-
-def get_tawjeeh_payment_status(request):
-    comp_code = get_comp_code(request)  
-    tawjeeh_payment_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH PAYMENT STATUS')
-    return {
-        'tawjeeh_payment_status_data': tawjeeh_payment_status_data
-    }
-
 def get_tawjeeh_class_status(request):
     comp_code = get_comp_code(request)
-    tawjeeh_class_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH CLASS STATUS')
+    tawjeeh_class_status_data = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'TAWJEEH TYPE')
     return {
         'tawjeeh_class_status_data': tawjeeh_class_status_data
     }

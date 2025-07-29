@@ -214,11 +214,11 @@ class PayProcessArchieve(models.Model):
 class Employee(models.Model):
     comp_code = models.CharField(max_length=15)  # Removed default value
     employee_id = models.AutoField(primary_key=True)  # Primary key for the employee
-    emp_code = models.CharField(max_length=50, blank=True, null=True)  # Employee code
+    emp_code = models.CharField(max_length=50, blank=True, null=True, unique=True)  # Employee code
     emp_name = models.CharField(max_length=500)  # Employee name (as per passport)
     surname = models.CharField(max_length=500, blank=True, null=True)  # Surname
     dob = models.DateField(blank=True, null=True)  # Date of birth
-    emp_sex = models.CharField(max_length=5, choices=[('1', 'Male'), ('2', 'Female')], default='1')  # Gender
+    emp_sex = models.CharField(max_length=5)  # Gender
     emp_status = models.CharField(max_length=50, blank=True, null=True)  # Employment status
     emp_sub_status = models.CharField(max_length=50, blank=True, null=True)  # Sub employment status
     passport_release = models.CharField(max_length=100, blank=True, null=True)  # Yes or No
@@ -1069,6 +1069,17 @@ class EmployeePPDetails(models.Model):
     tawjeeh_date = models.CharField(max_length=8000, null=True, blank=True)
     rp_stamping_date = models.CharField(max_length=8000, null=True, blank=True)
     eid_date = models.CharField(max_length=8000, null=True, blank=True)
+    eid_remarks = models.CharField(max_length=8000, null=True, blank=True)
+    # New ILOE fields
+    iloe_number = models.CharField(max_length=8000, null=True, blank=True)
+    iloe_inception_date = models.CharField(max_length=8000, null=True, blank=True)
+    iloe_expiry_date = models.CharField(max_length=8000, null=True, blank=True)
+    
+    # Health Insurance fields
+    insurance_status = models.CharField(max_length=8000, null=True, blank=True)
+    insurance_card_number = models.CharField(max_length=8000, null=True, blank=True)
+    insurance_expiry_date = models.CharField(max_length=8000, null=True, blank=True)
+
 
 def employee_pp_document_path(instance, filename):
     # Construct the path using the employee PP ID

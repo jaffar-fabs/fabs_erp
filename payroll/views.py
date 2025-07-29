@@ -7066,11 +7066,19 @@ def employee_pp_create(request):
             medical_result_date=request.POST.get('medical_result_date') or None,
             remedical_result_date=request.POST.get('remedical_result_date') or None,
             eid=request.POST.get('eid'),
+            eid_date=request.POST.get('eid_date') or None,
+            eid_remarks=request.POST.get('eid_remarks'),
             rp_stamping=request.POST.get('rp_stamping'),
+            rp_stamping_date=request.POST.get('rp_stamping_date') or None,
             fine_amount=request.POST.get('fine_amount') or None,
-            tawjeeh_payment=request.POST.get('tawjeeh_payment') or None,
+            tawjeeh_payment=request.POST.get('tawjeeh_payment'),
             tawjeeh_class=request.POST.get('tawjeeh_class'),
+            tawjeeh_date=request.POST.get('tawjeeh_date') or None,
             iloe_status=request.POST.get('iloe_status'),
+            iloe_date=request.POST.get('iloe_date') or None,
+            insurance_status=request.POST.get('insurance_status'),
+            insurance_card_number=request.POST.get('insurance_card_number'),
+            insurance_expiry_date=request.POST.get('insurance_expiry_date') or None,
         )
         
         # Handle document uploads
@@ -7124,19 +7132,26 @@ def employee_pp_edit(request):
             'medical_result_date': obj.medical_result_date,
             'remedical_result_date': obj.remedical_result_date,
             'eid': obj.eid,
+            'eid_date': obj.eid_date,
+            'eid_remarks': obj.eid_remarks,
             'rp_stamping': obj.rp_stamping,
+            'rp_stamping_date': obj.rp_stamping_date,
             'fine_amount': obj.fine_amount,
             'tawjeeh_payment': obj.tawjeeh_payment,
             'tawjeeh_class': obj.tawjeeh_class,
+            'tawjeeh_date': obj.tawjeeh_date,
             'iloe_status': obj.iloe_status,
             'iloe_date': obj.iloe_date,
-            'tawjeeh_date': obj.tawjeeh_date,
-            'rp_stamping_date': obj.rp_stamping_date,
-            'eid_date': obj.eid_date,
+            'iloe_number': obj.iloe_number,
+            'iloe_inception_date': obj.iloe_inception_date,
+            'iloe_expiry_date': obj.iloe_expiry_date,
+            'insurance_status': obj.insurance_status,
+            'insurance_card_number': obj.insurance_card_number,
+            'insurance_expiry_date': obj.insurance_expiry_date,
             'pp_documents': documents_data,
         }
         # Convert dates to string if needed
-        for k in ['doj', 'medical_result_date', 'remedical_result_date', 'iloe_date', 'tawjeeh_date', 'rp_stamping_date', 'eid_date']:
+        for k in ['doj', 'medical_result_date', 'remedical_result_date', 'iloe_date', 'tawjeeh_date', 'rp_stamping_date', 'eid_date', 'insurance_expiry_date']:
             if data[k] and hasattr(data[k], 'strftime'):
                 data[k] = data[k].strftime('%Y-%m-%d')
         return JsonResponse(data)
@@ -7165,6 +7180,36 @@ def employee_pp_update(request):
             obj.date_of_landing = request.POST.get('date_of_landing') or None
             obj.no_of_days = request.POST.get('no_of_days') or None
             obj.fine_amount = request.POST.get('fine_amount') or None
+            # Handle insurance_status field
+            insurance_status_value = request.POST.get('insurance_status')
+            if insurance_status_value:
+                obj.insurance_status = (obj.insurance_status or "") + ": " + insurance_status_value if obj.insurance_status else insurance_status_value
+
+            # Handle insurance_card_number field
+            insurance_card_number_value = request.POST.get('insurance_card_number')
+            if insurance_card_number_value:
+                obj.insurance_card_number = (obj.insurance_card_number or "") + ": " + insurance_card_number_value if obj.insurance_card_number else insurance_card_number_value
+
+            # Handle insurance_expiry_date field
+            insurance_expiry_date_value = request.POST.get('insurance_expiry_date')
+            if insurance_expiry_date_value:
+                obj.insurance_expiry_date = (str(obj.insurance_expiry_date or "") + ": " + insurance_expiry_date_value) if obj.insurance_expiry_date else insurance_expiry_date_value
+
+            # Handle iloe_number field
+            iloe_number_value = request.POST.get('iloe_number')
+            if iloe_number_value:
+                obj.iloe_number = (obj.iloe_number or "") + ": " + iloe_number_value if obj.iloe_number else iloe_number_value
+
+            # Handle iloe_inception_date field
+            iloe_inception_date_value = request.POST.get('iloe_inception_date')
+            if iloe_inception_date_value:
+                obj.iloe_inception_date = (str(obj.iloe_inception_date or "") + ": " + iloe_inception_date_value) if obj.iloe_inception_date else iloe_inception_date_value
+
+            # Handle iloe_expiry_date field
+            iloe_expiry_date_value = request.POST.get('iloe_expiry_date')
+            if iloe_expiry_date_value:
+                obj.iloe_expiry_date = (str(obj.iloe_expiry_date or "") + ": " + iloe_expiry_date_value) if obj.iloe_expiry_date else iloe_expiry_date_value
+
             # Handle medical field
             medical_value = request.POST.get('medical')
             if medical_value:
@@ -7224,6 +7269,11 @@ def employee_pp_update(request):
             eid_date_value = request.POST.get('eid_date')
             if eid_date_value:
                 obj.eid_date = (str(obj.eid_date or "") + ": " + eid_date_value) if obj.eid_date else eid_date_value
+
+            # Handle eid_remarks field
+            eid_remarks_value = request.POST.get('eid_remarks')
+            if eid_remarks_value:
+                obj.eid_remarks = (obj.eid_remarks or "") + ": " + eid_remarks_value if obj.eid_remarks else eid_remarks_value
             obj.save()
             
             # Handle document uploads

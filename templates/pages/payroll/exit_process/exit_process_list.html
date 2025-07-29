@@ -639,7 +639,7 @@ function deleteSubCategory(code) {
                 if (data.success) {
                     alert('Sub-category deleted successfully');
                     loadSubCategories($('#parent_category').val()); // Reload sub-categories
-                } else {
+            } else {
                     alert(data.message || 'Failed to delete sub-category');
                 }
             },

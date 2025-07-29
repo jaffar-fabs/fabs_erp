@@ -138,7 +138,6 @@ TEMPLATES = [
                 'payroll.context_processors.get_medical_status',
                 'payroll.context_processors.get_eid_status',
                 'payroll.context_processors.get_rp_stamping',
-                'payroll.context_processors.tawjeeh_payment_status',
                 'payroll.context_processors.get_tawjeeh_class_status',
                 'payroll.context_processors.get_iloe_status',
                 'payroll.context_processors.get_ecnr',

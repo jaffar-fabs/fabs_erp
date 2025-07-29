@@ -196,33 +196,105 @@
                         return value || '';
                     }
                     
-                    // Display with colon split
-                    displaySplitByColon('#medical_status_display', response.medical);
-                    displaySplitByColon('#medical_result_date_display', response.medical_result_date);
-                    displaySplitByColon('#remedical_result_date_display', response.remedical_result_date);
-                    $('#medical_data_row').show();
+                                         // Function to create multiple table rows for colon-separated values
+                     function createTableRowsForColonData(tableBodyId, data) {
+                         var tableBody = $('#' + tableBodyId);
+                         tableBody.empty();
+                         
+                         // Find fields that actually have colon-separated values
+                         var fieldsWithColons = {};
+                         var maxParts = 1;
+                         Object.keys(data).forEach(function(key) {
+                             if (data[key] && data[key].includes(':')) {
+                                 var parts = data[key].includes(' : ') ? data[key].split(' : ') : data[key].split(':');
+                                 fieldsWithColons[key] = parts;
+                                 maxParts = Math.max(maxParts, parts.length);
+                             }
+                         });
+                         
+                         // If no fields have colons, just create one row with all data
+                         if (maxParts === 1) {
+                             var row = $('<tr>');
+                             Object.keys(data).forEach(function(key) {
+                                 var cell = $('<td>');
+                                 cell.text(data[key] || 'N/A');
+                                 row.append(cell);
+                             });
+                             tableBody.append(row);
+                             return;
+                         }
+                         
+                         // Create rows for each part
+                         for (var i = 0; i < maxParts; i++) {
+                             var row = $('<tr>');
+                             Object.keys(data).forEach(function(key) {
+                                 var cell = $('<td>');
+                                 if (fieldsWithColons[key]) {
+                                     // This field has colon-separated values
+                                     cell.text(fieldsWithColons[key][i] ? fieldsWithColons[key][i].trim() : 'N/A');
+                                 } else {
+                                     // This field doesn't have colons, show 'N/A' for additional rows beyond the first
+                                     if (i === 0) {
+                                         cell.text(data[key] || 'N/A');
+                                     } else {
+                                         cell.text('N/A');
+                                     }
+                                 }
+                                 row.append(cell);
+                             });
+                             tableBody.append(row);
+                         }
+                     }
+                    
+                    // Display Medical data with proper table rows
+                    var medicalData = {
+                        'status': response.medical,
+                        'result_date': response.medical_result_date,
+                        'remedical_result_date': response.remedical_result_date
+                    };
+                    createTableRowsForColonData('medical_data_body', medicalData);
                     
                     
-                    // Display with colon split
-                    displaySplitByColon('#eid_status_display', response.eid);
-                    displaySplitByColon('#eid_date_display', response.eid_date);
-                    $('#eid_data_row').show();
+                                         // Display EID data with proper table rows
+                     var eidData = {
+                         'status': response.eid,
+                         'date': response.eid_date,
+                         'remarks': response.eid_remarks
+                     };
+                     createTableRowsForColonData('eid_data_body', eidData);
                     
-                    // Display with colon split
-                    displaySplitByColon('#rp_stamping_status_display', response.rp_stamping);
-                    displaySplitByColon('#rp_stamping_date_display', response.rp_stamping_date);
-                    $('#rp_stamping_data_row').show();
+                    // Display RP Stamping data with proper table rows
+                    var rpStampingData = {
+                        'status': response.rp_stamping,
+                        'date': response.rp_stamping_date
+                    };
+                    createTableRowsForColonData('rp_stamping_data_body', rpStampingData);
                     
-                    // Display with colon split
-                    displaySplitByColon('#tawjeeh_payment_display', response.tawjeeh_payment);
-                    displaySplitByColon('#tawjeeh_class_display', response.tawjeeh_class);
-                    displaySplitByColon('#tawjeeh_date_display', response.tawjeeh_date);
-                    $('#tawjeeh_data_row').show();
+                                         // Display Tawjeeh data with proper table rows
+                     var tawjeehData = {
+                         'type': response.tawjeeh_class,
+                         'date': response.tawjeeh_date
+                     };
+                     createTableRowsForColonData('tawjeeh_data_body', tawjeehData);
                     
-                                         // Display with colon split
-                     displaySplitByColon('#iloe_status_display', response.iloe_status);
-                     displaySplitByColon('#iloe_date_display', response.iloe_date);
-                     $('#iloe_data_row').show();
+                                         
+                     var iloeData = {
+                         'status': response.iloe_status,
+                         'number': response.iloe_number,
+                         'inception_date': response.iloe_inception_date,
+                         'expiry_date': response.iloe_expiry_date,
+                         'date': response.iloe_date
+                     };
+                     createTableRowsForColonData('iloe_data_body', iloeData);                     
+                     
+                     // Display Health Insurance data with proper table rows
+                     var healthInsuranceData = {
+                         'status': response.insurance_status,
+                         'card_number': response.insurance_card_number,
+                         'expiry_date': response.insurance_expiry_date
+                     };
+                     createTableRowsForColonData('health_insurance_data_body', healthInsuranceData);
+                     
                      
                      // Handle documents display
                      $("#pp-documents-body").empty();

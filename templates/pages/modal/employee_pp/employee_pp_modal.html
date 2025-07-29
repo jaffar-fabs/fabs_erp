@@ -18,7 +18,7 @@
                     <select name="emp_code" id="add_emp_code" class="form-control select2">
                         <option value="">Select Employee Code</option>
                         {% for employee in employee_data %}
-                        <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                        <option value="{{ employee.emp_code }}">{{ employee.emp_code }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -42,8 +42,9 @@
                     <label class="col-form-label">Status</label>
                     <select name="status" id="add_status" class="form-control">
                         <option value="">Select</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        {% for status in status_data %}
+                        <option value="{{ status.base_value }}">{{ status.base_description }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -62,8 +63,9 @@
                     <label class="col-form-label">Gender</label>
                     <select name="gender" id="add_gender" class="form-control">
                         <option value="">Select</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                        {% for gender in gender_data %}
+                        <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -71,7 +73,7 @@
                     <select name="designation" id="add_designation" class="form-control">
                         <option value="">Select</option>
                         {% for designation in desig_data %}
-                        <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
+                        <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -80,7 +82,7 @@
                     <select name="nationality" id="add_nationality" class="form-control">
                         <option value="">Select</option>
                         {% for nationality in nation_data %}
-                        <option value="{{ nationality.base_value }}">{{ nationality.base_value }} - {{ nationality.base_description }}</option>
+                        <option value="{{ nationality.base_value }}">{{ nationality.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -109,6 +111,78 @@
                     <input type="file" name="pp_documents[]" id="add_pp_documents" class="form-control" multiple>
                 </div>
                             </div>
+            </div>
+
+            <!-- Tawjeeh Accordion -->
+            <div class="accordion mb-3" id="accordionTawjeeh">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTawjeeh">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTawjeeh" aria-expanded="false" aria-controls="collapseTawjeeh">
+                            <i class="ti ti-book me-2"></i> Tawjeeh
+                        </button>
+                    </h2>
+                    <div id="collapseTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingTawjeeh" data-bs-parent="#accordionTawjeeh">
+                        <div class="accordion-body">
+                                                         <div class="row">
+                                 <div class="col-md-6 mb-3">
+                     <label class="col-form-label">Tawjeeh Type</label>
+                     <select name="tawjeeh_class" id="add_tawjeeh_class" class="form-control">
+                         <option value="">Select</option>
+                         {% for tawjeeh_class_status in tawjeeh_class_status_data %}
+                         <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
+                         {% endfor %}
+                     </select>
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">Tawjeeh Date</label>
+                                     <input type="date" name="tawjeeh_date" id="add_tawjeeh_date" class="form-control">
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ILOE Accordion -->
+            <div class="accordion mb-3" id="accordionILOE">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingILOE">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseILOE" aria-expanded="false" aria-controls="collapseILOE">
+                            <i class="ti ti-file-check me-2"></i> ILOE
+                        </button>
+                    </h2>
+                    <div id="collapseILOE" class="accordion-collapse collapse" aria-labelledby="headingILOE" data-bs-parent="#accordionILOE">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                    <label class="col-form-label">ILOE Status</label>
+                    <select name="iloe_status" id="add_iloe_status" class="form-control">
+                        <option value="">Select</option>
+                        {% for ioe_status in ioe_status_data %}
+                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Number</label>
+                                    <input type="text" name="iloe_number" id="add_iloe_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Inception Date</label>
+                                    <input type="date" name="iloe_inception_date" id="add_iloe_inception_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Expiry Date</label>
+                                    <input type="date" name="iloe_expiry_date" id="add_iloe_expiry_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Date</label>
+                                    <input type="date" name="iloe_date" id="add_iloe_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Medical Accordion -->
@@ -145,6 +219,41 @@
                 </div>
             </div>
 
+            <!-- Health Insurance Accordion -->
+            <div class="accordion mb-3" id="accordionHealthInsurance">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingHealthInsurance">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHealthInsurance" aria-expanded="false" aria-controls="collapseHealthInsurance">
+                            <i class="ti ti-shield-check me-2"></i> Health Insurance
+                        </button>
+                    </h2>
+                    <div id="collapseHealthInsurance" class="accordion-collapse collapse" aria-labelledby="headingHealthInsurance" data-bs-parent="#accordionHealthInsurance">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Insurance Status</label>
+                                    <select name="insurance_status" id="add_insurance_status" class="form-control">
+                                        <option value="">Select</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Expired">Expired</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Card Number</label>
+                                    <input type="text" name="insurance_card_number" id="add_insurance_card_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Expiry Date</label>
+                                    <input type="date" name="insurance_expiry_date" id="add_insurance_expiry_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- EID Accordion -->
             <div class="accordion mb-3" id="accordionEID">
                 <div class="accordion-item">
@@ -155,21 +264,25 @@
                     </h2>
                     <div id="collapseEID" class="accordion-collapse collapse" aria-labelledby="headingEID" data-bs-parent="#accordionEID">
                         <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">EID Status</label>
-                    <select name="eid" id="add_eid" class="form-control">
-                        <option value="">Select</option>
-                        {% for eid_status in eid_status_data %}
-                        <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">EID Date</label>
-                                    <input type="date" name="eid_date" id="add_eid_date" class="form-control">
-                                </div>
-                            </div>
+                                                         <div class="row">
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">EID Status</label>
+                     <select name="eid" id="add_eid" class="form-control">
+                         <option value="">Select</option>
+                         {% for eid_status in eid_status_data %}
+                         <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
+                         {% endfor %}
+                     </select>
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">EID Date</label>
+                                     <input type="date" name="eid_date" id="add_eid_date" class="form-control">
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">Remarks</label>
+                                     <input type="text" name="eid_remarks" id="add_eid_remarks" class="form-control">
+                                 </div>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -198,75 +311,6 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="col-form-label">RP Stamping Date</label>
                                     <input type="date" name="rp_stamping_date" id="add_rp_stamping_date" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tawjeeh Accordion -->
-            <div class="accordion mb-3" id="accordionTawjeeh">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTawjeeh">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTawjeeh" aria-expanded="false" aria-controls="collapseTawjeeh">
-                            <i class="ti ti-book me-2"></i> Tawjeeh
-                        </button>
-                    </h2>
-                    <div id="collapseTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingTawjeeh" data-bs-parent="#accordionTawjeeh">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">Tawjeeh Payment</label>
-                    <select name="tawjeeh_payment" id="add_tawjeeh_payment" class="form-control">
-                        <option value="">Select</option>
-                        {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
-                        <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">Tawjeeh Class</label>
-                    <select name="tawjeeh_class" id="add_tawjeeh_class" class="form-control">
-                        <option value="">Select</option>
-                        {% for tawjeeh_class_status in tawjeeh_class_status_data %}
-                        <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">Tawjeeh Date</label>
-                                    <input type="date" name="tawjeeh_date" id="add_tawjeeh_date" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ILOE Accordion -->
-            <div class="accordion mb-3" id="accordionILOE">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingILOE">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseILOE" aria-expanded="false" aria-controls="collapseILOE">
-                            <i class="ti ti-file-check me-2"></i> ILOE Status
-                        </button>
-                    </h2>
-                    <div id="collapseILOE" class="accordion-collapse collapse" aria-labelledby="headingILOE" data-bs-parent="#accordionILOE">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">ILOE Status</label>
-                    <select name="iloe_status" id="add_iloe_status" class="form-control">
-                        <option value="">Select</option>
-                        {% for ioe_status in ioe_status_data %}
-                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">ILOE Date</label>
-                                    <input type="date" name="iloe_date" id="add_iloe_date" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -336,7 +380,7 @@ $(function() {
                     <select name="emp_code" id="edit_emp_code" class="form-control select2">
                         <option value="">Select Employee Code</option>
                         {% for employee in employee_data %}
-                        <option value="{{ employee.emp_code }}">{{ employee.emp_code }} - {{ employee.emp_name }}</option>
+                        <option value="{{ employee.emp_code }}">{{ employee.emp_code }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -360,8 +404,9 @@ $(function() {
                     <label class="col-form-label">Status</label>
                     <select name="status" id="edit_status" class="form-control">
                         <option value="">Select</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        {% for status in status_data %}
+                        <option value="{{ status.base_value }}">{{ status.base_description }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -380,8 +425,9 @@ $(function() {
                     <label class="col-form-label">Gender</label>
                     <select name="gender" id="edit_gender" class="form-control">
                         <option value="">Select</option>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                        {% for gender in gender_data %}
+                        <option value="{{ gender.base_value }}">{{ gender.base_description }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -389,7 +435,7 @@ $(function() {
                     <select name="designation" id="edit_designation" class="form-control">
                         <option value="">Select</option>
                         {% for designation in desig_data %}
-                        <option value="{{ designation.base_value }}">{{ designation.base_value }} - {{ designation.base_description }}</option>
+                        <option value="{{ designation.base_value }}">{{ designation.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -398,7 +444,7 @@ $(function() {
                     <select name="nationality" id="edit_nationality" class="form-control">
                         <option value="">Select</option>
                         {% for nationality in nation_data %}
-                        <option value="{{ nationality.base_value }}">{{ nationality.base_value }} - {{ nationality.base_description }}</option>
+                        <option value="{{ nationality.base_value }}">{{ nationality.base_description }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -427,6 +473,122 @@ $(function() {
                     <input type="file" name="pp_documents[]" id="edit_pp_documents" class="form-control" multiple>
                 </div>
                             </div>
+            </div>
+
+            <!-- Tawjeeh Accordion -->
+            <div class="accordion mb-3" id="accordionEditTawjeeh">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditTawjeeh">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditTawjeeh" aria-expanded="false" aria-controls="collapseEditTawjeeh">
+                            <i class="ti ti-book me-2"></i> Tawjeeh
+                        </button>
+                    </h2>
+                    <div id="collapseEditTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingEditTawjeeh" data-bs-parent="#accordionEditTawjeeh">
+                        <div class="accordion-body">
+                                                         <!-- Form Fields -->
+                             <div class="row mb-4">
+                                 <div class="col-md-6 mb-3">
+                     <label class="col-form-label">Tawjeeh Type</label>
+                     <select name="tawjeeh_class" id="edit_tawjeeh_class" class="form-control">
+                         <option value="">Select</option>
+                         {% for tawjeeh_class_status in tawjeeh_class_status_data %}
+                         <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
+                         {% endfor %}
+                     </select>
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">Tawjeeh Date</label>
+                                     <input type="date" name="tawjeeh_date" id="edit_tawjeeh_date" class="form-control">
+                                 </div>
+                             </div>
+                             
+                             <!-- Display Data -->
+                             <div class="table-responsive">
+                                 <table class="table table-bordered table-hover">
+                                     <thead class="table-light">
+                                         <tr>
+                                             <th>Tawjeeh Type</th>
+                                             <th>Tawjeeh Date</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="tawjeeh_data_body">
+                                         <tr id="tawjeeh_data_row" style="display: none;">
+                                             <td id="tawjeeh_class_display"></td>
+                                             <td id="tawjeeh_date_display"></td>
+                                         </tr>
+                                     </tbody>
+                                 </table>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ILOE Accordion -->
+            <div class="accordion mb-3" id="accordionEditILOE">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditILOE">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditILOE" aria-expanded="false" aria-controls="collapseEditILOE">
+                            <i class="ti ti-file-check me-2"></i> ILOE Status
+                        </button>
+                    </h2>
+                    <div id="collapseEditILOE" class="accordion-collapse collapse" aria-labelledby="headingEditILOE" data-bs-parent="#accordionEditILOE">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                    <label class="col-form-label">ILOE Status</label>
+                    <select name="iloe_status" id="edit_iloe_status" class="form-control">
+                        <option value="">Select</option>
+                        {% for ioe_status in ioe_status_data %}
+                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
+                        {% endfor %}
+                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Number</label>
+                                    <input type="text" name="iloe_number" id="edit_iloe_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Inception Date</label>
+                                    <input type="date" name="iloe_inception_date" id="edit_iloe_inception_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Expiry Date</label>
+                                    <input type="date" name="iloe_expiry_date" id="edit_iloe_expiry_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ILOE Date</label>
+                                    <input type="date" name="iloe_date" id="edit_iloe_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>ILOE Status</th>
+                                            <th>ILOE Number</th>
+                                            <th>ILOE Inception Date</th>
+                                            <th>ILOE Expiry Date</th>
+                                            <th>ILOE Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="iloe_data_body">
+                                        <tr id="iloe_data_row" style="display: none;">
+                                            <td id="iloe_status_display"></td>
+                                            <td id="iloe_number_display"></td>
+                                            <td id="iloe_inception_date_display"></td>
+                                            <td id="iloe_expiry_date_display"></td>
+                                            <td id="iloe_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Medical Accordion -->
@@ -484,6 +646,62 @@ $(function() {
                 </div>
             </div>
 
+            <!-- Health Insurance Accordion -->
+            <div class="accordion mb-3" id="accordionEditHealthInsurance">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEditHealthInsurance">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditHealthInsurance" aria-expanded="false" aria-controls="collapseEditHealthInsurance">
+                            <i class="ti ti-shield-check me-2"></i> Health Insurance
+                        </button>
+                    </h2>
+                    <div id="collapseEditHealthInsurance" class="accordion-collapse collapse" aria-labelledby="headingEditHealthInsurance" data-bs-parent="#accordionEditHealthInsurance">
+                        <div class="accordion-body">
+                            <!-- Form Fields -->
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Insurance Status</label>
+                                    <select name="insurance_status" id="edit_insurance_status" class="form-control">
+                                        <option value="">Select</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Expired">Expired</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Card Number</label>
+                                    <input type="text" name="insurance_card_number" id="edit_insurance_card_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Expiry Date</label>
+                                    <input type="date" name="insurance_expiry_date" id="edit_insurance_expiry_date" class="form-control">
+                                </div>
+                            </div>
+                            
+                            <!-- Display Data -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Insurance Status</th>
+                                            <th>Card Number</th>
+                                            <th>Expiry Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="health_insurance_data_body">
+                                        <tr id="health_insurance_data_row" style="display: none;">
+                                            <td id="insurance_status_display"></td>
+                                            <td id="insurance_card_number_display"></td>
+                                            <td id="insurance_expiry_date_display"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- EID Accordion -->
             <div class="accordion mb-3" id="accordionEditEID">
                 <div class="accordion-item">
@@ -494,38 +712,44 @@ $(function() {
                     </h2>
                     <div id="collapseEditEID" class="accordion-collapse collapse" aria-labelledby="headingEditEID" data-bs-parent="#accordionEditEID">
                         <div class="accordion-body">
-                            <!-- Form Fields -->
-                            <div class="row mb-4">
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">EID Status</label>
-                    <select name="eid" id="edit_eid" class="form-control">
-                        <option value="">Select</option>
-                        {% for eid_status in eid_status_data %}
-                        <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">EID Date</label>
-                                    <input type="date" name="eid_date" id="edit_eid_date" class="form-control">
-                                </div>
-                            </div>
+                                                         <!-- Form Fields -->
+                             <div class="row mb-4">
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">EID Status</label>
+                     <select name="eid" id="edit_eid" class="form-control">
+                         <option value="">Select</option>
+                         {% for eid_status in eid_status_data %}
+                         <option value="{{ eid_status.base_value }}">{{ eid_status.base_description }}</option>
+                         {% endfor %}
+                     </select>
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">EID Date</label>
+                                     <input type="date" name="eid_date" id="edit_eid_date" class="form-control">
+                                 </div>
+                                 <div class="col-md-6 mb-3">
+                                     <label class="col-form-label">Remarks</label>
+                                     <input type="text" name="eid_remarks" id="edit_eid_remarks" class="form-control">
+                                 </div>
+                             </div>
                             
                             <!-- Display Data -->
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>EID Status</th>
-                                            <th>EID Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="eid_data_body">
-                                        <tr id="eid_data_row" style="display: none;">
-                                            <td id="eid_status_display"></td>
-                                            <td id="eid_date_display"></td>
-                                        </tr>
-                                    </tbody>
+                                                                         <thead class="table-light">
+                                         <tr>
+                                             <th>EID Status</th>
+                                             <th>EID Date</th>
+                                             <th>Remarks</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="eid_data_body">
+                                         <tr id="eid_data_row" style="display: none;">
+                                             <td id="eid_status_display"></td>
+                                             <td id="eid_date_display"></td>
+                                             <td id="eid_remarks_display"></td>
+                                         </tr>
+                                     </tbody>
                                 </table>
                             </div>
                         </div>
@@ -573,115 +797,6 @@ $(function() {
                                         <tr id="rp_stamping_data_row" style="display: none;">
                                             <td id="rp_stamping_status_display"></td>
                                             <td id="rp_stamping_date_display"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tawjeeh Accordion -->
-            <div class="accordion mb-3" id="accordionEditTawjeeh">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingEditTawjeeh">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditTawjeeh" aria-expanded="false" aria-controls="collapseEditTawjeeh">
-                            <i class="ti ti-book me-2"></i> Tawjeeh
-                        </button>
-                    </h2>
-                    <div id="collapseEditTawjeeh" class="accordion-collapse collapse" aria-labelledby="headingEditTawjeeh" data-bs-parent="#accordionEditTawjeeh">
-                        <div class="accordion-body">
-                            <!-- Form Fields -->
-                            <div class="row mb-4">
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">Tawjeeh Payment</label>
-                    <select name="tawjeeh_payment" id="edit_tawjeeh_payment" class="form-control">
-                        <option value="">Select</option>
-                        {% for tawjeeh_payment_status in tawjeeh_payment_status_data %}
-                        <option value="{{ tawjeeh_payment_status.base_value }}">{{ tawjeeh_payment_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">Tawjeeh Class</label>
-                    <select name="tawjeeh_class" id="edit_tawjeeh_class" class="form-control">
-                        <option value="">Select</option>
-                        {% for tawjeeh_class_status in tawjeeh_class_status_data %}
-                        <option value="{{ tawjeeh_class_status.base_value }}">{{ tawjeeh_class_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">Tawjeeh Date</label>
-                                    <input type="date" name="tawjeeh_date" id="edit_tawjeeh_date" class="form-control">
-                                </div>
-                            </div>
-                            
-                            <!-- Display Data -->
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Tawjeeh Payment</th>
-                                            <th>Tawjeeh Class</th>
-                                            <th>Tawjeeh Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tawjeeh_data_body">
-                                        <tr id="tawjeeh_data_row" style="display: none;">
-                                            <td id="tawjeeh_payment_display"></td>
-                                            <td id="tawjeeh_class_display"></td>
-                                            <td id="tawjeeh_date_display"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ILOE Accordion -->
-            <div class="accordion mb-3" id="accordionEditILOE">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingEditILOE">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEditILOE" aria-expanded="false" aria-controls="collapseEditILOE">
-                            <i class="ti ti-file-check me-2"></i> ILOE Status
-                        </button>
-                    </h2>
-                    <div id="collapseEditILOE" class="accordion-collapse collapse" aria-labelledby="headingEditILOE" data-bs-parent="#accordionEditILOE">
-                        <div class="accordion-body">
-                            <!-- Form Fields -->
-                            <div class="row mb-4">
-                                <div class="col-md-6 mb-3">
-                    <label class="col-form-label">ILOE Status</label>
-                    <select name="iloe_status" id="edit_iloe_status" class="form-control">
-                        <option value="">Select</option>
-                        {% for ioe_status in ioe_status_data %}
-                        <option value="{{ ioe_status.base_value }}">{{ ioe_status.base_description }}</option>
-                        {% endfor %}
-                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="col-form-label">ILOE Date</label>
-                                    <input type="date" name="iloe_date" id="edit_iloe_date" class="form-control">
-                                </div>
-                            </div>
-                            
-                            <!-- Display Data -->
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>ILOE Status</th>
-                                            <th>ILOE Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="iloe_data_body">
-                                        <tr id="iloe_data_row" style="display: none;">
-                                            <td id="iloe_status_display"></td>
-                                            <td id="iloe_date_display"></td>
                                         </tr>
                                     </tbody>
                                 </table>
