@@ -11105,7 +11105,6 @@ def create_exit_process(request):
             cancellation_date = request.POST.getlist('cancellation_date[]')
             remarks = request.POST.getlist('remarks[]')
             files = request.FILES.getlist('file_path[]')
-            print(offboarding_id, cancellation_category, cancellation_type, cancellation_date, remarks, files)
             # Validate required fields
             if not all([offboarding_id, cancellation_category, cancellation_type, cancellation_date]):
                 messages.error(request, 'All required fields must be filled')
@@ -11506,7 +11505,6 @@ def delete_cancellation_sub_category(request):
         try:
             parent_category = request.POST.get('parent_category')
             sub_category_code = request.POST.get('sub_category_code')
-            print(parent_category, sub_category_code)
             # Delete sub-category
             sub_category = CodeMaster.objects.get(
                 comp_code=COMP_CODE,
