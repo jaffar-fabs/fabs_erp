@@ -6943,7 +6943,7 @@ def recruitment_edit(request):
                 'availability': rec.availability,
                 'agent_charges': rec.agent_charges,
                 'charges_paid_date': rec.charges_paid_date.strftime('%Y-%m-%d') if rec.charges_paid_date else '',
-                'pcc_certificate': rec.pcc_certificate,
+                'ecnr': rec.ecnr,
                 'doc_status': rec.doc_status,
                 'pre_approval': rec.pre_approval,
                 'work_offer_letter': rec.work_offer_letter,
@@ -7081,15 +7081,19 @@ def employee_pp_create(request):
             insurance_expiry_date=request.POST.get('insurance_expiry_date') or None,
         )
         
-        # Handle document uploads
-        upload_documents = request.FILES.getlist('pp_documents[]')
-        if upload_documents:
-            for file in upload_documents:
+        # Handle document uploads with new multi-entry structure
+        document_types = request.POST.getlist('document_name[]')
+        document_files = request.FILES.getlist('document_file[]')
+        
+        # Use zip_longest to handle cases where there might be more types than files or vice versa
+        from itertools import zip_longest
+        for doc_type, doc_file in zip_longest(document_types, document_files, fillvalue=None):
+            if doc_type and doc_file:  # Only create if both type and file are provided
                 EmployeePPDocuments.objects.create(
                     comp_code=COMP_CODE,
                     employee_pp_id=employee_pp.id,
-                    document_name=file.name,
-                    document_file=file
+                    document_name=doc_type,
+                    document_file=doc_file
                 )
         
         return redirect('employee_pp_list')
@@ -7108,7 +7112,7 @@ def employee_pp_edit(request):
         for document in pp_documents:
             documents_data.append({
                 'document_id': document.document_id,
-                'document_name': document.document_name,
+                'document_name': document.document_name, # Changed from document_type to document_name
                 'document_url': document.document_file.url if document.document_file else None
             })
         
@@ -7276,16 +7280,44 @@ def employee_pp_update(request):
                 obj.eid_remarks = (obj.eid_remarks or "") + ": " + eid_remarks_value if obj.eid_remarks else eid_remarks_value
             obj.save()
             
-            # Handle document uploads
-            upload_documents = request.FILES.getlist('pp_documents[]')
-            if upload_documents:
-                for file in upload_documents:
-                    EmployeePPDocuments.objects.create(
-                        comp_code=COMP_CODE,
-                        employee_pp_id=obj.id,
-                        document_name=file.name,
-                        document_file=file
-                    )
+            # Handle document deletions
+            documents_to_remove = request.POST.get('documents_to_remove')
+            if documents_to_remove:
+                document_ids_to_remove = documents_to_remove.split(',')
+                EmployeePPDocuments.objects.filter(
+                    comp_code=COMP_CODE,
+                    employee_pp_id=obj.id,
+                    document_id__in=document_ids_to_remove
+                ).delete()
+            
+            # Handle document uploads with new multi-entry structure
+            document_types = request.POST.getlist('document_name[]')
+            document_files = request.FILES.getlist('document_file[]')
+            document_ids = request.POST.getlist('document_id[]')
+            
+            # Use zip_longest to handle cases where there might be more types than files or vice versa
+            from itertools import zip_longest
+            for doc_type, doc_file, doc_id in zip_longest(document_types, document_files, document_ids, fillvalue=None):
+                if doc_type and doc_file:  # Only create if both type and file are provided
+                    if doc_id:  # Update existing document
+                        try:
+                            existing_doc = EmployeePPDocuments.objects.get(
+                                comp_code=COMP_CODE,
+                                employee_pp_id=obj.id,
+                                document_id=doc_id
+                            )
+                            existing_doc.document_name = doc_type
+                            existing_doc.document_file = doc_file
+                            existing_doc.save()
+                        except EmployeePPDocuments.DoesNotExist:
+                            pass
+                    else:  # Create new document
+                        EmployeePPDocuments.objects.create(
+                            comp_code=COMP_CODE,
+                            employee_pp_id=obj.id,
+                            document_name=doc_type,
+                            document_file=doc_file
+                        )
             
             return redirect('employee_pp_list')
         except EmployeePPDetails.DoesNotExist:
@@ -7384,7 +7416,7 @@ def recruitment_update(request):
             rec.availability = request.POST.get('availability')
             rec.agent_charges = request.POST.get('agent_charges') or None
             rec.charges_paid_date = request.POST.get('charges_paid_date') or None
-            rec.pcc_certificate = request.POST.get('pcc_certificate')
+            rec.ecnr = request.POST.get('ecnr')
             rec.doc_status = request.POST.get('doc_status')
             rec.pre_approval = request.POST.get('pre_approval')
             rec.work_offer_letter = request.POST.get('work_offer_letter')
@@ -7418,7 +7450,7 @@ def convert_to_employee(request):
             rec.availability = request.POST.get('availability')
             rec.agent_charges = request.POST.get('agent_charges') or None
             rec.charges_paid_date = request.POST.get('charges_paid_date') or None
-            rec.pcc_certificate = request.POST.get('pcc_certificate')
+            rec.ecnr = request.POST.get('ecnr')
             rec.doc_status = request.POST.get('doc_status')
             rec.pre_approval = request.POST.get('pre_approval')
             rec.work_offer_letter = request.POST.get('work_offer_letter')
