@@ -1,0 +1,803 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content" style="overflow-y: auto; height: 90vh;">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <h4 class="page-title">Exit Process<span class="count-title">{{ offboardings.paginator.count }}</span>
+                            </h4>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="head-icons">
+                                <a href="" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    data-bs-original-title="Refresh"><i class="ti ti-refresh-dot"></i></a>
+                                <a href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top"
+                                    data-bs-original-title="Collapse" id="collapse-header"><i
+                                        class="ti ti-chevrons-up"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+                {% if messages %}
+                <div class="alert alert-danger" id="alert-message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="card">
+                    <div class="card-header">
+                        <!-- Search -->
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Offboarding" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <div class="dropdown me-2">
+                                        <a href="javascript:void(0);" class="dropdown-toggle" data-bs-toggle="dropdown"><i class="ti ti-package-export me-2"></i>Export</a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul>
+                                                <li><a href="?export=pdf{% if keyword %}&keyword={{ keyword }}{% endif %}" class="dropdown-item"><i class="ti ti-file-type-pdf text-danger me-1"></i>Export as PDF</a></li>
+                                            </ul>
+                                            <ul>
+                                                <li><a href="?export=excel{% if keyword %}&keyword={{ keyword }}{% endif %}" class="dropdown-item"><i class="ti ti-file-type-xls text-green me-1"></i>Export as Excel</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <a href="javascript:void(0);" class="btn btn-primary" onclick="openCancellationCategoryModal()">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Manage Categories
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Search -->
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Manage Offboarding List -->
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Employee Code</th>
+                                        <th>Employee Name</th>
+                                        <th>Designation</th>
+                                        <th>Department</th>
+                                        <th>Offboarding Type</th>
+                                        <th>Offboarding Date</th>
+                                        <th>Exit Process Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for offboarding in offboardings %}
+                                    <tr>
+                                        <td>{{ offboarding.emp_code }}</td>
+                                        <td>{{ offboarding.emp_name }}</td>
+                                        <td>{{ offboarding.designation }}</td>
+                                        <td>{{ offboarding.department }}</td>
+                                        <td>{{ offboarding.offboarding_type }}</td>
+                                        <td>{{ offboarding.offboarding_date }}</td>
+                                        <td>
+                                            {% if offboarding.offboarding_id in offboarding_ids_with_exit_process %}
+                                                <span class="badge bg-success">Exit Process Created</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Pending Exit Process</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="btn btn-primary btn-sm" 
+                                               onclick="openExitProcessModal('{{ offboarding.offboarding_id }}')">
+                                                <i class="ti ti-file-text me-1"></i>Exit Process
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /Manage Offboarding List -->
+                        
+                        <!-- Pagination -->
+                        {% if offboardings.has_other_pages %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="dataTables_info" id="DataTables_Table_0_info" role="status" aria-live="polite">
+                                    Showing {{ offboardings.start_index }} to {{ offboardings.end_index }} of {{ offboardings.paginator.count }} entries
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_0_paginate">
+                                    <ul class="pagination">
+                                        {% if offboardings.has_previous %}
+                                            <li class="paginate_button page-item previous" id="DataTables_Table_0_previous">
+                                                <a href="?page={{ offboardings.previous_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                            </li>
+                                        {% endif %}
+                                        
+                                        {% for num in offboardings.paginator.page_range %}
+                                            {% if offboardings.number == num %}
+                                                <li class="paginate_button page-item active">
+                                                    <a href="#" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0" class="page-link">{{ num }}</a>
+                                                </li>
+                                            {% elif num > offboardings.number|add:'-3' and num < offboardings.number|add:'3' %}
+                                                <li class="paginate_button page-item">
+                                                    <a href="?page={{ num }}{% if keyword %}&keyword={{ keyword }}{% endif %}" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0" class="page-link">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% if offboardings.has_next %}
+                                            <li class="paginate_button page-item next" id="DataTables_Table_0_next">
+                                                <a href="?page={{ offboardings.next_page_number }}{% if keyword %}&keyword={{ keyword }}{% endif %}" aria-controls="DataTables_Table_0" data-dt-idx="3" tabindex="0" class="page-link">Next</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <!-- /Pagination -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Exit Process Modal -->
+{% include 'pages/modal/payroll/exit_process_modal.html' %}
+
+<!-- Cancellation Category Management Modal -->
+<div class="modal fade" id="cancellationCategoryModal" tabindex="-1" aria-labelledby="cancellationCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancellationCategoryModalLabel">Manage Cancellation Sub-Categories</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>Existing Categories & Sub-Categories</h6>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm" id="categoryTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Category Code</th>
+                                        <th>Category Description</th>
+                                        <th>Sub-Categories</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Categories will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Add Sub-Category</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="subCategoryForm">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <label for="parent_category" class="form-label">Parent Category</label>
+                                        <select class="form-control" id="parent_category" name="parent_category" required>
+                                            <option value="">Select Category</option>
+                                            <!-- Categories will be loaded here -->
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sub_category_code" class="form-label">Sub-Category Code</label>
+                                        <input type="text" class="form-control" id="sub_category_code" name="sub_category_code" required style="text-transform: uppercase;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sub_category_description" class="form-label">Sub-Category Description</label>
+                                        <input type="text" class="form-control" id="sub_category_description" name="sub_category_description" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sub_category_status" class="form-label">Status</label>
+                                        <select class="form-control" id="sub_category_status" name="sub_category_status">
+                                            <option value="Y">Active</option>
+                                            <option value="N">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Add Sub-Category</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to open exit process modal
+function openExitProcessModal(offboardingId) {
+    // Reset form
+    document.getElementById('exitProcessForm').reset();
+    document.getElementById('exit_process_modal_title').textContent = 'Exit Process';
+    
+    // Set offboarding ID in hidden field
+    document.getElementById('offboarding_id_hidden').value = offboardingId;
+    
+    // Set offboarding ID in select field (for display only)
+    document.getElementById('offboarding_select').value = offboardingId;
+                document.getElementById('offboarding_select').disabled = true;
+                
+    // Get employee details using AJAX
+    $.ajax({
+        url: `/get_employee_offboarding_details/?offboarding_id=${offboardingId}`,
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                $('#emp_code_display').text(data.employee.emp_code);
+                $('#emp_name_display').text(data.employee.emp_name);
+                $('#designation_display').text(data.employee.designation);
+                $('#department_display').text(data.employee.department);
+                $('#offboarding_type_display').text(data.offboarding.offboarding_type);
+                $('#offboarding_date_display').text(data.offboarding.offboarding_date);
+                
+                // Show employee details section
+                $('#employee_details_section').show();
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+    
+    // Get exit process details using AJAX
+    $.ajax({
+        url: `/get_exit_process_details_by_offboarding/?offboarding_id=${offboardingId}`,
+        method: 'GET',
+        success: function(data) {
+            const categoryTablesContainer = $('#categoryTablesContainer');
+            const newTableBody = $('#exitProcessTable tbody');
+            
+            categoryTablesContainer.empty();
+            newTableBody.empty();
+            
+            if (data.success && data.exit_process_details && data.exit_process_details.length > 0) {
+                // Group data by category
+                const categoryGroups = {};
+                data.exit_process_details.forEach(detail => {
+                    const category = detail.cancellation_category;
+                    if (!categoryGroups[category]) {
+                        categoryGroups[category] = [];
+                    }
+                    categoryGroups[category].push(detail);
+                });
+                
+                // Create separate table for each category
+                Object.keys(categoryGroups).forEach(category => {
+                    const categoryData = categoryGroups[category];
+                    const categoryDisplayName = getCategoryDisplayName(category);
+                    
+                    const tableHtml = `
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-folder me-2"></i>${categoryDisplayName}
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>Remarks</th>
+                                            <th>File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${categoryData.map(detail => `
+                                            <tr>
+                                                <td>${detail.cancellation_type}</td>
+                                                <td>${detail.cancellation_date || ''}</td>
+                                                <td>${detail.remarks || ''}</td>
+                                                <td>
+                                                    ${detail.file_path ? 
+                                                        `<div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-sm btn-info" onclick="previewFile('${detail.file_path}')">
+                                                                <i class="fas fa-eye"></i> Preview
+                                                            </button>
+                                                            <a href="${detail.file_path}" download class="btn btn-sm btn-success">
+                                                                <i class="fas fa-download"></i> Download
+                                                            </a>
+                                                        </div>` : 
+                                                        '<span class="text-muted">No file</span>'
+                                                    }
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    
+                    categoryTablesContainer.append(tableHtml);
+                });
+                
+                // Show existing data accordion section
+                $('#existing_data_section').show();
+                
+            } else {
+                // Hide existing data accordion section
+                $('#existing_data_section').hide();
+                
+            }
+            
+            // Add empty row for new entries
+            addExitProcessRow();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            
+            // Hide existing data accordion section
+            $('#existing_data_section').hide();
+            
+            // Add empty row for new entries
+            addExitProcessRow();
+            
+        }
+    });
+    
+    // Show the modal
+                const modal = new bootstrap.Offcanvas(document.getElementById('exit_process_modal'));
+                modal.show();
+}
+
+// Function to add new empty exit process row
+function addExitProcessRow() {
+    const tableBody = $('#exitProcessTable tbody');
+    const row = $('<tr>');
+    row.html(`
+        <td>
+            <select name="cancellation_category[]" class="form-control">
+                <option value="">Select Category</option>
+                <!-- Categories will be loaded dynamically -->
+            </select>
+        </td>
+        <td>
+            <select name="cancellation_type[]" class="form-control">
+                <option value="">Select Type</option>
+                <!-- Types will be loaded dynamically based on category selection -->
+            </select>
+        </td>
+        <td>
+            <input type="date" name="cancellation_date[]" class="form-control">
+        </td>
+        <td>
+            <input type="text" name="remarks[]" class="form-control" placeholder="Enter remarks">
+        </td>
+        <td>
+            <input type="file" name="file_path[]" class="form-control" accept="application/pdf,image/*">
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeExitProcessRow(this)">
+                <i class="fas fa-times"></i>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="addExitProcessRow()">
+                <i class="fas fa-plus"></i>
+            </button>
+        </td>
+    `);
+    tableBody.append(row);
+    
+    // Populate the new row with categories and add event listener for type loading
+    populateDropdownsForRow(row);
+}
+
+// Function to remove exit process row
+function removeExitProcessRow(button) {
+    const row = $(button).closest('tr');
+    const tableBody = $('#exitProcessTable tbody');
+    
+    if (tableBody.find('tr').length > 1) {
+        row.remove();
+            } else {
+        alert("At least one row must remain.");
+    }
+}
+
+// Function to preview file
+function previewFile(filePath) {
+    // Check if it's an image file
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+    const fileExtension = filePath.toLowerCase().substring(filePath.lastIndexOf('.'));
+    
+    if (imageExtensions.includes(fileExtension)) {
+        // For images, open in a new window
+        window.open(filePath, '_blank');
+    } else {
+        // For PDFs and other files, try to open in new window
+        window.open(filePath, '_blank');
+    }
+}
+
+// Function to get category display name
+function getCategoryDisplayName(category) {
+    switch (category) {
+        case 'VISA_CANCELLATION':
+            return 'Visa Cancellation';
+        case 'PASSPORT_CANCELLATION':
+            return 'Passport Cancellation';
+        case 'EMIRATES_ID_CANCELLATION':
+            return 'Emirates ID Cancellation';
+        case 'WORK_PERMIT_CANCELLATION':
+            return 'Work Permit Cancellation';
+        case 'ACCOMMODATION_CANCELLATION':
+            return 'Accommodation Cancellation';
+        case 'BANK_ACCOUNT_CANCELLATION':
+            return 'Bank Account Cancellation';
+        case 'OTHER':
+            return 'Other';
+        default:
+            return category; // Fallback to category name
+    }
+}
+
+// Function to open cancellation category modal
+function openCancellationCategoryModal() {
+    // Load existing categories
+    loadCancellationCategories();
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('cancellationCategoryModal'));
+    modal.show();
+}
+
+// Function to load cancellation categories
+function loadCancellationCategories() {
+    $.ajax({
+        url: '/get_cancellation_categories/',
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                const tableBody = $('#categoryTable tbody');
+                const parentCategorySelect = $('#parent_category');
+                
+                tableBody.empty();
+                parentCategorySelect.empty();
+                parentCategorySelect.append('<option value="">Select Category</option>');
+                
+                data.categories.forEach(category => {
+                    const row = $('<tr>');
+                    row.html(`
+                        <td>${category.base_value}</td>
+                        <td>${category.base_description}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-info" onclick="viewSubCategories('${category.base_value}', '${category.base_description}')">
+                                <i class="fas fa-folder-open"></i> View Sub-Categories
+                            </button>
+                        </td>
+                        <td>
+                            <span class="badge ${category.is_active === 'Y' ? 'bg-success' : 'bg-danger'}">
+                                ${category.is_active === 'Y' ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="addSubCategory('${category.base_value}', '${category.base_description}')">
+                                <i class="fas fa-plus"></i> Add Sub-Category
+                            </button>
+                        </td>
+                    `);
+                    tableBody.append(row);
+                    
+                    // Add to parent category dropdown
+                    parentCategorySelect.append(`<option value="${category.base_value}">${category.base_description}</option>`);
+                });
+            } else {
+                alert('Failed to load categories');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error loading categories');
+        }
+    });
+}
+
+// Function to view sub-categories for a category
+function viewSubCategories(parentCode, parentDescription) {
+    // Set the parent category in the form
+    $('#parent_category').val(parentCode);
+    
+    // Load sub-categories for this parent
+    loadSubCategories(parentCode);
+    
+    // Show a modal or update the table to show sub-categories
+    alert(`Viewing sub-categories for: ${parentDescription}`);
+}
+
+// Function to add sub-category for a specific category
+function addSubCategory(parentCode, parentDescription) {
+    // Reset form
+    $('#subCategoryForm')[0].reset();
+    
+    // Set the parent category
+    $('#parent_category').val(parentCode);
+    
+    // Update form title
+    $('#subCategoryForm .card-header h6').text(`Add Sub-Category for: ${parentDescription}`);
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('cancellationCategoryModal'));
+    modal.show();
+}
+
+// Function to load sub-categories
+function loadSubCategories(parentCode) {
+    $.ajax({
+        url: `/get_sub_cancellation_categories/?parent_code=${parentCode}`,
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                // Create a new table or update existing table to show sub-categories
+                const subCategoryTable = `
+                    <div class="table-responsive mt-3">
+                        <h6>Sub-Categories for: ${parentCode}</h6>
+                        <table class="table table-striped table-sm">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>Sub-Category Code</th>
+                                    <th>Sub-Category Description</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subCategoryTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                // Replace or add the sub-category table
+                $('#categoryTable').after(subCategoryTable);
+                
+                const subCategoryTableBody = $('#subCategoryTableBody');
+                subCategoryTableBody.empty();
+                
+                data.sub_categories.forEach(subCategory => {
+                    const row = $('<tr>');
+                    row.html(`
+                        <td>${subCategory.base_value}</td>
+                        <td>${subCategory.base_description}</td>
+                        <td>
+                            <span class="badge ${subCategory.is_active === 'Y' ? 'bg-success' : 'bg-danger'}">
+                                ${subCategory.is_active === 'Y' ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-warning" onclick="editSubCategory('${subCategory.base_value}', '${subCategory.base_description}', '${subCategory.is_active}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="deleteSubCategory('${subCategory.base_value}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `);
+                    subCategoryTableBody.append(row);
+                });
+            } else {
+                alert('Failed to load sub-categories');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error loading sub-categories');
+        }
+    });
+}
+
+// Function to edit sub-category
+function editSubCategory(code, description, status) {
+    $('#sub_category_code').val(code);
+    $('#sub_category_description').val(description);
+    $('#sub_category_status').val(status);
+    
+    // Change form action to update
+    $('#subCategoryForm').attr('data-action', 'update');
+    $('#subCategoryForm button[type="submit"]').text('Update Sub-Category');
+}
+
+// Function to delete sub-category
+function deleteSubCategory(code) {
+    if (confirm('Are you sure you want to delete this sub-category?')) {
+        $.ajax({
+            url: '/delete_cancellation_sub_category/',
+            method: 'POST',
+            data: {
+                'sub_category_code': code,
+                'parent_category': $('#parent_category').val(),
+                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                if (data.success) {
+                    alert('Sub-category deleted successfully');
+                    loadSubCategories($('#parent_category').val()); // Reload sub-categories
+                } else {
+                    alert(data.message || 'Failed to delete sub-category');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('Error deleting sub-category');
+            }
+        });
+    }
+}
+
+// Function to populate dropdowns for a specific row
+function populateDropdownsForRow(row) {
+    const categorySelect = row.find('select[name="cancellation_category[]"]');
+    const typeSelect = row.find('select[name="cancellation_type[]"]');
+
+    // Clear existing options
+    categorySelect.empty();
+    categorySelect.append('<option value="">Select Category</option>');
+    typeSelect.empty();
+    typeSelect.append('<option value="">Select Type</option>');
+
+    // Load categories
+    $.ajax({
+        url: '/get_cancellation_categories/',
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                data.categories.forEach(category => {
+                    categorySelect.append(`<option value="${category.base_value}">${category.base_description}</option>`);
+                });
+            } else {
+                alert('Failed to load categories for dropdown');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error loading categories for dropdown');
+        }
+    });
+
+    // Add event listener to category select to load types
+    categorySelect.on('change', function() {
+        const selectedCategory = $(this).val();
+        if (selectedCategory) {
+            loadTypesForCategory(selectedCategory, typeSelect);
+        } else {
+            typeSelect.empty();
+            typeSelect.append('<option value="">Select Type</option>');
+        }
+    });
+}
+
+// Function to load types for a specific category
+function loadTypesForCategory(categoryCode, typeSelect) {
+    $.ajax({
+        url: `/get_cancellation_types_by_category/?category_code=${categoryCode}`,
+        method: 'GET',
+        success: function(data) {
+            if (data.success) {
+                typeSelect.empty();
+                typeSelect.append('<option value="">Select Type</option>');
+                data.types.forEach(type => {
+                    typeSelect.append(`<option value="${type.base_value}">${type.base_description}</option>`);
+                });
+            } else {
+                alert('Failed to load types for category');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error loading types for category');
+        }
+    });
+}
+
+// Handle category form submission
+$(document).ready(function() {
+    // Remove category form handler since we're not adding new categories
+    
+    $('#subCategoryForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Convert sub-category code to uppercase
+        const subCategoryCode = $('#sub_category_code').val().toUpperCase();
+        $('#sub_category_code').val(subCategoryCode);
+        
+        const action = $(this).attr('data-action') || 'create';
+        const url = action === 'update' ? '/update_cancellation_sub_category/' : '/create_cancellation_sub_category/';
+        
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(data) {
+                if (data.success) {
+                    alert(action === 'update' ? 'Sub-category updated successfully' : 'Sub-category created successfully');
+                    $('#subCategoryForm')[0].reset();
+                    $('#subCategoryForm').removeAttr('data-action');
+                    $('#subCategoryForm button[type="submit"]').text('Add Sub-Category');
+                    $('#subCategoryForm .card-header h6').text('Add Sub-Category');
+                    
+                    // Reload sub-categories if we're viewing them
+                    const parentCode = $('#parent_category').val();
+                    if (parentCode) {
+                        loadSubCategories(parentCode);
+                    }
+                } else {
+                    alert(data.message || 'Failed to save sub-category');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert('Error saving sub-category');
+            }
+        });
+    });
+    
+    // Convert sub-category code to uppercase on input
+    $('#sub_category_code').on('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+    
+    // Load cancellation data when page loads
+    loadCancellationData();
+});
+
+// Handle offboarding selection change
+$(document).ready(function() {
+    $('#offboarding_select').on('change', function() {
+        const selectedValue = $(this).val();
+            if (selectedValue) {
+            // Get employee details using AJAX
+            $.ajax({
+                url: `/get_employee_offboarding_details/?offboarding_id=${selectedValue}`,
+                method: 'GET',
+                success: function(data) {
+                        if (data.success) {
+                        $('#emp_code_display').text(data.employee.emp_code);
+                        $('#emp_name_display').text(data.employee.emp_name);
+                        $('#designation_display').text(data.employee.designation);
+                        $('#department_display').text(data.employee.department);
+                        $('#offboarding_type_display').text(data.offboarding.offboarding_type);
+                        $('#offboarding_date_display').text(data.offboarding.offboarding_date);
+                        
+                        // Show employee details section
+                        $('#employee_details_section').show();
+                    }
+                },
+                error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                }
+                    });
+            } else {
+            // Hide employee details section
+            $('#employee_details_section').hide();
+        }
+    });
+});
+</script>
+{% endblock %}

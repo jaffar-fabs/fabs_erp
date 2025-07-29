@@ -500,3 +500,10 @@ def get_offboarding_reason(request):
     return {
         'reasons': offboarding_reason
     }
+
+def get_cancellation_categories(request):
+    comp_code = get_comp_code(request)
+    cancellation_categories = CodeMaster.objects.filter(comp_code=comp_code, is_active='Y', base_type = 'CANCEL CATEGORY')
+    return {
+        'cancellation_categories': cancellation_categories
+    }

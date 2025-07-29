@@ -24,6 +24,9 @@ def gratuity_document_path(instance, filename):
     # Store documents under a folder named by employee ID
     return os.path.join('gratuity_docs', instance.employee_code, filename)
 
+def exit_process_document_path(instance, filename):
+    return os.path.join('exit_process_documents', str(instance.offboarding_id), filename)
+
 # -------------------------------------------------------------------------------
 # Party Master
 class PartyMaster(models.Model):
@@ -1210,4 +1213,17 @@ class OffboardingDocuments(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.BigIntegerField(null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
-    
+
+class ExitProcess(models.Model):
+    exit_process_id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15, null=True, blank=True)
+    offboarding_id = models.IntegerField()
+    cancellation_category = models.CharField(max_length=100, blank=True, null=True)
+    cancellation_type = models.CharField(max_length=100, blank=True, null=True)
+    cancellation_date = models.DateField(blank=True, null=True)
+    remarks = models.CharField(max_length=100, blank=True, null=True)
+    file_path = models.FileField(upload_to=exit_process_document_path, blank=True, null=True)
+    created_by = models.CharField(max_length=100, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    modified_by = models.CharField(max_length=100, null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)

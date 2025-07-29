@@ -331,6 +331,22 @@ urlpatterns = [
     path('offboarding/delete/', views.offboarding_delete, name='offboarding_delete'),
     path('get_employee_offboarding_details/', views.get_employee_offboarding_details, name='get_employee_offboarding_details'),
 
+    # Exit Process URLs
+    path('exit_process/', views.exit_process_list, name='exit_process_list'),
+    path('create_exit_process/', views.create_exit_process, name='create_exit_process'),
+    path('update_exit_process/', views.update_exit_process, name='update_exit_process'),
+    path('delete_exit_process/<int:exit_process_id>/', views.delete_exit_process, name='delete_exit_process'),
+    path('get_exit_process_details_by_offboarding/', views.get_exit_process_details_by_offboarding, name='get_exit_process_details_by_offboarding'),
+
+    # Cancellation Category Management URLs
+    path('get_cancellation_categories/', views.get_cancellation_categories, name='get_cancellation_categories'),
+    # Cancellation Sub-Category Management URLs
+    path('get_sub_cancellation_categories/', views.get_sub_cancellation_categories, name='get_sub_cancellation_categories'),
+    path('create_cancellation_sub_category/', views.create_cancellation_sub_category, name='create_cancellation_sub_category'),
+    path('update_cancellation_sub_category/', views.update_cancellation_sub_category, name='update_cancellation_sub_category'),
+    path('delete_cancellation_sub_category/', views.delete_cancellation_sub_category, name='delete_cancellation_sub_category'),
+    path('get_cancellation_types_by_category/', views.get_cancellation_types_by_category, name='get_cancellation_types_by_category'),
+
 ]
 
 

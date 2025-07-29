@@ -145,6 +145,7 @@ TEMPLATES = [
                 'payroll.context_processors.get_accommodation_type',
                 'payroll.context_processors.get_offboarding_types',
                 'payroll.context_processors.get_offboarding_reason',
+                'payroll.context_processors.get_cancellation_categories'
 
             ],
         },

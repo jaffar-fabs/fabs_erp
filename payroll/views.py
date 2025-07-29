@@ -413,7 +413,6 @@ def get_employee_details(request):
         return JsonResponse({'success': False, 'error': 'Employee not found'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
-    
 @csrf_exempt
 def save_employee(request):
     set_comp_code(request)
@@ -798,7 +797,6 @@ def deactivate_employee(request, employee_id):
         employee.delete()
         messages.success(request, 'Employee deactivated successfully!')
     return redirect('/employee')  # Redirect to the employee list page
-
 def index(request):
     set_comp_code(request)
     # Employee Statistics
@@ -851,7 +849,6 @@ def index(request):
     }
 
     return render(request, 'pages/dashboard/index.html', context)
-
 def payroll_dashboard(request):
     comp_code = request.session.get('comp_code')
     six_months_ago = datetime.now() - timedelta(days=180)
@@ -1219,8 +1216,6 @@ def get_seed(request, seed_id):
 
 
 #--------------------------------------------------
-
-
 class Paycycle(View):
     template_name = "pages/payroll/paycycle_master/paycycle-list.html"
 
@@ -1383,8 +1378,6 @@ class Paycycle(View):
     #     set_comp_code(request)
     #     auto_paycycle_id = PaycycleMaster.objects.filter(comp_code=COMP_CODE).order_by('-process_cycle_id').first()
     #     return auto_paycycle_id.process_cycle_id + 1 if auto_paycycle_id else 1
-    
-    
 def project(request):
     set_comp_code(request)
     if request.method == 'POST':
@@ -1708,7 +1701,6 @@ def project(request):
 
             # Render the template
             return render(request, template_name, context)
-       
     if request.method == "POST":
         project_id = request.POST.get("project_id")
 
@@ -2181,11 +2173,9 @@ class UserMasterDelete(View):
     
 from django.http import JsonResponse
 from .models import Employee
-
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Employee
-
 def get_employee_data(request, emp_code):
     try:
         employee = Employee.objects.get(emp_code=emp_code)
@@ -2204,7 +2194,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import GradeMaster
 from django.utils.timezone import now
-
 class GradeMasterList(View):
     template_name = "pages/payroll/grade_master/grade_master_list.html"
 
@@ -2693,7 +2682,6 @@ def permission_view(request):
         'module_ids': module_ids,
     }
     return render(request, 'pages/security/role/permission.html', context)
-
 @csrf_exempt
 def update_role_menu(request):
     set_comp_code(request)
@@ -2856,7 +2844,6 @@ def add_company(request):
         return redirect('company_list')
     
     return redirect('company_list')
-
 def company_edit(request):
     set_comp_code(request)
     if request.method == "GET":
@@ -3190,7 +3177,6 @@ def cancel_attendance_upload(request):
         request.session.pop('error_data', None)
         messages.success(request, "Attendance upload process has been canceled.")
     return redirect('attendance_upload')
-
 def payroll_processing(request):
     set_comp_code(request)
     if request.method == 'POST':
@@ -3655,7 +3641,6 @@ def cancel_payroll_processing(request):
         # Logic to cancel payroll processing
         messages.success(request, "Payroll processing has been canceled.")
     return redirect('payroll_processing')
-
 def fetch_paymonth(request):
     set_comp_code(request)
     paycycle = request.GET.get('paycycle')
@@ -3666,8 +3651,6 @@ def fetch_paymonth(request):
             options = ''.join([f'<option value="{month}">{month}</option>' for month in paymonths])
             return JsonResponse({'options': options})
     return JsonResponse({'options': '<option value="">Select Paymonth</option>'})
-
-
 def fetch_paymonth_adhoc(request):
     set_comp_code(request)  # Ensure this function is defined and works correctly
     paycycle = request.GET.get('paycycle')
@@ -4143,7 +4126,6 @@ def camp_list(request):
     }
     
     return render(request, 'pages/payroll/camp_master/camp_master.html', context)
-
 def create_camp(request):
     set_comp_code(request)
     if request.method == 'POST':
@@ -4272,7 +4254,6 @@ def create_camp(request):
 
         return redirect('camp_master')
     return render(request, 'pages/payroll/camp_master/camp_master.html')
-
 @csrf_exempt
 def camp_master_edit(request):
     set_comp_code(request)
@@ -4602,7 +4583,6 @@ def check_bed_allocation(request):
         ).exists()
         return JsonResponse({'allocated_current': is_allocated_current,'allocated_future':is_allocated_future})
     return JsonResponse({'error': 'Invalid bed details.'}, status=400)
-
 def camp_allocation_create(request):
     set_comp_code(request)  # Make sure this sets COMP_CODE globally or in session
 
@@ -5047,7 +5027,6 @@ def delete_party(request, party_id):
         return JsonResponse({'success': True, 'message': 'Party deleted successfully.'})
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
-
 def employee_enquiries(request):
     set_comp_code(request)  # Ensure the company code is set in the session
 
@@ -5521,7 +5500,6 @@ def leave_transaction_add(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
 @csrf_exempt
 def leave_transaction_edit(request):
     if request.method == 'GET':
@@ -5842,7 +5820,6 @@ def attendance_correction(request):
     except Exception as e:
         messages.error(request, f'Error in attendance correction: {str(e)}')
         return redirect('index')
-
 @csrf_exempt
 def get_employee_process_cycle(request):
     set_comp_code(request)
@@ -6020,7 +5997,6 @@ def gratuity_list(request):
         'result_cnt': result_cnt,
         'current_url': current_url
     });
-
 @csrf_exempt
 def add_gratuity(request):
     set_comp_code(request)
@@ -6499,7 +6475,6 @@ def get_rejoin_details(request):
         return JsonResponse(data)
     except LeaveTransaction.DoesNotExist:
         return JsonResponse({'error': 'Leave not found'}, status=404)
-
 @csrf_exempt
 def rejoin_approval_submit(request):
     if request.method == 'POST':
@@ -6603,8 +6578,6 @@ def get_rejoin_notifications(request):
             'status': 'error',
             'message': str(e)
         }, status=500)
-
-
 def get_emp_code(request):
     set_comp_code(request)
     if request.method == 'GET':
@@ -6993,7 +6966,6 @@ def recruitment_edit(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
-
 @csrf_exempt
 def recruitment_update(request):
     if request.method == 'POST':
@@ -7384,7 +7356,6 @@ def recruitment_update(request):
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
 @csrf_exempt
 def convert_to_employee(request):
     if request.method == 'POST':
@@ -7457,7 +7428,6 @@ def mrf_list(request):
     }
     
     return render(request, 'pages/payroll/mrf/mrf.html', context)
-
 @csrf_exempt
 def create_mrf(request):
     """View to create a new MRF"""
@@ -7956,7 +7926,6 @@ def document_tracker_report(request):
 #         response = HttpResponse(pdf_data, content_type='application/pdf')
 #         response['Content-Disposition'] = f'attachment; filename="{output_filename}"'
 #         return response
-    
 #     except Exception as e:
 #         print(e)
 #         return JsonResponse({
@@ -7974,7 +7943,6 @@ try:
 except ImportError as e:
     print(f"Error importing PyReportJasper: {e}")
     PyReportJasper = None
-
 def generate_report(request):
     set_comp_code(request)
 
@@ -8361,7 +8329,6 @@ def generate_report(request):
                         'status': 'error',
                         'message': f'Error executing salary register single history query: {str(e)}'
                     }, status=500)
-                    
             elif rname == 'PY_Project_Wise_Report.jasper':
                 # Handle project wise report with direct SQL execution and Excel export
                 try:
@@ -8725,7 +8692,6 @@ def generate_report(request):
                         'status': 'error',
                         'message': f'Error executing project wise job summary query: {str(e)}'
                     }, status=500)
-                    
             elif rname == 'PY_Project_wise_job_summary_History.jasper':
                 # Handle project wise job summary history report with direct SQL execution and Excel export
                 try:
@@ -8810,7 +8776,6 @@ def generate_report(request):
                         'status': 'error',
                         'message': f'Error executing project wise job summary history query: {str(e)}'
                     }, status=500)
-                    
             elif rname == 'PY_Paymentwise_Report.jasper':
                 # Handle payment wise report with direct SQL execution and Excel export
                 try:
@@ -9272,7 +9237,6 @@ def generate_report(request):
                             'status': 'error',
                             'message': f'Error executing pay slip history query: {str(e)}'
                         }, status=500)
-                        
             elif rname == 'PY_Employee_Salary_Detail.jasper':
                 # Handle employee salary detail report with direct SQL execution and Excel export
                 try:
@@ -9491,7 +9455,6 @@ def generate_report(request):
                             'status': 'error',
                             'message': f'Error executing employee advance query: {str(e)}'
                         }, status=500)
-                    
             elif rname == 'PY_Salary_Register(Multi).jasper':
                 # Handle salary register multi line report with direct SQL execution and Excel export
                 try:
@@ -9751,7 +9714,6 @@ def generate_report(request):
                             'status': 'error',
                             'message': f'Error executing salary register multi line history query: {str(e)}'
                         }, status=500)
-                    
             elif rname == 'PY_Control_Statement.jasper':
                 # Handle control statement report with direct SQL execution and Excel export
                 try:
@@ -10246,7 +10208,6 @@ def generate_report(request):
                 'status': 'error',
                 'message': f'Report file not found: {jasper_file}'
             }, status=404)
-        
         # Check if reports directory is writable
         if not os.access(reports_dir, os.W_OK):
             return JsonResponse({
@@ -10292,7 +10253,6 @@ def generate_report(request):
                 'status': 'error',
                 'message': f'Failed to create temporary file: {str(temp_error)}'
             }, status=500)
-            
         try:
             prj = PyReportJasper()
             try:
@@ -10744,7 +10704,6 @@ def notification_edit(request):
 
 #                 # Create a mapping of emp_code to emp_name for quick lookup
 #                 emp_code_to_name = {emp['emp_code']: emp['emp_name'] for emp in active_employees}
-
 #                 documents = EmployeeDocument.objects.filter(
 #                     comp_code=comp_code,
 #                     document_type=doc_type,
@@ -11062,8 +11021,7 @@ def offboarding_delete(request):
             return JsonResponse({'status': 'error', 'message': 'Offboarding record not found'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
-
-def get_employee_offboarding_details(request):
+def get_offboarding_details(request):
     set_comp_code(request)
     if request.method == 'GET':
         emp_code = request.GET.get('emp_code')
@@ -11096,4 +11054,508 @@ def get_employee_offboarding_details(request):
         except Employee.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Employee not found'})
         except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)}) 
+            return JsonResponse({'success': False, 'message': str(e)})        
+# Exit Process Views
+# Exit Process Views
+def exit_process_list(request):
+    set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    page_number = request.GET.get('page', 1)
+    
+    # Base query - get all offboarding records
+    query = Offboarding.objects.filter(comp_code=COMP_CODE)
+    
+    # Search filter
+    if keyword:
+        query = query.filter(
+            Q(emp_code__icontains=keyword) |
+            Q(emp_name__icontains=keyword) |
+            Q(designation__icontains=keyword) |
+            Q(department__icontains=keyword)
+        )
+    
+    # Pagination
+    paginator = Paginator(query, 10)
+    try:
+        offboardings = paginator.page(page_number)
+    except (PageNotAnInteger, EmptyPage):
+        offboardings = paginator.page(1)
+    
+    # Check which offboardings have exit process data
+    offboarding_ids_with_exit_process = ExitProcess.objects.filter(
+        comp_code=COMP_CODE
+    ).values_list('offboarding_id', flat=True).distinct()
+    
+    context = {
+        'offboardings': offboardings,
+        'keyword': keyword,
+        'offboarding_ids_with_exit_process': list(offboarding_ids_with_exit_process)
+    }
+    
+    return render(request, 'pages/payroll/exit_process/exit_process_list.html', context)
+
+@csrf_exempt
+def create_exit_process(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            offboarding_id = request.POST.get('offboarding_id')
+            cancellation_category = request.POST.getlist('cancellation_category[]')
+            cancellation_type = request.POST.getlist('cancellation_type[]')
+            cancellation_date = request.POST.getlist('cancellation_date[]')
+            remarks = request.POST.getlist('remarks[]')
+            files = request.FILES.getlist('file_path[]')
+            print(offboarding_id, cancellation_category, cancellation_type, cancellation_date, remarks, files)
+            # Validate required fields
+            if not all([offboarding_id, cancellation_category, cancellation_type, cancellation_date]):
+                messages.error(request, 'All required fields must be filled')
+                return redirect('exit_process_list')
+
+            # Create exit process records
+            for i in range(len(cancellation_category)):
+                file_path = files[i] if i < len(files) else None
+                
+                ExitProcess.objects.create(
+                    comp_code=COMP_CODE,
+                    offboarding_id=offboarding_id,
+                    cancellation_category=cancellation_category[i],
+                    cancellation_type=cancellation_type[i], 
+                    cancellation_date=cancellation_date[i],
+                    remarks=remarks[i] if i < len(remarks) else None,
+                    file_path=file_path,
+                    created_by=request.session.get('username', 1)
+                )
+
+            messages.success(request, 'Exit process created successfully')
+            return redirect('exit_process_list')
+
+        except Exception as e:
+            messages.error(request, f'Error creating exit process: {str(e)}')
+            return redirect('exit_process_list')
+
+    return redirect('exit_process_list')
+
+@csrf_exempt
+def update_exit_process(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            offboarding_id = request.POST.get('offboarding_id')
+            cancellation_category = request.POST.getlist('cancellation_category[]')
+            cancellation_type = request.POST.getlist('cancellation_type[]')
+            cancellation_date = request.POST.getlist('cancellation_date[]')
+            remarks = request.POST.getlist('remarks[]')
+            files = request.FILES.getlist('file_path[]')
+
+            # Validate required fields
+            if not all([offboarding_id, cancellation_category, cancellation_type, cancellation_date]):
+                messages.error(request, 'All required fields must be filled')
+                return redirect('exit_process_list')
+
+            # Delete existing records for this offboarding
+            ExitProcess.objects.filter(offboarding_id=offboarding_id, comp_code=COMP_CODE).delete()
+
+            # Create new exit process records
+            for i in range(len(cancellation_category)):
+                file_path = files[i] if i < len(files) else None
+                
+                ExitProcess.objects.create(
+                    comp_code=COMP_CODE,
+                    offboarding_id=offboarding_id,
+                    cancellation_category=cancellation_category[i],
+                    cancellation_type=cancellation_type[i],
+                    cancellation_date=cancellation_date[i],
+                    remarks=remarks[i] if i < len(remarks) else None,
+                    file_path=file_path,
+                    created_by=request.session.get('username', 1)
+                )
+
+            messages.success(request, 'Exit process updated successfully')
+            return redirect('exit_process_list')
+
+        except Exception as e:
+            messages.error(request, f'Error updating exit process: {str(e)}')
+            return redirect('exit_process_list')
+
+    return redirect('exit_process_list')
+
+@csrf_exempt
+def delete_exit_process(request, exit_process_id):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            exit_process = get_object_or_404(ExitProcess, exit_process_id=exit_process_id, comp_code=COMP_CODE)
+            exit_process.delete()
+            
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Exit process deleted successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    })
+
+def get_exit_process_details(request, exit_process_id):
+    set_comp_code(request)
+    try:
+        exit_process = get_object_or_404(ExitProcess, exit_process_id=exit_process_id, comp_code=COMP_CODE)
+        offboarding = exit_process.offboarding
+        
+        # Get employee details
+        employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
+        
+        data = {
+            'success': True,
+            'exit_process': {
+                'exit_process_id': exit_process.exit_process_id,
+                'offboarding_id': exit_process.offboarding_id,
+                'cancellation_category': exit_process.cancellation_category,
+                'cancellation_type': exit_process.cancellation_type,
+                'cancellation_date': exit_process.cancellation_date.strftime('%Y-%m-%d') if exit_process.cancellation_date else None,
+                'remarks': exit_process.remarks,
+                'file_path': exit_process.file_path.url if exit_process.file_path else None,
+            },
+            'employee': {
+                'emp_code': employee.emp_code if employee else offboarding.emp_code,
+                'emp_name': employee.emp_name if employee else offboarding.emp_name,
+                'designation': employee.designation if employee else offboarding.designation,
+                'department': employee.department if employee else offboarding.department,
+            },
+            'offboarding': {
+                'offboarding_type': offboarding.offboarding_type,
+                'offboarding_date': offboarding.offboarding_date,
+            }
+        }
+        
+        return JsonResponse(data)
+        
+    except ExitProcess.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Exit process not found'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+def get_employee_offboarding_details(request):
+    set_comp_code(request)
+    offboarding_id = request.GET.get('offboarding_id')
+    
+    if not offboarding_id:
+        return JsonResponse({
+            'success': False,
+            'message': 'Offboarding ID is required'
+        })
+    
+    try:
+        offboarding = get_object_or_404(Offboarding, offboarding_id=offboarding_id, comp_code=COMP_CODE)
+        employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
+        
+        data = {
+            'success': True,
+            'employee': {
+                'emp_code': employee.emp_code if employee else offboarding.emp_code,
+                'emp_name': employee.emp_name if employee else offboarding.emp_name,
+                'designation': employee.designation if employee else offboarding.designation,
+                'department': employee.department if employee else offboarding.department,
+            },
+            'offboarding': {
+                'offboarding_type': offboarding.offboarding_type,
+                'offboarding_date': offboarding.offboarding_date,
+            }
+        }
+        
+        return JsonResponse(data)
+        
+    except Offboarding.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Offboarding record not found'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+def get_exit_process_details_by_offboarding(request):
+    set_comp_code(request)
+    offboarding_id = request.GET.get('offboarding_id')
+    
+    if not offboarding_id:
+        return JsonResponse({
+            'success': False,
+            'message': 'Offboarding ID is required'
+        })
+    
+    try:
+        offboarding = get_object_or_404(Offboarding, offboarding_id=offboarding_id, comp_code=COMP_CODE)
+        employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
+        
+        # Get all exit process details for this offboarding
+        exit_process_details = ExitProcess.objects.filter(
+            offboarding_id=offboarding_id,
+            comp_code=COMP_CODE
+        ).values('cancellation_category', 'cancellation_type', 'cancellation_date', 'remarks', 'file_path')
+        
+        # Format the data
+        formatted_details = []
+        for detail in exit_process_details:
+            # Convert file_path to proper URL if it exists
+            file_url = None
+            if detail['file_path']:
+                # Get the URL for the file - use the same pattern as employee master
+                try:
+                    # If it's already a FileField object, get its URL
+                    if hasattr(detail['file_path'], 'url'):
+                        file_url = detail['file_path'].url
+                    else:
+                        # If it's a string path, construct the media URL using settings.MEDIA_URL
+                        file_path_str = str(detail['file_path'])
+                        file_url = f"{settings.MEDIA_URL}{file_path_str}"
+                except Exception as e:
+                    print(f"Error processing file path: {e}")
+                    file_url = str(detail['file_path'])
+            
+            formatted_details.append({
+                'cancellation_category': detail['cancellation_category'],
+                'cancellation_type': detail['cancellation_type'],
+                'cancellation_date': detail['cancellation_date'].strftime('%Y-%m-%d') if detail['cancellation_date'] else None,
+                'remarks': detail['remarks'],
+                'file_path': file_url
+            })
+        
+        data = {
+            'success': True,
+            'employee': {
+                'emp_code': employee.emp_code if employee else offboarding.emp_code,
+                'emp_name': employee.emp_name if employee else offboarding.emp_name,
+                'designation': employee.designation if employee else offboarding.designation,
+                'department': employee.department if employee else offboarding.department,
+            },
+            'offboarding': {
+                'offboarding_type': offboarding.offboarding_type,
+                'offboarding_date': offboarding.offboarding_date,
+            },
+            'exit_process_details': formatted_details
+        }
+        
+        return JsonResponse(data)
+        
+    except Offboarding.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': 'Offboarding record not found'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+# Cancellation Category Management Views
+def get_cancellation_categories(request):
+    set_comp_code(request)
+    try:
+        # Get cancellation categories from code master
+        categories = CodeMaster.objects.filter(
+            comp_code=COMP_CODE,
+            base_type='CANCEL CATEGORY'
+        ).values('base_value', 'base_description', 'is_active')
+        
+        data = {
+            'success': True,
+            'categories': list(categories)
+        }
+        
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+# Sub-Category Management Views
+def get_sub_cancellation_categories(request):
+    set_comp_code(request)
+    try:
+        parent_code = request.GET.get('parent_code')
+        
+        # Get sub-categories from code master
+        sub_categories = CodeMaster.objects.filter(
+            comp_code=COMP_CODE,
+            base_type=parent_code,
+        ).values('base_value', 'base_description', 'is_active')
+        
+        data = {
+            'success': True,
+            'sub_categories': list(sub_categories)
+        }
+        
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
+
+@csrf_exempt
+def create_cancellation_sub_category(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            parent_category = request.POST.get('parent_category')
+            sub_category_code = request.POST.get('sub_category_code')
+            sub_category_description = request.POST.get('sub_category_description')
+            sub_category_status = request.POST.get('sub_category_status', 'Y')
+            
+            # Check if sub-category already exists
+            if CodeMaster.objects.filter(comp_code=COMP_CODE, base_type=parent_category, base_value=sub_category_code).exists():
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Sub-category code already exists'
+                })
+            
+            # Create new sub-category
+            CodeMaster.objects.create(
+                comp_code=COMP_CODE,
+                base_type=parent_category,
+                base_value=sub_category_code,
+                base_description=sub_category_description,
+                is_active=sub_category_status,
+                created_by=1,
+                sequence_id=1
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Sub-category created successfully'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+@csrf_exempt
+def update_cancellation_sub_category(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            parent_category = request.POST.get('parent_category')
+            sub_category_code = request.POST.get('sub_category_code')
+            sub_category_description = request.POST.get('sub_category_description')
+            sub_category_status = request.POST.get('sub_category_status', 'Y')
+            
+            # Update existing sub-category
+            sub_category = CodeMaster.objects.get(
+                comp_code=COMP_CODE,
+                base_type=parent_category,
+                base_value=sub_category_code
+            )
+            
+            sub_category.base_description = sub_category_description
+            sub_category.is_active = sub_category_status
+            sub_category.modified_by = 1
+            sub_category.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Sub-category updated successfully'
+            })
+            
+        except CodeMaster.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Sub-category not found'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+@csrf_exempt
+def delete_cancellation_sub_category(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            parent_category = request.POST.get('parent_category')
+            sub_category_code = request.POST.get('sub_category_code')
+            print(parent_category, sub_category_code)
+            # Delete sub-category
+            sub_category = CodeMaster.objects.get(
+                comp_code=COMP_CODE,
+                base_type=parent_category,
+                base_value=sub_category_code
+            )
+            sub_category.delete()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Sub-category deleted successfully'
+            })
+            
+        except CodeMaster.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Sub-category not found'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            })
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method'
+    })
+
+def get_cancellation_types_by_category(request):
+    set_comp_code(request)
+    try:
+        category_code = request.GET.get('category_code')
+        
+        # Get types from code master based on the selected category
+        types = CodeMaster.objects.filter(
+            comp_code=COMP_CODE,
+            base_type=category_code,
+        ).values('base_value', 'base_description', 'is_active')
+        
+        data = {
+            'success': True,
+            'types': list(types)
+        }
+        
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        })
