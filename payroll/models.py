@@ -1019,7 +1019,7 @@ class Recruitment(models.Model):
     availability = models.CharField(max_length=50, null=True, blank=True)
     agent_charges = models.CharField(max_length=50, null=True, blank=True)
     charges_paid_date = models.DateField(null=True, blank=True)
-    pcc_certificate = models.TextField(null=True, blank=True)
+    ecnr = models.CharField(max_length=50, null=True, blank=True)
     doc_status = models.CharField(max_length=50, null=True, blank=True)
     pre_approval = models.CharField(max_length=50, null=True, blank=True)
     work_offer_letter = models.TextField(null=True, blank=True)

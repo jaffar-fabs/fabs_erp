@@ -75,8 +75,13 @@
                     <input type="date" name="charges_paid_date" id="edit_charges_paid_date" class="form-control">
                 </div>
                 <div class="col-md-4 mb-3">
-                    <label class="col-form-label">PCC Certificate</label>
-                    <input type="text" name="pcc_certificate" id="edit_pcc_certificate" class="form-control">
+                    <label class="col-form-label">Travel Requirement</label>
+                    <select name="ecnr" class="form-control" id="edit_ecnr" readonly>
+                        <option value="">Select</option>
+                        {% for ecnr in ecnr_data %}
+                        <option value="{{ ecnr.base_value }}">{{ ecnr.base_description }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="col-form-label">Pre-approval</label>
