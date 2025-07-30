@@ -7137,7 +7137,7 @@ def employee_pp_create(request):
             nationality=request.POST.get('nationality'),
             pp_control=request.POST.get('pp_control'),
             date_of_landing=request.POST.get('date_of_landing') or None,
-            no_of_days=60,
+            # no_of_days=60,
             medical=request.POST.get('medical'),
             medical_result_date=request.POST.get('medical_result_date') or None,
             remedical_result_date=request.POST.get('remedical_result_date') or None,
@@ -7192,6 +7192,9 @@ def employee_pp_edit(request):
                 'document_url': document.document_file.url if document.document_file else None
             })
         
+        # Calculate no_of_days as current date - landing date - 60
+        from datetime import datetime, date
+        
         data = {
             'id': obj.id,
             'pp_number': obj.pp_number,
@@ -7207,7 +7210,7 @@ def employee_pp_edit(request):
             'nationality': obj.nationality,
             'pp_control': obj.pp_control,
             'date_of_landing': obj.date_of_landing,
-            'no_of_days': obj.no_of_days,
+            'no_of_days': (60 - (date.today() - obj.date_of_landing).days) if obj.date_of_landing else None,
             'medical': obj.medical,
             'medical_result_date': obj.medical_result_date,
             'remedical_result_date': obj.remedical_result_date,
@@ -7258,7 +7261,7 @@ def employee_pp_update(request):
             obj.nationality = request.POST.get('nationality')
             obj.pp_control = request.POST.get('pp_control')
             obj.date_of_landing = request.POST.get('date_of_landing') or None
-            obj.no_of_days = request.POST.get('no_of_days') or None
+            # obj.no_of_days = request.POST.get('no_of_days') or None
             obj.fine_amount = request.POST.get('fine_amount') or None
             # Handle insurance_status field
             insurance_status_value = request.POST.get('insurance_status')
