@@ -47,6 +47,7 @@ urlpatterns = [
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),
     path('payroll_dashboard', payroll_views.payroll_dashboard, name='payroll_dashboard'),
+    path('hr_metrics_dashboard/', payroll_views.hr_metrics_dashboard, name='hr_metrics_dashboard'),
     path('', auth_views.Login.as_view(), name='login'),
     path('users/', auth_views.UserMasterList.as_view(), name='user_list'),
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),

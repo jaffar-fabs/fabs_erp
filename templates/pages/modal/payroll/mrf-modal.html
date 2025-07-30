@@ -107,9 +107,9 @@
                 <table class="table" id="mrfMultiEntryTable_add">
                     <thead>
                         <tr>
-                            <th>Designation</th>
-                            <th>Department</th>
                             <th>Category</th>
+                            <th>Department</th>
+                            <th>Designation</th>
                             <th>Quantity</th>
                             <th>Action</th>
                         </tr>
@@ -117,12 +117,10 @@
                     <tbody>
                         <tr>
                             <td>
-                                <select name="mrf_designation[]" class="form-control" required>
-                                    <option value="">Select Designation</option>
-                                    {% for designation in designations %}
-                                        <option value="{{ designation.base_value }}">
-                                            {{ designation.base_description }}
-                                        </option>
+                                <select name="mrf_category[]" class="form-control" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in staff_category_data %}
+                                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                                     {% endfor %}
                                 </select>
                             </td>
@@ -135,10 +133,12 @@
                                 </select>
                             </td>
                             <td>
-                                <select name="mrf_category[]" class="form-control" required>
-                                    <option value="">Select Category</option>
-                                    {% for category in staff_category_data %}
-                                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                                <select name="mrf_designation[]" class="form-control" required>
+                                    <option value="">Select Designation</option>
+                                    {% for designation in designations %}
+                                        <option value="{{ designation.base_value }}">
+                                            {{ designation.base_description }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                             </td>
@@ -296,9 +296,9 @@
                 <table class="table" id="mrfMultiEntryTable_edit">
                     <thead>
                         <tr>
-                            <th>Designation</th>
-                            <th>Department</th>
                             <th>Category</th>
+                            <th>Department</th>
+                            <th>Designation</th>
                             <th>Quantity</th>
                             <th>Action</th>
                         </tr>
@@ -478,12 +478,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
             <td>
-                <select name="mrf_designation[]" class="form-control" required>
-                    <option value="">Select Designation</option>
-                    {% for designation in designations %}
-                        <option value="{{ designation.base_value }}">
-                            {{ designation.base_description }}
-                        </option>
+                <select name="mrf_category[]" class="form-control" required>
+                    <option value="">Select Category</option>
+                    {% for category in staff_category_data %}
+                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                     {% endfor %}
                 </select>
             </td>
@@ -496,10 +494,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </select>
             </td>
             <td>
-                <select name="mrf_category[]" class="form-control" required>
-                    <option value="">Select Category</option>
-                    {% for category in staff_category_data %}
-                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                <select name="mrf_designation[]" class="form-control" required>
+                    <option value="">Select Designation</option>
+                    {% for designation in designations %}
+                        <option value="{{ designation.base_value }}">
+                            {{ designation.base_description }}
+                        </option>
                     {% endfor %}
                 </select>
             </td>
@@ -519,12 +519,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const newRow = document.createElement('tr');
         newRow.innerHTML = `
             <td>
-                <select name="mrf_designation[]" class="form-control" required>
-                    <option value="">Select Designation</option>
-                    {% for designation in designations %}
-                        <option value="{{ designation.base_value }}">
-                            {{ designation.base_description }}
-                        </option>
+                <select name="mrf_category[]" class="form-control" required>
+                    <option value="">Select Category</option>
+                    {% for category in staff_category_data %}
+                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                     {% endfor %}
                 </select>
             </td>
@@ -537,10 +535,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </select>
             </td>
             <td>
-                <select name="mrf_category[]" class="form-control" required>
-                    <option value="">Select Category</option>
-                    {% for category in staff_category_data %}
-                        <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                <select name="mrf_designation[]" class="form-control" required>
+                    <option value="">Select Designation</option>
+                    {% for designation in designations %}
+                        <option value="{{ designation.base_value }}">
+                            {{ designation.base_description }}
+                        </option>
                     {% endfor %}
                 </select>
             </td>

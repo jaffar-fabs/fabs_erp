@@ -1,0 +1,327 @@
+{% extends "partials/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- Page Wrapper -->
+<div class="page-wrapper">
+    <div class="content" style="overflow-y: scroll; height: calc(100vh - 120px);">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/page-title.html" with title="HR Metrics Dashboard" %}
+                {% endblock pagetitle %}
+            </div>
+        </div>
+
+        <!-- HR Metrics Dashboard -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header border-0 pb-0">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+                            <h4><i class="ti ti-chart-bar me-1"></i>HR Metrics Dashboard</h4>
+                            <div class="d-flex align-items-center">
+                                <select class="form-select me-2" id="timeRangeSelect">
+                                    <option value="current_month">Current Month</option>
+                                    <option value="ytd">YTD</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Resignation Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">Resignation</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Received</th>
+                                                <th class="text-center">Approved</th>
+                                                <th class="text-center">Cancelled</th>
+                                                <th class="text-center">Exit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-primary fw-bold">{{ resignation_data.received|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ resignation_data.approved|default:"0" }}</td>
+                                                <td class="text-center text-warning fw-bold">{{ resignation_data.cancelled|default:"0" }}</td>
+                                                <td class="text-center text-danger fw-bold">{{ resignation_data.exit|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Joiners Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">New Joiners</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Visa Received</th>
+                                                <th class="text-center">Joined</th>
+                                                <th class="text-center">PLVP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-info fw-bold">{{ new_joiners_data.visa_received|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ new_joiners_data.joined|default:"0" }}</td>
+                                                <td class="text-center text-warning fw-bold">{{ new_joiners_data.plvp|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Renewal Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">Renewal</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Renewal Due</th>
+                                                <th class="text-center">In Process</th>
+                                                <th class="text-center">Completed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-warning fw-bold">{{ renewal_data.due|default:"0" }}</td>
+                                                <td class="text-center text-info fw-bold">{{ renewal_data.in_process|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ renewal_data.completed|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Joiners vs Cancellation Comparison -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">New Joiners vs Cancellation</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">New Joiners</th>
+                                                <th class="text-center">Cancellation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-success fw-bold">{{ comparison_data.new_joiners|default:"0" }}</td>
+                                                <td class="text-center text-danger fw-bold">{{ comparison_data.cancellation|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Recruitment Table -->
+                            <div class="col-md-12 mb-4">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">Recruitment</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">AO Issued</th>
+                                                <th class="text-center">Visa Applied</th>
+                                                <th class="text-center">Visa Received</th>
+                                                <th class="text-center">Visa Rejected</th>
+                                                <th class="text-center">Visa Pending</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-primary fw-bold">{{ recruitment_data.ao_issued|default:"0" }}</td>
+                                                <td class="text-center text-info fw-bold">{{ recruitment_data.visa_applied|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ recruitment_data.visa_received|default:"0" }}</td>
+                                                <td class="text-center text-danger fw-bold">{{ recruitment_data.visa_rejected|default:"0" }}</td>
+                                                <td class="text-center text-warning fw-bold">{{ recruitment_data.visa_pending|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Staff Categories Table -->
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <h6 class="text-muted mb-3">Staff Categories</h6>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Category</th>
+                                                <th class="text-center">Soft</th>
+                                                <th class="text-center">Hard</th>
+                                                <th class="text-center">Projects</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold">Field Staff</td>
+                                                <td class="text-center text-primary fw-bold">{{ staff_categories.field_staff.soft|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ staff_categories.field_staff.hard|default:"0" }}</td>
+                                                <td class="text-center text-info fw-bold">{{ staff_categories.field_staff.projects|default:"0" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Staff</td>
+                                                <td class="text-center text-primary fw-bold">{{ staff_categories.staff.soft|default:"0" }}</td>
+                                                <td class="text-center text-success fw-bold">{{ staff_categories.staff.hard|default:"0" }}</td>
+                                                <td class="text-center text-info fw-bold">{{ staff_categories.staff.projects|default:"0" }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Row -->
+        <!-- <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg bg-success-light rounded-circle me-3">
+                                <i class="ti ti-user-check text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Active Employees</h6>
+                                <h3 class="mb-0 text-success">{{ active_employees|default:"0" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg bg-warning-light rounded-circle me-3">
+                                <i class="ti ti-calendar-off text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">On Leave</h6>
+                                <h3 class="mb-0 text-warning">{{ on_leave_employees|default:"0" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg bg-info-light rounded-circle me-3">
+                                <i class="ti ti-briefcase text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">On Job</h6>
+                                <h3 class="mb-0 text-info">{{ on_job_active_employees|default:"0" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-lg bg-danger-light rounded-circle me-3">
+                                <i class="ti ti-user-x text-danger"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Inactive</h6>
+                                <h3 class="mb-0 text-danger">{{ inactive_employees|default:"0" }}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<style>
+/* Additional styling for better dashboard appearance */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.avatar-lg {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-success-light {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.bg-warning-light {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-info-light {
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.bg-danger-light {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .avatar-lg {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* Ensure content is scrollable */
+.page-wrapper {
+    min-height: 100vh;
+    position: relative;
+}
+
+.content {
+    overflow-y: scroll !important;
+    overflow-x: hidden;
+    max-height: calc(100vh - 120px) !important;
+    padding: 20px;
+    margin-top: 20px;
+}
+</style>
+
+{% endblock content %} 
