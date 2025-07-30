@@ -7137,7 +7137,7 @@ def employee_pp_create(request):
             nationality=request.POST.get('nationality'),
             pp_control=request.POST.get('pp_control'),
             date_of_landing=request.POST.get('date_of_landing') or None,
-            no_of_days=request.POST.get('no_of_days') or None,
+            no_of_days=60,
             medical=request.POST.get('medical'),
             medical_result_date=request.POST.get('medical_result_date') or None,
             remedical_result_date=request.POST.get('remedical_result_date') or None,
