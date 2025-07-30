@@ -158,21 +158,21 @@ def send_notification():
         print("Error in send_notification:", str(e))
         return False
     
-def reducde_days_pp():
-    try:
-        from payroll.models import EmployeePPDetails
-        from datetime import datetime
+# def reducde_days_pp():
+#     try:
+#         from payroll.models import EmployeePPDetails
+#         from datetime import datetime
 
-        # Get all active PP records
-        pp_records = EmployeePPDetails.objects.filter(no_of_days__gt=0)
+#         # Get all active PP records
+#         pp_records = EmployeePPDetails.objects.filter(no_of_days__gt=0)
 
-        # Reduce days by 1 for each record
-        for record in pp_records:
-            record.no_of_days = record.no_of_days - 1
-            record.save()
+#         # Reduce days by 1 for each record
+#         for record in pp_records:
+#             record.no_of_days = record.no_of_days - 1
+#             record.save()
 
-        return True
+#         return True
 
-    except Exception as e:
-        print("Error in reducde_days_pp:", str(e))
-        return False
+#     except Exception as e:
+#         print("Error in reducde_days_pp:", str(e))
+#         return False
