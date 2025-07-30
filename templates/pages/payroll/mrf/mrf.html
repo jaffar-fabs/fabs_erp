@@ -171,11 +171,11 @@
                                 const newRow = `
                                     <tr>
                                         <td>
-                                            <select name="mrf_designation[]" class="form-control" required>
-                                                <option value="">Select Designation</option>
-                                                {% for designation in designations %}
-                                                    <option value="{{ designation.base_value }}" ${detail.designation === '{{ designation.base_value }}' ? 'selected' : ''}>
-                                                        {{ designation.base_description }}
+                                            <select name="mrf_category[]" class="form-control" required>
+                                                <option value="">Select Category</option>
+                                                {% for category in staff_category_data %}
+                                                    <option value="{{ category.base_value }}" ${detail.category === '{{ category.base_value }}' ? 'selected' : ''}>
+                                                        {{ category.base_description }}
                                                     </option>
                                                 {% endfor %}
                                             </select>
@@ -191,11 +191,11 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select name="mrf_category[]" class="form-control" required>
-                                                <option value="">Select Category</option>
-                                                {% for category in staff_category_data %}
-                                                    <option value="{{ category.base_value }}" ${detail.category === '{{ category.base_value }}' ? 'selected' : ''}>
-                                                        {{ category.base_description }}
+                                            <select name="mrf_designation[]" class="form-control" required>
+                                                <option value="">Select Designation</option>
+                                                {% for designation in designations %}
+                                                    <option value="{{ designation.base_value }}" ${detail.designation === '{{ designation.base_value }}' ? 'selected' : ''}>
+                                                        {{ designation.base_description }}
                                                     </option>
                                                 {% endfor %}
                                             </select>
@@ -217,12 +217,10 @@
                             const emptyRow = `
                                 <tr>
                                     <td>
-                                        <select name="mrf_designation[]" class="form-control" required>
-                                            <option value="">Select Designation</option>
-                                            {% for designation in designations %}
-                                                <option value="{{ designation.base_value }}">
-                                                    {{ designation.base_description }}
-                                                </option>
+                                        <select name="mrf_category[]" class="form-control" required>
+                                            <option value="">Select Category</option>
+                                            {% for category in staff_category_data %}
+                                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                                             {% endfor %}
                                         </select>
                                     </td>
@@ -235,10 +233,12 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select name="mrf_category[]" class="form-control" required>
-                                            <option value="">Select Category</option>
-                                            {% for category in staff_category_data %}
-                                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                                        <select name="mrf_designation[]" class="form-control" required>
+                                            <option value="">Select Designation</option>
+                                            {% for designation in designations %}
+                                                <option value="{{ designation.base_value }}">
+                                                    {{ designation.base_description }}
+                                                </option>
                                             {% endfor %}
                                         </select>
                                     </td>

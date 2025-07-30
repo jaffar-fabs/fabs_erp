@@ -929,6 +929,82 @@ def payroll_dashboard(request):
 
     return render(request, 'pages/dashboard/payroll_dashboard.html', context)
 
+def hr_metrics_dashboard(request):
+    set_comp_code(request)
+    
+    # Employee Statistics
+    total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
+    active_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count()
+    on_leave_employees = Employee.objects.filter(comp_code=COMP_CODE, release_reason='ON LEAVE').count()
+    on_job_active_employees = active_employees - on_leave_employees
+    inactive_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='INACTIVE').count()
+    
+    # HR Metrics Data - Resignation
+    resignation_data = {
+        'received': Employee.objects.filter(comp_code=COMP_CODE, emp_status='RESIGNED').count(),
+        'approved': Employee.objects.filter(comp_code=COMP_CODE, emp_status='RESIGNED', release_reason='APPROVED').count(),
+        'cancelled': Employee.objects.filter(comp_code=COMP_CODE, emp_status='RESIGNED', release_reason='CANCELLED').count(),
+        'exit': Employee.objects.filter(comp_code=COMP_CODE, emp_status='EXIT').count(),
+    }
+    
+    # HR Metrics Data - New Joiners
+    new_joiners_data = {
+        'visa_received': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE', date_of_join__gte=timezone.now() - timedelta(days=30)).count(),
+        'joined': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE', date_of_join__gte=timezone.now() - timedelta(days=30)).count(),
+        'plvp': Employee.objects.filter(comp_code=COMP_CODE, emp_status='PLVP').count(),
+    }
+    
+    # HR Metrics Data - Renewal
+    renewal_data = {
+        'due': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count(),  # Placeholder
+        'in_process': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count(),  # Placeholder
+        'completed': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count(),  # Placeholder
+    }
+    
+    # HR Metrics Data - Comparison
+    comparison_data = {
+        'new_joiners': new_joiners_data['joined'],
+        'cancellation': resignation_data['cancelled'],
+    }
+    
+    # HR Metrics Data - Recruitment
+    recruitment_data = {
+        'ao_issued': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count(),  # Placeholder
+        'visa_applied': Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count(),  # Placeholder
+        'visa_received': new_joiners_data['visa_received'],
+        'visa_rejected': Employee.objects.filter(comp_code=COMP_CODE, emp_status='REJECTED').count(),
+        'visa_pending': Employee.objects.filter(comp_code=COMP_CODE, emp_status='PENDING').count(),
+    }
+    
+    # HR Metrics Data - Staff Categories
+    staff_categories = {
+        'field_staff': {
+            'soft': Employee.objects.filter(comp_code=COMP_CODE, category='FIELD_STAFF', department='SOFT').count(),
+            'hard': Employee.objects.filter(comp_code=COMP_CODE, category='FIELD_STAFF', department='HARD').count(),
+            'projects': Employee.objects.filter(comp_code=COMP_CODE, category='FIELD_STAFF').count(),
+        },
+        'staff': {
+            'soft': Employee.objects.filter(comp_code=COMP_CODE, category='STAFF', department='SOFT').count(),
+            'hard': Employee.objects.filter(comp_code=COMP_CODE, category='STAFF', department='HARD').count(),
+            'projects': Employee.objects.filter(comp_code=COMP_CODE, category='STAFF').count(),
+        }
+    }
+
+    context = {
+        'total_employees': total_employees,
+        'active_employees': active_employees,
+        'on_leave_employees': on_leave_employees,
+        'inactive_employees': inactive_employees,
+        'on_job_active_employees': on_job_active_employees,
+        'resignation_data': resignation_data,
+        'new_joiners_data': new_joiners_data,
+        'renewal_data': renewal_data,
+        'comparison_data': comparison_data,
+        'recruitment_data': recruitment_data,
+        'staff_categories': staff_categories,
+    }
+
+    return render(request, 'pages/dashboard/hr_metrics.html', context)
 def my_login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -7512,6 +7588,7 @@ def mrf_list(request):
     return render(request, 'pages/payroll/mrf/mrf.html', context)
 @csrf_exempt
 def create_mrf(request):
+    set_comp_code(request)
     """View to create a new MRF"""
     if request.method == 'POST':
         try:
