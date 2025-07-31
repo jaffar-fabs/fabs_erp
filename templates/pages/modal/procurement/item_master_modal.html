@@ -16,16 +16,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Item Description</label>
-                        <input type="text" class="form-control" name="item_description" oninput="this.value = this.value.toUpperCase()" style="text-transform: uppercase;">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>UOM</label>
-                        <select class="form-select" name="uom">
-                            {% for uom in uom_data %}
-                                <option value="{{ uom.uom }}">{{ uom.base_uom }}</option>
+                        <label>Material Type</label>
+                        <select class="form-select" name="material_type">
+                            <option value="">Select Material Type</option>
+                            {% for material_type in material_type_data %}
+                                <option value="{{ material_type.base_value }}">{{ material_type.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -35,7 +30,7 @@
                         <label>Category</label>
                         <select class="form-select" name="category">
                             <option value="">Select Category</option>
-                            {% for category in item_category_data %}
+                            {% for category in category_data %}
                                 <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                             {% endfor %}
                         </select>
@@ -43,37 +38,82 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Sub Category</label>
-                        <select class="form-select" name="sub_category">
-                            <option value="">Select Sub Category</option>
-                            {% for sub_category in item_sub_category_data %}
-                                <option value="{{ sub_category.base_value }}">{{ sub_category.base_description }}</option>
+                        <label>Item Description</label>
+                        <select class="form-select" name="item_description">
+                            <option value="">Select Item Description</option>
+                            {% for item_description in item_description_data %}
+                                <option value="{{ item_description.base_value }}">{{ item_description.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Item Rate</label>
-                        <input type="number" step="0.01" class="form-control" name="item_rate">
+                        <label>Model No</label>
+                        <input type="text" class="form-control" name="model_no">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Stock Quantity</label>
-                        <input type="number" step="0.01" class="form-control" name="stock_qty">
+                        <label>Capacity</label>
+                        <input type="text" class="form-control" name="capacity">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Open Quantity</label>
-                        <input type="number" step="0.01" class="form-control" name="open_qty">
+                        <label>Size</label>
+                        <input type="text" class="form-control" name="size">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Reorder Quantity</label>
-                        <input type="number" step="0.01" class="form-control" name="reorder_qty">
+                        <label>Thickness</label>
+                        <input type="text" class="form-control" name="thickness">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Manufacturer</label>
+                        <select class="form-select" name="manufacturer">
+                            <option value="">Select Manufacturer</option>
+                            {% for manufacturer in manufacturer_data %}
+                                <option value="{{ manufacturer.base_value }}">{{ manufacturer.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Country of Origin</label>
+                        <select class="form-select" name="country_of_origin">
+                            <option value="">Select Country</option>
+                            {% for country in country_data %}
+                                <option value="{{ country.base_value }}">{{ country.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Specification / Standard</label>
+                        <input type="text" class="form-control" name="specification_standard">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>UOM</label>
+                        <select class="form-select" name="uom">
+                            <option value="">Select UOM</option>
+                            {% for uom in uom_data %}
+                                <option value="{{ uom.uom }}">{{ uom.base_uom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Rate</label>
+                        <input type="number" step="0.01" class="form-control" name="rate">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -87,8 +127,8 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label>Remarks</label>
-                        <textarea class="form-control" name="remarks" rows="2"></textarea>
+                        <label>Additional Information</label>
+                        <textarea class="form-control" name="additional_information" rows="3"></textarea>
                     </div>
                 </div>
             </div>
@@ -119,16 +159,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Item Description</label>
-                        <input type="text" class="form-control" id="item_description" name="item_description" oninput="this.value = this.value.toUpperCase()" style="text-transform: uppercase;">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>UOM</label>
-                        <select class="form-select" id="uom" name="uom">
-                            {% for uom in uom_data %}
-                                <option value="{{ uom.uom }}">{{ uom.base_uom }}</option>
+                        <label>Material Type</label>
+                        <select class="form-select" id="material_type" name="material_type">
+                            <option value="">Select Material Type</option>
+                            {% for material_type in material_type_data %}
+                                <option value="{{ material_type.base_value }}">{{ material_type.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -138,7 +173,7 @@
                         <label>Category</label>
                         <select class="form-select" id="category" name="category">
                             <option value="">Select Category</option>
-                            {% for category in item_category_data %}
+                            {% for category in category_data %}
                                 <option value="{{ category.base_value }}">{{ category.base_description }}</option>
                             {% endfor %}
                         </select>
@@ -146,37 +181,82 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Sub Category</label>
-                        <select class="form-select" id="sub_category" name="sub_category">
-                            <option value="">Select Sub Category</option>
-                            {% for sub_category in item_sub_category_data %}
-                                <option value="{{ sub_category.base_value }}">{{ sub_category.base_description }}</option>
+                        <label>Item Description</label>
+                        <select class="form-select" id="item_description" name="item_description">
+                            <option value="">Select Item Description</option>
+                            {% for item_description in item_description_data %}
+                                <option value="{{ item_description.base_value }}">{{ item_description.base_description }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Item Rate</label>
-                        <input type="number" step="0.01" class="form-control" id="item_rate" name="item_rate">
+                        <label>Model No</label>
+                        <input type="text" class="form-control" id="model_no" name="model_no">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Stock Quantity</label>
-                        <input type="number" step="0.01" class="form-control" id="stock_qty" name="stock_qty" readonly>
+                        <label>Capacity</label>
+                        <input type="text" class="form-control" id="capacity" name="capacity">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Open Quantity</label>
-                        <input type="number" step="0.01" class="form-control" id="open_qty" name="open_qty" readonly>
+                        <label>Size</label>
+                        <input type="text" class="form-control" id="size" name="size">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Reorder Quantity</label>
-                        <input type="number" step="0.01" class="form-control" id="reorder_qty" name="reorder_qty">
+                        <label>Thickness</label>
+                        <input type="text" class="form-control" id="thickness" name="thickness">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Manufacturer</label>
+                        <select class="form-select" id="manufacturer" name="manufacturer">
+                            <option value="">Select Manufacturer</option>
+                            {% for manufacturer in manufacturer_data %}
+                                <option value="{{ manufacturer.base_value }}">{{ manufacturer.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Country of Origin</label>
+                        <select class="form-select" id="country_of_origin" name="country_of_origin">
+                            <option value="">Select Country</option>
+                            {% for country in country_data %}
+                                <option value="{{ country.base_value }}">{{ country.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Specification / Standard</label>
+                        <input type="text" class="form-control" id="specification_standard" name="specification_standard">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>UOM</label>
+                        <select class="form-select" id="uom" name="uom">
+                            <option value="">Select UOM</option>
+                            {% for uom in uom_data %}
+                                <option value="{{ uom.uom }}">{{ uom.base_uom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Rate</label>
+                        <input type="number" step="0.01" class="form-control" id="rate" name="rate">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -190,8 +270,8 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label>Remarks</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="2"></textarea>
+                        <label>Additional Information</label>
+                        <textarea class="form-control" id="additional_information" name="additional_information" rows="3"></textarea>
                     </div>
                 </div>
             </div>
@@ -225,23 +305,9 @@
 <!-- Rate and quantity fields doesnt accept -ve values -->
 <script>
     $(document).ready(function() {
-        $('input[name="item_rate"]').on('input', function() {
+        $('input[name="rate"]').on('input', function() {
             if ($(this).val() < 0) {
-                $(this).val(0);
-            }
-        });
-        $('input[name="stock_qty"]').on('input', function() {
-            if ($(this).val() < 0) {
-                $(this).val(0);
-            }
-        });
-        $('input[name="open_qty"]').on('input', function() {
-            if ($(this).val() < 0) {
-                $(this).val(0);
-            }
-        });
-        $('input[name="reorder_qty"]').on('input', function() {
-            if ($(this).val() < 0) {
+                alert('Rate field doesnt accept -ve values');
                 $(this).val(0);
             }
         });

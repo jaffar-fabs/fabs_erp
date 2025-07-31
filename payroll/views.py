@@ -4920,7 +4920,7 @@ def party_master_list(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     # Pagination
-    paginator = Paginator(parties, 10)  # Show 10 parties per page
+    paginator = Paginator(parties, PAGINATION_SIZE)  # Show 10 parties per page
     page = request.GET.get('page', 1)
     try:
         parties = paginator.page(page)
@@ -6518,7 +6518,7 @@ def rejoin_approval_list(request):
         )
     
     # Pagination
-    paginator = Paginator(leaves, 10)
+    paginator = Paginator(leaves, PAGINATION_SIZE)
     try:
         leaves = paginator.page(page)
     except PageNotAnInteger:
@@ -6745,6 +6745,7 @@ def ao_entry_create(request):
             category = request.POST.get('category')
             # ao_ref_no = request.POST.get('ao_ref_no')
             name_as_per_pp = request.POST.get('name_as_per_pp')
+            sur_name = request.POST.get('sur_name')
             pp_number = request.POST.get('pp_number')
             pp_exp_date = request.POST.get('pp_exp_date') or None
             pp_validity_days = request.POST.get('pp_validity_days')
@@ -6792,6 +6793,7 @@ def ao_entry_create(request):
                     category=category,
                     ao_ref_no=ao_ref_no,
                     name_as_per_pp=name_as_per_pp,
+                    sur_name=sur_name,
                     pp_number=pp_number,
                     pp_exp_date=pp_exp_date,
                     pp_validity_days=pp_validity_days,
@@ -6860,6 +6862,7 @@ def ao_entry_edit(request):
                 'category': ao_entry.category,
                 'ao_ref_no': ao_entry.ao_ref_no,
                 'name_as_per_pp': ao_entry.name_as_per_pp,
+                'sur_name': ao_entry.sur_name,
                 'pp_number': ao_entry.pp_number,
                 'pp_exp_date': ao_entry.pp_exp_date.strftime('%Y-%m-%d') if ao_entry.pp_exp_date else None,
                 'pp_validity_days': ao_entry.pp_validity_days,
@@ -6908,6 +6911,7 @@ def ao_entry_update(request):
             ao_entry.ao_ref_no = request.POST.get('ao_ref_no')
             ao_entry.category = request.POST.get('category')
             ao_entry.name_as_per_pp = request.POST.get('name_as_per_pp')
+            ao_entry.sur_name = request.POST.get('sur_name')
             ao_entry.pp_number = request.POST.get('pp_number')
             ao_entry.pp_exp_date = request.POST.get('pp_exp_date') or None
             ao_entry.pp_validity_days = request.POST.get('pp_validity_days')
@@ -6981,7 +6985,7 @@ def recruitment_list(request):
             Q(project__icontains=keyword) |
             Q(dep__icontains=keyword)
         )
-    paginator = Paginator(entries, 10)
+    paginator = Paginator(entries, PAGINATION_SIZE)
     page = request.GET.get('page')
     try:
         entries = paginator.page(page)
@@ -7103,7 +7107,7 @@ def employee_pp_list(request):
             Q(tawjeeh_class__icontains=keyword) |
             Q(iloe_status__icontains=keyword)
         )
-    paginator = Paginator(entries, 10)
+    paginator = Paginator(entries, PAGINATION_SIZE)
     page = request.GET.get('page')
     try:
         entries = paginator.page(page)
@@ -10945,7 +10949,7 @@ def offboarding_list(request):
         )
     
     # Pagination
-    paginator = Paginator(query.order_by('-created_on'), 10)
+    paginator = Paginator(query.order_by('-created_on'), PAGINATION_SIZE)
     try:
         entries = paginator.page(page_number)
     except (PageNotAnInteger, EmptyPage):
@@ -11237,7 +11241,7 @@ def exit_process_list(request):
         )
     
     # Pagination
-    paginator = Paginator(query, 10)
+    paginator = Paginator(query, PAGINATION_SIZE)
     try:
         offboardings = paginator.page(page_number)
     except (PageNotAnInteger, EmptyPage):
@@ -11411,31 +11415,74 @@ def get_exit_process_details(request, exit_process_id):
 
 def get_employee_offboarding_details(request):
     set_comp_code(request)
+    emp_code = request.GET.get('emp_code')
     offboarding_id = request.GET.get('offboarding_id')
     
-    if not offboarding_id:
+    # Check if we have either emp_code or offboarding_id
+    if not emp_code and not offboarding_id:
         return JsonResponse({
             'success': False,
-            'message': 'Offboarding ID is required'
+            'message': 'Employee code or Offboarding ID is required'
         })
     
     try:
-        offboarding = get_object_or_404(Offboarding, offboarding_id=offboarding_id, comp_code=COMP_CODE)
-        employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
-        
-        data = {
-            'success': True,
-            'employee': {
-                'emp_code': employee.emp_code if employee else offboarding.emp_code,
-                'emp_name': employee.emp_name if employee else offboarding.emp_name,
-                'designation': employee.designation if employee else offboarding.designation,
-                'department': employee.department if employee else offboarding.department,
-            },
-            'offboarding': {
-                'offboarding_type': offboarding.offboarding_type,
-                'offboarding_date': offboarding.offboarding_date,
+        if emp_code:
+            # For new entry - get employee details by emp_code
+            employee = Employee.objects.filter(emp_code=emp_code, comp_code=COMP_CODE).first()
+            
+            if not employee:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Employee not found'
+                })
+            
+            # Check if employee already has an offboarding record
+            # existing_offboarding = Offboarding.objects.filter(emp_code=emp_code, comp_code=COMP_CODE).first()
+            
+            # if existing_offboarding:
+            #     return JsonResponse({
+            #         'success': False,
+            #         'message': f'Employee {emp_code} already has an offboarding record (ID: {existing_offboarding.offboarding_id})'
+            #     })
+            
+            data = {
+                'success': True,
+                'data': {
+                    'emp_name': employee.emp_name,
+                    'designation': employee.designation,
+                    'department': employee.department,
+                    'project': employee.prj_code,  # Changed from prj_code to project_code
+                    'date_of_join': employee.date_of_join.strftime('%Y-%m-%d') if employee.date_of_join else None,
+                    'passport_number': employee.passport_details,
+                    'passport_expiry': employee.passport_expiry_date.strftime('%Y-%m-%d') if employee.passport_expiry_date else None,  # Changed from passport_expiry to passport_expiry_date
+                    'visa_number': employee.visa_no,
+                    'visa_expiry': employee.visa_expiry_date.strftime('%Y-%m-%d') if employee.visa_expiry_date else None,  # Changed from visa_expiry to visa_expiry_date
+                    'emirates_id': employee.emirates_no,
+                    'emirates_expiry': employee.emirates_id_expiry_date.strftime('%Y-%m-%d') if employee.emirates_id_expiry_date else None,  # Changed from emirates_expiry to emirates_id_expiry_date
+                    'accommodation_type': employee.camp_type,  # Changed from accommodation_type to camp_type
+                    'camp_location': employee.select_camp,  # Changed from camp_location to select_camp
+                    'room_number': employee.room_no,  # Changed from room_number to room_no
+                }
             }
-        }
+            
+        else:
+            # For existing entry - get offboarding details by offboarding_id
+            offboarding = get_object_or_404(Offboarding, offboarding_id=offboarding_id, comp_code=COMP_CODE)
+            employee = Employee.objects.filter(emp_code=offboarding.emp_code, comp_code=COMP_CODE).first()
+            
+            data = {
+                'success': True,
+                'employee': {
+                    'emp_code': employee.emp_code if employee else offboarding.emp_code,
+                    'emp_name': employee.emp_name if employee else offboarding.emp_name,
+                    'designation': employee.designation if employee else offboarding.designation,
+                    'department': employee.department if employee else offboarding.department,
+                },
+                'offboarding': {
+                    'offboarding_type': offboarding.offboarding_type,
+                    'offboarding_date': offboarding.offboarding_date,
+                }
+            }
         
         return JsonResponse(data)
         
@@ -11449,7 +11496,7 @@ def get_employee_offboarding_details(request):
             'success': False,
             'message': str(e)
         })
-
+    
 def get_exit_process_details_by_offboarding(request):
     set_comp_code(request)
     offboarding_id = request.GET.get('offboarding_id')

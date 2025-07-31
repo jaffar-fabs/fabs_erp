@@ -18,21 +18,60 @@ def set_comp_code(request):
     COMP_CODE = request.session.get("comp_code")
 
 def item_master(request):
+
     # Get search keyword
     keyword = request.GET.get('keyword', '')
-    
+    set_comp_code(request)
     # Get all items or filter by keyword
     if keyword:
         items = ItemMaster.objects.filter(
             Q(item_code__icontains=keyword) |
             Q(item_description__icontains=keyword) |
-            Q(category__icontains=keyword)
+            Q(category__icontains=keyword),
+            comp_code=COMP_CODE
         ).order_by('item_code')
     else:
-        items = ItemMaster.objects.all().order_by('item_code')
+        items = ItemMaster.objects.filter(comp_code=COMP_CODE).order_by('item_code')
     
     # Get all active UOMs for dropdown
-    uoms = UOMMaster.objects.filter(is_active=True).order_by('uom')
+    uom_data = UOMMaster.objects.filter(is_active=True).order_by('uom')
+    
+    # Get dropdown data for new fields
+    material_type_data = CodeMaster.objects.filter(
+        base_type='MATERIAL_TYPE', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    category_data = CodeMaster.objects.filter(
+        base_type='ITEM_CATEGORY', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    manufacturer_data = CodeMaster.objects.filter(
+        base_type='MANUFACTURER', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    country_data = CodeMaster.objects.filter(
+        base_type='COUNTRY', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+
+    item_description_data = CodeMaster.objects.filter(
+        base_type='ITEM_DESCRIPTION', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+
+    uom_data = CodeMaster.objects.filter(
+        base_type='UOM', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
     
     # Pagination
     paginator = Paginator(items, PAGINATION_SIZE)
@@ -47,7 +86,13 @@ def item_master(request):
         'items': page_obj,
         'keyword': keyword,
         'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
-        'uoms': uoms  # Add UOMs to context
+        'uom_data': uom_data,
+        'material_type_data': material_type_data,
+        'category_data': category_data,
+        'manufacturer_data': manufacturer_data,
+        'country_data': country_data,
+        'item_description_data': item_description_data,
+        'uom_data': uom_data,
     }
     
     return render(request, 'pages/procurement/item_master.html', context)
@@ -65,18 +110,23 @@ def item_master_add(request):
             # Create new item
             item = ItemMaster(
                 item_code=item_code,
-                item_description=request.POST.get('item_description').upper(),
+                item_description=request.POST.get('item_description'),
                 uom=request.POST.get('uom'),
-                remarks=request.POST.get('remarks'),
-                category=request.POST.get('category'),
-                sub_category=request.POST.get('sub_category'),
-                item_rate=request.POST.get('item_rate') or 0,
-                stock_qty=request.POST.get('stock_qty') or 0,
-                open_qty=request.POST.get('open_qty') or 0,
-                reorder_qty=request.POST.get('reorder_qty') or 0,
                 is_active=request.POST.get('is_active') == 'true',
                 created_by=request.user.username,
-                comp_code=COMP_CODE
+                comp_code=COMP_CODE,
+                # New fields
+                material_type=request.POST.get('material_type'),
+                category=request.POST.get('category'),
+                model_no=request.POST.get('model_no'),
+                capacity=request.POST.get('capacity'),
+                size=request.POST.get('size'),
+                thickness=request.POST.get('thickness'),
+                manufacturer=request.POST.get('manufacturer'),
+                country_of_origin=request.POST.get('country_of_origin'),
+                specification_standard=request.POST.get('specification_standard'),
+                rate=request.POST.get('rate') or 0,
+                additional_information=request.POST.get('additional_information'),
             )
             item.save()
             return redirect('item_master')
@@ -96,14 +146,19 @@ def item_master_edit(request):
                 'item_code': item.item_code,
                 'item_description': item.item_description,
                 'uom': item.uom,
-                'category': item.category,
-                'sub_category': item.sub_category,
-                'item_rate': float(item.item_rate),
-                'stock_qty': float(item.stock_qty),
-                'open_qty': float(item.open_qty),
-                'reorder_qty': float(item.reorder_qty),
                 'is_active': item.is_active,
-                'remarks': item.remarks
+                # New fields
+                'material_type': item.material_type,
+                'category': item.category,
+                'model_no': item.model_no,
+                'capacity': item.capacity,
+                'size': item.size,
+                'thickness': item.thickness,
+                'manufacturer': item.manufacturer,
+                'country_of_origin': item.country_of_origin,
+                'specification_standard': item.specification_standard,
+                'rate': float(item.rate),
+                'additional_information': item.additional_information,
             }
             return JsonResponse(data)
         except Exception as e:
@@ -118,15 +173,21 @@ def item_master_edit(request):
             item.item_code = request.POST.get('item_code')
             item.item_description = request.POST.get('item_description')
             item.uom = request.POST.get('uom')
-            item.category = request.POST.get('category')
-            item.sub_category = request.POST.get('sub_category')
-            item.item_rate = Decimal(request.POST.get('item_rate') or 0)
-            item.stock_qty = Decimal(request.POST.get('stock_qty') or 0)
-            item.open_qty = Decimal(request.POST.get('open_qty') or 0)
-            item.reorder_qty = Decimal(request.POST.get('reorder_qty') or 0)
             item.is_active = request.POST.get('is_active') == 'true'
-            item.remarks = request.POST.get('remarks')
             item.updated_by = request.user.username
+            
+            # Update new fields
+            item.material_type = request.POST.get('material_type')
+            item.category = request.POST.get('category')
+            item.model_no = request.POST.get('model_no')
+            item.capacity = request.POST.get('capacity')
+            item.size = request.POST.get('size')
+            item.thickness = request.POST.get('thickness')
+            item.manufacturer = request.POST.get('manufacturer')
+            item.country_of_origin = request.POST.get('country_of_origin')
+            item.specification_standard = request.POST.get('specification_standard')
+            item.rate = Decimal(request.POST.get('rate') or 0)
+            item.additional_information = request.POST.get('additional_information')
             
             item.save()
             return redirect('item_master')
@@ -1552,3 +1613,602 @@ def check_uom_exists(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def service_master(request):
+    # Get search keyword
+    keyword = request.GET.get('keyword', '')
+    set_comp_code(request)
+    # Get all services or filter by keyword
+    if keyword:
+        services = ServiceMaster.objects.filter(
+            Q(service_code__icontains=keyword) |
+            Q(service_description__icontains=keyword) |
+            Q(category__icontains=keyword),
+            comp_code=COMP_CODE
+        ).order_by('service_code')
+    else:
+        services = ServiceMaster.objects.filter(comp_code=COMP_CODE).order_by('service_code')
+    
+    # Get dropdown data for new fields
+    service_type_data = CodeMaster.objects.filter(
+        base_type='PRO_SERVICE_TYPE', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    category_data = CodeMaster.objects.filter(
+        base_type='PRO_SERVICE_CATEGORY', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    service_description_data = CodeMaster.objects.filter(
+        base_type='PRO_SERVICE_DESCRIPTION', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    unit_data = CodeMaster.objects.filter(
+        base_type='PRO_SERVICE_UNIT', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    # Pagination
+    paginator = Paginator(services, PAGINATION_SIZE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Add pagination info to the page object
+    page_obj.start_index = (page_obj.number - 1) * paginator.per_page + 1
+    page_obj.end_index = min(page_obj.start_index + paginator.per_page - 1, paginator.count)
+    
+    context = {
+        'services': page_obj,
+        'keyword': keyword,
+        'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
+        'service_type_data': service_type_data,
+        'category_data': category_data,
+        'service_description_data': service_description_data,
+        'unit_data': unit_data,
+    }
+    
+    return render(request, 'pages/procurement/service_master.html', context)
+
+def service_master_add(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            # Generate service code using fn_get_seed_no
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'SERVICE'])
+                result = cursor.fetchone()
+                service_code = result[0] if result else None
+
+            # Create new service
+            service = ServiceMaster(
+                service_code=service_code,
+                service_type=request.POST.get('service_type'),
+                category=request.POST.get('category'),
+                service_description=request.POST.get('service_description'),
+                size=request.POST.get('size'),
+                unit=request.POST.get('unit'),
+                rate=request.POST.get('rate') or 0,
+                additional_information=request.POST.get('additional_information'),
+                is_active=request.POST.get('is_active') == 'true',
+                created_by=request.user.username,
+                comp_code=COMP_CODE,
+            )
+            service.save()
+            return redirect('service_master')
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def service_master_edit(request):
+    if request.method == 'GET':
+        service_id = request.GET.get('service_id')
+        try:
+            service = get_object_or_404(ServiceMaster, id=service_id)
+            data = {
+                'id': service.id,
+                'service_code': service.service_code,
+                'service_type': service.service_type,
+                'category': service.category,
+                'service_description': service.service_description,
+                'size': service.size,
+                'unit': service.unit,
+                'rate': float(service.rate),
+                'additional_information': service.additional_information,
+                'is_active': service.is_active,
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    elif request.method == 'POST':
+        try:
+            service_id = request.POST.get('service_id')
+            service = get_object_or_404(ServiceMaster, id=service_id)
+            
+            # Update service fields
+            service.service_code = request.POST.get('service_code')
+            service.service_type = request.POST.get('service_type')
+            service.category = request.POST.get('category')
+            service.service_description = request.POST.get('service_description')
+            service.size = request.POST.get('size')
+            service.unit = request.POST.get('unit')
+            service.rate = Decimal(request.POST.get('rate') or 0)
+            service.additional_information = request.POST.get('additional_information')
+            service.is_active = request.POST.get('is_active') == 'true'
+            service.updated_by = request.user.username
+            
+            service.save()
+            return redirect('service_master')
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def service_master_delete(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        service_id = request.POST.get('id')
+        try:
+            service = ServiceMaster.objects.get(id=service_id, comp_code=COMP_CODE)
+            service.delete()
+            return JsonResponse({'status': 'success'})
+        except ServiceMaster.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Service not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+# Vendor Master Views
+def vendor_master(request):
+    # Get search keyword
+    keyword = request.GET.get('keyword', '')
+    set_comp_code(request)
+    
+    # Get all vendors or filter by keyword
+    if keyword:
+        vendors = VendorMaster.objects.filter(
+            Q(vendor_code__icontains=keyword) |
+            Q(vendor_short_code__icontains=keyword) |
+            Q(vendor_name__icontains=keyword) |
+            Q(vendor_type__icontains=keyword) |
+            Q(vendor_type_detailed__icontains=keyword) |
+            Q(category__icontains=keyword) |
+            Q(category_detailed__icontains=keyword) |
+            Q(contact_person_1__icontains=keyword) |
+            Q(contact_designation_1__icontains=keyword) |
+            Q(contact_person_2__icontains=keyword) |
+            Q(contact_designation_2__icontains=keyword) |
+            Q(contact_person_3__icontains=keyword) |
+            Q(contact_designation_3__icontains=keyword) |
+            Q(contact_person_4__icontains=keyword) |
+            Q(contact_designation_4__icontains=keyword) |
+            Q(trade_license_no__icontains=keyword) |
+            Q(tax_registration_number__icontains=keyword) |
+            Q(vat_number__icontains=keyword) |
+            Q(flag__icontains=keyword),
+            comp_code=COMP_CODE
+        ).order_by('vendor_code')
+    else:
+        vendors = VendorMaster.objects.filter(comp_code=COMP_CODE).order_by('vendor_code')
+    
+    # Get dropdown data for vendor fields
+    vendor_type_data = CodeMaster.objects.filter(
+        base_type='VENDOR_TYPE', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    vendor_type_detailed_data = CodeMaster.objects.filter(
+        base_type='VENDOR_TYPE_DETAILED', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    category_data = CodeMaster.objects.filter(
+        base_type='VENDOR_CATEGORY', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    category_detailed_data = CodeMaster.objects.filter(
+        base_type='VENDOR_CATEGORY_DETAILED', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    status_data = CodeMaster.objects.filter(
+        base_type='VENDOR_STATUS', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    rating_data = CodeMaster.objects.filter(
+        base_type='VENDOR_RATING', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    flag_data = CodeMaster.objects.filter(
+        base_type='VENDOR_FLAG', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    payment_terms_data = CodeMaster.objects.filter(
+        base_type='PAYMENT_TERMS', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    currency_data = CodeMaster.objects.filter(
+        base_type='CURRENCY', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    pq_document_data = CodeMaster.objects.filter(
+        base_type='PQ_DOCUMENT_STATUS', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    iso_certified_data = CodeMaster.objects.filter(
+        base_type='ISO_CERTIFIED_STATUS', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    po_value_limit_data = CodeMaster.objects.filter(
+        base_type='PO_VALUE_LIMIT', 
+        is_active='Y',
+        comp_code=COMP_CODE
+    ).order_by('sequence_id')
+    
+    # Pagination
+    paginator = Paginator(vendors, PAGINATION_SIZE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Add pagination info to the page object
+    page_obj.start_index = (page_obj.number - 1) * paginator.per_page + 1
+    page_obj.end_index = min(page_obj.start_index + paginator.per_page - 1, paginator.count)
+    
+    context = {
+        'vendors': page_obj,
+        'keyword': keyword,
+        'current_url': request.path + '?' + '&'.join([f"{k}={v}" for k, v in request.GET.items() if k != 'page']) + '&' if request.GET else '?',
+        'vendor_type_data': vendor_type_data,
+        'vendor_type_detailed_data': vendor_type_detailed_data,
+        'category_data': category_data,
+        'category_detailed_data': category_detailed_data,
+        'status_data': status_data,
+        'rating_data': rating_data,
+        'flag_data': flag_data,
+        'payment_terms_data': payment_terms_data,
+        'currency_data': currency_data,
+        'pq_document_data': pq_document_data,
+        'iso_certified_data': iso_certified_data,
+        'po_value_limit_data': po_value_limit_data,
+    }
+    
+    return render(request, 'pages/procurement/vendor_master.html', context)
+
+@csrf_exempt
+def vendor_master_add(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        try:
+            # Generate vendor code using fn_get_seed_no
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT fn_get_seed_no(%s, %s, %s);", [COMP_CODE, None, 'ITEM'])
+                result = cursor.fetchone()
+                vendor_code = result[0] if result else None
+
+            # Handle logo upload
+            logo = request.FILES.get('logo')
+            
+            # Create new vendor
+            vendor = VendorMaster(
+                vendor_code=vendor_code,
+                vendor_short_code=request.POST.get('vendor_short_code'),
+                vendor_name=request.POST.get('vendor_name'),
+                logo=logo,
+                vendor_type=request.POST.get('vendor_type'),
+                vendor_type_detailed=request.POST.get('vendor_type_detailed'),
+                category=request.POST.get('category'),
+                category_detailed=request.POST.get('category_detailed'),
+                contact_person_1=request.POST.get('contact_person_1'),
+                contact_designation_1=request.POST.get('contact_designation_1'),
+                contact_email_1=request.POST.get('contact_email_1'),
+                contact_mobile_1=request.POST.get('contact_mobile_1'),
+                contact_tel_1=request.POST.get('contact_tel_1'),
+                contact_person_2=request.POST.get('contact_person_2'),
+                contact_designation_2=request.POST.get('contact_designation_2'),
+                contact_email_2=request.POST.get('contact_email_2'),
+                contact_mobile_2=request.POST.get('contact_mobile_2'),
+                contact_tel_2=request.POST.get('contact_tel_2'),
+                contact_person_3=request.POST.get('contact_person_3'),
+                contact_designation_3=request.POST.get('contact_designation_3'),
+                contact_email_3=request.POST.get('contact_email_3'),
+                contact_mobile_3=request.POST.get('contact_mobile_3'),
+                contact_tel_3=request.POST.get('contact_tel_3'),
+                contact_person_4=request.POST.get('contact_person_4'),
+                contact_designation_4=request.POST.get('contact_designation_4'),
+                contact_email_4=request.POST.get('contact_email_4'),
+                contact_mobile_4=request.POST.get('contact_mobile_4'),
+                contact_tel_4=request.POST.get('contact_tel_4'),
+                address=request.POST.get('address'),
+                address_branch_office_1=request.POST.get('address_branch_office_1'),
+                address_branch_office_2=request.POST.get('address_branch_office_2'),
+                city=request.POST.get('city'),
+                state=request.POST.get('state'),
+                country=request.POST.get('country'),
+                postal_code=request.POST.get('postal_code'),
+                trade_license_no=request.POST.get('trade_license_no'),
+                trade_license_valid_until=request.POST.get('trade_license_valid_until') or None,
+                establishment_year=request.POST.get('establishment_year'),
+                tax_registration_number=request.POST.get('tax_registration_number'),
+                vat_number=request.POST.get('vat_number'),
+                valid_until=request.POST.get('valid_until') or None,
+                icv_value=request.POST.get('icv_value'),
+                icv_valid_until=request.POST.get('icv_valid_until') or None,
+                payment_terms=request.POST.get('payment_terms'),
+                credit_limit=request.POST.get('credit_limit'),
+                currency=request.POST.get('currency'),
+                bank_name=request.POST.get('bank_name'),
+                bank_account_number=request.POST.get('bank_account_number'),
+                bank_swift_code=request.POST.get('bank_swift_code'),
+                bank_iban=request.POST.get('bank_iban'),
+                registration_date=request.POST.get('registration_date') or None,
+                expiry_date=request.POST.get('expiry_date') or None,
+                status=request.POST.get('status', 'Active'),
+                rating=request.POST.get('rating'),
+                pq_document=request.POST.get('pq_document'),
+                iso_9001_certified=request.POST.get('iso_9001_certified'),
+                iso_9001_valid_until=request.POST.get('iso_9001_valid_until') or None,
+                iso_14001_certified=request.POST.get('iso_14001_certified'),
+                iso_14001_valid_until=request.POST.get('iso_14001_valid_until') or None,
+                iso_45001_certified=request.POST.get('iso_45001_certified'),
+                iso_45001_valid_until=request.POST.get('iso_45001_valid_until') or None,
+                po_value_limit=request.POST.get('po_value_limit'),
+                flag=request.POST.get('flag'),
+                doc_type=request.POST.get('doc_type'),
+                remarks=request.POST.get('remarks'),
+                is_active=request.POST.get('is_active') == 'true',
+                created_by=request.user.username,
+                comp_code=COMP_CODE,
+            )
+            vendor.save()
+
+            # Handle document uploads
+            document_names = request.POST.getlist('document_name[]')
+            document_files = request.FILES.getlist('document_file[]')
+            
+            for i, (doc_name, doc_file) in enumerate(zip(document_names, document_files)):
+                if doc_name and doc_file:
+                    VendorDocuments.objects.create(
+                        vendor_code=vendor.vendor_code,
+                        document_name=doc_name,
+                        document_file=doc_file,
+                        uploaded_by=request.user.username,
+                        comp_code=COMP_CODE
+                    )
+
+            return redirect('vendor_master')
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def vendor_master_edit(request):
+    set_comp_code(request)
+    if request.method == 'GET':
+        vendor_id = request.GET.get('id')
+        try:
+            vendor = VendorMaster.objects.get(id=vendor_id, comp_code=COMP_CODE)
+            documents = VendorDocuments.objects.filter(vendor_code=vendor.vendor_code, comp_code=COMP_CODE)
+            
+            data = {
+                'id': vendor.id,
+                'vendor_code': vendor.vendor_code,
+                'vendor_short_code': vendor.vendor_short_code,
+                'vendor_name': vendor.vendor_name,
+                'logo': vendor.logo.url if vendor.logo and vendor.logo.name else '',
+                'vendor_type': vendor.vendor_type,
+                'vendor_type_detailed': vendor.vendor_type_detailed,
+                'category': vendor.category,
+                'category_detailed': vendor.category_detailed,
+                'contact_person_1': vendor.contact_person_1,
+                'contact_designation_1': vendor.contact_designation_1,
+                'contact_email_1': vendor.contact_email_1,
+                'contact_mobile_1': vendor.contact_mobile_1,
+                'contact_tel_1': vendor.contact_tel_1,
+                'contact_person_2': vendor.contact_person_2,
+                'contact_designation_2': vendor.contact_designation_2,
+                'contact_email_2': vendor.contact_email_2,
+                'contact_mobile_2': vendor.contact_mobile_2,
+                'contact_tel_2': vendor.contact_tel_2,
+                'contact_person_3': vendor.contact_person_3,
+                'contact_designation_3': vendor.contact_designation_3,
+                'contact_email_3': vendor.contact_email_3,
+                'contact_mobile_3': vendor.contact_mobile_3,
+                'contact_tel_3': vendor.contact_tel_3,
+                'contact_person_4': vendor.contact_person_4,
+                'contact_designation_4': vendor.contact_designation_4,
+                'contact_email_4': vendor.contact_email_4,
+                'contact_mobile_4': vendor.contact_mobile_4,
+                'contact_tel_4': vendor.contact_tel_4,
+                'address': vendor.address,
+                'address_branch_office_1': vendor.address_branch_office_1,
+                'address_branch_office_2': vendor.address_branch_office_2,
+                'city': vendor.city,
+                'state': vendor.state,
+                'country': vendor.country,
+                'postal_code': vendor.postal_code,
+                'trade_license_no': vendor.trade_license_no,
+                'trade_license_valid_until': vendor.trade_license_valid_until.strftime('%Y-%m-%d') if vendor.trade_license_valid_until else '',
+                'establishment_year': vendor.establishment_year,
+                'tax_registration_number': vendor.tax_registration_number,
+                'vat_number': vendor.vat_number,
+                'valid_until': vendor.valid_until.strftime('%Y-%m-%d') if vendor.valid_until else '',
+                'icv_value': vendor.icv_value,
+                'icv_valid_until': vendor.icv_valid_until.strftime('%Y-%m-%d') if vendor.icv_valid_until else '',
+                'payment_terms': vendor.payment_terms,
+                'credit_limit': vendor.credit_limit,
+                'currency': vendor.currency,
+                'bank_name': vendor.bank_name,
+                'bank_account_number': vendor.bank_account_number,
+                'bank_swift_code': vendor.bank_swift_code,
+                'bank_iban': vendor.bank_iban,
+                'registration_date': vendor.registration_date.strftime('%Y-%m-%d') if vendor.registration_date else '',
+                'expiry_date': vendor.expiry_date.strftime('%Y-%m-%d') if vendor.expiry_date else '',
+                'status': vendor.status,
+                'rating': vendor.rating,
+                'pq_document': vendor.pq_document,
+                'iso_9001_certified': vendor.iso_9001_certified,
+                'iso_9001_valid_until': vendor.iso_9001_valid_until.strftime('%Y-%m-%d') if vendor.iso_9001_valid_until else '',
+                'iso_14001_certified': vendor.iso_14001_certified,
+                'iso_14001_valid_until': vendor.iso_14001_valid_until.strftime('%Y-%m-%d') if vendor.iso_14001_valid_until else '',
+                'iso_45001_certified': vendor.iso_45001_certified,
+                'iso_45001_valid_until': vendor.iso_45001_valid_until.strftime('%Y-%m-%d') if vendor.iso_45001_valid_until else '',
+                'po_value_limit': vendor.po_value_limit,
+                'flag': vendor.flag,
+                'doc_type': vendor.doc_type,
+                'remarks': vendor.remarks,
+                'is_active': vendor.is_active,
+                'documents': [{'id': doc.id, 'document_name': doc.document_name, 'document_file': doc.document_file.url} for doc in documents]
+            }
+            return JsonResponse(data)
+        except VendorMaster.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Vendor not found'})
+    
+    elif request.method == 'POST':
+        vendor_id = request.POST.get('id')
+        try:
+            vendor = VendorMaster.objects.get(id=vendor_id, comp_code=COMP_CODE)
+            
+            # Handle logo upload
+            logo = request.FILES.get('logo')
+            if logo:
+                vendor.logo = logo
+            
+            # Update vendor fields
+            vendor.vendor_short_code = request.POST.get('vendor_short_code')
+            vendor.vendor_name = request.POST.get('vendor_name')
+            vendor.vendor_type = request.POST.get('vendor_type')
+            vendor.vendor_type_detailed = request.POST.get('vendor_type_detailed')
+            vendor.category = request.POST.get('category')
+            vendor.category_detailed = request.POST.get('category_detailed')
+            vendor.contact_person_1 = request.POST.get('contact_person_1')
+            vendor.contact_designation_1 = request.POST.get('contact_designation_1')
+            vendor.contact_email_1 = request.POST.get('contact_email_1')
+            vendor.contact_mobile_1 = request.POST.get('contact_mobile_1')
+            vendor.contact_tel_1 = request.POST.get('contact_tel_1')
+            vendor.contact_person_2 = request.POST.get('contact_person_2')
+            vendor.contact_designation_2 = request.POST.get('contact_designation_2')
+            vendor.contact_email_2 = request.POST.get('contact_email_2')
+            vendor.contact_mobile_2 = request.POST.get('contact_mobile_2')
+            vendor.contact_tel_2 = request.POST.get('contact_tel_2')
+            vendor.contact_person_3 = request.POST.get('contact_person_3')
+            vendor.contact_designation_3 = request.POST.get('contact_designation_3')
+            vendor.contact_email_3 = request.POST.get('contact_email_3')
+            vendor.contact_mobile_3 = request.POST.get('contact_mobile_3')
+            vendor.contact_tel_3 = request.POST.get('contact_tel_3')
+            vendor.contact_person_4 = request.POST.get('contact_person_4')
+            vendor.contact_designation_4 = request.POST.get('contact_designation_4')
+            vendor.contact_email_4 = request.POST.get('contact_email_4')
+            vendor.contact_mobile_4 = request.POST.get('contact_mobile_4')
+            vendor.contact_tel_4 = request.POST.get('contact_tel_4')
+            vendor.address = request.POST.get('address')
+            vendor.address_branch_office_1 = request.POST.get('address_branch_office_1')
+            vendor.address_branch_office_2 = request.POST.get('address_branch_office_2')
+            vendor.city = request.POST.get('city')
+            vendor.state = request.POST.get('state')
+            vendor.country = request.POST.get('country')
+            vendor.postal_code = request.POST.get('postal_code')
+            vendor.trade_license_no = request.POST.get('trade_license_no')
+            vendor.trade_license_valid_until = request.POST.get('trade_license_valid_until') or None
+            vendor.establishment_year = request.POST.get('establishment_year')
+            vendor.tax_registration_number = request.POST.get('tax_registration_number')
+            vendor.vat_number = request.POST.get('vat_number')
+            vendor.valid_until = request.POST.get('valid_until') or None
+            vendor.icv_value = request.POST.get('icv_value')
+            vendor.icv_valid_until = request.POST.get('icv_valid_until') or None
+            vendor.payment_terms = request.POST.get('payment_terms')
+            vendor.credit_limit = request.POST.get('credit_limit')
+            vendor.currency = request.POST.get('currency')
+            vendor.bank_name = request.POST.get('bank_name')
+            vendor.bank_account_number = request.POST.get('bank_account_number')
+            vendor.bank_swift_code = request.POST.get('bank_swift_code')
+            vendor.bank_iban = request.POST.get('bank_iban')
+            vendor.registration_date = request.POST.get('registration_date') or None
+            vendor.expiry_date = request.POST.get('expiry_date') or None
+            vendor.status = request.POST.get('status', 'Active')
+            vendor.rating = request.POST.get('rating')
+            vendor.pq_document = request.POST.get('pq_document')
+            vendor.iso_9001_certified = request.POST.get('iso_9001_certified')
+            vendor.iso_9001_valid_until = request.POST.get('iso_9001_valid_until') or None
+            vendor.iso_14001_certified = request.POST.get('iso_14001_certified')
+            vendor.iso_14001_valid_until = request.POST.get('iso_14001_valid_until') or None
+            vendor.iso_45001_certified = request.POST.get('iso_45001_certified')
+            vendor.iso_45001_valid_until = request.POST.get('iso_45001_valid_until') or None
+            vendor.po_value_limit = request.POST.get('po_value_limit')
+            vendor.flag = request.POST.get('flag')
+            vendor.doc_type = request.POST.get('doc_type')
+            vendor.remarks = request.POST.get('remarks')
+            vendor.is_active = request.POST.get('is_active') == 'true'
+            vendor.updated_by = request.user.username
+            vendor.save()
+
+            # Handle document removals
+            documents_to_remove = request.POST.get('documents_to_remove', '')
+            if documents_to_remove:
+                doc_ids = [int(x.strip()) for x in documents_to_remove.split(',') if x.strip()]
+                VendorDocuments.objects.filter(id__in=doc_ids, vendor_code=vendor.vendor_code).delete()
+
+            # Handle new document uploads
+            document_names = request.POST.getlist('document_name[]')
+            document_files = request.FILES.getlist('document_file[]')
+            
+            for i, (doc_name, doc_file) in enumerate(zip(document_names, document_files)):
+                if doc_name and doc_file:
+                    VendorDocuments.objects.create(
+                        vendor_code=vendor.vendor_code,
+                        document_name=doc_name,
+                        document_file=doc_file,
+                        uploaded_by=request.user.username,
+                        comp_code=COMP_CODE
+                    )
+
+            return redirect('vendor_master')
+        except VendorMaster.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Vendor not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def vendor_master_delete(request):
+    set_comp_code(request)
+    if request.method == 'POST':
+        vendor_id = request.POST.get('id')
+        try:
+            vendor = VendorMaster.objects.get(id=vendor_id, comp_code=COMP_CODE)
+            vendor.delete()
+            return JsonResponse({'status': 'success'})
+        except VendorMaster.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Vendor not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

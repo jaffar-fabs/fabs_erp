@@ -278,6 +278,16 @@ urlpatterns = [
     path('procurement/item_master_edit/', procurement.item_master_edit, name='item_master_edit'),
     path('procurement/item_master_delete/', procurement.item_master_delete, name='item_master_delete'),
 
+    path('procurement/service_master/', procurement.service_master, name='service_master'),
+    path('procurement/service_master_add/', procurement.service_master_add, name='service_master_add'),
+    path('procurement/service_master_edit/', procurement.service_master_edit, name='service_master_edit'),
+    path('procurement/service_master_delete/', procurement.service_master_delete, name='service_master_delete'),
+
+    path('procurement/vendor_master/', procurement.vendor_master, name='vendor_master'),
+    path('procurement/vendor_master_add/', procurement.vendor_master_add, name='vendor_master_add'),
+    path('procurement/vendor_master_edit/', procurement.vendor_master_edit, name='vendor_master_edit'),
+    path('procurement/vendor_master_delete/', procurement.vendor_master_delete, name='vendor_master_delete'),
+
     path('procurement/uom_master/', procurement.uom_master, name='uom_master'),
     path('procurement/uom_master_add/', procurement.uom_master_add, name='uom_master_add'),
     path('procurement/uom_master_edit/', procurement.uom_master_edit, name='uom_master_edit'),

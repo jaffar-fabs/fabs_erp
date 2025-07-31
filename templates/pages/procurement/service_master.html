@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-12">
                 {% block pagetitle %}
-                {% include "partials/title.html" with title="Item Master" %}
+                {% include "partials/title.html" with title="Service Master" %}
                 {% endblock pagetitle %}
                 <div class="card">
                     <div class="card-header">
@@ -15,14 +15,14 @@
                                 <form method="get" id="searchForm">
                                     <div class="icon-form mb-3 mb-sm-0">
                                         <span class="form-icon"><i class="ti ti-search"></i></span>
-                                        <input type="text" name="keyword" class="form-control" placeholder="Search Items" value="{{ keyword }}">
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Services" value="{{ keyword }}">
                                     </div>
                                 </form>
                             </div>
                             <div class="col-sm-8">
                                 <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
                                     <a href="javascript:void(0);" class="btn btn-primary add-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
-                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Item
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Service
                                     </a>
                                 </div>
                             </div>
@@ -33,31 +33,29 @@
                             <table class="table datatable">
                                 <thead>
                                     <tr>
-                                        <th>Item Code</th>
-                                        <th>Material Type</th>
+                                        <th>Service Code</th>
+                                        <th>Service Type</th>
                                         <th>Category</th>
-                                        <th>Item Description</th>
-                                        <th>Model No</th>
-                                        <th>Manufacturer</th>
-                                        <th>UOM</th>
+                                        <th>Service Description</th>
+                                        <th>Size</th>
+                                        <th>Unit</th>
                                         <th>Rate</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for item in items %}
+                                    {% for service in services %}
                                     <tr>
-                                        <td>{{ item.item_code }}</td>
-                                        <td>{{ item.material_type }}</td>
-                                        <td>{{ item.category }}</td>
-                                        <td>{{ item.item_description }}</td>
-                                        <td>{{ item.model_no }}</td>
-                                        <td>{{ item.manufacturer }}</td>
-                                        <td>{{ item.uom }}</td>
-                                        <td>{{ item.rate }}</td>
+                                        <td>{{ service.service_code }}</td>
+                                        <td>{{ service.service_type }}</td>
+                                        <td>{{ service.category }}</td>
+                                        <td>{{ service.service_description }}</td>
+                                        <td>{{ service.size }}</td>
+                                        <td>{{ service.unit }}</td>
+                                        <td>{{ service.rate }}</td>
                                         <td>
-                                            {% if item.is_active %}
+                                            {% if service.is_active %}
                                             <span class="badge bg-success">Active</span>
                                             {% else %}
                                             <span class="badge bg-danger">Inactive</span>
@@ -69,10 +67,10 @@
                                                     <i class="fa fa-ellipsis-v"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item edit-item-btn" href="#" data-id="{{ item.id }}">
+                                                    <a class="dropdown-item edit-service-btn" href="#" data-id="{{ service.id }}">
                                                         <i class="ti ti-edit text-blue"></i> Edit
                                                     </a>
-                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_item" data-item-id="{{ item.id }}">
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_service" data-service-id="{{ service.id }}">
                                                         <i class="ti ti-trash text-danger"></i> Delete
                                                     </a>
                                                 </div>
@@ -86,25 +84,25 @@
                         <!-- Pagination -->
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <div>
-                                Showing {{ items.start_index }} to {{ items.end_index }} of {{ items.paginator.count }} entries
+                                Showing {{ services.start_index }} to {{ services.end_index }} of {{ services.paginator.count }} entries
                             </div>
                             <nav>
                                 <ul class="pagination">
-                                    {% if items.has_previous %}
+                                    {% if services.has_previous %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ current_url }}page={{ items.previous_page_number }}" aria-label="Previous">
+                                        <a class="page-link" href="{{ current_url }}page={{ services.previous_page_number }}" aria-label="Previous">
                                             <span aria-hidden="true">&laquo;</span>
                                         </a>
                                     </li>
                                     {% endif %}
-                                    {% for num in items.paginator.page_range %}
-                                    <li class="page-item {% if items.number == num %}active{% endif %}">
+                                    {% for num in services.paginator.page_range %}
+                                    <li class="page-item {% if services.number == num %}active{% endif %}">
                                         <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
                                     </li>
                                     {% endfor %}
-                                    {% if items.has_next %}
+                                    {% if services.has_next %}
                                     <li class="page-item">
-                                        <a class="page-link" href="{{ current_url }}page={{ items.next_page_number }}" aria-label="Next">
+                                        <a class="page-link" href="{{ current_url }}page={{ services.next_page_number }}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
                                     </li>
@@ -124,10 +122,10 @@
 
 <script>
     $(document).ready(function () {
-        // Edit Item Functionality
-        $(".edit-item-btn").on("click", function (event) {
+        // Edit Service Functionality
+        $(".edit-service-btn").on("click", function (event) {
             event.preventDefault();
-            var itemId = $(this).data("id");
+            var serviceId = $(this).data("id");
             var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
             offcanvasElement.show();
 
@@ -135,50 +133,42 @@
             $("#offcanvas_edit input, #offcanvas_edit select, #offcanvas_edit textarea").val("");
 
             $.ajax({
-                url: "{% url 'item_master_edit' %}",
+                url: "{% url 'service_master_edit' %}",
                 type: "GET",
-                data: { 'item_id': itemId },
+                data: { 'service_id': serviceId },
                 success: function (response) {
                     // Populate the edit form with the response data
-                    $("#item_id").val(response.id);
-                    $("#item_code").val(response.item_code);
-                    $("#item_description").val(response.item_description);
-                    $("#uom").val(response.uom);
-                    $("#is_active").val(response.is_active.toString());
-                    
-                    // Populate new fields
-                    $("#material_type").val(response.material_type);
+                    $("#service_id").val(response.id);
+                    $("#service_code").val(response.service_code);
+                    $("#service_type").val(response.service_type);
                     $("#category").val(response.category);
-                    $("#model_no").val(response.model_no);
-                    $("#capacity").val(response.capacity);
+                    $("#service_description").val(response.service_description);
                     $("#size").val(response.size);
-                    $("#thickness").val(response.thickness);
-                    $("#manufacturer").val(response.manufacturer);
-                    $("#country_of_origin").val(response.country_of_origin);
-                    $("#specification_standard").val(response.specification_standard);
+                    $("#unit").val(response.unit);
                     $("#rate").val(response.rate);
+                    $("#is_active").val(response.is_active.toString());
                     $("#additional_information").val(response.additional_information);
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", xhr.responseText);
-                    alert("Error loading item details. Please try again.");
+                    alert("Error loading service details. Please try again.");
                 }
             });
         });
 
-        // Delete Item Functionality
+        // Delete Service Functionality
         $(".delete-btn").on("click", function () {
-            var itemId = $(this).data("item-id");
-            $("#confirmDelete").data("item-id", itemId);
+            var serviceId = $(this).data("service-id");
+            $("#confirmDelete").data("service-id", serviceId);
         });
 
         $("#confirmDelete").on("click", function () {
-            var itemId = $(this).data("item-id");
+            var serviceId = $(this).data("service-id");
             $.ajax({
-                url: "{% url 'item_master_delete' %}",
+                url: "{% url 'service_master_delete' %}",
                 type: "POST",
                 data: {
-                    'item_id': itemId,
+                    'service_id': serviceId,
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function (response) {
@@ -190,14 +180,14 @@
                 },
                 error: function (xhr, status, error) {
                     console.error("Error:", xhr.responseText);
-                    alert("Error deleting item. Please try again.");
+                    alert("Error deleting service. Please try again.");
                 }
             });
         });
     });
 </script>
 
-{% block item_modal %}
-{% include "pages/modal/procurement/item_master_modal.html" %}
+{% block service_modal %}
+{% include "pages/modal/procurement/service_master_modal.html" %}
 {% endblock %}
-{% endblock content %}
+{% endblock content %} 

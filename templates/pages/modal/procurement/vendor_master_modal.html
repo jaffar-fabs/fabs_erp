@@ -1,0 +1,1319 @@
+<!-- Add Vendor Details Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_add" style="width: 1000px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="offcanvas_add_vendor_label">Add New Vendor</h5>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="addVendorForm" action="{% url 'vendor_master_add' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="mb-4">
+                <h6 class="mb-3"><i class="ti ti-user me-2"></i> Basic Information</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Name *</label>
+                        <input type="text" name="vendor_name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Short Code</label>
+                        <input type="text" name="vendor_short_code" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Logo</label>
+                        <input type="file" name="logo" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Type</label>
+                        <select name="vendor_type" class="form-select">
+                            <option value="">Select Vendor Type</option>
+                            {% for vendor_type in vendor_type_data %}
+                                <option value="{{ vendor_type.base_value }}">{{ vendor_type.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Type Detailed</label>
+                        <select name="vendor_type_detailed" class="form-select">
+                            <option value="">Select Type</option>
+                            {% for vendor_type_detailed in vendor_type_detailed_data %}
+                                <option value="{{ vendor_type_detailed.base_value }}">{{ vendor_type_detailed.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="">Select Category</option>
+                            {% for category in category_data %}
+                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Category Detailed</label>
+                        <select name="category_detailed" class="form-select">
+                            <option value="">Select Category</option>
+                            {% for category_detailed in category_detailed_data %}
+                                <option value="{{ category_detailed.base_value }}">{{ category_detailed.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Status</label>
+                        <select name="status" class="form-select">
+                            {% for status in status_data %}
+                                <option value="{{ status.base_value }}">{{ status.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Rating</label>
+                        <select name="rating" class="form-select">
+                            <option value="">Select Rating</option>
+                            {% for rating in rating_data %}
+                                <option value="{{ rating.base_value }}">{{ rating.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Flag</label>
+                        <select name="flag" class="form-select">
+                            <option value="">Select Flag</option>
+                            {% for flag in flag_data %}
+                                <option value="{{ flag.base_value }}">{{ flag.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Is Active</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_active" checked>
+                            <label class="form-check-label">Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion for other sections -->
+            <div class="accordion" id="vendorAccordion">
+                <!-- Contact Person 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson1Heading">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson1Collapse" aria-expanded="true" aria-controls="contactPerson1Collapse">
+                            <i class="ti ti-user me-2"></i> Contact Person 1
+                        </button>
+                    </h2>
+                    <div id="contactPerson1Collapse" class="accordion-collapse collapse show" aria-labelledby="contactPerson1Heading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson2Heading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson2Collapse" aria-expanded="false" aria-controls="contactPerson2Collapse">
+                            <i class="ti ti-user me-2"></i> Contact Person 2
+                        </button>
+                    </h2>
+                    <div id="contactPerson2Collapse" class="accordion-collapse collapse" aria-labelledby="contactPerson2Heading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_2" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson3Heading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson3Collapse" aria-expanded="false" aria-controls="contactPerson3Collapse">
+                            <i class="ti ti-user me-2"></i> Contact Person 3
+                        </button>   
+                    </h2>
+                    <div id="contactPerson3Collapse" class="accordion-collapse collapse" aria-labelledby="contactPerson3Heading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_3" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 4 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson4Heading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson4Collapse" aria-expanded="false" aria-controls="contactPerson4Collapse">
+                            <i class="ti ti-user me-2"></i> Contact Person 4
+                        </button>
+                    </h2>
+                    <div id="contactPerson4Collapse" class="accordion-collapse collapse" aria-labelledby="contactPerson4Heading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_4" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Information Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="addressHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addressCollapse" aria-expanded="false" aria-controls="addressCollapse">
+                            <i class="ti ti-map-pin me-2"></i> Address Information
+                        </button>
+                    </h2>
+                    <div id="addressCollapse" class="accordion-collapse collapse" aria-labelledby="addressHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Address (Home Branch)</label>
+                                    <textarea name="address" class="form-control" rows="3"></textarea>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Address Branch Office-1</label>
+                                    <textarea name="address_branch_office_1" class="form-control" rows="3"></textarea>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Address Branch Office-2</label>
+                                    <textarea name="address_branch_office_2" class="form-control" rows="3"></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">City</label>
+                                    <input type="text" name="city" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">State</label>
+                                    <input type="text" name="state" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Country</label>
+                                    <input type="text" name="country" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Postal Code</label>
+                                    <input type="text" name="postal_code" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trade License & Establishment Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="tradeLicenseHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tradeLicenseCollapse" aria-expanded="false" aria-controls="tradeLicenseCollapse">
+                            <i class="ti ti-file-certificate me-2"></i> Trade License & Establishment
+                        </button>
+                    </h2>
+                    <div id="tradeLicenseCollapse" class="accordion-collapse collapse" aria-labelledby="tradeLicenseHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Trade License No</label>
+                                    <input type="text" name="trade_license_no" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Trade License Valid Until</label>
+                                    <input type="date" name="trade_license_valid_until" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Establishment Year</label>
+                                    <input type="number" name="establishment_year" class="form-control" min="1900" max="2030">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax & Legal Information Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="taxLegalHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#taxLegalCollapse" aria-expanded="false" aria-controls="taxLegalCollapse">
+                            <i class="ti ti-file-text me-2"></i> Tax & Legal Information
+                        </button>
+                    </h2>
+                    <div id="taxLegalCollapse" class="accordion-collapse collapse" aria-labelledby="taxLegalHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Tax Registration Number</label>
+                                    <input type="text" name="tax_registration_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">VAT Number</label>
+                                    <input type="text" name="vat_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Valid Until</label>
+                                    <input type="date" name="valid_until" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ICV Value</label>
+                                    <input type="number" step="0.01" name="icv_value" class="form-control" min="0">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ICV Valid Until</label>
+                                    <input type="date" name="icv_valid_until" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Registration Date</label>
+                                    <input type="date" name="registration_date" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Expiry Date</label>
+                                    <input type="date" name="expiry_date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="financialHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#financialCollapse" aria-expanded="false" aria-controls="financialCollapse">
+                            <i class="ti ti-credit-card me-2"></i> Financial Information
+                        </button>
+                    </h2>
+                    <div id="financialCollapse" class="accordion-collapse collapse" aria-labelledby="financialHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Payment Terms</label>
+                                    <select name="payment_terms" class="form-select">
+                                        <option value="">Select Payment Terms</option>
+                                        {% for payment_term in payment_terms_data %}
+                                            <option value="{{ payment_term.base_value }}">{{ payment_term.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Credit Limit</label>
+                                    <input type="number" step="0.01" name="credit_limit" class="form-control" min="0">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Currency</label>
+                                    <select name="currency" class="form-select">
+                                        <option value="">Select Currency</option>
+                                        {% for currency in currency_data %}
+                                            <option value="{{ currency.base_value }}">{{ currency.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Information Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="bankHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bankCollapse" aria-expanded="false" aria-controls="bankCollapse">
+                            <i class="ti ti-building-bank me-2"></i> Bank Information
+                        </button>
+                    </h2>
+                    <div id="bankCollapse" class="accordion-collapse collapse" aria-labelledby="bankHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Bank Name</label>
+                                    <input type="text" name="bank_name" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Bank Account Number</label>
+                                    <input type="text" name="bank_account_number" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Bank Swift Code</label>
+                                    <input type="text" name="bank_swift_code" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Bank IBAN</label>
+                                    <input type="text" name="bank_iban" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ISO Certification Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="isoHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#isoCollapse" aria-expanded="false" aria-controls="isoCollapse">
+                            <i class="ti ti-certificate me-2"></i> ISO Certification
+                        </button>
+                    </h2>
+                    <div id="isoCollapse" class="accordion-collapse collapse" aria-labelledby="isoHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">PQ Document</label>
+                                    <select name="pq_document" class="form-select">
+                                        <option value="">Select Status</option>
+                                        {% for pq_document in pq_document_data %}
+                                            <option value="{{ pq_document.base_value }}">{{ pq_document.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 9001 Certified</label>
+                                    <select name="iso_9001_certified" class="form-select">
+                                        <option value="">Select Status</option>
+                                        {% for iso_certified in iso_certified_data %}
+                                            <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 9001 Valid Until</label>
+                                    <input type="date" name="iso_9001_valid_until" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 14001 Certified</label>
+                                    <select name="iso_14001_certified" class="form-select">
+                                        <option value="">Select Status</option>
+                                        {% for iso_certified in iso_certified_data %}
+                                            <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 14001 Valid Until</label>
+                                    <input type="date" name="iso_14001_valid_until" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 45001 Certified</label>
+                                    <select name="iso_45001_certified" class="form-select">
+                                        <option value="">Select Status</option>
+                                        {% for iso_certified in iso_certified_data %}
+                                            <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">ISO 45001 Valid Until</label>
+                                    <input type="date" name="iso_45001_valid_until" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PO Value Limit Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="poValueHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#poValueCollapse" aria-expanded="false" aria-controls="poValueCollapse">
+                            <i class="ti ti-credit-card me-2"></i> PO Value Limit
+                        </button>
+                    </h2>
+                    <div id="poValueCollapse" class="accordion-collapse collapse" aria-labelledby="poValueHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">PO Value Limit</label>
+                                    <select name="po_value_limit" class="form-select">
+                                        <option value="">Select Limit</option>
+                                        {% for po_value_limit in po_value_limit_data %}
+                                            <option value="{{ po_value_limit.base_value }}">{{ po_value_limit.base_description }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="col-form-label">Doc Type</label>
+                                    <input type="text" name="doc_type" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="documentsHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#documentsCollapse" aria-expanded="false" aria-controls="documentsCollapse">
+                            <i class="ti ti-files me-2"></i> Documents
+                        </button>
+                    </h2>
+                    <div id="documentsCollapse" class="accordion-collapse collapse" aria-labelledby="documentsHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <small class="form-text text-muted mb-3">Maximum file size: 5MB for all document uploads</small>
+                            <table class="table" id="documentUploadTable_add">
+                                <thead>
+                                    <tr>
+                                        <th>Document Name</th>
+                                        <th>File Upload</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" name="document_id[]" value="">
+                                            <input type="text" name="document_name[]" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                                            <div class="file-preview"></div>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger" onclick="removeDocumentRow_add(this)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-primary" onclick="addDocumentRow_add()">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Remarks Section -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="remarksHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#remarksCollapse" aria-expanded="false" aria-controls="remarksCollapse">
+                            <i class="ti ti-note me-2"></i> Additional Information
+                        </button>
+                    </h2>
+                    <div id="remarksCollapse" class="accordion-collapse collapse" aria-labelledby="remarksHeading" data-bs-parent="#vendorAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label class="col-form-label">Remarks</label>
+                                    <textarea name="remarks" class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Vendor</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Vendor Details Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas_edit" style="width: 1000px !important;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="offcanvas_edit_vendor_label">Edit Vendor Details</h5>
+        <button type="button" class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form id="editVendorForm" action="{% url 'vendor_master_edit' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="edit_id">
+            
+            <!-- Basic Information Section -->
+            <div class="mb-4">
+                <h6 class="mb-3"><i class="ti ti-user me-2"></i> Basic Information</h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Code</label>
+                        <input type="text" name="vendor_code" id="edit_vendor_code" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Short Code</label>
+                        <input type="text" name="vendor_short_code" id="edit_vendor_short_code" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Name *</label>
+                        <input type="text" name="vendor_name" id="edit_vendor_name" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Logo</label>
+                        <input type="file" name="logo" id="edit_logo" class="form-control" accept="image/*">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Type</label>
+                        <select name="vendor_type" id="edit_vendor_type" class="form-select">
+                            <option value="">Select Vendor Type</option>
+                            {% for vendor_type in vendor_type_data %}
+                                <option value="{{ vendor_type.base_value }}">{{ vendor_type.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Vendor Type Detailed</label>
+                        <select name="vendor_type_detailed" id="edit_vendor_type_detailed" class="form-select">
+                            <option value="">Select Type</option>
+                            {% for vendor_type_detailed in vendor_type_detailed_data %}
+                                <option value="{{ vendor_type_detailed.base_value }}">{{ vendor_type_detailed.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Category</label>
+                        <select name="category" id="edit_category" class="form-select">
+                            <option value="">Select Category</option>
+                            {% for category in category_data %}
+                                <option value="{{ category.base_value }}">{{ category.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Category Detailed</label>
+                        <select name="category_detailed" id="edit_category_detailed" class="form-select">
+                            <option value="">Select Category</option>
+                            {% for category_detailed in category_detailed_data %}
+                                <option value="{{ category_detailed.base_value }}">{{ category_detailed.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Status</label>
+                        <select name="status" id="edit_status" class="form-select">
+                            {% for status in status_data %}
+                                <option value="{{ status.base_value }}">{{ status.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Rating</label>
+                        <select name="rating" id="edit_rating" class="form-select">
+                            <option value="">Select Rating</option>
+                            {% for rating in rating_data %}
+                                <option value="{{ rating.base_value }}">{{ rating.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Flag</label>
+                        <select name="flag" id="edit_flag" class="form-select">
+                            <option value="">Select Flag</option>
+                            {% for flag in flag_data %}
+                                <option value="{{ flag.base_value }}">{{ flag.base_description }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="col-form-label">Is Active</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="edit_is_active">
+                            <label class="form-check-label">Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accordion for other sections -->
+            <div class="accordion" id="vendorAccordionEdit">
+
+                <!-- Contact Person 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson1HeadingEdit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson1CollapseEdit" aria-expanded="false" aria-controls="contactPerson1CollapseEdit">
+                            <i class="ti ti-user me-2"></i> Contact Person 1
+                        </button>
+                    </h2>
+                    <div id="contactPerson1CollapseEdit" class="accordion-collapse collapse" aria-labelledby="contactPerson1HeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_1" id="edit_contact_person_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_1" id="edit_contact_designation_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_1" id="edit_contact_email_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_1" id="edit_contact_mobile_1" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_1" id="edit_contact_tel_1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson2HeadingEdit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson2CollapseEdit" aria-expanded="false" aria-controls="contactPerson2CollapseEdit">
+                            <i class="ti ti-user me-2"></i> Contact Person 2
+                        </button>
+                    </h2>
+                    <div id="contactPerson2CollapseEdit" class="accordion-collapse collapse" aria-labelledby="contactPerson2HeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_2" id="edit_contact_person_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_2" id="edit_contact_designation_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_2" id="edit_contact_email_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_2" id="edit_contact_mobile_2" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_2" id="edit_contact_tel_2" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson3HeadingEdit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson3CollapseEdit" aria-expanded="false" aria-controls="contactPerson3CollapseEdit">
+                            <i class="ti ti-user me-2"></i> Contact Person 3
+                        </button>   
+                    </h2>
+                    <div id="contactPerson3CollapseEdit" class="accordion-collapse collapse" aria-labelledby="contactPerson3HeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_3" id="edit_contact_person_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_3" id="edit_contact_designation_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_3" id="edit_contact_email_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_3" id="edit_contact_mobile_3" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_3" id="edit_contact_tel_3" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Person 4 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="contactPerson4HeadingEdit">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactPerson4CollapseEdit" aria-expanded="false" aria-controls="contactPerson4CollapseEdit">
+                            <i class="ti ti-user me-2"></i> Contact Person 4
+                        </button>
+                    </h2>
+                    <div id="contactPerson4CollapseEdit" class="accordion-collapse collapse" aria-labelledby="contactPerson4HeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Contact Name</label>
+                                    <input type="text" name="contact_person_4" id="edit_contact_person_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Designation</label>
+                                    <input type="text" name="contact_designation_4" id="edit_contact_designation_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Email ID</label>
+                                    <input type="email" name="contact_email_4" id="edit_contact_email_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Mobile No</label>
+                                    <input type="text" name="contact_mobile_4" id="edit_contact_mobile_4" class="form-control">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="col-form-label">Tel No</label>
+                                    <input type="text" name="contact_tel_4" id="edit_contact_tel_4" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Address Information Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="addressHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addressCollapseEdit" aria-expanded="false" aria-controls="addressCollapseEdit">
+                        <i class="ti ti-map-pin me-2"></i> Address Information
+                    </button>
+                </h2>
+                <div id="addressCollapseEdit" class="accordion-collapse collapse" aria-labelledby="addressHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label class="col-form-label">Address (Home Branch)</label>
+                                <textarea name="address" id="edit_address" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="col-form-label">Address Branch Office-1</label>
+                                <textarea name="address_branch_office_1" id="edit_address_branch_office_1" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="col-form-label">Address Branch Office-2</label>
+                                <textarea name="address_branch_office_2" id="edit_address_branch_office_2" class="form-control" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">City</label>
+                                <input type="text" name="city" id="edit_city" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">State</label>
+                                <input type="text" name="state" id="edit_state" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Country</label>
+                                <input type="text" name="country" id="edit_country" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Postal Code</label>
+                                <input type="text" name="postal_code" id="edit_postal_code" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade License & Establishment Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="licenseHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#licenseCollapseEdit" aria-expanded="false" aria-controls="licenseCollapseEdit">
+                        <i class="ti ti-file-certificate me-2"></i> Trade License & Establishment
+                    </button>
+                </h2>
+                <div id="licenseCollapseEdit" class="accordion-collapse collapse" aria-labelledby="licenseHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Trade License No</label>
+                                <input type="text" name="trade_license_no" id="edit_trade_license_no" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Trade License Valid Until</label>
+                                <input type="date" name="trade_license_valid_until" id="edit_trade_license_valid_until" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Establishment Year</label>
+                                <input type="number" name="establishment_year" id="edit_establishment_year" class="form-control" min="1900" max="2030">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tax & Legal Information Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="taxHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#taxCollapseEdit" aria-expanded="false" aria-controls="taxCollapseEdit">
+                        <i class="ti ti-file-text me-2"></i> Tax & Legal Information
+                    </button>
+                </h2>
+                <div id="taxCollapseEdit" class="accordion-collapse collapse" aria-labelledby="taxHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Tax Registration Number</label>
+                                <input type="text" name="tax_registration_number" id="edit_tax_registration_number" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">VAT Number</label>
+                                <input type="text" name="vat_number" id="edit_vat_number" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Valid Until</label>
+                                <input type="date" name="valid_until" id="edit_valid_until" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ICV Value</label>
+                                <input type="number" step="0.01" name="icv_value" id="edit_icv_value" class="form-control" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ICV Valid Until</label>
+                                <input type="date" name="icv_valid_until" id="edit_icv_valid_until" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Registration Date</label>
+                                <input type="date" name="registration_date" id="edit_registration_date" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Expiry Date</label>
+                                <input type="date" name="expiry_date" id="edit_expiry_date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financial Information Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="financialHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#financialCollapseEdit" aria-expanded="false" aria-controls="financialCollapseEdit">
+                        <i class="ti ti-credit-card me-2"></i> Financial Information
+                    </button>
+                </h2>
+                <div id="financialCollapseEdit" class="accordion-collapse collapse" aria-labelledby="financialHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Payment Terms</label>
+                                <select name="payment_terms" id="edit_payment_terms" class="form-select">
+                                    <option value="">Select Payment Terms</option>
+                                    {% for payment_term in payment_terms_data %}
+                                        <option value="{{ payment_term.base_value }}">{{ payment_term.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Credit Limit</label>
+                                <input type="number" step="0.01" name="credit_limit" id="edit_credit_limit" class="form-control" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Currency</label>
+                                <select name="currency" id="edit_currency" class="form-select">
+                                    <option value="">Select Currency</option>
+                                    {% for currency in currency_data %}
+                                        <option value="{{ currency.base_value }}">{{ currency.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bank Information Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="bankHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bankCollapseEdit" aria-expanded="false" aria-controls="bankCollapseEdit">
+                        <i class="ti ti-building-bank me-2"></i> Bank Information
+                    </button>
+                </h2>
+                <div id="bankCollapseEdit" class="accordion-collapse collapse" aria-labelledby="bankHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Bank Name</label>
+                                <input type="text" name="bank_name" id="edit_bank_name" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Bank Account Number</label>
+                                <input type="text" name="bank_account_number" id="edit_bank_account_number" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Bank Swift Code</label>
+                                <input type="text" name="bank_swift_code" id="edit_bank_swift_code" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Bank IBAN</label>
+                                <input type="text" name="bank_iban" id="edit_bank_iban" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ISO Certification Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="isoHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#isoCollapseEdit" aria-expanded="false" aria-controls="isoCollapseEdit">
+                        <i class="ti ti-certificate me-2"></i> ISO Certification
+                    </button>
+                </h2>
+                <div id="isoCollapseEdit" class="accordion-collapse collapse" aria-labelledby="isoHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">PQ Document</label>
+                                <select name="pq_document" id="edit_pq_document" class="form-select">
+                                    <option value="">Select Status</option>
+                                    {% for pq_document in pq_document_data %}
+                                        <option value="{{ pq_document.base_value }}">{{ pq_document.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 9001 Certified</label>
+                                <select name="iso_9001_certified" id="edit_iso_9001_certified" class="form-select">
+                                    <option value="">Select Status</option>
+                                    {% for iso_certified in iso_certified_data %}
+                                        <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 9001 Valid Until</label>
+                                <input type="date" name="iso_9001_valid_until" id="edit_iso_9001_valid_until" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 14001 Certified</label>
+                                <select name="iso_14001_certified" id="edit_iso_14001_certified" class="form-select">
+                                    <option value="">Select Status</option>
+                                    {% for iso_certified in iso_certified_data %}
+                                        <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 14001 Valid Until</label>
+                                <input type="date" name="iso_14001_valid_until" id="edit_iso_14001_valid_until" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 45001 Certified</label>
+                                <select name="iso_45001_certified" id="edit_iso_45001_certified" class="form-select">
+                                    <option value="">Select Status</option>
+                                    {% for iso_certified in iso_certified_data %}
+                                        <option value="{{ iso_certified.base_value }}">{{ iso_certified.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">ISO 45001 Valid Until</label>
+                                <input type="date" name="iso_45001_valid_until" id="edit_iso_45001_valid_until" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PO Value Limit Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="poValueHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#poValueCollapseEdit" aria-expanded="false" aria-controls="poValueCollapseEdit">
+                        <i class="ti ti-credit-card me-2"></i> PO Value Limit
+                    </button>
+                </h2>
+                <div id="poValueCollapseEdit" class="accordion-collapse collapse" aria-labelledby="poValueHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">PO Value Limit</label>
+                                <select name="po_value_limit" id="edit_po_value_limit" class="form-select">
+                                    <option value="">Select Limit</option>
+                                    {% for po_value_limit in po_value_limit_data %}
+                                        <option value="{{ po_value_limit.base_value }}">{{ po_value_limit.base_description }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="col-form-label">Doc Type</label>
+                                <input type="text" name="doc_type" id="edit_doc_type" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="documentsHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#documentsCollapseEdit" aria-expanded="false" aria-controls="documentsCollapseEdit">
+                        <i class="ti ti-files me-2"></i> Documents
+                    </button>
+                </h2>
+                <div id="documentsCollapseEdit" class="accordion-collapse collapse" aria-labelledby="documentsHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <small class="form-text text-muted mb-3">Maximum file size: 5MB for all document uploads</small>
+                        <input type="hidden" name="documents_to_remove" id="documents_to_remove">
+                        <table class="table" id="documentUploadTable_edit">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>File Upload</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="document_id[]" value="">
+                                        <input type="text" name="document_name[]" class="form-control">
+                                    </td>
+                                    <td>
+                                        <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                                        <div class="file-preview"></div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remarks Section -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="remarksHeadingEdit">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#remarksCollapseEdit" aria-expanded="false" aria-controls="remarksCollapseEdit">
+                        <i class="ti ti-note me-2"></i> Additional Information
+                    </button>
+                </h2>
+                <div id="remarksCollapseEdit" class="accordion-collapse collapse" aria-labelledby="remarksHeadingEdit" data-bs-parent="#vendorAccordionEdit">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label class="col-form-label">Remarks</label>
+                                <textarea name="remarks" id="edit_remarks" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Vendor</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Document handling functions for multi-entry table
+    function addDocumentRow_add() {
+        const tableBody = document.querySelector('#documentUploadTable_add tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+                <input type="hidden" name="document_id[]" value="">
+                <input type="text" name="document_name[]" class="form-control">
+            </td>
+            <td>
+                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                <div class="file-preview"></div>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeDocumentRow_add(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addDocumentRow_add()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(newRow);
+    }
+
+    function removeDocumentRow_add(button) {
+        const row = button.closest('tr');
+        const tableBody = document.querySelector('#documentUploadTable_add tbody');
+        
+        if (!tableBody) {
+            console.error('Table body not found');
+            return;
+        }
+        
+        // Ensure at least one row remains
+        if (tableBody.rows.length > 1) {
+            row.remove();
+        } else {
+            // Show warning message
+            const message = document.createElement('div');
+            message.className = 'alert alert-warning mt-3';
+            message.innerText = "At least one row must remain.";
+            
+            // Insert after table
+            const table = document.getElementById('documentUploadTable_add');
+            if (table && table.parentNode) {
+                table.parentNode.insertBefore(message, table.nextSibling);
+                
+                // Remove after 3 seconds
+                setTimeout(() => message.remove(), 3000);
+            }
+        }
+    }
+
+    function addDocumentRow_edit() {
+        const tableBody = document.querySelector('#documentUploadTable_edit tbody');
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>
+                <input type="hidden" name="document_id[]" value="">
+                <input type="text" name="document_name[]" class="form-control">
+            </td>
+            <td>
+                <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                <div class="file-preview"></div>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(newRow);
+    }
+
+    function removeDocumentRow_edit(button, documentId = null) {
+        const row = button.closest('tr');
+        const tableBody = document.querySelector('#documentUploadTable_edit tbody');
+        
+        if (!tableBody) {
+            console.error('Table body not found');
+            return;
+        }
+        
+        // If this is an existing document (has documentId), add it to documents_to_remove
+        if (documentId) {
+            let documentsToRemove = document.getElementById('documents_to_remove');
+            
+            if (!documentsToRemove) {
+                documentsToRemove = document.createElement('input');
+                documentsToRemove.type = 'hidden';
+                documentsToRemove.id = 'documents_to_remove';
+                documentsToRemove.name = 'documents_to_remove';
+                const table = document.getElementById('documentUploadTable_edit');
+                if (table && table.parentNode) {
+                    table.parentNode.appendChild(documentsToRemove);
+                }
+            }
+            
+            // Get current values and add new documentId
+            const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+            if (!currentValues.includes(documentId.toString())) {
+                currentValues.push(documentId.toString());
+                documentsToRemove.value = currentValues.join(',');
+            }
+        }
+        
+        // Ensure at least one row remains
+        if (tableBody.rows.length > 1) {
+            row.remove();
+        } else {
+            // Show warning message
+            const message = document.createElement('div');
+            message.className = 'alert alert-warning mt-3';
+            message.innerText = "At least one row must remain.";
+            
+            // Insert after table
+            const table = document.getElementById('documentUploadTable_edit');
+            if (table && table.parentNode) {
+                table.parentNode.insertBefore(message, table.nextSibling);
+                
+                // Remove after 3 seconds
+                setTimeout(() => message.remove(), 3000);
+            }
+        }
+    }
+
+    // Form validation for credit limit
+    document.addEventListener('DOMContentLoaded', function() {
+        const creditLimitInputs = document.querySelectorAll('input[name="credit_limit"], input[name="credit_limit"]');
+        creditLimitInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    });
+</script> 

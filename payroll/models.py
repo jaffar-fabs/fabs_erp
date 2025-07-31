@@ -989,6 +989,7 @@ class Recruitment(models.Model):
     project = models.TextField(null=True, blank=True)
     ao_ref_no = models.CharField(max_length=50, null=True, blank=True)
     name_as_per_pp = models.TextField(null=True, blank=True)
+    sur_name = models.TextField(null=True, blank=True)
     pp_number = models.CharField(max_length=50, null=True, blank=True)
     pp_exp_date = models.DateField(null=True, blank=True)
     pp_validity_days = models.CharField(max_length=50, null=True, blank=True)

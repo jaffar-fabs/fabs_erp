@@ -1,0 +1,404 @@
+{% extends "partials/base.html" %}
+{% block content %}
+
+<div class="page-wrapper">
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                {% block pagetitle %}
+                {% include "partials/title.html" with title="Vendor Master" %}
+                {% endblock pagetitle %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-4">
+                                <form method="get" id="searchForm">
+                                    <div class="icon-form mb-3 mb-sm-0">
+                                        <span class="form-icon"><i class="ti ti-search"></i></span>
+                                        <input type="text" name="keyword" class="form-control" placeholder="Search Vendors" value="{{ keyword }}">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="d-flex align-items-center flex-wrap row-gap-2 justify-content-sm-end">
+                                    <a href="javascript:void(0);" class="btn btn-primary add-btn" data-bs-toggle="offcanvas" data-bs-target="#offcanvas_add">
+                                        <i class="ti ti-square-rounded-plus me-2"></i>Add New Vendor
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive custom-table">
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Vendor Code</th>
+                                        <th>Short Code</th>
+                                        <th>Vendor Name</th>
+                                        <th>Vendor Type</th>
+                                        <th>Category</th>
+                                        <th>Contact Person 1</th>
+                                        <th>Designation 1</th>
+                                        <th>Mobile 1</th>
+                                        <th>Flag</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for vendor in vendors %}
+                                    <tr>
+                                        <td>{{ vendor.vendor_code }}</td>
+                                        <td>{{ vendor.vendor_short_code|default:"-" }}</td>
+                                        <td>{{ vendor.vendor_name }}</td>
+                                        <td>{{ vendor.vendor_type|default:"-" }}</td>
+                                        <td>{{ vendor.category|default:"-" }}</td>
+                                        <td>{{ vendor.contact_person_1|default:"-" }}</td>
+                                        <td>{{ vendor.contact_designation_1|default:"-" }}</td>
+                                        <td>{{ vendor.contact_mobile_1|default:"-" }}</td>
+                                        <td>
+                                            {% if vendor.flag == 'Green' %}
+                                            <span class="badge bg-success">{{ vendor.flag }}</span>
+                                            {% elif vendor.flag == 'Amber' %}
+                                            <span class="badge bg-warning">{{ vendor.flag }}</span>
+                                            {% elif vendor.flag == 'Red' %}
+                                            <span class="badge bg-danger">{{ vendor.flag }}</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">{{ vendor.flag|default:"-" }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if vendor.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="dropdown table-action">
+                                                <a href="#" class="action-icon" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fa fa-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item edit-item-btn" href="#" data-id="{{ vendor.id }}">
+                                                        <i class="ti ti-edit text-blue"></i> Edit
+                                                    </a>
+                                                    <a class="dropdown-item delete-btn" href="#" data-bs-toggle="modal" data-bs-target="#delete_vendor" data-vendor-id="{{ vendor.id }}">
+                                                        <i class="ti ti-trash text-danger"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                Showing {{ vendors.start_index }} to {{ vendors.end_index }} of {{ vendors.paginator.count }} entries
+                            </div>
+                            <nav>
+                                <ul class="pagination">
+                                    {% if vendors.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ vendors.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for num in vendors.paginator.page_range %}
+                                    <li class="page-item {% if vendors.number == num %}active{% endif %}">
+                                        <a class="page-link" href="{{ current_url }}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    {% if vendors.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ current_url }}page={{ vendors.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Edit Vendor Functionality
+        $(".edit-item-btn").on("click", function (event) {
+            event.preventDefault();
+            var vendorId = $(this).data("id");
+            var offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit"));
+            offcanvasElement.show();
+
+            // Reset all fields
+            $("#offcanvas_edit input, #offcanvas_edit select, #offcanvas_edit textarea").val("");
+            // Clear logo preview
+            $("#edit_logo").siblings('.logo-preview').remove();
+            // Clear document table
+            $("#documentUploadTable_edit tbody").empty();
+
+            $.ajax({
+                url: "{% url 'vendor_master_edit' %}",
+                type: "GET",
+                data: { 'id': vendorId },
+                success: function (response) {
+                    // Populate the edit form with the response data
+                    $("#edit_id").val(response.id);
+                    $("#edit_vendor_code").val(response.vendor_code);
+                    $("#edit_vendor_short_code").val(response.vendor_short_code);
+                    $("#edit_vendor_name").val(response.vendor_name);
+                    $("#edit_vendor_type").val(response.vendor_type);
+                    $("#edit_vendor_type_detailed").val(response.vendor_type_detailed);
+                    $("#edit_category").val(response.category);
+                    $("#edit_category_detailed").val(response.category_detailed);
+                    $("#edit_is_active").val(response.is_active.toString());
+                    
+                    // Populate contact fields
+                    $("#edit_contact_person_1").val(response.contact_person_1);
+                    $("#edit_contact_designation_1").val(response.contact_designation_1);
+                    $("#edit_contact_email_1").val(response.contact_email_1);
+                    $("#edit_contact_mobile_1").val(response.contact_mobile_1);
+                    $("#edit_contact_tel_1").val(response.contact_tel_1);
+                    
+                    $("#edit_contact_person_2").val(response.contact_person_2);
+                    $("#edit_contact_designation_2").val(response.contact_designation_2);
+                    $("#edit_contact_email_2").val(response.contact_email_2);
+                    $("#edit_contact_mobile_2").val(response.contact_mobile_2);
+                    $("#edit_contact_tel_2").val(response.contact_tel_2);
+                    
+                    $("#edit_contact_person_3").val(response.contact_person_3);
+                    $("#edit_contact_designation_3").val(response.contact_designation_3);
+                    $("#edit_contact_email_3").val(response.contact_email_3);
+                    $("#edit_contact_mobile_3").val(response.contact_mobile_3);
+                    $("#edit_contact_tel_3").val(response.contact_tel_3);
+                    
+                    $("#edit_contact_person_4").val(response.contact_person_4);
+                    $("#edit_contact_designation_4").val(response.contact_designation_4);
+                    $("#edit_contact_email_4").val(response.contact_email_4);
+                    $("#edit_contact_mobile_4").val(response.contact_mobile_4);
+                    $("#edit_contact_tel_4").val(response.contact_tel_4);
+                    
+                    // Populate other fields
+                    $("#edit_address").val(response.address);
+                    $("#edit_address_branch_office_1").val(response.address_branch_office_1);
+                    $("#edit_address_branch_office_2").val(response.address_branch_office_2);
+                    $("#edit_city").val(response.city);
+                    $("#edit_state").val(response.state);
+                    $("#edit_country").val(response.country);
+                    $("#edit_postal_code").val(response.postal_code);
+                    $("#edit_trade_license_no").val(response.trade_license_no);
+                    $("#edit_trade_license_valid_until").val(response.trade_license_valid_until);
+                    $("#edit_establishment_year").val(response.establishment_year);
+                    $("#edit_tax_registration_number").val(response.tax_registration_number);
+                    $("#edit_vat_number").val(response.vat_number);
+                    $("#edit_valid_until").val(response.valid_until);
+                    $("#edit_icv_value").val(response.icv_value);
+                    $("#edit_icv_valid_until").val(response.icv_valid_until);
+                    $("#edit_payment_terms").val(response.payment_terms);
+                    $("#edit_credit_limit").val(response.credit_limit);
+                    $("#edit_currency").val(response.currency);
+                    $("#edit_bank_name").val(response.bank_name);
+                    $("#edit_bank_account_number").val(response.bank_account_number);
+                    $("#edit_bank_swift_code").val(response.bank_swift_code);
+                    $("#edit_bank_iban").val(response.bank_iban);
+                    $("#edit_registration_date").val(response.registration_date);
+                    $("#edit_expiry_date").val(response.expiry_date);
+                    $("#edit_status").val(response.status);
+                    $("#edit_rating").val(response.rating);
+                    $("#edit_pq_document").val(response.pq_document);
+                    $("#edit_iso_9001_certified").val(response.iso_9001_certified);
+                    $("#edit_iso_9001_valid_until").val(response.iso_9001_valid_until);
+                    $("#edit_iso_14001_certified").val(response.iso_14001_certified);
+                    $("#edit_iso_14001_valid_until").val(response.iso_14001_valid_until);
+                    $("#edit_iso_45001_certified").val(response.iso_45001_certified);
+                    $("#edit_iso_45001_valid_until").val(response.iso_45001_valid_until);
+                    $("#edit_po_value_limit").val(response.po_value_limit);
+                    $("#edit_flag").val(response.flag);
+                    $("#edit_doc_type").val(response.doc_type);
+                    $("#edit_remarks").val(response.remarks);
+                    
+                    // Handle logo preview
+                    if (response.logo) {
+                        // Create logo preview
+                        let logoPreview = $("#edit_logo").siblings('.logo-preview');
+                        if (logoPreview.length === 0) {
+                            logoPreview = $('<div class="logo-preview mt-2"></div>');
+                            $("#edit_logo").after(logoPreview);
+                        }
+                        logoPreview.html(`
+                            <img src="${response.logo}" alt="Logo" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; border-radius: 4px;">
+                            <div class="mt-2">
+                                <a href="${response.logo}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                <a href="${response.logo}" download class="btn btn-sm btn-outline-success">Download</a>
+                            </div>
+                        `);
+                    } else {
+                        $("#edit_logo").siblings('.logo-preview').remove();
+                    }
+                    
+                    // Handle existing documents
+                    const documentTable = $("#documentUploadTable_edit tbody");
+                    documentTable.empty(); // Clear existing rows
+                    
+                    if (response.documents && response.documents.length > 0) {
+                        response.documents.forEach(function(doc, index) {
+                            const newRow = document.createElement('tr');
+                            newRow.innerHTML = `
+                                <td>
+                                    <input type="hidden" name="document_id[]" value="${doc.id}">
+                                    <input type="text" name="document_name[]" class="form-control" value="${doc.document_name}">
+                                </td>
+                                <td>
+                                    <div class="file-preview">
+                                        <a href="${doc.document_file}" target="_blank" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="${doc.document_file}" download class="btn btn-sm btn-outline-success">Download</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this, ${doc.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </td>
+                            `;
+                            documentTable.append(newRow);
+                        });
+                    } else {
+                        // Add at least one empty row
+                        addDocumentRow_edit();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error loading vendor details. Please try again.");
+                }
+            });
+        });
+
+        // Delete Vendor Functionality
+        $(".delete-btn").on("click", function () {
+            var vendorId = $(this).data("vendor-id");
+            $("#confirmDelete").data("vendor-id", vendorId);
+        });
+
+        $("#confirmDelete").on("click", function () {
+            var vendorId = $(this).data("vendor-id");
+            $.ajax({
+                url: "{% url 'vendor_master_delete' %}",
+                type: "POST",
+                data: {
+                    'id': vendorId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    alert("Error deleting vendor. Please try again.");
+                }
+            });
+        });
+        
+        // Document handling functions for edit modal
+        window.addDocumentRow_edit = function() {
+            const tableBody = document.querySelector('#documentUploadTable_edit tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>
+                    <input type="hidden" name="document_id[]" value="">
+                    <input type="text" name="document_name[]" class="form-control">
+                </td>
+                <td>
+                    <input type="file" name="document_file[]" class="form-control" accept="application/pdf,image/*">
+                    <div class="file-preview"></div>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeDocumentRow_edit(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="addDocumentRow_edit()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+        };
+
+        window.removeDocumentRow_edit = function(button, documentId = null) {
+            const row = button.closest('tr');
+            const tableBody = document.querySelector('#documentUploadTable_edit tbody');
+            
+            if (!tableBody) {
+                console.error('Table body not found');
+                return;
+            }
+            
+            // If this is an existing document (has documentId), add it to documents_to_remove
+            if (documentId) {
+                let documentsToRemove = document.getElementById('documents_to_remove');
+                
+                if (!documentsToRemove) {
+                    documentsToRemove = document.createElement('input');
+                    documentsToRemove.type = 'hidden';
+                    documentsToRemove.id = 'documents_to_remove';
+                    documentsToRemove.name = 'documents_to_remove';
+                    const table = document.getElementById('documentUploadTable_edit');
+                    if (table && table.parentNode) {
+                        table.parentNode.appendChild(documentsToRemove);
+                    }
+                }
+                
+                // Get current values and add new documentId
+                const currentValues = documentsToRemove.value ? documentsToRemove.value.split(',') : [];
+                if (!currentValues.includes(documentId.toString())) {
+                    currentValues.push(documentId.toString());
+                    documentsToRemove.value = currentValues.join(',');
+                }
+            }
+            
+            // Ensure at least one row remains
+            if (tableBody.rows.length > 1) {
+                row.remove();
+            } else {
+                // Show warning message
+                const message = document.createElement('div');
+                message.className = 'alert alert-warning mt-3';
+                message.innerText = "At least one row must remain.";
+                
+                // Insert after table
+                const table = document.getElementById('documentUploadTable_edit');
+                if (table && table.parentNode) {
+                    table.parentNode.insertBefore(message, table.nextSibling);
+                    
+                    // Remove after 3 seconds
+                    setTimeout(() => message.remove(), 3000);
+                }
+            }
+        };
+    });
+</script>
+
+{% block vendor_modal %}
+{% include "pages/modal/procurement/vendor_master_modal.html" %}
+{% endblock %}
+{% endblock content %}
