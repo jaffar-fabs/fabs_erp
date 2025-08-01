@@ -228,13 +228,14 @@
 
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="col-form-label" id="staff_category_label">Category</label>
-                                        <select name="staff_category" id="staff_category" class="form-select">
+                                        <label class="col-form-label" id="staff_category_label">Category <span class="text-danger">*</span></label>
+                                        <select name="staff_category" id="staff_category" class="form-select" required>
                                             <option value="">Select</option>
                                             {% for statuses in staff_category_data %}
                                                 <option value="{{ statuses.base_value }}">{{ statuses.base_description }}</option>
                                             {% endfor %}
                                         </select>
+                                        <div class="invalid-feedback">Please select a category.</div>
                                     </div>
                                 </div>
                                 
@@ -2087,7 +2088,8 @@ function validateForm() {
         { id: 'department', label: 'Department' },
         { id: 'res_addr_line1', label: 'Address Line 1' },
         { id: 'res_city', label: 'City' },
-        { id: 'res_state', label: 'State' }
+        { id: 'res_state', label: 'State' },
+        { id: 'staff_category', label: 'Category' }
     ];
 
     // Add salary fields if user has salary permissions
