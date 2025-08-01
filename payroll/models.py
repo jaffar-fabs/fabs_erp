@@ -1036,7 +1036,10 @@ class Recruitment(models.Model):
     eta = models.DateTimeField(null=True, blank=True)
     arrived_or_not = models.CharField(max_length=50, null=True, blank=True)
     convert_to_employee_flag = models.CharField(max_length=50, null=True, blank=True)
-
+    created_by = models.CharField(max_length=500, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    modified_by = models.CharField(max_length=500, null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
 
 class EmployeePPDetails(models.Model):
     id = models.AutoField(primary_key=True)
@@ -1080,7 +1083,10 @@ class EmployeePPDetails(models.Model):
     insurance_status = models.CharField(max_length=8000, null=True, blank=True)
     insurance_card_number = models.CharField(max_length=8000, null=True, blank=True)
     insurance_expiry_date = models.CharField(max_length=8000, null=True, blank=True)
-
+    created_by = models.CharField(max_length=8000, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    modified_by = models.CharField(max_length=8000, null=True, blank=True)
+    modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
 
 def employee_pp_document_path(instance, filename):
     # Construct the path using the employee PP ID
@@ -1239,3 +1245,61 @@ class ExitProcess(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     modified_by = models.CharField(max_length=100, null=True, blank=True)
     modified_on = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+# ------------------------------------------------------------------------------------------------------------
+# DOA (Delegation of Authority) Master
+
+class DOAMaster(models.Model):
+    id = models.AutoField(primary_key=True)
+    comp_code = models.CharField(max_length=15, null=True, blank=True)
+    
+    # Basic Information
+    dd = models.CharField(max_length=50, null=True, blank=True)  # Document Type: Leave, Camp, Resignation
+    category = models.CharField(max_length=50, null=True, blank=True)  # Staff, Field Staff, Management
+    job_no = models.CharField(max_length=50, null=True, blank=True)
+    desy = models.CharField(max_length=100, null=True, blank=True)  # Description
+    authorised_person = models.CharField(max_length=100, null=True, blank=True)
+    purpose = models.CharField(max_length=200, null=True, blank=True)
+    
+    # Approval Levels
+    level_1 = models.CharField(max_length=100, null=True, blank=True)
+    level_2 = models.CharField(max_length=100, null=True, blank=True)
+    level_3 = models.CharField(max_length=100, null=True, blank=True)
+    level_4 = models.CharField(max_length=100, null=True, blank=True)
+    
+    # Approval Flow
+    approval_type = models.CharField(max_length=50, null=True, blank=True)  # Type Name
+    app_reference = models.CharField(max_length=50, null=True, blank=True)  # App reference
+    
+    # Workflow Status
+    can_edit = models.BooleanField(default=True)
+    can_view = models.BooleanField(default=True)
+    approval_status = models.CharField(max_length=20, choices=[
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected')
+    ], default='Pending')
+    
+    # Conditions
+    duplicate_condition = models.TextField(null=True, blank=True)  # Condition for duplicate
+    row_condition = models.TextField(null=True, blank=True)  # Add row condition
+    
+    # Origin Details
+    come_up_by = models.CharField(max_length=100, null=True, blank=True)  # How request originates
+    type_app = models.CharField(max_length=50, null=True, blank=True)  # Type of application
+    
+    # Audit Fields
+    created_by = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_by = models.CharField(max_length=50, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Status
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"DOA {self.id} - {self.dd} - {self.category}"
+    
+    class Meta:
+        db_table = 'payroll_doa_master'
+        ordering = ['-created_at']

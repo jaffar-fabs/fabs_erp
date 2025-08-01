@@ -363,7 +363,7 @@ class VendorMaster(models.Model):
     flag = models.CharField(max_length=20, blank=True, null=True)  # Green/Amber/Red
     doc_type = models.CharField(max_length=50, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.CharField(max_length=10)
     created_by = models.CharField(max_length=100)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_by = models.CharField(max_length=100, blank=True, null=True)

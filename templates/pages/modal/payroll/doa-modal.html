@@ -1,0 +1,459 @@
+{% load static %}
+
+<!-- Add New DOA -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_add_doa">
+    <div class="offcanvas-header border-bottom">
+        <h4>Add New DOA</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'create_doa' %}" method="POST" id="doaForm">
+            {% csrf_token %}
+            
+            <!-- Basic Information Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Basic Information</h5>
+                </div>
+                
+                <!-- Document Type (Dd) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Document Type (Dd) <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="dd" id="dd" required>
+                            <option value="">Select Document Type</option>
+                            <option value="Leave">Leave</option>
+                            <option value="Camp">Camp</option>
+                            <option value="Resignation">Resignation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="category" id="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Field Staff">Field Staff</option>
+                            <option value="Management">Management</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Job Number -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Job Number</label>
+                        <input type="text" class="form-control" name="job_no" id="job_no">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Description</label>
+                        <input type="text" class="form-control" name="desy" id="desy">
+                    </div>
+                </div>
+
+                <!-- Authorised Person -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Authorised Person</label>
+                        <input type="text" class="form-control" name="authorised_person" id="authorised_person">
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Purpose</label>
+                        <input type="text" class="form-control" name="purpose" id="purpose">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approval Levels Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Approval Levels</h5>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 1</label>
+                        <input type="text" class="form-control" name="level_1" id="level_1">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 2</label>
+                        <input type="text" class="form-control" name="level_2" id="level_2">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 3</label>
+                        <input type="text" class="form-control" name="level_3" id="level_3">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 4</label>
+                        <input type="text" class="form-control" name="level_4" id="level_4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approval Flow Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Approval Flow</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Approval Type</label>
+                        <input type="text" class="form-control" name="approval_type" id="approval_type">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">App Reference</label>
+                        <input type="text" class="form-control" name="app_reference" id="app_reference">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conditions Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Conditions</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Duplicate Condition</label>
+                        <textarea class="form-control" name="duplicate_condition" id="duplicate_condition" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Row Condition</label>
+                        <textarea class="form-control" name="row_condition" id="row_condition" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Origin Details Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Origin Details</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Come Up By</label>
+                        <input type="text" class="form-control" name="come_up_by" id="come_up_by">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Type App</label>
+                        <input type="text" class="form-control" name="type_app" id="type_app">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create DOA</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit DOA -->
+<div class="offcanvas offcanvas-end offcanvas-large" tabindex="-1" id="offcanvas_edit_doa">
+    <div class="offcanvas-header border-bottom">
+        <h4>Edit DOA</h4>
+        <button type="button"
+            class="btn-close custom-btn-close border p-1 me-0 d-flex align-items-center justify-content-center rounded-circle"
+            data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="ti ti-x"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+        <form action="{% url 'edit_doa' %}" method="POST" id="editDoaForm">
+            {% csrf_token %}
+            <input type="hidden" name="doa_id" id="edit_doa_id">
+            
+            <!-- Basic Information Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Basic Information</h5>
+                </div>
+                
+                <!-- Document Type (Dd) -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Document Type (Dd) <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="dd" id="edit_dd" required>
+                            <option value="">Select Document Type</option>
+                            <option value="Leave">Leave</option>
+                            <option value="Camp">Camp</option>
+                            <option value="Resignation">Resignation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-control select" name="category" id="edit_category" required>
+                            <option value="">Select Category</option>
+                            <option value="Staff">Staff</option>
+                            <option value="Field Staff">Field Staff</option>
+                            <option value="Management">Management</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Job Number -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Job Number</label>
+                        <input type="text" class="form-control" name="job_no" id="edit_job_no">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Description</label>
+                        <input type="text" class="form-control" name="desy" id="edit_desy">
+                    </div>
+                </div>
+
+                <!-- Authorised Person -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Authorised Person</label>
+                        <input type="text" class="form-control" name="authorised_person" id="edit_authorised_person">
+                    </div>
+                </div>
+
+                <!-- Purpose -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Purpose</label>
+                        <input type="text" class="form-control" name="purpose" id="edit_purpose">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approval Levels Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Approval Levels</h5>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 1</label>
+                        <input type="text" class="form-control" name="level_1" id="edit_level_1">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 2</label>
+                        <input type="text" class="form-control" name="level_2" id="edit_level_2">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 3</label>
+                        <input type="text" class="form-control" name="level_3" id="edit_level_3">
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="col-form-label">Level 4</label>
+                        <input type="text" class="form-control" name="level_4" id="edit_level_4">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approval Flow Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Approval Flow</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Approval Type</label>
+                        <input type="text" class="form-control" name="approval_type" id="edit_approval_type">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">App Reference</label>
+                        <input type="text" class="form-control" name="app_reference" id="edit_app_reference">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conditions Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Conditions</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Duplicate Condition</label>
+                        <textarea class="form-control" name="duplicate_condition" id="edit_duplicate_condition" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Row Condition</label>
+                        <textarea class="form-control" name="row_condition" id="edit_row_condition" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Origin Details Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="border-bottom pb-2">Origin Details</h5>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Come Up By</label>
+                        <input type="text" class="form-control" name="come_up_by" id="edit_come_up_by">
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="col-form-label">Type App</label>
+                        <input type="text" class="form-control" name="type_app" id="edit_type_app">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-light me-2" data-bs-dismiss="offcanvas">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update DOA</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Delete DOA Modal -->
+<div class="modal fade" id="delete_doa" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="avatar avatar-xl bg-danger-light rounded-circle mb-3">
+                        <i class="ti ti-trash-x fs-36 text-danger"></i>
+                    </div>
+                    <h4 class="mb-2">Remove DOA?</h4>
+                    <p class="mb-0">Are you sure you want to remove this DOA?</p>
+                    <form id="delete-doa-form" method="POST" action="{% url 'delete_doa' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="doa_id" id="delete_doa_id">
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <a href="#" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Yes, Delete it</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Initialize Select2 for all select elements
+    $('.select').select2({
+        width: '100%',
+        placeholder: 'Select options'
+    });
+
+    // Handle delete button click
+    $('.delete-doa-btn').on('click', function() {
+        const doaId = $(this).data('doa-id');
+        $('#delete_doa_id').val(doaId);
+    });
+
+    // Handle edit button click
+    $('.edit-doa-btn').on('click', function(e) {
+        e.preventDefault();
+        const doaId = $(this).data('doa-id');
+        
+        // Open edit offcanvas
+        const offcanvasElement = new bootstrap.Offcanvas(document.getElementById("offcanvas_edit_doa"));
+        offcanvasElement.show();
+
+        // Fetch DOA details and populate form
+        $.ajax({
+            url: "/get_doa_details/",
+            type: "GET",
+            data: { 'doa_id': doaId },
+            success: function(response) {
+                if (response) {
+                    // Set form fields
+                    $('#edit_doa_id').val(doaId);
+                    $('#edit_dd').val(response.dd).trigger('change');
+                    $('#edit_category').val(response.category).trigger('change');
+                    $('#edit_job_no').val(response.job_no);
+                    $('#edit_desy').val(response.desy);
+                    $('#edit_authorised_person').val(response.authorised_person);
+                    $('#edit_purpose').val(response.purpose);
+                    $('#edit_level_1').val(response.level_1);
+                    $('#edit_level_2').val(response.level_2);
+                    $('#edit_level_3').val(response.level_3);
+                    $('#edit_level_4').val(response.level_4);
+                    $('#edit_approval_type').val(response.approval_type);
+                    $('#edit_app_reference').val(response.app_reference);
+                    $('#edit_duplicate_condition').val(response.duplicate_condition);
+                    $('#edit_row_condition').val(response.row_condition);
+                    $('#edit_come_up_by').val(response.come_up_by);
+                    $('#edit_type_app').val(response.type_app);
+                } else {
+                    alert('Error fetching DOA details');
+                }
+            },
+            error: function() {
+                alert('Error fetching DOA details');
+            }
+        });
+    });
+});
+</script> 
