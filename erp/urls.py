@@ -46,8 +46,12 @@ urlpatterns = [
     path('after-login/', my_login_view, name='after-login'),
     path('logout/', logout, name='logout'),
     path('index', payroll_views.index, name='index'),
+    path('get_dashboard_data/', payroll_views.get_dashboard_data, name='get_dashboard_data'),
     path('payroll_dashboard', payroll_views.payroll_dashboard, name='payroll_dashboard'),
     path('hr_metrics_dashboard/', payroll_views.hr_metrics_dashboard, name='hr_metrics_dashboard'),
+    path('hr-metrics-data/', payroll_views.index, name='hr_metrics_data'),
+
+
     path('', auth_views.Login.as_view(), name='login'),
     path('users/', auth_views.UserMasterList.as_view(), name='user_list'),
     path('users/create/', auth_views.UserMasterCreate.as_view(), name='user_create'),
@@ -63,7 +67,13 @@ urlpatterns = [
     path('leave_transaction/delete/', views.leave_transaction_delete, name='leave_transaction_delete'),
     path('leave_approval/', views.leave_approval_list, name='leave_approval_list'),
     path('leave_approval/submit/', views.leave_approval, name='leave_approval'),
-    
+
+    #DOA Master URLs
+    path('doa_list/', views.doa_list, name='doa_list'),
+    path('create_doa/', views.create_doa, name='create_doa'),
+    path('edit_doa/', views.edit_doa, name='edit_doa'),
+    path('delete_doa/', views.delete_doa, name='delete_doa'),
+    path('get_doa_details/', views.get_doa_details, name='get_doa_details'),
 
     #seed Master urls
     path('create_seed/', views.create_seed, name='create_seed'),

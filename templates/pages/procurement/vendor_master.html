@@ -69,10 +69,12 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if vendor.is_active %}
+                                            {% if vendor.is_active == 'ACTIVE' %}
                                             <span class="badge bg-success">Active</span>
-                                            {% else %}
+                                            {% elif vendor.is_active == 'INACTIVE' %}
                                             <span class="badge bg-danger">Inactive</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">{{ vendor.is_active|default:"-" }}</span>
                                             {% endif %}
                                         </td>
                                         <td>
@@ -164,7 +166,7 @@
                     $("#edit_vendor_type_detailed").val(response.vendor_type_detailed);
                     $("#edit_category").val(response.category);
                     $("#edit_category_detailed").val(response.category_detailed);
-                    $("#edit_is_active").val(response.is_active.toString());
+                    $("#edit_is_active").val(response.is_active);
                     
                     // Populate contact fields
                     $("#edit_contact_person_1").val(response.contact_person_1);

@@ -799,56 +799,252 @@ def deactivate_employee(request, employee_id):
     return redirect('/employee')  # Redirect to the employee list page
 def index(request):
     set_comp_code(request)
+    
     # Employee Statistics
     total_employees = Employee.objects.filter(comp_code=COMP_CODE).count()
-    active_employees = Employee.objects.filter(comp_code = COMP_CODE,emp_status='ACTIVE').count()
-    on_leave_employees = Employee.objects.filter(comp_code = COMP_CODE,release_reason='ON LEAVE').count()
-    # on_job active - leave
+    active_employees = Employee.objects.filter(comp_code=COMP_CODE, emp_status='ACTIVE').count()
+    on_leave_employees = Employee.objects.filter(comp_code=COMP_CODE, release_reason='ON LEAVE').count()
     on_job_active_employees = active_employees - on_leave_employees
-    # inactive_employees = Employee.objects.filter(emp_status='INACTIVE').count()
     
     # Recent Leave Requests
     recent_leaves = LeaveTransaction.objects.filter(
-        comp_code = COMP_CODE,
+        comp_code=COMP_CODE,
         created_on__gte=timezone.now() - timedelta(days=10)
     ).order_by('-created_on')[:5]
-
-    # Chart Data
-    chart_data = {
-        'labels': json.dumps(['Active', 'On Leave', 'Inactive']),
-        'values': json.dumps([active_employees, on_leave_employees, on_job_active_employees])
-    }
-
-    # Department Distribution
-    departments = Employee.objects.filter(comp_code=COMP_CODE).values('department').annotate(
-        count=Count('employee_id')
-    ).exclude(department__isnull=True).order_by('-count')[:5]
-
-    department_data = {
-        'labels': json.dumps([dept['department'] for dept in departments]),
-        'values': json.dumps([dept['count'] for dept in departments])
-    }
-
-    # Camp Occupancy
-    total_beds = CampBeds.objects.filter(comp_code=COMP_CODE).count()
-    occupied_beds = CampBeds.objects.filter(comp_code=COMP_CODE,bed_status='Occupied').count()
-    camp_occupancy = round((occupied_beds / total_beds * 100) if total_beds > 0 else 0, 1)
-    available_beds_percentage = round(100 - camp_occupancy, 1)  # Calculate available beds percentage
 
     context = {
         'total_employees': total_employees,
         'active_employees': active_employees,
         'on_leave_employees': on_leave_employees,
-        # 'inactive_employees': inactive_employees,
         'on_job_active_employees': on_job_active_employees,
         'recent_leaves': recent_leaves,
-        'chart_data': chart_data,
-        'department_data': department_data,
-        'camp_occupancy': camp_occupancy,
-        'available_beds_percentage': available_beds_percentage,
     }
 
     return render(request, 'pages/dashboard/index.html', context)
+
+
+def get_dashboard_data(request):
+    """AJAX endpoint to fetch dashboard metrics data"""
+    set_comp_code(request)
+    
+    # Get time range and table type from request
+    time_range = request.GET.get('time_range', 'current_month')
+    table_type = request.GET.get('table', '')
+    
+    # Calculate date range
+    today = timezone.now().date()
+    if time_range == 'current_month':
+        start_date = today.replace(day=1)
+        end_date = today
+    else:  # YTD
+        start_date = today.replace(month=1, day=1)
+        end_date = today
+    
+    # Return data based on table type
+    if table_type == 'resignation':
+        return get_resignation_data(start_date, end_date)
+    elif table_type == 'new_joiners':
+        return get_new_joiners_data(start_date, end_date)
+    elif table_type == 'renewal':
+        return get_renewal_data(start_date, end_date)
+    elif table_type == 'comparison':
+        return get_comparison_data(start_date, end_date)
+    elif table_type == 'recruitment':
+        return get_recruitment_data(start_date, end_date)
+    elif table_type == 'staff_categories':
+        return get_staff_categories_data(start_date, end_date)
+    else:
+        # Return all data if no specific table requested
+        return get_all_dashboard_data(start_date, end_date)
+
+def get_resignation_data(start_date, end_date):
+    """Get resignation data"""
+    resignation_received = Offboarding.objects.filter(
+        comp_code=COMP_CODE,
+        created_on__range=[start_date, end_date]
+    ).count()
+    resignation_approved = Offboarding.objects.filter(
+        comp_code=COMP_CODE,
+        offboarding_id__in=ExitProcess.objects.filter(comp_code=COMP_CODE).values('offboarding_id'),
+        created_on__range=[start_date, end_date]
+    ).count()
+    resignation_cancelled = Offboarding.objects.filter(
+        comp_code=COMP_CODE,
+        offboarding_id__in=ExitProcess.objects.filter(comp_code=COMP_CODE).values('offboarding_id'),
+        created_on__range=[start_date, end_date]
+    ).count()
+    resignation_exit = Offboarding.objects.filter(
+        comp_code=COMP_CODE,
+        offboarding_id__in=ExitProcess.objects.filter(comp_code=COMP_CODE).values('offboarding_id'),
+        created_on__range=[start_date, end_date]
+    ).count()
+    
+    return JsonResponse({
+        'resignation_data': {
+            'received': resignation_received,
+            'approved': resignation_approved,
+            'cancelled': resignation_cancelled,
+            'exit': resignation_exit
+        }
+    })
+
+def get_new_joiners_data(start_date, end_date):
+    """Get new joiners data"""
+    visa_received_count = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        visa_submission='DONE',
+        created_on__range=[start_date, end_date]
+    ).count()
+    joined_count = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        emp_status='ACTIVE',
+        date_of_join__range=[start_date, end_date]
+    ).count()
+    plvp_count = EmployeePPDetails.objects.filter(
+        comp_code=COMP_CODE,
+        created_on__range=[start_date, end_date]
+    ).count()
+    
+    return JsonResponse({
+        'new_joiners_data': {
+            'visa_received': visa_received_count,
+            'joined': joined_count,
+            'plvp': plvp_count
+        }
+    })
+
+def get_renewal_data(start_date, end_date):
+    """Get renewal data"""
+    renewal_due = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        emp_status='ACTIVE'
+    ).count()  # Placeholder
+    renewal_in_process = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        emp_status='ACTIVE'
+    ).count()  # Placeholder
+    renewal_completed = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        emp_status='ACTIVE'
+    ).count()  # Placeholder
+    
+    return JsonResponse({
+        'renewal_data': {
+            'due': renewal_due,
+            'in_process': renewal_in_process,
+            'completed': renewal_completed
+        }
+    })
+
+def get_comparison_data(start_date, end_date):
+    """Get comparison data"""
+    comparison_new_joiners = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        emp_status='ACTIVE',
+        date_of_join__range=[start_date, end_date]
+    ).count()
+    comparison_cancellation = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        release_reason='CANCELLED',
+        created_on__range=[start_date, end_date]
+    ).count()
+    
+    return JsonResponse({
+        'comparison_data': {
+            'new_joiners': comparison_new_joiners,
+            'cancellation': comparison_cancellation
+        }
+    })
+
+def get_recruitment_data(start_date, end_date):
+    """Get recruitment data"""
+    recruitment_ao_issued = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        ao_acceptance='Yes',
+        created_on__date__range=[start_date, end_date]
+    ).count()
+    recruitment_visa_applied = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        visa_issued_date__isnull=False,
+        visa_expiry_date__isnull=False,
+        created_on__date__range=[start_date, end_date]
+    ).count()
+    recruitment_visa_received = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        visa_submission='DONE',
+        created_on__date__range=[start_date, end_date]
+    ).count()
+    recruitment_visa_rejected = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        visa_submission='CANCELLED & EXIT',
+        created_on__date__range=[start_date, end_date]
+    ).count()
+    recruitment_visa_pending = Recruitment.objects.filter(
+        comp_code=COMP_CODE,
+        visa_submission='NOT DONE',
+        created_on__date__range=[start_date, end_date]
+    ).count()
+    
+    return JsonResponse({
+        'recruitment_data': {
+            'ao_issued': recruitment_ao_issued,
+            'visa_applied': recruitment_visa_applied,
+            'visa_received': recruitment_visa_received,
+            'visa_rejected': recruitment_visa_rejected,
+            'visa_pending': recruitment_visa_pending
+        }
+    })
+
+def get_staff_categories_data(start_date, end_date):
+    """Get staff categories data"""
+    field_staff = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        category='FIELD STAFF',
+        created_on__range=[start_date, end_date]
+    )
+    staff = Employee.objects.filter(
+        comp_code=COMP_CODE,
+        category='STAFF',
+        created_on__range=[start_date, end_date]
+    )
+    
+    return JsonResponse({
+        'staff_categories': {
+            'field_staff': {
+                'soft': field_staff.filter(department='SOFT SERVICES').count(),
+                'hard': field_staff.filter(department='HARD SERVICES').count(),
+                'projects': field_staff.filter(prj_code__isnull=False).count()
+            },
+            'staff': {
+                'soft': staff.filter(department='SOFT SERVICES').count(),
+                'hard': staff.filter(department='HARD SERVICES').count(),
+                'projects': staff.filter(prj_code__isnull=False).count()
+            }
+        }
+    })
+
+def get_all_dashboard_data(start_date, end_date):
+    """Get all dashboard data (for backward compatibility)"""
+    resignation_data = get_resignation_data(start_date, end_date).content
+    new_joiners_data = get_new_joiners_data(start_date, end_date).content
+    renewal_data = get_renewal_data(start_date, end_date).content
+    comparison_data = get_comparison_data(start_date, end_date).content
+    recruitment_data = get_recruitment_data(start_date, end_date).content
+    staff_categories_data = get_staff_categories_data(start_date, end_date).content
+    
+    # Parse JSON responses and combine
+    import json
+    all_data = {}
+    all_data.update(json.loads(resignation_data.decode()))
+    all_data.update(json.loads(new_joiners_data.decode()))
+    all_data.update(json.loads(renewal_data.decode()))
+    all_data.update(json.loads(comparison_data.decode()))
+    all_data.update(json.loads(recruitment_data.decode()))
+    all_data.update(json.loads(staff_categories_data.decode()))
+    
+    return JsonResponse(all_data)
+
+
 def payroll_dashboard(request):
     comp_code = request.session.get('comp_code')
     six_months_ago = datetime.now() - timedelta(days=180)
@@ -6819,8 +7015,8 @@ def ao_entry_create(request):
                     document_status=document_status,
                     interview_date=interview_date,
                     ecnr=ecnr,
-                    # created_by=request.session.get('username'),
-                    # created_on=now()
+                    created_by=request.session.get('username'),
+                    created_on=now()
                 )
                 
                 # Update MRF detail remaining quantity if selected
@@ -6937,6 +7133,8 @@ def ao_entry_update(request):
             ao_entry.document_status = request.POST.get('document_status')
             ao_entry.interview_date = request.POST.get('interview_date') or None
             ao_entry.ecnr = request.POST.get('ecnr')
+            ao_entry.modified_by=request.session.get('username'),
+            ao_entry.modified_on=now()
             
             # Get selected MRF detail ID and update remaining quantity
             selected_mrf_detail_id = request.POST.get('selected_mrf_detail_id')
@@ -7159,6 +7357,8 @@ def employee_pp_create(request):
             insurance_status=request.POST.get('insurance_status'),
             insurance_card_number=request.POST.get('insurance_card_number'),
             insurance_expiry_date=request.POST.get('insurance_expiry_date') or None,
+            created_by=request.user.username,
+            created_on=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         )
         
         # Handle document uploads with new multi-entry structure
@@ -7361,6 +7561,8 @@ def employee_pp_update(request):
             eid_remarks_value = request.POST.get('eid_remarks')
             if eid_remarks_value:
                 obj.eid_remarks = (obj.eid_remarks or "") + ": " + eid_remarks_value if obj.eid_remarks else eid_remarks_value
+            obj.modified_by=request.user.username,
+            obj.modified_on=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             obj.save()
             
             # Handle document deletions
@@ -11766,3 +11968,186 @@ def get_cancellation_types_by_category(request):
             'success': False,
             'message': str(e)
         })
+
+# ------------------------------------------------------------------------------------------------------------
+# DOA (Delegation of Authority) Views
+
+def doa_list(request):
+    """List all DOA records"""
+    set_comp_code(request)
+    keyword = request.GET.get('keyword', '').strip()
+    
+    # Base query
+    query = DOAMaster.objects.filter(comp_code=COMP_CODE, is_active=True)
+    
+    # Search filter
+    if keyword:
+        query = query.filter(
+            Q(dd__icontains=keyword) |
+            Q(category__icontains=keyword) |
+            Q(job_no__icontains=keyword) |
+            Q(desy__icontains=keyword) |
+            Q(authorised_person__icontains=keyword) |
+            Q(purpose__icontains=keyword) |
+            Q(approval_type__icontains=keyword) |
+            Q(app_reference__icontains=keyword)
+        )
+    
+    # Order by creation date
+    doas = query.order_by('-created_at')
+    
+    context = {
+        'doas': doas,
+        'keyword': keyword,
+    }
+    
+    return render(request, 'pages/payroll/doa/doa.html', context)
+
+def create_doa(request):
+    """Create new DOA record"""
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                # Get form data
+                dd = request.POST.get('dd')
+                category = request.POST.get('category')
+                job_no = request.POST.get('job_no')
+                desy = request.POST.get('desy')
+                authorised_person = request.POST.get('authorised_person')
+                purpose = request.POST.get('purpose')
+                level_1 = request.POST.get('level_1')
+                level_2 = request.POST.get('level_2')
+                level_3 = request.POST.get('level_3')
+                level_4 = request.POST.get('level_4')
+                approval_type = request.POST.get('approval_type')
+                app_reference = request.POST.get('app_reference')
+                duplicate_condition = request.POST.get('duplicate_condition')
+                row_condition = request.POST.get('row_condition')
+                come_up_by = request.POST.get('come_up_by')
+                type_app = request.POST.get('type_app')
+                
+                # Create DOA record
+                doa = DOAMaster.objects.create(
+                    comp_code=COMP_CODE,
+                    dd=dd,
+                    category=category,
+                    job_no=job_no,
+                    desy=desy,
+                    authorised_person=authorised_person,
+                    purpose=purpose,
+                    level_1=level_1,
+                    level_2=level_2,
+                    level_3=level_3,
+                    level_4=level_4,
+                    approval_type=approval_type,
+                    app_reference=app_reference,
+                    duplicate_condition=duplicate_condition,
+                    row_condition=row_condition,
+                    come_up_by=come_up_by,
+                    type_app=type_app,
+                    created_by=request.user.username if request.user.is_authenticated else 'system',
+                    updated_by=request.user.username if request.user.is_authenticated else 'system',
+                )
+                
+                messages.success(request, f'DOA record created successfully!')
+                return redirect('doa_list')
+                
+        except Exception as e:
+            messages.error(request, f'Error creating DOA record: {str(e)}')
+            return redirect('doa_list')
+    
+    return redirect('doa_list')
+
+def edit_doa(request):
+    """Edit existing DOA record"""
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                doa_id = request.POST.get('doa_id')
+                doa = get_object_or_404(DOAMaster, id=doa_id, comp_code=COMP_CODE)
+                
+                # Update fields
+                doa.dd = request.POST.get('dd')
+                doa.category = request.POST.get('category')
+                doa.job_no = request.POST.get('job_no')
+                doa.desy = request.POST.get('desy')
+                doa.authorised_person = request.POST.get('authorised_person')
+                doa.purpose = request.POST.get('purpose')
+                doa.level_1 = request.POST.get('level_1')
+                doa.level_2 = request.POST.get('level_2')
+                doa.level_3 = request.POST.get('level_3')
+                doa.level_4 = request.POST.get('level_4')
+                doa.approval_type = request.POST.get('approval_type')
+                doa.app_reference = request.POST.get('app_reference')
+                doa.duplicate_condition = request.POST.get('duplicate_condition')
+                doa.row_condition = request.POST.get('row_condition')
+                doa.come_up_by = request.POST.get('come_up_by')
+                doa.type_app = request.POST.get('type_app')
+                doa.updated_by = request.user.username if request.user.is_authenticated else 'system'
+                doa.save()
+                
+                messages.success(request, f'DOA record updated successfully!')
+                return redirect('doa_list')
+                
+        except Exception as e:
+            messages.error(request, f'Error updating DOA record: {str(e)}')
+            return redirect('doa_list')
+    
+    return redirect('doa_list')
+
+def delete_doa(request):
+    """Delete DOA record (soft delete)"""
+    if request.method == 'POST':
+        try:
+            doa_id = request.POST.get('doa_id')
+            doa = get_object_or_404(DOAMaster, id=doa_id, comp_code=COMP_CODE)
+            
+            # Soft delete
+            doa.is_active = False
+            doa.updated_by = request.user.username if request.user.is_authenticated else 'system'
+            doa.save()
+            
+            messages.success(request, f'DOA record deleted successfully!')
+            return redirect('doa_list')
+            
+        except Exception as e:
+            messages.error(request, f'Error deleting DOA record: {str(e)}')
+            return redirect('doa_list')
+    
+    return redirect('doa_list')
+
+def get_doa_details(request):
+    """Get DOA details for AJAX edit"""
+    if request.method == 'GET':
+        try:
+            doa_id = request.GET.get('doa_id')
+            doa = get_object_or_404(DOAMaster, id=doa_id, comp_code=COMP_CODE)
+            
+            data = {
+                'dd': doa.dd,
+                'category': doa.category,
+                'job_no': doa.job_no,
+                'desy': doa.desy,
+                'authorised_person': doa.authorised_person,
+                'purpose': doa.purpose,
+                'level_1': doa.level_1,
+                'level_2': doa.level_2,
+                'level_3': doa.level_3,
+                'level_4': doa.level_4,
+                'approval_type': doa.approval_type,
+                'app_reference': doa.app_reference,
+                'duplicate_condition': doa.duplicate_condition,
+                'row_condition': doa.row_condition,
+                'come_up_by': doa.come_up_by,
+                'type_app': doa.type_app,
+                'approval_status': doa.approval_status,
+                'can_edit': doa.can_edit,
+                'can_view': doa.can_view,
+            }
+            
+            return JsonResponse(data)
+            
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

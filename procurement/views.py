@@ -1915,7 +1915,7 @@ def vendor_master_add(request):
 
             # Handle logo upload
             logo = request.FILES.get('logo')
-            
+
             # Create new vendor
             vendor = VendorMaster(
                 vendor_code=vendor_code,
@@ -1983,7 +1983,7 @@ def vendor_master_add(request):
                 flag=request.POST.get('flag'),
                 doc_type=request.POST.get('doc_type'),
                 remarks=request.POST.get('remarks'),
-                is_active=request.POST.get('is_active') == 'true',
+                is_active=request.POST.get('is_active'),
                 created_by=request.user.username,
                 comp_code=COMP_CODE,
             )
@@ -2101,7 +2101,8 @@ def vendor_master_edit(request):
             logo = request.FILES.get('logo')
             if logo:
                 vendor.logo = logo
-            
+
+            print(request.POST.get('is_active'))
             # Update vendor fields
             vendor.vendor_short_code = request.POST.get('vendor_short_code')
             vendor.vendor_name = request.POST.get('vendor_name')
@@ -2166,7 +2167,7 @@ def vendor_master_edit(request):
             vendor.flag = request.POST.get('flag')
             vendor.doc_type = request.POST.get('doc_type')
             vendor.remarks = request.POST.get('remarks')
-            vendor.is_active = request.POST.get('is_active') == 'true'
+            vendor.is_active = request.POST.get('is_active')
             vendor.updated_by = request.user.username
             vendor.save()
 

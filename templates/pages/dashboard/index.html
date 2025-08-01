@@ -55,7 +55,7 @@
                             </div>
                             <div class="ms-3">
                                 <h5 class="mb-1">On Leave</h5>
-                                <h2 class="mb-0">{{ on_leave_employees }}</h2>
+                                <h2 class="mb-0" id="on-leave">{{ on_leave_employees }}</h2>
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                             </div>
                             <div class="ms-3">
                                 <h5 class="mb-1">On Job</h5>
-                                <h2 class="mb-0">{{ on_job_active_employees }}</h2>
+                                <h2 class="mb-0" id="on-job">{{ on_job_active_employees }}</h2>
                             </div>
                         </div>
                     </div>
@@ -78,28 +78,19 @@
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="row">
-            <div class="col-md-7">
-                <div class="card">
+        <!-- Recent Leave Requests - Full Width -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
                     <div class="card-header border-0 pb-0">
                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-                            <h4><i class="ti ti-grip-vertical me-1"></i>Recent Leave Requests</h4>
-                            <!-- <div class="dropdown">
-                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
-                                    <i class="ti ti-calendar-check me-2"></i>Last 10 days
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
-                                </div>
-                            </div> -->
+                            <h5 class="mb-0"><i class="ti ti-calendar me-2"></i>Recent Leave Requests</h5>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive custom-table">
-                            <table class="table datatable">
-                                <thead class="thead-light">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
                                     <tr>
                                         <th>Employee</th>
                                         <th>Leave Type</th>
@@ -111,23 +102,23 @@
                                     {% for leave in recent_leaves %}
                                     <tr>
                                         <td>
-                                            <h2 class="d-flex align-items-center">
-                                                <a href="#" class="avatar avatar-sm border me-2">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3">
                                                     {% for employee in employee_data %}
                                                     {% if employee.emp_code == leave.employee_code %}
-                                                    <img class="w-auto h-auto" src="{{ employee.emp_profile_picture }}" alt="User Image"/>
+                                                    <img class="rounded-circle" src="{{ employee.emp_profile_picture }}" alt="User Image" style="width: 32px; height: 32px;"/>
                                                     {% endif %}
                                                     {% endfor %}
-                                                </a>
-                                                <a href="#" class="d-flex flex-column">
-                                                    {{ leave.employee_name }}
-                                                </a>
-                                            </h2>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ leave.employee_name }}</h6>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td>{{ leave.leave_type }}</td>
+                                        <td><span class="badge bg-primary">{{ leave.leave_type }}</span></td>
                                         <td>{{ leave.start_date }} - {{ leave.end_date }}</td>
                                         <td>
-                                            <span class="badge badge-pill {% if leave.hr_status == 'Approved' %}bg-success{% elif leave.hr_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                            <span class="badge {% if leave.hr_status == 'Approved' %}bg-success{% elif leave.hr_status == 'Pending' %}bg-warning{% else %}bg-danger{% endif %}">
                                                 {{ leave.hr_status }}
                                             </span>
                                         </td>
@@ -139,69 +130,205 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-5 d-flex">
-                <div class="card w-100">
-                    <div class="card-header border-0 pb-0">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-                            <h4><i class="ti ti-grip-vertical me-1"></i>Employee Status</h4>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
-                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="employee-status-chart"></div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
+        <!-- HR Metrics Dashboard -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
                     <div class="card-header border-0 pb-0">
                         <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-                            <h4><i class="ti ti-grip-vertical me-1"></i>Department Distribution</h4>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
-                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
-                                </div>
-                            </div>
+                            <h5 class="mb-0"><i class="ti ti-chart-bar me-2"></i>HR Metrics Dashboard</h5>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div id="department-chart"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header border-0 pb-0">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-                            <h4><i class="ti ti-grip-vertical me-1"></i>Camp Occupancy</h4>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);">
-                                    <i class="ti ti-calendar-check me-2"></i>Last 30 days
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 15 days</a>
-                                    <a href="javascript:void(0);" class="dropdown-item">Last 30 days</a>
+                        <div class="row">
+                            <!-- Resignation Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">Resignation</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="resignation">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Received</th>
+                                                <th class="text-center">Approved</th>
+                                                <th class="text-center">Cancelled</th>
+                                                <th class="text-center">Exit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-primary fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-warning fw-bold">0</td>
+                                                <td class="text-center text-danger fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Joiners Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">New Joiners</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="new-joiners">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Visa Received</th>
+                                                <th class="text-center">Joined</th>
+                                                <th class="text-center">PLVP</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-info fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-warning fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Renewal Table -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">Renewal</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="renewal">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Renewal Due</th>
+                                                <th class="text-center">In Process</th>
+                                                <th class="text-center">Completed</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-warning fw-bold">0</td>
+                                                <td class="text-center text-info fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Joiners vs Cancellation Comparison -->
+                            <div class="col-md-6 mb-4">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">New Joiners vs Cancellation</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="comparison">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">New Joiners</th>
+                                                <th class="text-center">Cancellation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-danger fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Recruitment Table -->
+                            <div class="col-md-12 mb-4">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">Recruitment</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="recruitment">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">AO Issued</th>
+                                                <th class="text-center">Visa Applied</th>
+                                                <th class="text-center">Visa Received</th>
+                                                <th class="text-center">Visa Rejected</th>
+                                                <th class="text-center">Visa Pending</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center text-primary fw-bold">0</td>
+                                                <td class="text-center text-info fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-danger fw-bold">0</td>
+                                                <td class="text-center text-warning fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Staff Categories Table -->
+                            <div class="col-md-12">
+                                <div class="table-responsive">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="text-muted mb-0">Staff Categories</h6>
+                                        <select class="form-select form-select-sm" style="width: auto;" name="time_range" data-table="staff-categories">
+                                            <option value="current_month" selected>Current Month</option>
+                                            <option value="ytd">YTD</option>
+                                            </select>
+                                    </div>
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center">Category</th>
+                                                <th class="text-center">Soft</th>
+                                                <th class="text-center">Hard</th>
+                                                <th class="text-center">Projects</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="fw-bold">Field Staff</td>
+                                                <td class="text-center text-primary fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-info fw-bold">0</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="fw-bold">Staff</td>
+                                                <td class="text-center text-primary fw-bold">0</td>
+                                                <td class="text-center text-success fw-bold">0</td>
+                                                <td class="text-center text-info fw-bold">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="camp-occupancy-chart"></div>
                     </div>
                 </div>
             </div>
@@ -209,88 +336,368 @@
     </div>
 </div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Dashboard Script -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Employee Status Chart
-    const statusCtx = document.getElementById('employee-status-chart').getContext('2d');
-    const chartData = {
-        labels: ['Active', 'On Leave', 'Inactive'],
-        datasets: [{
-            data: [
-                {{ active_employees }},
-                {{ on_leave_employees }},
-                {{ inactive_employees }}
-            ],
-            backgroundColor: ['#28a745', '#ffc107', '#dc3545']
-        }]
-    };
+    console.log('HR Dashboard loaded successfully');
     
-    new Chart(statusCtx, {
-        type: 'pie',
-        data: chartData,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
+    // Load initial dashboard data for all tables
+    loadAllTableData();
+    
+    // Handle time range changes for each table independently
+    document.querySelectorAll('select[name="time_range"]').forEach(function(select) {
+        select.addEventListener('change', function() {
+            const timeRange = this.value;
+            const tableType = this.getAttribute('data-table');
+            
+            if (tableType) {
+                loadSpecificTableData(tableType, timeRange);
             }
-        }
-    });
-
-    // Department Distribution Chart
-    const deptCtx = document.getElementById('department-chart').getContext('2d');
-    new Chart(deptCtx, {
-        type: 'bar',
-        data: {
-            labels: {{ department_data.labels|safe }},
-            datasets: [{
-                label: 'Employees per Department',
-                data: {{ department_data.values|safe }},
-                backgroundColor: '#0d6efd'
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-
-    // Camp Occupancy Chart
-    const campCtx = document.getElementById('camp-occupancy-chart').getContext('2d');
-    new Chart(campCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Occupied', 'Available'],
-            datasets: [{
-                data: [{{ camp_occupancy }}, {{ available_beds_percentage }}],
-                backgroundColor: ['#0d6efd', '#e9ecef']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
+        });
     });
 });
+
+function loadAllTableData() {
+    // Load data for each table with their individual time ranges
+    loadResignationData(getTableTimeRange('resignation'));
+    loadNewJoinersData(getTableTimeRange('new-joiners'));
+    loadRenewalData(getTableTimeRange('renewal'));
+    loadComparisonData(getTableTimeRange('comparison'));
+    loadRecruitmentData(getTableTimeRange('recruitment'));
+    loadStaffCategoriesData(getTableTimeRange('staff-categories'));
+}
+
+function loadSpecificTableData(tableType, timeRange) {
+    switch(tableType) {
+        case 'resignation':
+            loadResignationData(timeRange);
+            break;
+        case 'new-joiners':
+            loadNewJoinersData(timeRange);
+            break;
+        case 'renewal':
+            loadRenewalData(timeRange);
+            break;
+        case 'comparison':
+            loadComparisonData(timeRange);
+            break;
+        case 'recruitment':
+            loadRecruitmentData(timeRange);
+            break;
+        case 'staff-categories':
+            loadStaffCategoriesData(timeRange);
+            break;
+    }
+}
+
+function getTableTimeRange(tableType) {
+    const select = document.querySelector(`select[data-table="${tableType}"]`);
+    return select ? select.value : 'current_month';
+}
+
+function loadResignationData(timeRange) {
+    showTableLoading('resignation');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=resignation`)
+        .then(response => response.json())
+        .then(data => {
+            updateResignationTable(data.resignation_data);
+            hideTableLoading('resignation');
+        })
+        .catch(error => {
+            console.error('Error fetching resignation data:', error);
+            hideTableLoading('resignation');
+        });
+}
+
+function loadNewJoinersData(timeRange) {
+    showTableLoading('new-joiners');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=new_joiners`)
+        .then(response => response.json())
+        .then(data => {
+            updateNewJoinersTable(data.new_joiners_data);
+            hideTableLoading('new-joiners');
+        })
+        .catch(error => {
+            console.error('Error fetching new joiners data:', error);
+            hideTableLoading('new-joiners');
+        });
+}
+
+function loadRenewalData(timeRange) {
+    showTableLoading('renewal');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=renewal`)
+        .then(response => response.json())
+        .then(data => {
+            updateRenewalTable(data.renewal_data);
+            hideTableLoading('renewal');
+        })
+        .catch(error => {
+            console.error('Error fetching renewal data:', error);
+            hideTableLoading('renewal');
+        });
+}
+
+function loadComparisonData(timeRange) {
+    showTableLoading('comparison');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=comparison`)
+        .then(response => response.json())
+        .then(data => {
+            updateComparisonTable(data.comparison_data);
+            hideTableLoading('comparison');
+        })
+        .catch(error => {
+            console.error('Error fetching comparison data:', error);
+            hideTableLoading('comparison');
+        });
+}
+
+function loadRecruitmentData(timeRange) {
+    showTableLoading('recruitment');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=recruitment`)
+        .then(response => response.json())
+        .then(data => {
+            updateRecruitmentTable(data.recruitment_data);
+            hideTableLoading('recruitment');
+        })
+        .catch(error => {
+            console.error('Error fetching recruitment data:', error);
+            hideTableLoading('recruitment');
+        });
+}
+
+function loadStaffCategoriesData(timeRange) {
+    showTableLoading('staff-categories');
+    fetch(`/get_dashboard_data/?time_range=${timeRange}&table=staff_categories`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Staff categories response:', data);
+            updateStaffCategoriesTable(data.staff_categories);
+            hideTableLoading('staff-categories');
+        })
+        .catch(error => {
+            console.error('Error fetching staff categories data:', error);
+            hideTableLoading('staff-categories');
+        });
+}
+
+// Removed updateAllSelects function since we don't want to sync all selects anymore
+
+function updateResignationTable(data) {
+    if (data) {
+        const resignationTable = document.querySelector('.col-md-6:first-child .table tbody tr');
+        if (resignationTable) {
+            resignationTable.querySelector('td:nth-child(1)').textContent = data.received || 0;
+            resignationTable.querySelector('td:nth-child(2)').textContent = data.approved || 0;
+            resignationTable.querySelector('td:nth-child(3)').textContent = data.cancelled || 0;
+            resignationTable.querySelector('td:nth-child(4)').textContent = data.exit || 0;
+        }
+    }
+}
+
+function updateNewJoinersTable(data) {
+    if (data) {
+        const newJoinersTable = document.querySelector('.col-md-6:nth-child(2) .table tbody tr');
+        if (newJoinersTable) {
+            newJoinersTable.querySelector('td:nth-child(1)').textContent = data.visa_received || 0;
+            newJoinersTable.querySelector('td:nth-child(2)').textContent = data.joined || 0;
+            newJoinersTable.querySelector('td:nth-child(3)').textContent = data.plvp || 0;
+        }
+    }
+}
+
+function updateRenewalTable(data) {
+    if (data) {
+        const renewalTable = document.querySelector('.col-md-6:nth-child(3) .table tbody tr');
+        if (renewalTable) {
+            renewalTable.querySelector('td:nth-child(1)').textContent = data.due || 0;
+            renewalTable.querySelector('td:nth-child(2)').textContent = data.in_process || 0;
+            renewalTable.querySelector('td:nth-child(3)').textContent = data.completed || 0;
+        }
+    }
+}
+
+function updateComparisonTable(data) {
+    if (data) {
+        const comparisonTable = document.querySelector('.col-md-6:nth-child(4) .table tbody tr');
+        if (comparisonTable) {
+            comparisonTable.querySelector('td:nth-child(1)').textContent = data.new_joiners || 0;
+            comparisonTable.querySelector('td:nth-child(2)').textContent = data.cancellation || 0;
+        }
+    }
+}
+
+function updateRecruitmentTable(data) {
+    if (data) {
+        const recruitmentTable = document.querySelector('.col-md-12:nth-child(5) .table tbody tr');
+        if (recruitmentTable) {
+            recruitmentTable.querySelector('td:nth-child(1)').textContent = data.ao_issued || 0;
+            recruitmentTable.querySelector('td:nth-child(2)').textContent = data.visa_applied || 0;
+            recruitmentTable.querySelector('td:nth-child(3)').textContent = data.visa_received || 0;
+            recruitmentTable.querySelector('td:nth-child(4)').textContent = data.visa_rejected || 0;
+            recruitmentTable.querySelector('td:nth-child(5)').textContent = data.visa_pending || 0;
+        }
+    }
+}
+
+function updateStaffCategoriesTable(data) {
+    if (data) {
+        console.log('Updating staff categories table with data:', data);
+        
+        // Find the staff categories table specifically using the data-table attribute
+        const staffCategoriesSelect = document.querySelector('select[data-table="staff-categories"]');
+        if (staffCategoriesSelect) {
+            const staffCategoriesContainer = staffCategoriesSelect.closest('.col-md-12');
+            if (staffCategoriesContainer) {
+                const tableBody = staffCategoriesContainer.querySelector('.table tbody');
+                if (tableBody) {
+                    const rows = tableBody.querySelectorAll('tr');
+                    console.log('Found rows:', rows.length);
+                    
+                    if (rows.length >= 2) {
+                        // Field Staff row (first row)
+                        const fieldStaffRow = rows[0];
+                        const fieldStaffCells = fieldStaffRow.querySelectorAll('td');
+                        
+                        if (fieldStaffCells.length >= 4) {
+                            fieldStaffCells[1].textContent = data.field_staff.soft || 0;
+                            fieldStaffCells[2].textContent = data.field_staff.hard || 0;
+                            fieldStaffCells[3].textContent = data.field_staff.projects || 0;
+                            console.log('Updated Field Staff row');
+                        }
+                        
+                        // Staff row (second row)
+                        const staffRow = rows[1];
+                        const staffCells = staffRow.querySelectorAll('td');
+                        
+                        if (staffCells.length >= 4) {
+                            staffCells[1].textContent = data.staff.soft || 0;
+                            staffCells[2].textContent = data.staff.hard || 0;
+                            staffCells[3].textContent = data.staff.projects || 0;
+                            console.log('Updated Staff row');
+                        }
+                    } else {
+                        console.log('Not enough rows found in staff categories table');
+                    }
+                } else {
+                    console.log('Staff categories table body not found');
+                }
+            } else {
+                console.log('Staff categories container not found');
+            }
+        } else {
+            console.log('Staff categories select element not found');
+        }
+    } else {
+        console.log('No data provided to updateStaffCategoriesTable');
+    }
+}
+
+function showTableLoading(tableType) {
+    const tableContainer = getTableContainer(tableType);
+    if (tableContainer) {
+        tableContainer.style.opacity = '0.6';
+        tableContainer.style.pointerEvents = 'none';
+    }
+}
+
+function hideTableLoading(tableType) {
+    const tableContainer = getTableContainer(tableType);
+    if (tableContainer) {
+        tableContainer.style.opacity = '1';
+        tableContainer.style.pointerEvents = 'auto';
+    }
+}
+
+function getTableContainer(tableType) {
+    switch(tableType) {
+        case 'resignation':
+            return document.querySelector('.col-md-6:first-child .table-responsive');
+        case 'new-joiners':
+            return document.querySelector('.col-md-6:nth-child(2) .table-responsive');
+        case 'renewal':
+            return document.querySelector('.col-md-6:nth-child(3) .table-responsive');
+        case 'comparison':
+            return document.querySelector('.col-md-6:nth-child(4) .table-responsive');
+        case 'recruitment':
+            return document.querySelector('.col-md-12:nth-child(5) .table-responsive');
+        case 'staff-categories':
+            return document.querySelector('.col-md-12:last-child .table-responsive');
+        default:
+            return null;
+    }
+}
 </script>
+
+<style>
+/* Additional styling for better dashboard appearance */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.table-sm th,
+.table-sm td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.avatar-lg {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-success-light {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.bg-warning-light {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-info-light {
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.bg-danger-light {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .avatar-lg {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* Ensure content is scrollable */
+.page-wrapper {
+    min-height: 100vh;
+    position: relative;
+}
+
+.content {
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    max-height: calc(100vh - 120px) !important;
+    padding: 20px;
+    margin-top: 20px;
+}
+</style>
 
 {% endblock content %}
