@@ -610,60 +610,61 @@ document.addEventListener('DOMContentLoaded', function() {
                                             var months = (today.getFullYear() - serviceStart.getFullYear()) * 12 + 
                                                        (today.getMonth() - serviceStart.getMonth());
                                             
-                                            if (months >= 6) {
-                                                eligibleDays = months * 2;
-                                            }
+                                            // if (months >= 6) {
+                                            //     eligibleDays = months * 2;
+                                            // }
+                                            eligibleDays = data.eligible_days;
                                         }
                                         // Sick Leave-Paid calculation
                                         else if (data.description === 'Sick Leave-Paid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Paid') {
                                             if (monthsSinceJoin >= 6) {
-                                                eligibleDays = 15;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Sick Leave-halfpaid calculation
                                         else if (data.description === 'Sick Leave-halfpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
                                             if (monthsSinceJoin >= 6) {
-                                                eligibleDays = 30;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Sick Leave-Unpaid calculation
                                         else if (data.description === 'Sick Leave-Unpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
                                             if (monthsSinceJoin >= 6) {
-                                                eligibleDays = 45;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Maternity Leave calculation Full Paid
                                         else if (data.description === 'Maternity Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Paid') {
                                             if (monthsSinceJoin >= 12) {
-                                                eligibleDays = 45;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Maternity Leave calculation Half Paid
                                         else if (data.description === 'Maternity Leave-halfpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'halfpaid') {
                                             if (monthsSinceJoin >= 12) {
-                                                eligibleDays = 15;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Paternity Leave calculation
                                         else if (data.description === 'Paternity Leave-Unpaid' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
-                                            eligibleDays = 5;
+                                            eligibleDays = data.eligible_days;
                                         }
                                         // Bereavement Leave calculation
                                         else if (data.description === 'Bereavement Leave Spouse' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
-                                            eligibleDays = 5;
+                                            eligibleDays = data.eligible_days;
                                         }
                                         // Bereavement Leave calculation
                                         else if (data.description === 'Bereavement Leave Others' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
-                                            eligibleDays = 5;
+                                            eligibleDays = data.eligible_days;
                                         }
                                         // Hajj Leave calculation
                                         else if (data.description === 'Hajj Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
-                                            eligibleDays = 30;
+                                            eligibleDays = data.eligible_days;
                                         }
                                         // Skill Improvement Leave calculation
                                         else if (data.description === 'Skills Enhancement Leave' && data.eligible_day_type === 'Calendar' && data.payment_type === 'Unpaid') {
                                             if (monthsSinceJoin >= 24) {
-                                                eligibleDays = 10;
+                                                eligibleDays = data.eligible_days;
                                             }
                                         }
                                         // Default case for other leave types

@@ -27,11 +27,16 @@
 	<div class="header-left active" style=" background-color: pink;">
 		<a href="" class="logo logo-normal">
 			{% if request.session.username == 'SYSTEM' %}
+			<img src="{% static 'assets/img/FABS.png' %}" class="white-logo" alt="Logo" />
+			{% else %}
+			<img src="/media/{{ request.session.image_url }}" class="white-logo" alt="Logo" />
+			{% endif %}
+			{% if request.session.username == 'SYSTEM' %}
 			<img src="{% static 'assets/img/FABS.png' %}" alt="Logo" />
 			{% else %}
 			<img src="/media/{{ request.session.image_url }}" alt="Logo" />
 			{% endif %}
-			<img src="{% static 'assets/img/white-logo.svg' %}" class="white-logo" alt="Logo" />
+			
 		</a>
 		<a href="" class="logo-small"><img src="{% static 'assets/img/logo-small.svg' %}"
 				alt="Logo" /></a>
